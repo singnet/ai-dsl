@@ -1,6 +1,6 @@
 # AI-DSL
 
-Artificial Intelligence Domain Specific Language (AI-DSL) to enable
+Artificial Intelligence Domain Specific Language (AI-DSL) for
 autonomous interoperability between AI services.
 
 ## Further Reading
