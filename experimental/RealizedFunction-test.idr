@@ -22,3 +22,6 @@ rlz_twicer = MkRealizedFunction twicer twicer_attrs
 rlz_composition : RealizedFunction (Int -> Int)
 rlz_composition = compose rlz_twicer rlz_incrementer
 
+-- Simple test, result should be (3+1)*2 = 8
+rslt : Int
+rslt = apply rlz_composition 3
