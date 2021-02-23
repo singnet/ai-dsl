@@ -1,7 +1,7 @@
--- Prototype of RealizedAttributes as described in
+-- Prototype of NonDTRealizedAttributes as described in
 -- https://blog.singularitynet.io/ai-dsl-toward-a-general-purpose-description-language-for-ai-agents-21459f691b9e
 
-module RealizedAttributes
+module NonDTRealizedAttributes
 
 public export
 CostT : Type
@@ -17,8 +17,8 @@ QualityT : Type
 QualityT = Double
 
 public export
-record RealizedAttributes where
-  constructor MkRealizedAttributes
+record NonDTRealizedAttributes where
+  constructor MkNonDTRealizedAttributes
   costs : Costs
   quality : QualityT
 
@@ -31,8 +31,10 @@ add_costs x y = MkCosts (x.financial + y.financial)
 
 -- Add costs, minimum quality
 public export
-add_costs_min_quality : RealizedAttributes -> RealizedAttributes -> RealizedAttributes
+add_costs_min_quality : NonDTRealizedAttributes ->
+                        NonDTRealizedAttributes ->
+                        NonDTRealizedAttributes
 add_costs_min_quality f_attrs g_attrs = fg_attrs where
-  fg_attrs : RealizedAttributes
-  fg_attrs = MkRealizedAttributes (add_costs f_attrs.costs g_attrs.costs)
-                                  (min f_attrs.quality g_attrs.quality)
+  fg_attrs : NonDTRealizedAttributes
+  fg_attrs = MkNonDTRealizedAttributes (add_costs f_attrs.costs g_attrs.costs)
+                                       (min f_attrs.quality g_attrs.quality)
