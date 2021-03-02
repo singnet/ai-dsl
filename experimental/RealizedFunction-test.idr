@@ -1,25 +1,23 @@
 module Main
 
-import RealizedFunction
+import SimpleRealizedFunction
 
 -- Realized incrementer
 incrementer : Int -> Int
 incrementer = (+1)
-incrementer_attrs : RealizedAttributes
-incrementer_attrs = MkRealizedAttributes (MkCosts 1 1 1) 1
-rlz_incrementer : RealizedFunction (Int -> Int)
-rlz_incrementer = MkRealizedFunction incrementer incrementer_attrs
+rlz_incrementer : SimpleRealizedFunction (Int -> Int) 100 1.0
+rlz_incrementer = MkSimpleRealizedFunction incrementer
 
 -- Realized twicer
 twicer : Int -> Int
 twicer = (*2)
-twicer_attrs : RealizedAttributes
-twicer_attrs = MkRealizedAttributes (MkCosts 2 2 2) 0.9
-rlz_twicer : RealizedFunction (Int -> Int)
-rlz_twicer = MkRealizedFunction twicer twicer_attrs
+rlz_twicer : SimpleRealizedFunction (Int -> Int) 500 0.9
+rlz_twicer = MkSimpleRealizedFunction twicer
 
--- Realized (twicer . incrementer)
-rlz_composition : RealizedFunction (Int -> Int)
+-- Realized (twicer . incrementer).
+rlz_composition : SimpleRealizedFunction (Int -> Int) 600 0.9
+-- The following does not work because 601 ≠ 100+500 and 1.0 ≠ (min 1.0 0.9)
+-- rlz_composition : SimpleRealizedFunction (Int -> Int) 601 1.0
 rlz_composition = compose rlz_twicer rlz_incrementer
 
 -- Simple test, result should be (3+1)*2 = 8
