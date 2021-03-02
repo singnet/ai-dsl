@@ -1,5 +1,6 @@
--- Prototype of NonDTRealizedAttributes as described in
+-- Prototype of RealizedAttributes as described in
 -- https://blog.singularitynet.io/ai-dsl-toward-a-general-purpose-description-language-for-ai-agents-21459f691b9e
+-- except that the data structure is not dependently typed.
 
 module NonDTRealizedAttributes
 
