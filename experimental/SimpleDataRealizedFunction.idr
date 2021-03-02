@@ -1,6 +1,7 @@
 -- Like SimpleRealizedFunction but uses data instead of record
 
 module SimpleDataRealizedFunction
+%default total
 
 public export
 data SimpleDataRealizedFunction : (t : Type) -> (cost : Integer) -> (quality : Double)
