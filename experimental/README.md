@@ -29,7 +29,16 @@ More specifically it contains the following approaches
    `SimpleRealizedFunction.idr` and `SimpleRealizedFunction-test.idr`.
 
 4. `SimpleDataRealizedFunction`: like `SimpleRealizedFunction` but
-   uses `data` instead of `record`.
+   uses `data` instead of `record`.  See
+   `SimpleDataRealizedFunction.idr` and
+   `SimpleDataRealizedFunction-test.idr`.
 
-5. TODO: modular function-based realized dependently typed attributes.
-   This should be what we want and is a work in progress.
+5. `RealizedFunction`: like `SimpleRealizedFunction` but attributes
+   are described in a `RealizedAttributes` data structure instead of
+   being directly described in the type of `RealizedFunction`. This is
+   getting closer to what we want, though it fails to compile for now.
+   See `RealizedAttributes.idr`, `RealizedFunction.idr` and
+   `RealizedFunction-test.idr`.
+
+6. `Service`: more abstract approach using data constructors to
+   compose realized functions rather than standalone functions.
