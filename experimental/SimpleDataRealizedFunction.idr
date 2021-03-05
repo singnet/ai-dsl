@@ -14,10 +14,7 @@ data SimpleDataRealizedFunction : (t : Type) -> (cost : Integer) -> (quality : D
 --
 -- 1. Composed lifted functions
 -- 2. Costs are added
--- public export
--- compose : (SimpleDataRealizedFunction (b -> c) g_cost g_q) ->
---           (SimpleDataRealizedFunction (a -> b) f_cost f_q) ->
---           (SimpleDataRealizedFunction (a -> c) (f_cost + g_cost) (min f_q g_q))
+-- 3. Composed quality is the min of the component qualities
 public export
 compose : {a : Type} -> {b : Type} -> {c : Type} ->
           (SimpleDataRealizedFunction (b -> c) g_cost g_q) ->
