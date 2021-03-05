@@ -1,12 +1,13 @@
 -- Like SimpleRealizedFunction but uses data instead of record
 
 module SimpleDataRealizedFunction
+%default total
 
 public export
-data SimpleDataRealizedFunction : (a -> b) -> (cost : Integer) -> (quality : Double)
+data SimpleDataRealizedFunction : (t : Type) -> (cost : Integer) -> (quality : Double)
                                   -> Type where
-  MkSimpleDataRealizedFunction : (f : a -> b) -> (cost : Integer) -> (quality : Double)
-                                 -> SimpleDataRealizedFunction f cost quality
+  MkSimpleDataRealizedFunction : (f : t) -> (cost : Integer) -> (quality : Double)
+                                 -> SimpleDataRealizedFunction t cost quality
 
 -- Perform the composition between 2 simple realized functions.  The
 -- resulting realized function is formed as follows:
@@ -18,14 +19,15 @@ data SimpleDataRealizedFunction : (a -> b) -> (cost : Integer) -> (quality : Dou
 --           (SimpleDataRealizedFunction (a -> b) f_cost f_q) ->
 --           (SimpleDataRealizedFunction (a -> c) (f_cost + g_cost) (min f_q g_q))
 public export
-compose : (SimpleDataRealizedFunction (b -> c) g_cost g_q) ->
+compose : {a : Type} -> {b : Type} -> {c : Type} ->
+          (SimpleDataRealizedFunction (b -> c) g_cost g_q) ->
           (SimpleDataRealizedFunction (a -> b) f_cost f_q) ->
           (SimpleDataRealizedFunction (a -> c) (f_cost + g_cost) (min f_q g_q))
-compose (MkSimpleDataRealizedFunction f) (MkSimpleDataRealizedFunction g) =
-  MkSimpleDataRealizedFunction (f . g)
+compose (MkSimpleDataRealizedFunction f f_cost f_q) (MkSimpleDataRealizedFunction g g_cost g_q) =
+         MkSimpleDataRealizedFunction (f . g) (g_cost + f_cost) (min g_q f_q)
 
 -- Perform function application over realized functions.  Maybe we'd
 -- want to used some funded data, as defined in FndType.
 public export
 apply : (SimpleDataRealizedFunction (a -> b) cost quality) -> a -> b
-apply (MkSimpleDataRealizedFunction f) = f
+apply (MkSimpleDataRealizedFunction f cost quality) = f
