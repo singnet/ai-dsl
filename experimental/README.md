@@ -36,9 +36,7 @@ More specifically it contains the following approaches
 5. `RealizedFunction`: like `SimpleRealizedFunction` but attributes
    are described in a `RealizedAttributes` data structure instead of
    being directly described in the type of `RealizedFunction`. This is
-   getting closer to what we want, though it fails to compile for now.
-   See `RealizedAttributes.idr`, `RealizedFunction.idr` and
-   `RealizedFunction-test.idr`.
+   getting closer to what we want though not optimally elegant.
 
 6. `Service`: more abstract approach using data constructors to
    compose realized functions rather than standalone functions.
