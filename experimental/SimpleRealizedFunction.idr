@@ -18,9 +18,9 @@ public export
 compose : (SimpleRealizedFunction (b -> c) g_cost g_q) ->
           (SimpleRealizedFunction (a -> b) f_cost f_q) ->
           (SimpleRealizedFunction (a -> c) (f_cost + g_cost) (min f_q g_q))
-compose rlz_f rlz_g = MkSimpleRealizedFunction rlz_fg where
+compose rlz_g rlz_f = MkSimpleRealizedFunction rlz_fg where
   rlz_fg : a -> c
-  rlz_fg = rlz_f.function . rlz_g.function
+  rlz_fg = rlz_g.function . rlz_f.function
 
 -- Perform function application over realized functions.  Maybe we'd
 -- want to used some funded data, as defined in FndType.
