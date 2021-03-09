@@ -23,8 +23,8 @@ compose : {a : Type} -> {b : Type} -> {c : Type} ->
           (RealizedFunction (b -> c) g_attrs) ->
           (RealizedFunction (a -> b) f_attrs) ->
           (RealizedFunction (a -> c) (add_costs_min_quality f_attrs g_attrs))
-compose (MkRealizedFunction f f_attrs) (MkRealizedFunction g g_attrs) =
-  MkRealizedFunction (f . g) (add_costs_min_quality f_attrs g_attrs)
+compose (MkRealizedFunction g g_attrs) (MkRealizedFunction f f_attrs) =
+  MkRealizedFunction (g . f) (add_costs_min_quality f_attrs g_attrs)
 
 -- Perform function application over realized functions.  Maybe we'd
 -- want to used some funded data, as defined in FndType.
