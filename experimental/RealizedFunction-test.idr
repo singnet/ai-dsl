@@ -26,6 +26,8 @@ rlz_twicer = MkRealizedFunction twicer twicer_attrs
 -- Realized (twicer . incrementer).
 rlz_composition_attrs : RealizedAttributes
 rlz_composition_attrs = MkRealizedAttributes (MkCosts 300 30 3) 0.9
+-- The following does not work because 301 ≠ 200+100
+-- rlz_composition_attrs = MkRealizedAttributes (MkCosts 301 30 3) 0.9
 rlz_composition : RealizedFunction (Int -> Int) Main.rlz_composition_attrs
 rlz_composition = compose rlz_twicer rlz_incrementer
 
