@@ -20,8 +20,8 @@ compose : {a : Type} -> {b : Type} -> {c : Type} ->
           (SimpleDataRealizedFunction (b -> c) g_cost g_q) ->
           (SimpleDataRealizedFunction (a -> b) f_cost f_q) ->
           (SimpleDataRealizedFunction (a -> c) (f_cost + g_cost) (min f_q g_q))
-compose (MkSimpleDataRealizedFunction f f_cost f_q) (MkSimpleDataRealizedFunction g g_cost g_q) =
-         MkSimpleDataRealizedFunction (f . g) (g_cost + f_cost) (min g_q f_q)
+compose (MkSimpleDataRealizedFunction g g_cost g_q) (MkSimpleDataRealizedFunction f f_cost f_q) =
+         MkSimpleDataRealizedFunction (g . f) (f_cost + g_cost) (min f_q g_q)
 
 -- Perform function application over realized functions.  Maybe we'd
 -- want to used some funded data, as defined in FndType.

@@ -28,8 +28,8 @@ rlz_composition : SimpleDataRealizedFunction (Int -> Int)  600 0.9
 rlz_composition = compose rlz_twicer rlz_incrementer
 
 -- Simple test, result should be (3+1)*2 = 8
-rslt : Int -> Int
-rslt = apply rlz_composition
+lifted_composition : Int -> Int
+lifted_composition = apply rlz_composition
 
-rsltTest : (rslt 3) = 8
-rsltTest = Refl
+test : (lifted_composition 3) = 8
+test = Refl
