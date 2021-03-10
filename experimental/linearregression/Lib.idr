@@ -1,6 +1,6 @@
 module Lib
 import Types
-
+import Data.List
 
 public export
 calculateDeltas : (Double,Double) -> (Double, Double) -> Double
@@ -17,7 +17,6 @@ avg xs = do
   (sum xs) / z
 
 
-
 getmult: List Double -> List Double -> List Double
 getmult [] [] = []
 getmult (x::xs) [] = (x::getmult xs [])
@@ -27,10 +26,10 @@ getmult (x::xs) (y::ys) = (x * y :: getmult xs ys)
 public export
 adjustDeltas : List Double -> List (Double,Double) -> List Double
 adjustDeltas deltas examples =
-  let xs = (map (\(x,y) => x) examples)
+  let xs = map fst examples
 --      zipped = zip deltas xs
 --  in getmult deltas  xs
-  in  getmult deltas xs
+  in  zipWith (*) deltas xs
 
 public export
 newthetas : (Double, Double) -> Double -> List (Double, Double) ->  (Double, Double)
