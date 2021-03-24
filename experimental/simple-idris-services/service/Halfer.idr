@@ -12,5 +12,5 @@ halfer : Int -> Int
 halfer = (flip div 2)
 halfer_attrs : RealizedAttributes
 halfer_attrs = MkRealizedAttributes (MkCosts 300 30 3) 0.8
-rlz_halfer : RealizedFunction (Int -> Int) Main.halfer_attrs
+rlz_halfer : RealizedFunction (Int -> Int) Halfer.halfer_attrs
 rlz_halfer = MkRealizedFunction halfer halfer_attrs

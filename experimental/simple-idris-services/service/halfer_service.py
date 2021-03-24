@@ -44,6 +44,7 @@ class HalferServicer(grpc_bt_grpc.HalferServicer):
         argstr = str(self.argument)
         cmd = ["idris2", "Halfer.idr", "--client", "halfer " + argstr]
         spres = subprocess.run(cmd, capture_output=True, cwd="service")
+        log.debug("spres.stdout = {}".format(spres.stdout))
         self.result.value = int(spres.stdout)
 
         log.debug("halfer {} = {}".format(self.argument, self.result.value))
