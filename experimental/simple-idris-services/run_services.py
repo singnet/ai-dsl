@@ -12,7 +12,7 @@ import argparse
 from service import registry
 
 logging.basicConfig(level=10, format="%(asctime)s - [%(levelname)8s] - %(name)s - %(message)s")
-log = logging.getLogger("run_simple_service")
+log = logging.getLogger("run_services")
 
 
 def main():
@@ -30,7 +30,7 @@ def main():
     root_path = pathlib.Path(__file__).absolute().parent
 
     # All services modules go here
-    service_modules = ["service.simple_service"]
+    service_modules = ["service.incrementer_service", "service.twicer_service", "service.halfer_service"]
 
     # Call for all the services listed in service_modules
     all_p = start_all_services(root_path, service_modules, args.run_daemon, args.daemon_config, args.run_ssl)

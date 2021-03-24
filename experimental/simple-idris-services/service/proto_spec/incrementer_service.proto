@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package simple_service;
+package incrementer_service;
 
 message Arguments {
     uint32 argument = 1;
@@ -10,8 +10,6 @@ message Result {
     uint32 value = 1;
 }
 
-service Simple {
+service Incrementer {
     rpc incrementer(Arguments) returns (Result) {}
-    rpc twicer(Arguments) returns (Result) {}
-    rpc halfer(Arguments) returns (Result) {}
 }
