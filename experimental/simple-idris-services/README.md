@@ -38,6 +38,7 @@ run as an external subprocess wrapped in Python.
 
 - grpc
 - grpc-cli
+- idris2
 
 # Usage
 

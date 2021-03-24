@@ -1,5 +1,6 @@
 import sys
 import logging
+import subprocess
 
 import grpc
 import concurrent.futures as futures
@@ -45,7 +46,15 @@ class SimpleServicer(grpc_bt_grpc.SimpleServicer):
         # To respond we need to create a Result() object (from .proto file)
         self.result = Result()
 
-        self.result.value = self.argument + 1 # NEXT: replace by idris call
+        # Python incrementer
+        # self.result.value = self.argument + 1
+
+        # Idris incrementer
+        argstr = str(self.argument)
+        cmd = ["idris2", "Incrementer.idr", "--client", "incrementer " + argstr]
+        spres = subprocess.run(cmd, capture_output=True, cwd="service")
+        self.result.value = int(spres.stdout)
+
         log.debug("incrementer {} = {}".format(self.argument, self.result.value))
         return self.result
 
@@ -54,7 +63,16 @@ class SimpleServicer(grpc_bt_grpc.SimpleServicer):
         self.argument = request.argument
 
         self.result = Result()
-        self.result.value = self.argument * 2 # NEXT: replace by idris call
+
+        # # Python twicer
+        # self.result.value = self.argument * 2
+
+        # Idris twicer
+        argstr = str(self.argument)
+        cmd = ["idris2", "Twicer.idr", "--client", "twicer " + argstr]
+        spres = subprocess.run(cmd, capture_output=True, cwd="service")
+        self.result.value = int(spres.stdout)
+
         log.debug("twicer {} = {}".format(self.argument, self.result.value))
         return self.result
 
@@ -63,7 +81,16 @@ class SimpleServicer(grpc_bt_grpc.SimpleServicer):
         self.argument = request.argument
 
         self.result = Result()
-        self.result.value = self.argument // 2 # NEXT: replace by idris call
+
+        # Python halfer
+        # self.result.value = self.argument // 2
+
+        # Idris halfer
+        argstr = str(self.argument)
+        cmd = ["idris2", "Halfer.idr", "--client", "halfer " + argstr]
+        spres = subprocess.run(cmd, capture_output=True, cwd="service")
+        self.result.value = int(spres.stdout)
+
         log.debug("halfer {} = {}".format(self.argument, self.result.value))
         return self.result
 
