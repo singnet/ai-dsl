@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package incrementer_service;
+
+message Arguments {
+    uint32 argument = 1;
+}
+
+message Result {
+    uint32 value = 1;
+}
+
+service Incrementer {
+    rpc incrementer(Arguments) returns (Result) {}
+}

@@ -22,7 +22,3 @@ main = do
 --  let deltas = [6.0, 5.2]
 --  let examples = [(7.0,50.0), (2.0,3.0)]
 --  print $ adjustDeltas deltas examples
-
-
-  
-

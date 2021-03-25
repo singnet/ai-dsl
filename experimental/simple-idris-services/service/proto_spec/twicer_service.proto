@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package twicer_service;
+
+message Arguments {
+    uint32 argument = 1;
+}
+
+message Result {
+    uint32 value = 1;
+}
+
+service Twicer {
+    rpc twicer(Arguments) returns (Result) {}
+}
