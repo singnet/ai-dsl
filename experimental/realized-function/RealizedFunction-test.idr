@@ -47,16 +47,30 @@ rlz_compo2_attrs = MkRealizedAttributes (MkCosts 600 60 6) 0.8
 rlz_compo2 : RealizedFunction (Int -> Int) Main.rlz_compo2_attrs
 rlz_compo2 = (compose rlz_incrementer (compose rlz_twicer rlz_halfer))
 
+-- Realized (halfer . incrementer . twicer).  If halfer is supposed to
+-- take an even interger, then such composition is not valid.
+rlz_compo3_attrs : RealizedAttributes
+rlz_compo3_attrs = MkRealizedAttributes (MkCosts 600 60 6) 0.8
+rlz_compo3 : RealizedFunction (Int -> Int) Main.rlz_compo3_attrs
+rlz_compo3 = (compose rlz_halfer (compose rlz_incrementer rlz_twicer))
+
 -- Tests
 
--- Result should be (3+1)*2 = 8
+-- Result should be (20+1)*2 = 42
 lifted_compo1 : Int -> Int
 lifted_compo1 = apply rlz_compo1
-test1 : lifted_compo1 3 = 8
+test1 : lifted_compo1 20 = 42
 test1 = Refl
 
--- Result should be 1+2*(4/2) = 5
+-- Result should be 1+2*(40/2) = 41
 lifted_compo2 : Int -> Int
 lifted_compo2 = apply rlz_compo2
-test2 : lifted_compo2 4 = 5
+test2 : lifted_compo2 40 = 41
+test2 = Refl
+
+-- Result should be (40*2+1)/2 = 40 [assuming no even integer
+-- constraint on halfer's input].
+lifted_compo3 : Int -> Int
+lifted_compo3 = apply rlz_compo3
+test2 : lifted_compo3 40 = 40
 test2 = Refl
