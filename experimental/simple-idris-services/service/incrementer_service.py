@@ -11,7 +11,7 @@ import service.common
 import service.proto_spec.incrementer_service_pb2_grpc as grpc_bt_grpc
 from service.proto_spec.incrementer_service_pb2 import Result
 
-logging.basicConfig(level=10, format="%(asctime)s - [%(levelname)8s] - %(name)s - %(message)s")
+logging.basicConfig(level=10, format="[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s")
 log = logging.getLogger("incrementer_service")
 
 """

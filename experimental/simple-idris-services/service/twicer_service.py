@@ -11,7 +11,7 @@ import service.common
 import service.proto_spec.twicer_service_pb2_grpc as grpc_bt_grpc
 from service.proto_spec.twicer_service_pb2 import Result
 
-logging.basicConfig(level=10, format="%(asctime)s - [%(levelname)8s] - %(name)s - %(message)s")
+logging.basicConfig(level=10, format="[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s")
 log = logging.getLogger("twicer_service")
 
 
@@ -34,7 +34,6 @@ class TwicerServicer(grpc_bt_grpc.TwicerServicer):
     # Multiply an integer by 2
     def twicer(self, request, context):
         self.argument = request.argument
-
         self.result = Result()
 
         # # Python twicer

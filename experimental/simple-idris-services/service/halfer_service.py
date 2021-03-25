@@ -11,7 +11,7 @@ import service.common
 import service.proto_spec.halfer_service_pb2_grpc as grpc_bt_grpc
 from service.proto_spec.halfer_service_pb2 import Result
 
-logging.basicConfig(level=10, format="%(asctime)s - [%(levelname)8s] - %(name)s - %(message)s")
+logging.basicConfig(level=10, format="[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s")
 log = logging.getLogger("halfer_service")
 
 
@@ -34,7 +34,6 @@ class HalferServicer(grpc_bt_grpc.HalferServicer):
     # Divide an integer by 2
     def halfer(self, request, context):
         self.argument = request.argument
-
         self.result = Result()
 
         # Python halfer
