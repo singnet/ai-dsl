@@ -8,4 +8,13 @@ registry = {
     "halfer_service": {
         "grpc": 7005,
     },
+    "compo1_service": {
+        "grpc": 7006,
+    },
+    "compo2_service": {
+        "grpc": 7006,
+    },
+    "compo3_service": {
+        "grpc": 7007,
+    },
 }
