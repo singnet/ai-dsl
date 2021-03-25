@@ -47,8 +47,8 @@ rlz_compo2_attrs = MkRealizedAttributes (MkCosts 600 60 6) 0.8
 rlz_compo2 : RealizedFunction (Int -> Int) Main.rlz_compo2_attrs
 rlz_compo2 = (compose rlz_incrementer (compose rlz_twicer rlz_halfer))
 
--- Realized (halfer . incrementer . twicer).  If halfer is supposed to
--- take an even interger, then such composition is not valid.
+-- Realized (halfer . incrementer . twicer).  If halfer can only take
+-- an even integer, then such composition is not valid.
 rlz_compo3_attrs : RealizedAttributes
 rlz_compo3_attrs = MkRealizedAttributes (MkCosts 600 60 6) 0.8
 rlz_compo3 : RealizedFunction (Int -> Int) Main.rlz_compo3_attrs
