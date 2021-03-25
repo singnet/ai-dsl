@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package compo3_service;
+
+message Arguments {
+    uint32 argument = 1;
+}
+
+message Result {
+    uint32 value = 1;
+}
+
+service Compo3 {
+    rpc compo3(Arguments) returns (Result) {}
+}
