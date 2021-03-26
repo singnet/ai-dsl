@@ -12,9 +12,9 @@ registry = {
         "grpc": 7006,
     },
     "compo2_service": {
-        "grpc": 7006,
+        "grpc": 7007,
     },
     "compo3_service": {
-        "grpc": 7007,
+        "grpc": 7008,
     },
 }
