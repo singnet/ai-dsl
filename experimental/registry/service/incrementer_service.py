@@ -44,8 +44,8 @@ class IncrementerServicer(grpc_bt_grpc.IncrementerServicer):
         # Idris incrementer
         argstr = str(self.argument)
         cmd = ["idris2", "Incrementer.idr", "--client", "incrementer " + argstr]
-        spres = subprocess.run(cmd, capture_output=True, cwd="service")
-        self.result.value = int(spres.stdout)
+        spr = subprocess.run(cmd, capture_output=True, text=True, cwd="service")
+        self.result.value = int(spr.stdout.strip())
 
         log.debug("incrementer {} = {}".format(self.argument, self.result.value))
         return self.result

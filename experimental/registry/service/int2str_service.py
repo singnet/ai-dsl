@@ -42,9 +42,8 @@ class Int2StrServicer(grpc_bt_grpc.Int2StrServicer):
         # Idris int2str
         argstr = str(self.argument)
         cmd = ["idris2", "Int2Str.idr", "--client", "int2str " + argstr]
-        spres = subprocess.run(cmd, capture_output=True, cwd="service")
-        log.debug("spres.stdout = {}".format(spres.stdout))
-        self.result.value = str(spres.stdout)
+        spr = subprocess.run(cmd, capture_output=True, text=True, cwd="service")
+        self.result.value = spr.stdout.strip()
 
         log.debug("int2str {} = {}".format(self.argument, self.result.value))
         return self.result

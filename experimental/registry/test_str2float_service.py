@@ -15,7 +15,7 @@ if __name__ == "__main__":
         # Ask endpoint and argument
         dflt_ep = "localhost:{}".format(registry["str2float_service"]["grpc"])
         endpoint = input("Endpoint [default={}]: ".format(dflt_ep)) or dflt_ep
-        argument = input("Argument [default=42]: ") or "42"
+        argument = input("Argument [default=\"42\"]: ") or "\"42\""
 
         # Open a gRPC channel
         channel = grpc.insecure_channel(endpoint)

@@ -36,8 +36,8 @@ class RegistryServicer(grpc_registry_grpc.RegistryServicer):
         spr = subprocess.run(cmd, capture_output=True, text=True, cwd="service")
         if (spr.returncode != 0):
             log.debug("Failed type checking!")
-            log.debug("stdout: {}".format(spr.stdout))
-            log.debug("stderr: {}".format(spr.stderr))
+            log.debug("stdout: {}".format(spr.stdout.strip()))
+            log.debug("stderr: {}".format(spr.stderr.strip()))
             exit(spr.returncode)
 
         # Fetch service names (imported modules in Registry.idr)
@@ -45,11 +45,12 @@ class RegistryServicer(grpc_registry_grpc.RegistryServicer):
         spr = subprocess.run(cmd, capture_output=True, text=True, cwd="service")
         if (spr.returncode != 0):
             log.debug("Failed fetching service names!")
-            log.debug("stdout: {}".format(spr.stdout))
-            log.debug("stderr: {}".format(spr.stderr))
+            log.debug("stdout: {}".format(spr.stdout.strip()))
+            log.debug("stderr: {}".format(spr.stderr.strip()))
             exit(spr.returncode)
-        self.services = str(spr.stdout).split()
-        log.debug("Registered services = {}".format(self.services))
+        self.services = str(spr.stdout.strip()).split()
+        self.services += ["Registry"] # Add the Registry itself
+        log.debug("Registered services = {}".format(", ".join(self.services)))
 
         # Just for debugging purpose.
         log.debug("RegistryServicer created")
@@ -59,15 +60,14 @@ class RegistryServicer(grpc_registry_grpc.RegistryServicer):
         self.result = Result()
 
         # Call idris2 :search
-        # TODO: cwd problem for idris2
         cmd = ["idris2", "Registry.idr", "--client", ":search " + self.tsgn]
-        log.debug("cmd: {}".format(cmd))
+        # log.debug("cmd: {}".format(cmd))
         spr = subprocess.run(cmd, capture_output=True, text=True, cwd="service")
         if (spr.returncode != 0):
             log.debug("Failed to call the registry!")
-            log.debug("stdout: {}".format(spr.stdout))
-            log.debug("stderr: {}".format(spr.stderr))
-        tsgn_matches = spr.stdout.split('\n')
+            log.debug("stdout: {}".format(spr.stdout.strip()))
+            log.debug("stderr: {}".format(spr.stderr.strip()))
+        tsgn_matches = spr.stdout.strip().split('\n')
         # Filter out matches not corresponding to services in the registry
         tsgn_svc_matches = [m for m in tsgn_matches
                             if any(m.startswith(s) for s in self.services)]
@@ -82,8 +82,9 @@ class RegistryServicer(grpc_registry_grpc.RegistryServicer):
         (svc_name, proc_name) = svc_proc_names.split('.')
         self.result.service_name = svc_name
         self.result.procedure_name = proc_name
-
-        log.debug("self.result = {}".format(self.result))
+        log.debug("retrieve {} = ({}, {})".format(self.tsgn,
+                                                  self.result.service_name,
+                                                  self.result.procedure_name))
         return self.result
 
     def compose(self, request, context):

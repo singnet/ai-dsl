@@ -42,8 +42,8 @@ class Str2FloatServicer(grpc_bt_grpc.Str2FloatServicer):
         # Idris str2float
         argstr = str(self.argument)
         cmd = ["idris2", "Str2Float.idr", "--client", "str2float " + argstr]
-        spres = subprocess.run(cmd, capture_output=True, cwd="service")
-        self.result.value = float(spres.stdout)
+        spr = subprocess.run(cmd, capture_output=True, text=True, cwd="service")
+        self.result.value = float(spr.stdout.strip())
 
         log.debug("str2float {} = {}".format(self.argument, self.result.value))
         return self.result
