@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package str2float_service;
+
+message Arguments {
+    string argument = 1;
+}
+
+message Result {
+    float value = 1;
+}
+
+service Str2Float {
+    rpc str2float(Arguments) returns (Result) {}
+}

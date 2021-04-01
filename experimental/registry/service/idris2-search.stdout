@@ -1,0 +1,13 @@
+prim__cast_IntString : Int -> String
+
+Str2Float.int2str'' : Int -> String
+
+Prelude.Types.cast : Int -> String
+
+Prelude.Show.show : Int -> String
+
+Int2Str.int2str' : Int -> String
+
+Int2Str.int2str : Int -> String
+
+Totality: total
