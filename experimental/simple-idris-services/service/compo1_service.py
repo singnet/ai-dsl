@@ -7,15 +7,15 @@ import concurrent.futures as futures
 
 import service.common
 
-# import the generated classes
+# Importing the generated codes from buildproto.sh
+import service.proto_spec.compo1_service_pb2_grpc as grpc_compo1_grpc
+from service.proto_spec.compo1_service_pb2 import Result
+
+# Import the generated classes from other services
 import service.proto_spec.incrementer_service_pb2_grpc as grpc_incrementer_grpc
 import service.proto_spec.incrementer_service_pb2 as grpc_incrementer_pb2
 import service.proto_spec.twicer_service_pb2_grpc as grpc_twicer_grpc
 import service.proto_spec.twicer_service_pb2 as grpc_twicer_pb2
-
-# Importing the generated codes from buildproto.sh
-import service.proto_spec.compo1_service_pb2_grpc as grpc_compo1_grpc
-from service.proto_spec.compo1_service_pb2 import Result
 
 from service import registry
 
@@ -39,10 +39,10 @@ class Compo1Servicer(grpc_compo1_grpc.Compo1Servicer):
 
         # Type check
         cmd = ["idris2", "Compo1.idr", "--check"]
-        spres = subprocess.run(cmd, capture_output=True, cwd="service")
-        if (spres.returncode != 0):
-            log.debug("Fails type checking with error: {}".format(spres.stdout))
-            exit(spres.returncode)
+        spr = subprocess.run(cmd, capture_output=True, cwd="service")
+        if (spr.returncode != 0):
+            log.debug("Fails type checking with error: {}".format(spr.stdout))
+            exit(spr.returncode)
 
         # Just for debugging purpose.
         log.debug("Compo1Servicer created")

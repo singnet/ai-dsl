@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package compoint2float_service;
+
+message Arguments {
+    uint32 argument = 1;
+}
+
+message Result {
+    float value = 1;
+}
+
+service CompoInt2Float {
+    rpc compoint2float(Arguments) returns (Result) {}
+}

@@ -62,7 +62,7 @@ run as an external subprocess wrapped in Python.
 python3 run_services.py --no-daemon
 ```
 
-3. Call the various primary services
+3. Test the various primary services
 
 ```bash
 python3 test_incrementer_service.py
