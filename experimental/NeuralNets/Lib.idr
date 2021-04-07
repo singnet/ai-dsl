@@ -44,11 +44,11 @@ matrix_gen :Num j =>  List j -> List j -> List (List j)
 matrix_gen ws zs = foldr (\x, acc => zs::acc) [] ws
 b : Double
 b = 0.3
-simple_dense : List Double -> List Double -> List Double
-simple_dense [] _ = []
-simple_dense _ [] = []
-simple_dense [] [] = []
-simple_dense (x::xs) (y::ys) = (x * y + b)::simple_dense xs ys
+nn_Layer : List Double -> List Double -> List Double
+nn_Layer [] _ = []
+nn_Layer _ [] = []
+nn_Layer [] [] = []
+nn_Layer (x::xs) (y::ys) = (x * y + b)::nn_Layer xs ys
 
 
 main : IO ()
