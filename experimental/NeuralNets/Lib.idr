@@ -56,6 +56,12 @@ softmax_activation : List Double -> List Double
 softmax_activation xs = let softmax_denom = sum $ map exp $ xs 
 in foldr (\x,acc => (exp x)/softmax_denom::acc) [] xs
 
+grad_CrossEntropy : List Double -> List Double -> List Double
+grad_CrossEntropy [] _ = []
+grad_CrossEntropy _ [] = []
+grad_CrossEntropy [] [] = []
+grad_CrossEntropy (x::xs) (y::ys) = -(y/x) + (1-y)/(1-x)::grad_CrossEntropy xs ys
+
 main : IO ()
 main = do
   let sample_data ="Hello tge is a not will be happy. the Hello the a and is . ME is will not try to be"
