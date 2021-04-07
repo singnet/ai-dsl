@@ -42,6 +42,7 @@ insertAt (x::xs) elem pos = x::insertAt xs elem (pos - 1 )
 
 matrix_gen :Num j =>  List j -> List j -> List (List j) 
 matrix_gen ws zs = foldr (\x, acc => zs::acc) [] ws
+
 b : Double
 b = 0.3
 nn_Layer : List Double -> List Double -> List Double
@@ -50,6 +51,10 @@ nn_Layer _ [] = []
 nn_Layer [] [] = []
 nn_Layer (x::xs) (y::ys) = (x * y + b)::nn_Layer xs ys
 
+
+softmax_activation : List Double -> List Double
+softmax_activation xs = let softmax_denom = sum $ map exp $ xs 
+in foldr (\x,acc => (exp x)/softmax_denom::acc) [] xs
 
 main : IO ()
 main = do
