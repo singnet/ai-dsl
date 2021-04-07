@@ -40,6 +40,9 @@ insertAt (x::xs) elem  0 = elem::x::xs
 insertAt (x::xs) elem 1 = x::elem::xs
 insertAt (x::xs) elem pos = x::insertAt xs elem (pos - 1 ) 
 
+matrix_gen :Num j =>  List j -> List j -> List (List j) 
+matrix_gen ws zs = foldr (\x, acc => zs::acc) [] ws
+
 main : IO ()
 main = do
   let sample_data ="Hello tge is a not will be happy. the Hello the a and is . ME is will not try to be"
