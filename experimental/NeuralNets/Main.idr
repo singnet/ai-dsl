@@ -60,9 +60,11 @@ main = do
    --let input = xss paired
    --let target = yss paired
    --let zs = zeros cleaned dict
-    let gen_ws = matrix_gen ran zs
-    let y_encode = oneHotEncoder yss_index zs
-    let x_encode = oneHotEncoder xss_index zs
+    let weights = matrix_gen ran zs
+    let en_inputs = oneHotEncoder xss_index zs
+    let en_targets = oneHotEncoder yss_index zs
+    let bias = 0.3
+--    let expected = en
 
 --  let index : String -> Nat
 --  in index x = (\(Just i) => i ) $ lookup x dict
@@ -71,7 +73,7 @@ main = do
 --  in get_indices vocabs = foldr (\x, acc => (index x) :: acc ) [] vocabs
 --  print $ paired
 --   print $ length zs
-    print $ length $ gen_ws
+    print $  en_targets
 
 
 
