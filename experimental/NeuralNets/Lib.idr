@@ -43,7 +43,7 @@ createDictionary xss = func 0 tmp
 
 export
 insertAt : List Double -> Double -> Nat -> List Double
-insertAt [] elem pos = elem::[]
+insertAt [] elem pos = []
 insertAt (x::xs) elem  Z = elem::x::xs
 insertAt (x::xs) elem (S Z) = x::elem::xs
 insertAt (x::xs) elem (S k) = x::insertAt xs elem k 
@@ -60,16 +60,17 @@ b : Double
 b = 0.3
 
 export
+softmax_activation : List Double -> List Double
+softmax_activation xs = let softmax_denom = sum $ map exp $ xs 
+in foldr (\x,acc => (exp x)/softmax_denom::acc) [] xs
+
+export
 nn_Layer : List Double -> List Double -> List Double
 nn_Layer [] _ = []
 nn_Layer _ [] = []
 nn_Layer [] [] = []
 nn_Layer (x::xs) (y::ys) = (x * y + b)::nn_Layer xs ys
 
-export
-softmax_activation : List Double -> List Double
-softmax_activation xs = let softmax_denom = sum $ map exp $ xs 
-in foldr (\x,acc => (exp x)/softmax_denom::acc) [] xs
 
 export
 grad_CrossEntropy : List Double -> List Double -> List Double
@@ -79,7 +80,7 @@ grad_CrossEntropy [] [] = []
 grad_CrossEntropy (x::xs) (y::ys) = -(y/x) + (1-y)/(1-x)::grad_CrossEntropy xs ys
 
 export
-adam_Optimizer : List Double -> List Double -> Double -> Double -> Double ->Double -> Double -> Double-> List Double
+adam_Optimizer : List Double -> List Double -> Double -> Double -> Double -> Double -> Double -> Double -> List Double
 adam_Optimizer [] _ _ _ _ _ _ _ =  []
 adam_Optimizer _ [] _ _ _ _ _ _ =  []
 adam_Optimizer (t::thetas) (gt::gts) alpha m_prev v_prev beta1 beta2 epsilon = do
