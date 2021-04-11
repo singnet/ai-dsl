@@ -33,14 +33,6 @@ createDictionary xss = func 0 tmp
                 func (S k) (x::xs) = (x, S k) :: func (S (S k) ) xs
 
 
-
---index : String -> Nat
---index x = (\(Just i) => i ) $ lookup x dict
-
---get_indices : List String -> List Nat
---get_indices vocabs = foldr (\x, acc => (index x) :: acc ) [] vocabs
-
-
 export
 insertAt : List Double -> Double -> Nat -> List Double
 insertAt [] elem pos = []
@@ -91,19 +83,6 @@ adam_Optimizer (t::thetas) (gt::gts) alpha m_prev v_prev beta1 beta2 epsilon = d
               (t - alpha * mhat_current / ((sqrt  vhat_current) + epsilon)):: adam_Optimizer thetas gts alpha m_current v_current beta1 beta2 epsilon
 
 export
-model : List Double -> Double -> List Double -> List Double -> Double -> Double -> Double -> Int -> List Double 
-model weights alpha inputs targets  beta1 beta2 epsilon iterations = case iterations == 0 of
-                                                      True => weights
-                                                      False => do
-                                                        let z = nn_Layer inputs weights
-                                                        let predicted = softmax_activation z
-                                                        let cost = grad_CrossEntropy predicted targets
-                                                        let new_weights = adam_Optimizer inputs cost alpha 0 0 beta1 beta2 epsilon
-                                                        model new_weights alpha inputs targets beta1 beta2 epsilon (iterations-1)
-
---fn_classifier: List String
---fn_classifer raw_inputs raw_outputs alpha beta1 beta2 epsilon iterations
-export
 wordpairs : List String -> List (String,String)
 wordpairs wrds = makeWordPairs wrds
 
@@ -115,14 +94,6 @@ export
 yss: List (String,String) -> List String
 yss wordpairs = map (\(a,b) => b ) wordpairs
 
---model : List String -> List String -> Double -> Double -> Double -> Double -> Int -> List Double
---model raw_inputs raw_targets alpha beta1 beta2 epsilon iteration =
-
---  let index : String -> Nat
---  in index x = (\(Just i) => i ) $ lookup x dict
-
---  let get_indices : List String -> List Nat
---  in get_indices vocabs = foldr (\x, acc => (index x) :: acc ) [] vocabs
 
 export
 wordify : List String -> List String
@@ -143,7 +114,38 @@ rawToCleaned : List String -> List String
 rawToCleaned [] = []
 rawToCleaned (x::xs) = let some_var = removeStopWords x
                        in some_var ++ rawToCleaned xs
---  in index x = (\(Just i) => i ) $ lookup x dict
+export
+fullNNLayer : List (List Double) -> List (List Double) -> List (List Double)
+fullNNLayer [] [] = []
+fullNNLayer (x::inputs) (y::weights) = (softmax_activation $ nn_Layer x y)::fullNNLayer inputs weights
 
---  let get_indices : List String -> List Nat
---  in get_indices vocabs = foldr (\x, acc => (index x) :: acc ) [] vocabs
+export
+loss_func : (List Double -> List Double -> List Double ) -> List (List Double) -> List (List Double) -> List (List Double)
+loss_func f [] _ = []
+loss_func f _ [] = []
+loss_func f [] [] = []
+loss_func f (p::preds) (t::targets) = f p t :: loss_func f preds targets
+
+export
+optimizer: ( List Double -> List Double -> Double -> Double -> Double -> Double -> Double -> Double -> List Double) -> List (List Double) -> List (List Double) -> Double -> Double -> Double -> Double -> Double -> Double -> List (List Double)
+optimizer f [] _ _ _ _ _ _ _ = []
+optimizer f _ [] _ _ _ _ _ _ = []
+optimizer f [] [] _ _ _ _ _ _= []
+optimizer f (ws::wss) (cs::costs) alpha  m v beta1 beta2 epsilon =  (f ws cs alpha m v beta1 beta2 epsilon) :: optimizer f wss costs alpha m  v beta1 beta2 epsilon
+
+export
+model : List (List Double) -> List (List Double) -> List (List Double) -> Double -> Double -> Double -> Double -> Int -> List (List Double )
+model [] _ _ _ _ _ _ _ = []
+model _ [] _ _ _ _ _ _ = []
+model _ _ [] _ _ _ _ _ = []
+model [] [] [] _ _ _ _ _= []
+model weights inputs targets alpha beta1 beta2 epsilon iterations = case iterations == 0 of                         
+                                              True => weights
+                                              False => do
+                                                  let predicted = fullNNLayer inputs weights
+                                                  let full_cost = loss_func grad_CrossEntropy predicted targets 
+                                                  let new_weights = optimizer adam_Optimizer weights full_cost alpha 0.0 0.0 beta1 beta2 epsilon 
+                                                  model new_weights inputs targets alpha beta1 beta2 epsilon (iterations - 1)
+
+
+
