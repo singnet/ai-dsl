@@ -45,7 +45,7 @@ oneHotEncoder : List Nat -> List Double -> List (List Double)
 oneHotEncoder ws zs = foldr(\x, acc => (insertAt zs 1.0 x)::acc) [] ws
 
 export
-matrix_gen :Num j =>  List j -> List j -> List (List j )
+matrix_gen : Num j =>  List j -> List j -> List (List j )
 matrix_gen ws zs = foldr (\x, acc => zs::acc) [] ws
 
 b : Double
@@ -87,11 +87,11 @@ wordpairs : List String -> List (String,String)
 wordpairs wrds = makeWordPairs wrds
 
 export
-xss: List (String, String) -> List String
+xss : List (String, String) -> List String
 xss wordpairs = map (\(a,b) => a ) wordpairs
 
 export
-yss: List (String,String) -> List String
+yss : List (String,String) -> List String
 yss wordpairs = map (\(a,b) => b ) wordpairs
 
 
@@ -127,7 +127,7 @@ loss_func f [] [] = []
 loss_func f (p::preds) (t::targets) = f p t :: loss_func f preds targets
 
 export
-optimizer: ( List Double -> List Double -> Double -> Double -> Double -> Double -> Double -> Double -> List Double) -> List (List Double) -> List (List Double) -> Double -> Double -> Double -> Double -> Double -> Double -> List (List Double)
+optimizer : ( List Double -> List Double -> Double -> Double -> Double -> Double -> Double -> Double -> List Double) -> List (List Double) -> List (List Double) -> Double -> Double -> Double -> Double -> Double -> Double -> List (List Double)
 optimizer f [] _ _ _ _ _ _ _ = []
 optimizer f _ [] _ _ _ _ _ _ = []
 optimizer f [] [] _ _ _ _ _ _= []
