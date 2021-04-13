@@ -1,6 +1,8 @@
 module Lib
 import Prelude.Doubles as db
 
+|||TODO functions not using foldr probably reverses order of elements in a list
+
 export
 stopwords : List String
 stopwords = ["the", "a", "and", "is", "be", "will", "is"] 
@@ -14,6 +16,13 @@ removeStopWords : String -> List String
 removeStopWords line = do
               let tmp = words line
               foldr (\x, acc => if elem x stopwords then acc else x::acc ) [] tmp
+
+
+||| makeWordPairs creates a list of pairs consisting of words from 
+||| some context n to the left of the focus word and n right to the 
+||| focus word e.g let str = "The prince is the future king"
+||| where n = 2 focus word is The we have (The, prince) (The, is)  
+||| where n = 2 focus word is prince we have (prince, The), (prince, is), (prince, the)....so on 
 
 export
 makeWordPairs : List String -> List (String, String)
@@ -60,7 +69,6 @@ export
 nn_Layer : List Double -> List Double -> List Double
 nn_Layer [] _ = []
 nn_Layer _ [] = []
-nn_Layer [] [] = []
 nn_Layer (x::xs) (y::ys) = (x * y + b)::nn_Layer xs ys
 
 
@@ -68,7 +76,6 @@ export
 grad_CrossEntropy : List Double -> List Double -> List Double
 grad_CrossEntropy [] _ = []
 grad_CrossEntropy _ [] = []
-grad_CrossEntropy [] [] = []
 grad_CrossEntropy (x::xs) (y::ys) = -(y/x) + (1-y)/(1-x)::grad_CrossEntropy xs ys
 
 export
@@ -123,14 +130,12 @@ export
 loss_func : (List Double -> List Double -> List Double ) -> List (List Double) -> List (List Double) -> List (List Double)
 loss_func f [] _ = []
 loss_func f _ [] = []
-loss_func f [] [] = []
 loss_func f (p::preds) (t::targets) = f p t :: loss_func f preds targets
 
 export
 optimizer : ( List Double -> List Double -> Double -> Double -> Double -> Double -> Double -> Double -> List Double) -> List (List Double) -> List (List Double) -> Double -> Double -> Double -> Double -> Double -> Double -> List (List Double)
 optimizer f [] _ _ _ _ _ _ _ = []
 optimizer f _ [] _ _ _ _ _ _ = []
-optimizer f [] [] _ _ _ _ _ _= []
 optimizer f (ws::wss) (cs::costs) alpha  m v beta1 beta2 epsilon =  (f ws cs alpha m v beta1 beta2 epsilon) :: optimizer f wss costs alpha m  v beta1 beta2 epsilon
 
 export
@@ -138,7 +143,6 @@ model : List (List Double) -> List (List Double) -> List (List Double) -> Double
 model [] _ _ _ _ _ _ _ = []
 model _ [] _ _ _ _ _ _ = []
 model _ _ [] _ _ _ _ _ = []
-model [] [] [] _ _ _ _ _= []
 model weights inputs targets alpha beta1 beta2 epsilon iterations = case iterations == 0 of                         
                                               True => weights
                                               False => do
