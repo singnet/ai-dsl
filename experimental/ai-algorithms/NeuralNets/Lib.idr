@@ -13,11 +13,10 @@ nums = "0123456789!@#$%^&*()_+=-:;"
 
 export
 removeStopWords : String -> List String
-removeStopWords line = do
-              let tmp = words line
-              foldr (\x, acc => if elem x stopwords then acc else x::acc ) [] tmp
+removeStopWords line = let tmp = words line
+                       in foldr (\x, acc => if elem x stopwords then acc else x::acc ) [] tmp
 
-
+             
 ||| makeWordPairs creates a list of pairs consisting of words from 
 ||| some context n to the left of the focus word and n right to the 
 ||| focus word e.g let str = "The prince is the future king"
