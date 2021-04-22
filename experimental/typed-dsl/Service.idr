@@ -9,6 +9,8 @@ data Contract : IO t -> Type -> Type where
 
 public export
 trustContract : Contract a b -> b
+-- This definition left blank for now, but in the future
+-- it should provide proof of the existence of a smart contract
 
 ||| Abstract Syntax Tree for the Service DSL
 public export
@@ -41,3 +43,17 @@ public export
 Monad Service where
       (>>=) = Bind
       join m = !m
+
+
+||| Execute an entire service in an IO context
+public export
+execute : Service a -> IO a
+execute (Val x) = pure x
+execute (Promise (MkContract c)) = c
+execute (App sf sx) = do
+                        f <- execute sf
+                        x <- execute sx
+                        pure $ f x
+execute (Bind sx f) = do
+                        x <- execute sx
+                        execute $ f x
