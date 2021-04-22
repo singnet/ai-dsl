@@ -46,15 +46,22 @@ Neg WFInt where
     negate a = cast $ negate $ (the Integer $ cast a)
     (-) a b = cast $ (the Integer $ cast a) - (the Integer $ cast b)
 
+public export
+partial
+Integral WFInt where
+         div a b = cast $ the Integer $ div (cast a) (cast b)
+         mod a b = cast $ the Integer $ mod (cast a) (cast b)
 
 
 -- n-parity, i.e. proof that an integer a is evenly divisible by n (or not).
 public export
 data Parity : (a : WFInt) -> (n : WFInt) -> Type where
      -- a has even n-parity if there exists an integer multiple x s.t. x*n = a.
-     Even : (x : WFInt ** (x * n) = a) -> Parity a n
+     Factor    : (x : WFInt ** (x * n) = a) -> Parity a n
+     ModIsZero : (mod n a = 0) -> Parity a n
 
 public export
 data OddParity : (a : WFInt) -> (n : WFInt) -> Type where
      -- a has odd n-parity if there exists
      Odd : (b : WFInt ** LT = compare (mag b) (mag n)) -> (Parity (a + b) n) ->  OddParity a n
+

@@ -14,14 +14,15 @@ import Incrementer
 compo1 : Integer -> Service (Integer)
 compo1 a = do
             n <- twicerService a
-            incrementerService (cast $ fst n)
+            incrementerService n
 
 -- composition of Twicer, Halfer, and Incrementer
 compo2 : Integer -> Service (Integer)
 compo2 a = do
-            n <- twicerService a
-            m <- halferService n
-            incrementerService m
+            i <- twicerService a
+            j <- Promise (MkContract ?check1)
+            k <- halferService j
+            incrementerService k
 
 
 -- invalid composition of Twicer, Incrementer, and Halfer

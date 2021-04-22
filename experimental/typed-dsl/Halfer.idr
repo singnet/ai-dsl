@@ -5,9 +5,18 @@ import Numeric
 
 %default total
 
+-- Helpful type alias for even integers
 public export
 EvenNumber : Type
 EvenNumber = (n : WFInt ** Parity n 2)
+
+public export
+maybeEven : Integer -> Maybe EvenNumber
+
+-- maybeEven a with (mod a 2) proof p
+--   maybeEven a | 0 = Just ((cast a) ** ModIsZero p)
+--   maybeEven a | _ = Nothing
+
 
 -- Run external service
 public export

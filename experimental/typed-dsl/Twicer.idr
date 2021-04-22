@@ -5,19 +5,16 @@ import Numeric
 
 %default total
 
-public export
-EvenNumber : Type
-EvenNumber = (n : WFInt ** Parity n 2)
 
 -- Run external service
 public export
-runTwicer : Integer -> IO EvenNumber
+runTwicer : Integer -> IO Integer
 runTwicer = do ?run
 
 public export
-twicerContract : (a : Integer) -> Contract (runTwicer a) EvenNumber
+twicerContract : (a : Integer) -> Contract (runTwicer a) Integer
 twicerContract a = MkContract (runTwicer a)
 
 public export
-twicerService : Integer -> Service EvenNumber
+twicerService : Integer -> Service Integer
 twicerService a = Promise (twicerContract a)
