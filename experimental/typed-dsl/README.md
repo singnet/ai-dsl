@@ -59,3 +59,19 @@ compo2 a = do
 Here, the ?check1 hole represents a reference to an external smart contract that
 vouches for the fact that twicerService outputs an even number.
 
+
+## Running and Testing
+
+Running either 
+
+``` shell
+idris Compo.idr
+```
+or
+``` shell
+idris2 Compo.idr
+```
+should demonstrate the type errors caught in the composition examples, where 
+applicable.  Currently, the external python services are not used, as there is 
+more work to be done looking into IO methods.
+
