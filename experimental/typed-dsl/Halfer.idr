@@ -10,8 +10,13 @@ public export
 EvenNumber : Type
 EvenNumber = (n : WFInt ** Parity n 2)
 
+||| Return a Just EvenNumber if the number is even, or Nothing otherwise.
 public export
 maybeEven : Integer -> Maybe EvenNumber
+
+||| Round a number down to the nearest even number
+public export
+forceEven : Integer -> EvenNumber
 
 -- maybeEven a with (mod a 2) proof p
 --   maybeEven a | 0 = Just ((cast a) ** ModIsZero p)
