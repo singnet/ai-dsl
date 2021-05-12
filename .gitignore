@@ -8,3 +8,6 @@
 *.log
 __pycache__
 build
+*.out
+*.gz
+*.toc

@@ -4,9 +4,13 @@
 \documentclass[]{report}
 \usepackage{url}
 
+\usepackage[textsize=footnotesize]{todonotes}
+\newcommand{\kabir}[2][]{\todo[color=yellow,author=kabir, #1]{#2}}
+\usepackage{hyperref}
+
 \begin{document}
 
-\title{AI-DSL Technical Report (March to May 2021)}
+\title{AI-DSL Technical Report (February to May 2021)}
 \author{Nil Geisweiller, Kabir Veitas, Eman Shemsu Asfaw, Samuel Roberti}
 \maketitle
 
@@ -14,9 +18,66 @@
   Based on \cite{GoertzelGeisweillerBlog}.
 \end{abstract}
 
+
+\tableofcontents
+
 \chapter{Chapter}
 \section{Section}
 \subsection{Subsection}
+
+
+\chapter{AI-DSL Ontology}
+
+\section{Design requirements}
+
+Based on:
+\begin{enumerate}
+	\item the summary of \href{https://github.com/nunet-io/ai-dsl-ontology/wiki}{initial discussions about requirements}
+	\item possibly augmented by later research.
+\end{enumerate}
+
+\section{Domain model considerations}
+
+Explanation of NuNet fake-news-detector domain model and related considerations  making the first ontology, based on:
+\begin{itemize}
+	\item presentation on NuNet service discovery;
+	\item augmented by developments on the system over last month;
+	\item using ontology for agent communication in decentralized computing systems, based on \cite{YvesHellenschmidt2002};
+\end{itemize}
+
+\kabir[inline]{The domain model may need to be presented somewhere else, as it may be related to other sections besides AI-DSL ontology}
+
+\section{Choice of existing ontologies}
+
+Based on:
+\begin{enumerate}
+	\item discussion on \href{reusing existing ontologies}{https://github.com/singnet/ai-dsl/discussions/18} for the choice of SUMO and KIF;
+	\item Usage of:
+	\begin{itemize}
+		\item Upper level SUMO ontology (\href{Merge.kif}{https://github.com/ontologyportal/sumo/blob/master/Merge.kif});
+		\item Middle level SUMO ontology (\href{Mid-level-ontology.kif}{https://github.com/ontologyportal/sumo/blob/master/Mid-level-ontology.kif});
+		\item Distributed computing hardware domain ontology in SUO-KIF (\href{QoSontology.kif}{https://github.com/ontologyportal/sumo/blob/master/QoSontology.kif});
+		\item \href{Software ontology}{https://github.com/allysonlister/swo} in OWL. In the long term, it may be ideal to develop a converter for converting it to KIF, since OWL may be representable in KIF \cite{martin_translations_nodate} using \href{OWL API}{https://github.com/owlcs/owlapi}; For the purpose of the ontology prototype, we will manually select parts of the this ontology in order to build the prototype and write them in SUO-KIF format;
+	\end{itemize}
+\end{enumerate}
+
+\section{Tools}
+
+Intro to Sigma, SigmajEdit, etc. and how to install them.
+
+\section{AI-DSL ontology prototoype}
+
+The prototype will be the fake-news-detector leaf ontology based on the above listed upper and middle ontologies (SUMO) and domain ontologies of computer hardware and sofware.
+
+\section{Combining ontology with Idris}
+
+\kabir[inline]{It would be good to have a section explaining ideas about that, but I cannot do this alone, so probably the best is to reserve it for the end of the monht, when all the other aspects of AI-DSL project (including Idris) are explained.}
+
+\section{Summary of results and future work}
+
+
+
+
 
 \bibliographystyle{splncs04}
 \bibliography{local}
