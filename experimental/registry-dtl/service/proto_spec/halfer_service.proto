@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package halfer_service;
+
+message Arguments {
+    int32 argument = 1;
+}
+
+message Result {
+    int32 value = 1;
+}
+
+service Halfer {
+    rpc halfer(Arguments) returns (Result) {}
+}
