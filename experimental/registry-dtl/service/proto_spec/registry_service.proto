@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package registry_service;
+
+message Arguments {
+    string type_signature = 1;
+}
+
+message Result {
+    // Only return a single (first) match for now
+    string service_name = 1;
+    string procedure_name = 2;
+}
+
+service Registry {
+    rpc retrieve(Arguments) returns (Result) {}
+    rpc compose(Arguments) returns (Result) {} // Not implemented
+}

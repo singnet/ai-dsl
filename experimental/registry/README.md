@@ -7,7 +7,7 @@ Simple registry prototype.
 We have 2 basic services
 
 1. int2str: cast an integer into a string
-2. str2float: cast an integer into a float
+2. str2float: cast a string into a float
 
 The registry has 2 procedures
 
