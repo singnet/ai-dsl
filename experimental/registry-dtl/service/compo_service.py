@@ -64,13 +64,14 @@ class CompoServicer(grpc_compo_grpc.CompoServicer):
         stub = eval(grpc_namespace_str + "." + service_name + "Stub(channel)")
         pb2_namespace_str = "grpc_" + svc_lower_name + "_pb2"
         arguments = eval(pb2_namespace_str + ".Arguments(argument=argument)")
-        return eval("stub." + procedure_name + "(arguments)")
+        result = eval("stub." + procedure_name + "(arguments)")
+        return result.value
 
     def call_halfer_svc(self, x):
-        return self.call_service("Halfer", "halfer", x).value
+        return self.call_service("Halfer", "halfer", x)
 
     def call_incrementer_svc(self, x):
-        return self.call_service("Incrementer", "incrementer", x).value
+        return self.call_service("Incrementer", "incrementer", x)
 
     def call_registry_svc(self, tsgn):
         endpoint = "localhost:{}".format(registry["registry_service"]["grpc"])
@@ -97,9 +98,9 @@ class CompoServicer(grpc_compo_grpc.CompoServicer):
             self.result.value = \
                 self.call_incrementer_svc(
                     self.call_halfer_svc(
-                        self.call_service(hole_serv_name, hole_proc_name).value
-                    ).value
-                ).value
+                        self.call_service(hole_serv_name, hole_proc_name, self.argument)
+                    )
+                )
 
             # Return compo result
             log.debug("compo {} = {}".format(self.argument, self.result.value))

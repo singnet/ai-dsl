@@ -55,6 +55,14 @@ class RegistryServicer(grpc_registry_grpc.RegistryServicer):
         # Just for debugging purpose.
         log.debug("RegistryServicer created")
 
+    def get_module_name(self, line):
+        """Output the name of the module at the line output by idris"""
+        return line.split()[0].split('.')[0] if line else ""
+
+    def get_function_name(self, line):
+        """Output the name of the function at line output by idris"""
+        return line.split()[0].split('.')[1] if line else ""
+
     def retrieve(self, request, context):
         self.tsgn = request.type_signature
         self.result = Result()
@@ -68,9 +76,11 @@ class RegistryServicer(grpc_registry_grpc.RegistryServicer):
             log.debug("stdout: {}".format(spr.stdout.strip()))
             log.debug("stderr: {}".format(spr.stderr.strip()))
         tsgn_matches = spr.stdout.strip().split('\n')
-        # Filter out matches not corresponding to services in the registry
+        # Filter out matches not corresponding to services within the
+        # registry, or corresponding to holes.
         tsgn_svc_matches = [m for m in tsgn_matches
-                            if any(m.startswith(s) for s in self.services)]
+                            if (self.get_module_name(m) in self.services
+                                and self.get_function_name(m) != "hole")]
 
         if not tsgn_svc_matches:
             log.debug("No matching services with type signature: {}".format(self.tsgn))
@@ -78,10 +88,8 @@ class RegistryServicer(grpc_registry_grpc.RegistryServicer):
 
         # Return the first match
         front_match = tsgn_svc_matches[0]
-        svc_proc_names = front_match.split()[0]
-        (svc_name, proc_name) = svc_proc_names.split('.')
-        self.result.service_name = svc_name
-        self.result.procedure_name = proc_name
+        self.result.service_name = self.get_module_name(front_match)
+        self.result.procedure_name = self.get_function_name(front_match)
         log.debug("retrieve {} = ({}, {})".format(self.tsgn,
                                                   self.result.service_name,
                                                   self.result.procedure_name))
