@@ -14,14 +14,14 @@ record Costs where
   financial, temporal, computational : CostT
 
 public export
-QualityT : Type
-QualityT = Double
+Quality : Type
+Quality = Double
 
 public export
 record NonDTRealizedAttributes where
   constructor MkNonDTRealizedAttributes
   costs : Costs
-  quality : QualityT
+  quality : Quality
 
 -- Add costs
 public export
