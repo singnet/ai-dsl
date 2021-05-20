@@ -3,9 +3,10 @@
 
 \documentclass[]{report}
 \usepackage{url}
-
+\usepackage{minted}
 \usepackage[textsize=footnotesize]{todonotes}
 \newcommand{\kabir}[2][]{\todo[color=yellow,author=kabir, #1]{#2}}
+\newcommand{\nil}[2][]{\todo[color=purple,author=nil, #1]{#2}}
 \usepackage{hyperref}
 
 \begin{document}
@@ -15,12 +16,378 @@
 \maketitle
 
 \begin{abstract}
-  Based on \cite{GoertzelGeisweillerBlog}.
+Based on~\cite{GoertzelGeisweillerBlog}.
 \end{abstract}
 
 \tableofcontents
 
 \chapter{Nil's work}
+
+Work done:
+\begin{enumerate}
+\item Implement \texttt{RealizedFunction} as described
+  in~\cite{GoertzelGeisweillerBlog}.
+\item Implement a network of trivially simple AI services implemented
+  in Idris2, and use Idris compiler to type check if they can properly
+  connect to each other.
+\item Implement a Registry prototype, as a proof-of-concept for
+  querying AI services based on their dependently typed
+  specifications.
+\end{enumerate}
+
+\section{Realized Function}
+\label{realized_function}
+
+\subsection{Description}
+
+The \texttt{RealizedFunction} data structure, as introduced
+in~\cite{GoertzelGeisweillerBlog}, is a wrapper around a regular
+function to integrate aspects of its specifications pertaining to its
+execution on real physical substrates as opposed to just its
+algorithmic properties.  For instance it contains descriptions of
+costs (financial, computational, etc) and performances (quality, etc)
+captured in the \texttt{RealizedAttributes} data structure, as
+introduced in~\cite{GoertzelGeisweillerBlog} as well.
+
+For that iteration we have implemented a simple version of
+\texttt{RealizedFunction} and \texttt{RealizedAttributes} in
+\href{https://www.idris-lang.org/}{Idris2}.  The
+\texttt{RealizedAttributes} data structure contains
+\begin{itemize}
+\item \texttt{Costs}: as a triple of three constants,
+  \texttt{financial}, \texttt{temporal} and \texttt{computational},
+\item \texttt{Quality}: as a single \texttt{quality} value.
+\end{itemize}
+as well as an example of compositional law,
+\texttt{add\_costs\_min\_quality}, where costs are additive and
+quality is infimumitive\nil{is there a word for that?}.  Below is a
+small snippet of that code to give an idea of how it looks like
+
+\begin{minted}[mathescape]{idris}
+record RealizedAttributes where
+  constructor MkRealizedAttributes
+  costs : Costs
+  quality : Quality
+\end{minted}
+
+\begin{minted}[mathescape]{idris}
+add_costs_min_quality : RealizedAttributes ->
+                        RealizedAttributes ->
+                        RealizedAttributes
+add_costs_min_quality f_attrs g_attrs = fg_attrs where
+  fg_attrs : RealizedAttributes
+  fg_attrs = MkRealizedAttributes (add_costs f_attrs.costs g_attrs.costs)
+                                  (min f_attrs.quality g_attrs.quality)
+\end{minted}
+The full implementation can be found in
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/RealizedAttributes.idr}{RealizedAttributes.idr},
+under the
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/}{experimental/realized-function/}
+folder of the \href{https://github.com/singnet/ai-dsl/}{ai-dsl
+  repository}.\\
+
+Then we have implemented \texttt{RealizedFunction} that essentially
+attaches a \texttt{RealizedAttributes} instance to a function.  In
+addition we have implemented a composition (as in function
+composition) operating on \texttt{RealizedFunction} instead of
+regular function, making use of that compositional law above.
+Likewise below is a snippet of that code
+
+\begin{minted}[mathescape]{idris}
+data RealizedFunction : (t : Type) -> (attrs : RealizedAttributes) -> Type where
+  MkRealizedFunction : (f : t) -> (attrs : RealizedAttributes) ->
+                       RealizedFunction t attrs
+\end{minted}
+
+\begin{minted}[mathescape]{idris}
+compose : {a : Type} -> {b : Type} -> {c : Type} ->
+          (RealizedFunction (b -> c) g_attrs) ->
+          (RealizedFunction (a -> b) f_attrs) ->
+          (RealizedFunction (a -> c) (add_costs_min_quality f_attrs g_attrs))
+compose (MkRealizedFunction g g_attrs) (MkRealizedFunction f f_attrs) =
+  MkRealizedFunction (g . f) (add_costs_min_quality f_attrs g_attrs)
+\end{minted}
+The full implementation can be found in
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/RealizedFunction.idr}{RealizedFunction.idr}
+under the same folder.
+
+\subsection{Objectives and achievements}
+
+The objectives of this work was to see if Idris2 was able to type
+check that the realized attributes of composed realized functions
+followed the defined compositional law.  We have found that Idris2 is
+not only able to do that, but to our surprise much faster that Idris1
+(instantaneous instead of seconds to minutes), by bypassing induction
+on numbers and using efficient function-driven rewriting on the
+realized attributes instead.  That experiment can be found in
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/RealizedFunction-test.idr}{RealizedFunction-test.idr},
+under the
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/}{experimental/realized-function/}
+folder of the \href{https://github.com/singnet/ai-dsl/}{ai-dsl
+  repository}.
+
+\subsection{Future work}
+
+Experimenting with constants as realized attributes was the first step
+in our investigation.  The subsequent steps will be to replace
+constants by functions, probability distributions and other
+sophisticated ways to represent costs and quality.
+
+\section{Network of Idris AI services}
+\label{network_idris_ai_services}
+
+\subsection{Description}
+
+In this work we have implemented a small network of trivially simple
+AI services, with the objective of testing if the Idris compiler could
+be used to type check the validity of their connections. Three primary
+services were implemented
+\begin{enumerate}
+\item \texttt{incrementer}: increment an integer by 1
+\item \texttt{twicer}: multiply an integer by 2
+\item \texttt{halfer}: divide an integer by 2
+\end{enumerate}
+as well as composite services based on these primary services, such as
+\begin{itemize}
+\item \texttt{incrementer . halfer . twicer}
+\end{itemize}
+with the objective of testing that such compositions were properly
+typed.  The networking part was implemented based on the
+\href{https://github.com/singnet/example-service}{SingularityNET
+  example} mentioned in the
+\href{https://dev.singularitynet.io/tutorials/publish/}{SingularityNET
+  tutorial}.  The specifics of that implementation are of little
+importance for that report and thus are largely ignored.  The point
+was to try to be as close as possible to real networking conditions.
+For the part that matters to us we may mention that communications
+between AI services are handled by gRPC~\cite{TODO}, which has some
+level of type checking by insuring that the data being exchanged
+fulfill some type structures (list of integers, union type of string
+and bool, etc) specified in Protobuf~\cite{TODO}.  Thus one may see
+the usage of Idris in that context as adding an enhanced refined
+verification layer on top of gRPC making use of the expressive power
+of dependent types.
+
+\subsection{Objectives and achievements}
+
+As mentioned above the objectives of such an experiment was to see how
+the Idris compiler can be used to type check combinations of AI
+services.  It was initially envisioned to make use of dependent types
+by specifying that the \texttt{twicer} service outputs an even
+integer, as opposed to any integer, and that the \texttt{halfer}
+service only accepts an even integer as well.  The idea was to
+prohibit certain combinations such as
+\begin{itemize}
+\item \texttt{halfer . incrementer . twicer}
+\end{itemize}
+Since the output of \texttt{incrementer . twicer} is provably odd,
+\texttt{halfer} should refuse it and such combination should be
+rejected.  This objective was not reached in this experiment, but
+similar objectives were reached other experiments, see Section
+\ref{aidsl_registry}\nil{Add ref to Sam's work}.  The other objective
+was to type check that the compositions have realized attributes
+corresponding to the compositional law implemented in Section
+\ref{realized_function}, which was fully achieved in this experiment.
+For instance by changing either the types, costs or quality of the
+following composition
+\begin{minted}[mathescape]{idris}
+-- Realized (twicer . incrementer).
+rlz_compo1_attrs : RealizedAttributes
+rlz_compo1_attrs = MkRealizedAttributes (MkCosts 300 30 3) 0.9
+-- The following does not work because 301 /= 200+100
+-- rlz_compo1_attrs = MkRealizedAttributes (MkCosts 301 30 3) 0.9
+rlz_compo1 : RealizedFunction (Int -> Int) Compo1.rlz_compo1_attrs
+rlz_compo1 = compose rlz_twicer rlz_incrementer
+\end{minted}
+defined in
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/simple-idris-services/service/Compo1.idr}{experimental/simple-idris-services/service/Compo1.idr},
+the corresponding service would raise a type checking error at start
+up.  More details on the experiment and how to run it can be found in
+the
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/simple-idris-services/README.md}{\texttt{README.md}}
+under the
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/simple-idris-services/}{\texttt{experimental/simple-idris-services/service/}}
+folder of the \href{https://github.com/singnet/ai-dsl/}{ai-dsl
+  repository}.
+
+\subsection{Future work}
+
+Such experiment was good to explore how Idris can be integrated to a
+network of services.  What we need to do next is experiment with
+actual AIs algorithms, ideally making full use of dependent types in
+their specifications.  Such endeavor was actually attempted by using
+an existing set of cooperating AI services\nil{Ref to Kabir's fake
+  news detector}, but it was eventually concluded to be too ambitious
+for that iteration and was postponed for the next.
+
+Obviously we want to be able to reuse existing AI services and write
+their enhanced specifications on top of them, as opposed to writing
+both specification and code in Idris/AI-DSL.  To that end it was noted
+that having a Protobuf to/from Idris/AI-DSL converter would be useful,
+so that a developer can start from an existing AI service, specified
+in Protobuf, and enriched it with dependent types in Idris/AI-DSL.
+The other way around could be useful as well to enable a developer to
+implement AI services entirely in Idris/AI-DSL and expose their
+Protobuf specification to the network.  To that end having an
+implementation of gRPC for Idris/AI-DSL could be handy as well.
+
+\section{AI-DSL Registry}
+\label{aidsl_registry}
+
+\subsection{Description}
+
+One important goal of the AI-DSL is to have a system that can perform
+autonomous matching and composition of AI services, so that provided
+the specification of an AI, it should suffice to find it, complete it
+or even entirely build it from scratch.  We have implemented a
+proof-of-concept \emph{registry} to start experimenting with such
+functionalities.
+
+So far we have two versions in the
+\href{https://github.com/singnet/ai-dsl/}{ai-dsl repository}, one
+without dependent types support, under
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/}{experimental/registry/},
+and a more recent one with dependent type support that can be found
+under
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/registry-dtl/}{experimental/registry-dtl/}.
+We will focus our attention on the latter which is far more
+interesting.\\
+
+The AI-DSL registry (reminiscent of the SingularityNET
+registry~\cite{TODO}) is itself an AI service with the following functions
+\begin{enumerate}
+\item \texttt{retrieve}: find AI services on the network fulfilling a
+  given specification.
+\item \texttt{compose}: construct composite services fulfilling that
+  specification.  Useful when no such AI services can be found.
+\end{enumerate}
+
+The experiment contains the same \texttt{incrementer}, \texttt{twicer}
+and \texttt{halfer} services described in Section
+\ref{network_idris_ai_services} with the important distinction that
+their specifications now utilize dependent types.  For instance the
+type signature of \texttt{twicer} becomes
+\begin{minted}[mathescape]{idris}
+twicer : Integer -> EvenInteger
+\end{minted}
+instead of
+\begin{minted}[mathescape]{idris}
+twicer : Integer -> Integer
+\end{minted}
+where \texttt{EvenInteger} is actually a shorthand for the following
+dependent type
+\begin{minted}[mathescape]{idris}
+EvenInteger : Type
+EvenInteger = (n : WFInt ** Parity n 2)
+\end{minted}
+that is a \emph{dependent pair} composed of a \emph{well founded
+integer} of type \texttt{WFInt} and a dependent data structure,
+\texttt{Parity} containing a proof that the first element of the pair,
+\texttt{n}, is even.  More details on that can be found in
+Section\nil{Add ref to Sam's work}.
+
+For now our prototype of AI-DSL registry implements the
+\texttt{retreive} function, which, given an Idris type signature,
+searches through a database of AI services and returns one fulfilling
+that type.  In that experiment the database of AI services is composed
+of \texttt{incrementer}, \texttt{twicer}, \texttt{halfer}, the
+\texttt{registry} itself and \texttt{compo}, a composite service using
+previously listed services.
+
+One can query each service via gRPC.  For instance querying the
+\texttt{retreive} function of the \texttt{registry} service with the
+following input
+\begin{minted}[mathescape]{idris}
+String -> (String, String)
+\end{minted}
+outputs
+\begin{minted}[mathescape]{idris}
+Registry.retreive
+\end{minted}
+which is itself.  Likewise one can query
+\begin{minted}[mathescape]{idris}
+Integer -> Integer
+\end{minted}
+which outputs
+\begin{minted}[mathescape]{idris}
+Incrementer.incrementer
+\end{minted}
+corresponding to the \texttt{Incrementer} service with the
+\texttt{incrementer} function.
+Next one can provide a query involving dependent types, such as
+\begin{minted}[mathescape]{idris}
+Integer -> EvenInteger
+\end{minted}
+outputting
+\begin{minted}[mathescape]{idris}
+Twicer.twicer
+\end{minted}
+Or equivalently provide the unwrapped dependent type signature
+\begin{minted}[mathescape]{idris}
+Integer -> (n : WFInt ** Parity n (Nat 2))
+\end{minted}
+retrieving the correct service again
+\begin{minted}[mathescape]{idris}
+Twicer.twicer
+\end{minted}
+
+At the heart of it is Idris.  Behind the scene the registry
+communicates the type signature to the Idris REPL and requests, via
+the {\texttt :search} meta function, all loaded functions matching the
+type signature.  Then the registry just returns the first match.
+
+Secondly, we can now write composite services with missing parts.  The
+\texttt{compo} service illustrates this.  This service essentially
+implements the following composition
+\begin{minted}[mathescape]{idris}
+incrementer . halfer . (Registry.retrieve ?type)
+\end{minted}
+Thus upon execution queries the registry to fill the hole with the
+correct, according to its specification, service.
+
+More details about this, including steps to reproduce it all, can be
+found in the
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/registry-dsl/README.md}{\texttt{README.md}}
+under the
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/registry-dsl/}{\texttt{experimental/simple-idris-services/service/}}
+folder of the \href{https://github.com/singnet/ai-dsl/}{ai-dsl
+  repository}.
+
+\subsection{Objectives and achievements}
+
+As shown above we were able to implement a proof-of-concept of an
+AI-DSL registry.  Only the \texttt{retrieve} function was implemented.
+The \texttt{compose} function still remains to be implemented,
+although the \texttt{compo} service is somewhat halfway there, with
+limitations, for instance the missing type, \texttt{?type}, was
+hardwired in the code, \texttt{Integer -> EvenInteger}.  It should be
+noted however that Idris is in principle capable of inferring such
+information but more work is needed to more fully explore that
+functionality.
+
+Of course it is a very simple example, in fact the simplest we could
+come up with, but we believe serves as a nice proof-of-concept, and
+demonstrates that AI services matching and such, using dependent types
+as formal specification language, is possible.
+
+\subsection{Future work}
+
+There a lot of possible future improvements for this work, in no
+particular order
+\begin{itemize}
+\item Use structured data structures to represent type signatures
+  instead of String.
+\item Return a list of services instead of the first one.
+\item Implement \texttt{compose} for autonomous composition.
+\item Use real AI services instead of trivially simple ones.
+\end{itemize}
+
+Also, as of right now, the registry was implemented in Python,
+querying Idris when necessary.  However it is likely that this should
+be better suited to Idris itself.  Which leads us to an interesting
+possibility, maybe the registry, and in fact most (perhaps all)
+components and functions of the AI-DSL could or should be implemented
+in the AI-DSL itself.
 
 \chapter{AI-DSL Ontology (Kabir's work)}
 
