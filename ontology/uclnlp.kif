@@ -1,0 +1,38 @@
+(instance uclnlp SNetAIService)
+(documentation uclnlp EnglishLanguage "Forked and adapted component of stance detection algorithm by UCL Machine Reading group.")
+
+(hasInput uclnlp uclnlpInput)
+(hasInput uclnlp uclnlpOutput)
+
+(instance uclnlpInputType DataType)
+(instance uclnlpOutputType DataType)
+
+(=>
+  (and
+    (hasField ?uclnlpInput titleText AlphaNumericString)
+    (hasField ?uclnlpInput mainText AlphaNumericString)
+  )
+  (instance ?uclnlpInput uclnlpInputType)
+)
+
+(=>
+  (and
+    (hasField ?uclnlpOutput agree RealNumber)
+    (hasField ?uclnlpOutput disagree RealNumber)
+    (hasField ?uclnlpOutput discuss RealNumber)
+    (hasField ?uclnlpOutput unrelated RealNumber)
+  )
+  (instance ?uclnlpOutput uclnlpOutputType)
+)
+
+; THIS COMMENT APPLIES TO ALL SERVICE DEFINITIONS
+;
+; here we enter the territory of type definitions and type checking
+; which is the subject of formal type-checking part of AI-DSL
+; therefore it is left unfinished here
+; however, what we could do here is:
+; (1) define correct serviceInput and serviceOutput types (unique for each service)
+; (2) if possible, provide proof that if a service data of correct type on input, then it will output correctly typed data
+; (3) if that will not be possible (which is the default option when actual service AI are not written in Idris):
+; (3.1) check if input data is of correct type at runtime and refuse to start service if it is not;
+; (3.2) check if output data is of correct type before sending it to the caller and raise error if it is not so;
