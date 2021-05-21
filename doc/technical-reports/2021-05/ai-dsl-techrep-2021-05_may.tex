@@ -8,6 +8,13 @@
 \newcommand{\kabir}[2][]{\todo[color=yellow,author=kabir, #1]{#2}}
 \newcommand{\nil}[2][]{\todo[color=purple,author=nil, #1]{#2}}
 \usepackage{hyperref}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=false,frame=single}
+\usepackage{float}
+\restylefloat{table}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
 
 \begin{document}
 
@@ -430,7 +437,51 @@ Intro to Sigma, SigmajEdit, etc. and how to install them.
 
 \section{AI-DSL ontology prototoype}
 
-The prototype will be the fake-news-detector leaf ontology based on the above listed upper and middle ontologies (SUMO) and domain ontologies of computer hardware and sofware.
+\subsection{Leaf ontology (fake-news-detection workflow definition)}
+
+
+The prototype will be the fake-news-detector leaf ontology based on the above listed upper and middle ontologies (SUMO) and domain ontologies of computer hardware and software.
+
+\begin{lstlisting}[caption={\label{lst:dag}Program graph as \href{https://gitlab.com/nunet/fake-news-detection/fake\_news\_score/-/blob/master/service/dag.json}{defined and used in fake-news-warning app prototype} a the time of writing.},captionpos=b]
+
+"dag": {
+	"testing-news-score" : 
+		["testing-uclnlp","binary-classification"]
+}
+\end{lstlisting}
+
+
+\begin{table}[h]
+	\begin{tabular}{p{0.2\linewidth}|p{0.2\linewidth}|p{0.2\linewidth}|p{0.2\linewidth}|p{0.2\linewidth}}
+	\textbf{Leaf item} & \textbf{Description} & \textbf{Input} & \textbf{Output} & \textbf{Source}\\
+	\hline
+	binary-classification & A pre-trained binary classification model & English text of any length & 1 -- the text is categorized as fake; 0 -- text is categorized as not-fake & \textcopyright \href{https://gitlab.com/nunet/fake-news-detection/binary-classification}{NuNet} 2021\\
+    \hline
+	uclnlp & Forked and adapted component of stance detection algorithm (\href{http://www.fakenewschallenge.org/#fnc1results}{FNC} third place winner) & Article title and text & Probabilities of the title \textit{agreeing}, \textit{disagreeing}, \textit{discussing} or being \textit{unrelated} to the text & \textcopyright \href{https://github.com/uclnlp/fakenewschallenge}{UCL Machine Reading} 2017; \textcopyright \href{https://gitlab.com/nunet/fake-news-detection/uclnlp}{NuNet} 2021\\
+	\hline
+	news-score & Calls dependent services, calculates overall result and sends them to the caller. & URL of the content to be checked & Probability that the content in the URL is fake & \textcopyright \href{https://gitlab.com/nunet/fake-news-detection/fake_news_score}{NuNet} 2021 \\
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+	\centering
+	\begin{subfigure}[b]{1\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{images/SNetAIService.png}
+		\caption{Class dependencies of the SNetAIService subclass within the ontology.}
+		\label{fig:SNetAIService hierachy}
+	\end{subfigure}
+	\begin{subfigure}[b]{1\textwidth}
+		\centering
+		\includegraphics[width=\textwidth/4]{example-image-a}
+		\caption{Class dependencies of the SNetAppBackend subclass (workflow definition) within the ontology.}
+		\label{fig:tSNetAppBackend}
+	\end{subfigure}
+	\caption{Class dependences of AI-DSL Ontology (SingularityNet.kif) }
+	\label{fig:SingularityNet.kif}
+\end{figure}
+
+\lstinputlisting[float,caption={\label{lst:dag}Contents of SingularityNet.kif that contains all },captionpos=b,breaklines=true]{images/SingularityNet.kif}
 
 \section{Combining ontology with Idris}
 
