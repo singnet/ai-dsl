@@ -402,11 +402,48 @@ in the AI-DSL itself.
 
 \subsection{Design requirements}
 
-Based on:
-\begin{enumerate}
-	\item the summary of \href{https://github.com/nunet-io/ai-dsl-ontology/wiki}{initial discussions about requirements}
-	\item possibly augmented by later research.
-\end{enumerate}
+At the beginning of the current iteration of the AI-DSL project we had a round of discussions about the high level functional and design requirements for AI-DSL and its role in SingularityNET platfrom and ecosystem. The discussions were based on \cite{GoertzelGeisweillerBlog,singularitynet_foundation_phasetwo_2021}  and are \href{https://github.com/nunet-io/ai-dsl-ontology/wiki/AI-DSL\%20requirements}{available online} in their original form. Here is the summary of the preliminary design requirements informed by those discussions:
+
+\begin{itemize}
+  \item AI-DSL is a language that allows AI agents/services running on SinglarityNET platfrom to declare their capabilities and needs for data to other AI agents in a rich and versatile machine readible form; This will enable different AI agents to search, find data sources and other AI services whithout human interaction;
+  \item AI-DSL ontology defines data and service (task) types to be used by AI-DSL. Requirements for the ontology are shaped by the scope and specification of the AI-DSL itself;
+\end{itemize}
+
+High level requirements for AI-DSL are:
+
+\begin{description}
+  \item[Extendability] The ontology of data types and AI task types should be extendable in the sense that individual service providers / users should be able to create new types and tasks and make them available to the network. AI-DSL should be able to ingest these new types / tasks and immediately be able to do the type-checking job. In other words, AI-DSL ontology of types / tasks should be able to evolve. At the same time, extended ontologies should relate to existing basic AI-DSL ontology in a clear way, allowing AI agents to perform reasoning across the whole space of available ontologies (which, at lower levels, may be globally inconsistent). In order to ensure interoperability of lower level ontologies, AI-DSL ontology will define small kernel / vocabulary of globally accessible grounded types, which will be built-in into the platform at the deep level. Changing this kernel will most probably require some form of voting / global consensus on a platfrom level.
+
+  Therefore, it seems best to define AI-DSL Ontology and the mechanism of using it on two levels:
+  \begin{itemize}
+    \item \textit{The globally accessible vocabulary/root ontology of grounded types}. This vocabulary can be seen as immutable (in short and medium term) kernel. It should be extendible in the long term, but the mechanisms of changing and extending it will be quite complex, most probably involving theorectical considerations and/or a strict procedures of reaching global consensus within the whole platform (a sort of voting);
+    \item \textit{A decentralized ontology of types and tasks} which each are based (i.e. type-dependent) on the root ontology/vocabulary, but can be extended in a decentralized manner -- in the sense that each agent in the platfrom will be able to define, use and share derived types and task definitions at its own discretion without the need of global consensus.
+  \end{itemize}
+
+  \item[Competing versions and consensus.] We want both consistency (for enabling deterministic type checking -- as much as it is possible) and flexibility (for enabling adaptation and support for innovation). This will be achieved by enforcing different restrictions for competing versions and consensus reaching on the two levels of ontologoy descrbed above:
+
+  \begin{itemize}
+    \item The globally accessible vocabulary / root ontology of grounded types will not allow for competing versions. In a sense, this level will be the true ontology, representable by a one and unique root / upper-level ontology of the network which users will not be able to modify directly;
+    \item All other types and task definitions within the platform will be required to be derived from the root ontology (if they will want to be used for interaction with other agents); However, the platform whould not restrict the number of competing versions or define a global consensus  of types and task descriptions on this level.
+    \item Furthermore, the ontology and the AI-DSL logic should allow for some variant of 'soft matching' which would allow to find the type / service that does not satisfy all requirements exactly, but comes as closely as available in the platform.
+    \item At the lowest level of describing each instance of AI service or data source on the platfrom, AI-DSL shall allow maximum extentibility in so that AI service providers and data providers will be able to describe and declare their services in the most flexible and unconstrained manner, facilitating competition and cooperation between them.
+  \end{itemize}
+
+  \item[Code-level / service-level APIs.] It is important to ensure that the ontology is readable / writable by different components of the SingularityNET platform, at least between AI-DSL engine / data structures and each AI service separately. This is needed because some of the required descriptors of AI services will have to be dynamically calculated at the time of calling a service and will depend on the immediate context (e.g. price of service, a machine on which it is running, possibly reputation score, etc.). It is not clear at this point how much of this functionality will be possible (and practical) to implement on available type-dependent, ontology languages or even if it is possible to use single language. Even it if is possible to implement all AI-DSL purely on the current type-dependent language choice Idris, it will have to interface with the world, deal with indeterministic input from network and mutable states -- operations that may fail in run-time no matter how careful type checking is done during compile time \cite{brady_resource-dependent_2015}.
+
+  Defining and maintaining code-level and service-level APIs will first of all enable interfacing SingularityNET agents to AI-DSL and therefore between themselves.
+
+  \item[Key AI Agents properties] We can distinguish two somewhat distinct (but yet interacting) levels of AI-DSL Ontology AI service description level and data description level. It seems that it may be best to start building the ontology from the service level, because data description language is even more open-ended than AI description language, which is already open enough. Initially, we may want to include into the description of each AI service at least these properties:
+  \begin{itemize}
+    \item Input and output data structures and types
+    \item Financial cost of service
+    \item Time of computation
+    \item Computational resource cost
+    \item Quality of results
+  \end{itemize}
+  Most probably it is possible to express and reason about this data with Idris. It is quite clear however, that in order to enable interaction with and between SingularityNET agents (and NuNet adapters) all above properties have to be made accessible outside Idris and therefore supported by the code-level / service-level APIs and the SingularityNET platfrom in general.
+
+\end{description}
 
 \subsection{Domain model considerations}
 
@@ -438,6 +475,8 @@ Based on:
 Intro to Sigma, SigmajEdit, etc. and how to install them.
 
 \section{Objectives and achievements}
+
+
 
 \subsection{Leaf ontology (fake-news-detection workflow definition)}
 
