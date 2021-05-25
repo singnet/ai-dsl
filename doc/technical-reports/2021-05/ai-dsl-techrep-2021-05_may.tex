@@ -371,9 +371,9 @@ information but more work is needed to more fully explore that
 functionality.
 
 Of course it is a very simple example, in fact the simplest we could
-come up with, but we believe serves as a nice proof-of-concept, and
-demonstrates that AI services matching and such, using dependent types
-as formal specification language, is possible.
+come up with, but we believe serves as a proof-of-concept, and
+demonstrates that AI services matching, using dependent types as
+formal specification language, is possible.
 
 \subsection{Future work}
 
@@ -387,12 +387,13 @@ particular order
 \item Use real AI services instead of trivially simple ones.
 \end{itemize}
 
-Also, as of right now, the registry was implemented in Python,
-querying Idris when necessary.  However it is likely that this should
-be better suited to Idris itself.  Which leads us to an interesting
-possibility, maybe the registry, and in fact most (perhaps all)
-components and functions of the AI-DSL could or should be implemented
-in the AI-DSL itself.
+Also, as of right now, the registry was implemented in
+Python\footnote{because the SingularityNET example it is derived from
+is written in Python}, querying Idris when necessary.  However it is
+likely that this should be better suited to Idris itself.  Which leads
+us to an interesting possibility, maybe the registry, and in fact most
+(perhaps all) components and functions of the AI-DSL could or should
+be implemented in the AI-DSL itself.
 
 \chapter{AI-DSL Ontology (Kabir's work)}
 
