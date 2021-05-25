@@ -1,0 +1,41 @@
+(subclass SNetAIService ComputerProgram)
+(subclass SNetAIService SoftwareContainer)
+(documentation SNetAIService EnglishLanguage
+"Software package exposed via SNetPlatfrom and conforming to the special packaging rules")
+
+(subclass SNetAIServiceIO Descriptor)
+
+(instance hasInput BinaryPredicate)
+(domain hasInput 1 SNetAIService)
+(domain hasInput 2 SNetAIServiceIO)
+
+(instance hasOutput BinaryPredicate)
+(domain hasOutput 1 SNetAIService)
+(domain hasOutput 2 SNetAIServiceIO)
+
+; we can also use TernaryPredicate here in order to make it more open for change
+; currently I am not sure if it will make things more or less complicated
+
+(=>
+  (or
+    (subclass ?SNetAIServiceInputIO JSONDef)
+    (subclass ?SNetAIServiceInputIO ProtoBufDef)
+    (subclass ?SNetAIServiceInputIO IdrisTypeDef)
+  )
+  (instance ?SNetAIServiceInputIO SNetAIServiceInputIO)
+)
+
+(instance hasMetadata BinaryPredicate)
+(domain hasMetadata 1 SNetAIService)
+(domain hasMetadata 2 SNetAIServiceMetadata)
+
+; We can then define axioms defining valid json and protobuf on SNet platfrom
+; Further, we want to define all primitive data types allowed by service ontologies
+; however it is not clear how do to it in kif or SUMO
+; so this is listed only as indication but is not correct
+; this is subject of the future work
+
+(subclass JSONDef DataType)
+(subclass URL DataType)
+(subclass Text DataType)
+(subclass Boolean DataType)

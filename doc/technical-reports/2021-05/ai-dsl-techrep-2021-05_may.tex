@@ -8,6 +8,13 @@
 \newcommand{\kabir}[2][]{\todo[color=yellow,author=kabir, #1]{#2}}
 \newcommand{\nil}[2][]{\todo[color=purple,author=nil, #1]{#2}}
 \usepackage{hyperref}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=false,frame=single}
+\usepackage{float}
+\restylefloat{table}
+\usepackage{graphicx}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{subcaption}
 
 \begin{document}
 
@@ -391,15 +398,54 @@ in the AI-DSL itself.
 
 \chapter{AI-DSL Ontology (Kabir's work)}
 
-\section{Design requirements}
+\section{Description}
 
-Based on:
-\begin{enumerate}
-	\item the summary of \href{https://github.com/nunet-io/ai-dsl-ontology/wiki}{initial discussions about requirements}
-	\item possibly augmented by later research.
-\end{enumerate}
+\subsection{Design requirements}
 
-\section{Domain model considerations}
+At the beginning of the current iteration of the AI-DSL project we had a round of discussions about the high level functional and design requirements for AI-DSL and its role in SingularityNET platfrom and ecosystem. The discussions were based on \cite{GoertzelGeisweillerBlog,singularitynet_foundation_phasetwo_2021}  and are \href{https://github.com/nunet-io/ai-dsl-ontology/wiki/AI-DSL\%20requirements}{available online} in their original form. Here is the summary of the preliminary design requirements informed by those discussions:
+
+\begin{itemize}
+  \item AI-DSL is a language that allows AI agents/services running on SinglarityNET platfrom to declare their capabilities and needs for data to other AI agents in a rich and versatile machine readible form; This will enable different AI agents to search, find data sources and other AI services whithout human interaction;
+  \item AI-DSL ontology defines data and service (task) types to be used by AI-DSL. Requirements for the ontology are shaped by the scope and specification of the AI-DSL itself;
+\end{itemize}
+
+High level requirements for AI-DSL are:
+
+\begin{description}
+  \item[Extendability] The ontology of data types and AI task types should be extendable in the sense that individual service providers / users should be able to create new types and tasks and make them available to the network. AI-DSL should be able to ingest these new types / tasks and immediately be able to do the type-checking job. In other words, AI-DSL ontology of types / tasks should be able to evolve. At the same time, extended ontologies should relate to existing basic AI-DSL ontology in a clear way, allowing AI agents to perform reasoning across the whole space of available ontologies (which, at lower levels, may be globally inconsistent). In order to ensure interoperability of lower level ontologies, AI-DSL ontology will define small kernel / vocabulary of globally accessible grounded types, which will be built-in into the platform at the deep level. Changing this kernel will most probably require some form of voting / global consensus on a platfrom level.
+
+  Therefore, it seems best to define AI-DSL Ontology and the mechanism of using it on two levels:
+  \begin{itemize}
+    \item \textit{The globally accessible vocabulary/root ontology of grounded types}. This vocabulary can be seen as immutable (in short and medium term) kernel. It should be extendible in the long term, but the mechanisms of changing and extending it will be quite complex, most probably involving theorectical considerations and/or a strict procedures of reaching global consensus within the whole platform (a sort of voting);
+    \item \textit{A decentralized ontology of types and tasks} which each are based (i.e. type-dependent) on the root ontology/vocabulary, but can be extended in a decentralized manner -- in the sense that each agent in the platfrom will be able to define, use and share derived types and task definitions at its own discretion without the need of global consensus.
+  \end{itemize}
+
+  \item[Competing versions and consensus.] We want both consistency (for enabling deterministic type checking -- as much as it is possible) and flexibility (for enabling adaptation and support for innovation). This will be achieved by enforcing different restrictions for competing versions and consensus reaching on the two levels of ontologoy descrbed above:
+
+  \begin{itemize}
+    \item The globally accessible vocabulary / root ontology of grounded types will not allow for competing versions. In a sense, this level will be the true ontology, representable by a one and unique root / upper-level ontology of the network which users will not be able to modify directly;
+    \item All other types and task definitions within the platform will be required to be derived from the root ontology (if they will want to be used for interaction with other agents); However, the platform whould not restrict the number of competing versions or define a global consensus  of types and task descriptions on this level.
+    \item Furthermore, the ontology and the AI-DSL logic should allow for some variant of 'soft matching' which would allow to find the type / service that does not satisfy all requirements exactly, but comes as closely as available in the platform.
+    \item At the lowest level of describing each instance of AI service or data source on the platfrom, AI-DSL shall allow maximum extentibility in so that AI service providers and data providers will be able to describe and declare their services in the most flexible and unconstrained manner, facilitating competition and cooperation between them.
+  \end{itemize}
+
+  \item[Code-level / service-level APIs.] It is important to ensure that the ontology is readable / writable by different components of the SingularityNET platform, at least between AI-DSL engine / data structures and each AI service separately. This is needed because some of the required descriptors of AI services will have to be dynamically calculated at the time of calling a service and will depend on the immediate context (e.g. price of service, a machine on which it is running, possibly reputation score, etc.). It is not clear at this point how much of this functionality will be possible (and practical) to implement on available type-dependent, ontology languages or even if it is possible to use single language. Even it if is possible to implement all AI-DSL purely on the current type-dependent language choice Idris, it will have to interface with the world, deal with indeterministic input from network and mutable states -- operations that may fail in run-time no matter how careful type checking is done during compile time \cite{brady_resource-dependent_2015}.
+
+  Defining and maintaining code-level and service-level APIs will first of all enable interfacing SingularityNET agents to AI-DSL and therefore between themselves.
+
+  \item[Key AI Agents properties] We can distinguish two somewhat distinct (but yet interacting) levels of AI-DSL Ontology AI service description level and data description level. It seems that it may be best to start building the ontology from the service level, because data description language is even more open-ended than AI description language, which is already open enough. Initially, we may want to include into the description of each AI service at least these properties:
+  \begin{itemize}
+    \item Input and output data structures and types
+    \item Financial cost of service
+    \item Time of computation
+    \item Computational resource cost
+    \item Quality of results
+  \end{itemize}
+  Most probably it is possible to express and reason about this data with Idris. It is quite clear however, that in order to enable interaction with and between SingularityNET agents (and NuNet adapters) all above properties have to be made accessible outside Idris and therefore supported by the code-level / service-level APIs and the SingularityNET platfrom in general.
+
+\end{description}
+
+\subsection{Domain model considerations}
 
 Explanation of NuNet fake-news-detector domain model and related considerations  making the first ontology, based on:
 \begin{itemize}
@@ -410,7 +456,7 @@ Explanation of NuNet fake-news-detector domain model and related considerations 
 
 \kabir[inline]{The domain model may need to be presented somewhere else, as it may be related to other sections besides AI-DSL ontology}
 
-\section{Choice of existing ontologies}
+\subsection{Choice of existing ontologies}
 
 Based on:
 \begin{enumerate}
@@ -424,19 +470,74 @@ Based on:
 	\end{itemize}
 \end{enumerate}
 
-\section{Tools}
+\subsection{Tools}
 
 Intro to Sigma, SigmajEdit, etc. and how to install them.
 
-\section{AI-DSL ontology prototoype}
+\section{Objectives and achievements}
 
-The prototype will be the fake-news-detector leaf ontology based on the above listed upper and middle ontologies (SUMO) and domain ontologies of computer hardware and sofware.
 
-\section{Combining ontology with Idris}
+
+\subsection{Leaf ontology (fake-news-detection workflow definition)}
+
+The prototype will be the fake-news-detector leaf ontology based on the above listed upper and middle ontologies (SUMO) and domain ontologies of computer hardware and software.
+
+\begin{figure}[h]
+\begin{minted}[linenos,tabsize=2,breaklines, fontsize=\small]{json}
+"dag": {
+	"testing-news-score" :
+		["testing-uclnlp","binary-classification"]
+}
+\end{minted}
+\caption{\label{lst:dag}Program graph as defined and used in NuNet's \href{https://gitlab.com/nunet/fake-news-detection/fake\_news\_score/-/blob/master/service/dag.json}{fake-news-warning app prototype} a the time of writing.}
+\end{figure}
+
+
+\begin{table}[h]
+  \scriptsize
+  \centering
+	\begin{tabular}{p{0.15\linewidth}|p{0.2\linewidth}|p{0.2\linewidth}|p{0.2\linewidth}|p{0.1\linewidth}}
+	\textbf{Leaf item} & \textbf{Description} & \textbf{Input} & \textbf{Output} & \textbf{Source}\\
+	\hline
+	binary-classification & A pre-trained binary classification model & English text of any length & 1 -- the text is categorized as fake; 0 -- text is categorized as not-fake & \textcopyright \href{https://gitlab.com/nunet/fake-news-detection/binary-classification}{NuNet} 2021\\
+    \hline
+	uclnlp & Forked and adapted component of stance detection algorithm (\href{http://www.fakenewschallenge.org/#fnc1results}{FNC} third place winner) & Article title and text & Probabilities of the title \textit{agreeing}, \textit{disagreeing}, \textit{discussing} or being \textit{unrelated} to the text & \textcopyright \href{https://github.com/uclnlp/fakenewschallenge}{UCL Machine Reading} 2017; \textcopyright \href{https://gitlab.com/nunet/fake-news-detection/uclnlp}{NuNet} 2021\\
+	\hline
+	news-score & Calls dependent services, calculates overall result and sends them to the caller. & URL of the content to be checked & Probability that the content in the URL is fake & \textcopyright \href{https://gitlab.com/nunet/fake-news-detection/fake_news_score}{NuNet} 2021 \\
+\end{tabular}
+\caption{\label{tbl:fns_components}Description of each component of \texttt{Fake News Warning} application.}
+\end{table}
+
+\begin{figure}[h]
+	\centering
+	\begin{subfigure}[b]{1\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../../../ontology/images/SNetAIService.png}
+		\caption{Class dependencies of the SNetAIService subclass within the ontology.}
+		\label{fig:SNetAIService hierachy}
+	\end{subfigure}
+	\begin{subfigure}[b]{1\textwidth}
+		\centering
+		\includegraphics[width=\textwidth/4]{example-image-a}
+		\caption{Class dependencies of the SNetAppBackend subclass (workflow definition) within the ontology.}
+		\label{fig:tSNetAppBackend}
+	\end{subfigure}
+	\caption{Class dependences of AI-DSL Ontology (SingularityNet.kif) }
+	\label{fig:SingularityNet.kif}
+\end{figure}
+
+\begin{figure}[h]
+\inputminted[firstline=2, lastline=12, linenos,tabsize=2,breaklines, fontsize=\small]{scm}{../../../ontology/SingularityNet.kif}
+\caption{\label{lst:singularitynet}Contents of SingularityNet.kif}
+\end{figure}
+
+
+\section{Future work}
+
+\subsection{Combining ontology with Idris}
 
 \kabir[inline]{It would be good to have a section explaining ideas about that, but I cannot do this alone, so probably the best is to reserve it for the end of the monht, when all the other aspects of AI-DSL project (including Idris) are explained.}
 
-\section{Summary of results and future work}
 
 
 

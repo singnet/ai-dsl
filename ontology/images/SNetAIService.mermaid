@@ -1,0 +1,38 @@
+graph LR
+	subgraph "Upper ontology (Merge.kif)"
+		Entity(Entity)
+		Abstract(Abstract)
+		Proposition(Proposition)
+		Procedure(Procedure)
+	end
+	subgraph "Domain ontology (ComputerInput.kif)"
+		Software(Software)
+	end
+	subgraph "Domain ontology (SingularityNet.kif)"
+	    SoftwareContainer(SoftwareContainer)
+	    SNetAIService(SNetAIService)
+	end
+	subgraph "Leaf ontology (FakeNewsWarning.kif)"
+	    uclnlp(uclnlp)
+	    binary-classifier(binary-classifier)
+	    fake-news-score(fake-news-score)
+	 end
+Abstract --> Entity
+Proposition --> Abstract
+Procedure --> Proposition
+Software --> Procedure
+SoftwareContainer --> Software
+SNetAIService --> SoftwareContainer
+uclnlp --> SNetAIService
+binary-classifier --> SNetAIService
+fake-news-score --> SNetAIService
+
+
+classDef blue fill:lightblue
+classDef green fill:lightgreen
+classDef gray fill:lightgray
+classDef red fill:red
+class Entity,Abstract,Proposition,Procedure gray
+class Software gray
+class SNetAIService,SoftwareContainer green
+class binary-classifier,fake-news-score,uclnlp blue

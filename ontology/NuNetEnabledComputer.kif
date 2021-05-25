@@ -1,0 +1,9 @@
+(instance machineOne NuNetEnabledComputer)
+(documentation machineOne EnglishLanguage "Free text explanation of the computer and its capabilities (if the owner wishes to expose)")
+
+(hasMetadata machineOne ComputerMetadata)
+; there should be a way to actually check that the metadata file is contained on the machine (or it returns it if needed)
+(hasField AvailableComputingResources ComputerMetadata)
+; there should be a way to check actual resources and reise them here
+(runsOS machineOne Linux)
+(hasHardware machineOne PC)

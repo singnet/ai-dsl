@@ -1,0 +1,47 @@
+(subclass NuNetEnabledSNetAIService SNetAIService)
+(documentation NuNetEnabledSNetAIService EnglishLanguage "SNetAIService which can be deployed on NuNetEnabledComputers and orchestrated via NuNet platfrom")
+
+(=>
+  (and
+    (hasMetadata ?SNetAIServiceMetadata ?SNetAIService)
+    (hasField ?SNetAIServiceMetadata RequiredComputingResources)
+    ; includes many other prerequisites and special protobuf definitions
+  )
+  (instance ?SNetAIService NuNetEnabledSNetAIService)
+)
+
+(subclass NuNetEnabledComputer Computer)
+(documentation NuNetEnabledComputer EnglishLanguage "A Computer which was onboarded to NuNet platfrom and complies to its requirements.")
+
+(=>
+  (and
+    (hasRun ?NuNetEnabledComputer NuNetOnboardingScript)
+    (hasMetadata ?NuNetEnabledComputer ?ComputerMetadata)
+    (hasField AvailableComputingResources ?ComputerMetadata)
+    (or
+      (runsOS ?NuNetEnabledComputer Linux)
+      (runsOs ?NuNetEnabledComputer Raspbian)
+    )
+    (or
+      (hasHardware ?NuNetEnabledComputer PC)
+      (hasHardware ?NuNetEnabledComputer RaspberyPi)
+    )
+  )
+  (instance ?NuNetEnabledComputer NuNetEnabledComputer)
+)
+
+; here we check if a NuNetEnabledSNetAIService can be deployed on a NuNetEnabledComputer
+; at any particular instance in time
+; since AvailableComputingResources depend on state of the computer at that time
+; (therefore it can be calculated only at runtime)
+
+(=>
+  (and
+    (hasMetadata ?NuNetEnabledComputer ?ComputerMetadata)
+    (hasField ?AvailableComputingResources ?ComputerMetadata)
+    (hasMetadata ?NuNetEnabledSNetAIService ?SNetAIServiceMetadata)
+    (hasField ?RequiredComputingResources ?SNetAIServiceMetadata)
+    (lessThanOrEqualTo ?RequiredComputingResources ?AvailableComputingResources)
+  )
+  (canDeploy ?NuNetEnabledSNetAIService ?NuNetEnabledComputer)
+)
