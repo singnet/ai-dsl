@@ -1,0 +1,19 @@
+graph LR
+	subgraph "machine#1"
+		image1(SNet AI Service<br>fake-news-score / orchestrator)
+	end
+	subgraph "machine#2"
+  		image5(SNet AI Service<br>stance-detection-ai<br>algorithm: uclnlp)
+	end
+	subgraph "machine#3"
+    	image7(SNet AI Service<br>binary-classification-ai<br>algorithm: neural network)
+	end
+browser-extention --> image1
+image1 --> image5 & image7
+
+classDef blue fill:lightblue
+classDef green fill:lightgreen
+classDef gray fill:lightgray
+classDef red fill:red
+class browser-extention gray
+class image7,image5,image1 green
