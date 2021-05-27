@@ -87,10 +87,10 @@ add_costs_min_quality f_attrs g_attrs = fg_attrs where
                                   (min f_attrs.quality g_attrs.quality)
 \end{minted}
 The full implementation can be found in
-\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/RealizedAttributes.idr}{RealizedAttributes.idr},
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/RealizedAttributes.idr}{\texttt{RealizedAttributes.idr}},
 under the
-\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/}{experimental/realized-function/}
-folder of the \href{https://github.com/singnet/ai-dsl/}{ai-dsl
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/}{\texttt{experimental/realized-function/}}
+folder of the \href{https://github.com/singnet/ai-dsl/}{AI-DSL
   repository}~\cite{AIDSLRepo}.\\
 
 Then we have implemented \texttt{RealizedFunction} that essentially
@@ -115,7 +115,7 @@ compose (MkRealizedFunction g g_attrs) (MkRealizedFunction f f_attrs) =
   MkRealizedFunction (g . f) (add_costs_min_quality f_attrs g_attrs)
 \end{minted}
 The full implementation can be found in
-\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/RealizedFunction.idr}{RealizedFunction.idr}
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/RealizedFunction.idr}{\texttt{RealizedFunction.idr}}
 under the same folder.
 
 \subsection{Objectives and achievements}
@@ -127,10 +127,10 @@ not only able to do that, but to our surprise much faster that Idris1
 (instantaneous instead of seconds to minutes), by bypassing induction
 on numbers and using efficient function-driven rewriting on the
 realized attributes instead.  That experiment can be found in
-\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/RealizedFunction-test.idr}{RealizedFunction-test.idr},
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/RealizedFunction-test.idr}{\texttt{RealizedFunction-test.idr}},
 under the
-\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/}{experimental/realized-function/}
-folder of the \href{https://github.com/singnet/ai-dsl/}{ai-dsl
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/}{\texttt{experimental/realized-function/}}
+folder of the \href{https://github.com/singnet/ai-dsl/}{AI-DSL
   repository}~\cite{AIDSLRepo}.
 
 \subsection{Future work}
@@ -205,14 +205,14 @@ rlz_compo1 : RealizedFunction (Int -> Int) Compo1.rlz_compo1_attrs
 rlz_compo1 = compose rlz_twicer rlz_incrementer
 \end{minted}
 defined in
-\href{https://github.com/singnet/ai-dsl/blob/master/experimental/simple-idris-services/service/Compo1.idr}{experimental/simple-idris-services/service/Compo1.idr},
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/simple-idris-services/service/Compo1.idr}{\texttt{experimental/simple-idris-services/service/Compo1.idr}},
 the corresponding service would raise a type checking error at start
 up.  More details on the experiment and how to run it can be found in
 the
 \href{https://github.com/singnet/ai-dsl/blob/master/experimental/simple-idris-services/README.md}{\texttt{README.md}}
 under the
 \href{https://github.com/singnet/ai-dsl/blob/master/experimental/simple-idris-services/}{\texttt{experimental/simple-idris-services/service/}}
-folder of the \href{https://github.com/singnet/ai-dsl/}{ai-dsl
+folder of the \href{https://github.com/singnet/ai-dsl/}{AI-DSL
   repository}~\cite{AIDSLRepo}.
 
 \subsection{Future work}
@@ -262,17 +262,17 @@ proof-of-concept \emph{registry} to start experimenting with such
 functionalities.
 
 So far we have two versions in the
-\href{https://github.com/singnet/ai-dsl/}{ai-dsl repository}, one
+\href{https://github.com/singnet/ai-dsl/}{AI-DSL repository}, one
 without dependent types support, under
-\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/}{experimental/registry/},
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/registry/}{\texttt{experimental/registry/}},
 and a more recent one with dependent type support that can be found
 under
-\href{https://github.com/singnet/ai-dsl/blob/master/experimental/registry-dtl/}{experimental/registry-dtl/}.
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/registry-dtl/}{\texttt{experimental/registry-dtl/}}.
 We will focus our attention on the latter which is far more
 interesting.\\
 
 The AI-DSL registry (reminiscent of the SingularityNET
-registry~\cite{TODO}) is itself an AI service with the following functions
+registry~\cite{SNETRegistry}) is itself an AI service with the following functions
 \begin{enumerate}
 \item \texttt{retrieve}: find AI services on the network fulfilling a
   given specification.
@@ -368,7 +368,7 @@ found in the
 \href{https://github.com/singnet/ai-dsl/blob/master/experimental/registry-dsl/README.md}{\texttt{README.md}}
 under the
 \href{https://github.com/singnet/ai-dsl/blob/master/experimental/registry-dsl/}{\texttt{experimental/simple-idris-services/service/}}
-folder of the \href{https://github.com/singnet/ai-dsl/}{ai-dsl
+folder of the \href{https://github.com/singnet/ai-dsl/}{AI-DSL
   repository}~\cite{AIDSLRepo}.
 
 \subsection{Objectives and achievements}
