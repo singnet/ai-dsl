@@ -219,11 +219,24 @@ folder of the \href{https://github.com/singnet/ai-dsl/}{ai-dsl
 
 Such experiment was good to explore how Idris can be integrated to a
 network of services.  What we need to do next is experiment with
-actual AIs algorithms, ideally making full use of dependent types in
+actual AI algorithms, ideally making full use of dependent types in
 their specifications.  Such endeavor was actually attempted by using
-an existing set of cooperating AI services\nil{Ref to Kabir's fake
-  news detector}, but it was eventually concluded to be too ambitious
-for that iteration and was postponed for the next.
+an existing set of cooperating AI services, see Section
+\ref{registry_fake_news_detector}, but it was eventually concluded to
+be too ambitious for that iteration and was postponed for the next.
+
+An intermediary step, before moving to actual AI algorithms, is to
+explore multi-facet specifications and their interactions with other
+AI services.  That is, a service A might output a data type satisfying
+a combination of properties, such as, to tie that back to the trivial
+incrementer, twicer and halfer combination, an integer that is both
+even and within a certain interval.  Then two other services, B and C,
+may have partial constraints instead.  For instance B may require an
+even integer, while C may require that integer to be within a certain
+interval.  In other words both can take as input the output of A, for
+different reasons.  It's obviously not conceptual difficult to cast
+the output of A to match the input types of B and C, however it is
+still something we need to explore in practice with Idris.
 
 Obviously we want to be able to reuse existing AI services and write
 their enhanced specifications on top of them, as opposed to writing
