@@ -546,34 +546,26 @@ graph of the application. Note, that conceptually, construction of an
 application from several independent containers is almost equivalent to
 functionality explained in section \ref{aidsl_registry} on AI-DSL Registry,
 namely performance of matching and composition of AI services. This is the main
-reason why we chose \textit{Fake News Warning} application as a domain model for
-early development efforts of AI-DSL.
+reason why we chose \textit{Fake News Warning} application as a domain model
+for early development efforts of AI-DSL. However, we use this domain model
+solely for the appication-independent design of AI-DSL and attend to
+its application specific aspects only as much as it informs the project.
 
-\begin{figure}[h]
-  \centering
-    \begin{minted}[linenos,tabsize=2,breaklines, fontsize=\small]{json}
-      "dag": {
-        "news-score" : ["uclnlp","binary-classification"]
-        }
-    \end{minted}
-    \caption{\label{lst:dag}Program graph as defined and used in NuNet's
-\href{https://gitlab.com/nunet/fake-news-detection/fake\_news\_score/-/blob/master/service/dag.json}{fake-news-warning app prototype}
- a the time of writing.}
-\end{figure}
-
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\textwidth]{../../../ontology/images/fake_news_detector.png}
-  \caption{Schema of dependencies between components of the application.}
-  \label{fig:fake_news_detector_schema}
-\end{figure}
+The idea of dynamic service discovery is to enable application developers to
+construct working applications (or at least their backends) by simply passing a
+declarative definition of program graph to the special platform component
+("network orchestrator") -- which then searches for appropriate SingularityNET
+AI containers and connects them in to a single workflow (or workflows).
+Suppose, that the backend of \textit{Fake News Warning} app consists of three
+SingularityNET AI containers \textit{news\_score}, \textit{uclnlp} and
+\textit{binary-classification}:
 
 \begin{table}[H]
   \scriptsize
   \centering
   \begin{tabular}{p{0.15\linewidth}|p{0.2\linewidth}|p{0.2\linewidth}|p{0.2\linewidth}|p{0.1\linewidth}}
-    \textbf{Leaf item} & \textbf{Description} & \textbf{Input} & \textbf{Output} &
+    \textbf{Leaf item} & \textbf{Description} & \textbf{Input} &
+    \textbf{Output} &
     \textbf{Source}\\
     \hline
     binary-classification & A pre-trained binary classification model &
@@ -590,39 +582,98 @@ early development efforts of AI-DSL.
     Machine Reading} 2017; \textcopyright
     \href{https://gitlab.com/nunet/fake-news-detection/uclnlp}{NuNet} 2021\\ \hline
     news-score & Calls dependent services, calculates overall result and sends them
-    to the caller. & URL of the content to be checked & Probability that the content
+    to the frontend & URL of the content to be checked & Probability that the content
     in the URL is fake & \textcopyright
     \href{https://gitlab.com/nunet/fake-news-detection/fake_news_score}{NuNet} 2021 \\
     \end{tabular}
-  \caption{\label{tbl:fns_components}Description of each componentof
+  \captionsetup{width=0.7\linewidth}
+  \caption{\label{tbl:fns_components}Description of each component of
   \texttt{Fake News Warning} application.}
 \end{table}
 
+Each component of application's backend is a SingularityNET AI Service
+registered on the platfrom.  Note, that as SingularityNET AI services are
+defined through their specification and their
+metadata\cite{SNETDocumentationServiceSetup}. The main purpose of the AI-DSL
+Ontology is to be able to describe SNet AI Services in a manner that would allow
+them to search and match each other on the platfrom and compose into complex
+workflows -- similarly to what is described in Section
+\ref{network_idris_ai_services}. Here is a simple represenation of the program
+graph of \textit{Fake News Warning} app:
 
-\subsection{Choice of existing ontologies}
+\begin{figure}[h]
+  \centering
+    \begin{minted}[linenos,tabsize=2,breaklines, fontsize=\small]{json}
+      "dag": {
+        "news-score" : ["uclnlp","binary-classification"]
+        }
+    \end{minted}
+    \captionsetup{width=0.7\linewidth}
+    \caption{\label{lst:dag}A directed acyclic graph (DAT) of
+    \textit{Fake News Warning} app prototype\cite{NuNetFakeNewsWarningAppRepo}}
+\end{figure}
 
-Based on: \begin{enumerate} \item discussion on \href{reusing existing
-ontologies}{https://github.com/singnet/ai-dsl/discussions/18} for the choice of
-SUMO and KIF; \item Usage of: \begin{itemize} \item Upper level SUMO ontology
-(\href{Merge.kif}{https://github.com/ontologyportal/sumo/blob/master/Merge.kif});
-\item Middle level SUMO ontology
-(\href{Mid-level-ontology.kif}{https://github.com/ontologyportal/sumo/blob/master/Mid-level-ontology.kif});
-\item Distributed computing hardware domain ontology in SUO-KIF
-(\href{QoSontology.kif}{https://github.com/ontologyportal/sumo/blob/master/QoSontology.kif});
-\item \href{Software ontology}{https://github.com/allysonlister/swo} in OWL. In
-the long term, it may be ideal to develop a converter for converting it to KIF,
-since OWL may be representable in KIF \cite{martin_translations_nodate} using
-\href{OWL API}{https://github.com/owlcs/owlapi}; For the purpose of the ontology
-prototype, we will manually select parts of the this ontology in order to build
-the prototype and write them in SUO-KIF format; \end{itemize} \end{enumerate}
+The schematic representation of the \textit{Fake News Warning} app deployed as a
+result of processing the DAG is depicted below. The addition of NuNet platfrom
+to SingularityNET service discovery is that each service may be deployed on
+different hardware environments, sourced by NuNet. When the application backend
+is deployed, it can be accessed from the GUI interface, which in this case is a
+Brave browser extension.
 
-\subsection{Tools}
+\begin{figure}[H]
+  \begin{subfigure}[b]{0.50\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{../../../ontology/images/fake_news_detector.png}
+    \captionsetup{width=0.8\linewidth}
+    \caption{Schema of dependencies between backend components of the application
+    (SingularityNET AI services potentially running on different machines).}
+    \label{fig:fake_news_detector_schema}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.50\textwidth}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../../../ontology/images/fake_news_detector_browser_extension.png}
+    \captionsetup{width=0.8\linewidth}
+    \caption{Brave browser extension which calls the backend of
+    \textit{Fake News Warning} application on each invocation on new
+    content displayed in browser tab.}
+  \end{subfigure}
+\end{figure}
 
-Intro to Sigma, SigmajEdit, etc. and how to install them.
+We will use this application design principles as the domain model for the first
+design of AI-DSL Ontology and the prototype.
+
+\subsection{Ontology language and upper level ontology}
+
+After discussing several choices of ontology languages and reusing existing
+ontologies for designing AI-DSL ontology\footnote{See
+\href{https://github.com/singnet/ai-dsl/discussions/18}{Reusing Existing
+Ontologies} discussion on AI-DSL Github Repo\cite{AIDSLRepo}}, we have opted to
+use SUO-KIF as an ontology language \cite{pease_standard_2009} and SUMO as an
+upper-level ontology \cite{NilesPease2001}. The main motivation for this choice
+were the versatility of KIF/SUO-KIF (Knowledge Interchange Format) language,
+which essentially allows to express first order logic statements in a simple
+text format in terms of lisp-like syntax. Due to that, KIF can be easily
+converted to other formats\cite{kalibatiene_survey_2011}. Also, a conversion to
+Atomese -- the OpenCog's language also employoing a list-like syntax -- has been
+successfully attempted in the past\footnote{As informed by Ben Goertzel during
+one of the AI-DSL project meetings.} SUMO and the related ontology design tools
+\cite{pease_sigma_2001} provide a convienent way for starting to design AI-DSL
+Ontology levels and their relations.
+
+\kabir[inline]{Finished here: 2021-05-27T01:37 CET}
 
 \section{Objectives and achievements}
 
 \section{Relations between levels}
+
+\begin{enumerate}
+  \item Upper level SUMO ontology
+  (\href{https://github.com/ontologyportal/sumo/blob/master/Merge.kif}{Merge.kif});
+  \item Middle level SUMO ontology
+(\href{https://github.com/ontologyportal/sumo/blob/master/Mid-level-ontology.kif}{Mid-level-ontology.kif});
+  \item Distributed computing hardware domain ontology in SUO-KIF
+(\href{https://github.com/ontologyportal/sumo/blob/master/QoSontology.kif}{QoSontology.kif});
+\end{enumerate}
 
 \begin{figure}[h] \centering \begin{subfigure}[b]{1\textwidth} \centering
 \includegraphics[width=\textwidth]{../../../ontology/images/SNetAIService.png}
@@ -651,15 +702,22 @@ hardware and software.
 \nil[inline]{Very cool, I think we want to include the (subclass
   Boolean DataType) lines, etc, as well, as they start touching the
   what matters}
+\kabir[inline]{Yes, we will. The kif files are quite large and I will have to think how to include the most important parts to test; but of course i will provide links to them here.}
 
 \section{Future work}
 
-\subsection{Combining ontology with Idris}
-
-\kabir[inline]{It would be good to have a section explaining ideas about that,
+\begin{itemize}
+  \item In the long term, it may be ideal to develop a converter for converting it to KIF,
+  since OWL may be representable in KIF \cite{martin_translations_nodate} using
+  \href{OWL API}{https://github.com/owlcs/owlapi}; For the purpose of the ontology
+  prototype, we will manually select parts of the this ontology in order to build
+  the prototype and write them in SUO-KIF format;
+  \item Combining ontology with Idris
+\kabir{It would be good to have a section explaining ideas about that,
 but I cannot do this alone, so probably the best is to reserve it for the end of
 the monht, when all the other aspects of AI-DSL project (including Idris) are
 explained.}
+\end{itemize}
 
 
 \chapter{Eman's work}
