@@ -8,6 +8,7 @@
 \newcommand{\kabir}[2][]{\todo[color=yellow,author=kabir, #1]{#2}}
 \newcommand{\nil}[2][]{\todo[color=purple,author=nil, #1]{#2}}
 \usepackage{hyperref}
+\usepackage{breakurl}
 \usepackage{listings}
 \lstset{basicstyle=\ttfamily\footnotesize,breaklines=false,frame=single}
 \usepackage{float}
@@ -400,6 +401,7 @@ be implemented in the AI-DSL itself.
 \section{Description}
 
 \subsection{Design requirements}
+\label{design-requirements}
 
 At the beginning of the current iteration of the AI-DSL project we had a round
 of discussions about the high level functional and design requirements for
@@ -544,7 +546,7 @@ meshes from several SingularityNET AI services\cite{nunet_nunet_2021}. In order
 for the service mesh to be deployed, NuNet needs only a specification of program
 graph of the application. Note, that conceptually, construction of an
 application from several independent containers is almost equivalent to
-functionality explained in section \ref{aidsl_registry} on AI-DSL Registry,
+functionality explained in section~\ref{aidsl_registry} on AI-DSL Registry,
 namely performance of matching and composition of AI services. This is the main
 reason why we chose \textit{Fake News Warning} application as a domain model
 for early development efforts of AI-DSL. However, we use this domain model
@@ -660,11 +662,76 @@ one of the AI-DSL project meetings.} SUMO and the related ontology design tools
 \cite{pease_sigma_2001} provide a convienent way for starting to design AI-DSL
 Ontology levels and their relations.
 
-\kabir[inline]{Finished here: 2021-05-27T01:37 CET}
-
 \section{Objectives and achievements}
 
-\section{Relations between levels}
+\section{Decentralized ontology}
+
+In order to satisfy the \textit{extendibility} requirement of ontology design
+(see~\ref{design-requirements}), we are proposing a notion and design of a \textit{decentralized ontology}, which enables us to work with globally consistent and locally incosistent components within the same mechanism of AI-DSL. Based on this design, the full ontology of \textit{Fake News Warning} application is constructed from a number of separate components, which operate at different level of decentralization. Table below describes each of these components.
+
+\begin{table}[H]
+%describe each kif file / level of ontology / consistent / inconsistent;
+  \scriptsize
+  \centering
+  \begin{tabular}{p{0.24\linewidth}|p{0.24\linewidth}|p{0.24\linewidth}|p{0.24\linewidth}|}
+    \textbf{Component} &
+    \textbf{Description} &
+    \textbf{Dependencies} &
+    \textbf{Extendability}\\
+    \hline
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/NuNet.kif}{NuNet.kif} &
+    Defines classes to be used for describing each hardware resource eligible
+    for running SingularityNET AI Services via NuNet platfrom;  &
+    Merge.kif, SingularityNET.kif [,..]&
+    Limited: versioning mechanism controlled by NuNet (to be defined) \\
+    \hline
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
+    SingulairtyNet.kif}{SingularityNet.kif} &
+    Defines global classes and types to be used for describing each
+    SingularityNET AI Service &
+    ComputerInput.kif, Merge.kif [,..]&
+    Limited: versioning mechanism controlled by SingularityNET (to be defined)\\
+    \hline
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
+    FakeNewsScore.kif}{FakeNewsScore.kif} &
+    SingularityNET service responsible for constructing the whole backend of
+    each \textit{Fake News Warning} application instance i.e. program graph
+    (DAG) of the application.&
+    SingularityNET.kif [,..] &
+    Fully decentralized: defined by application developers; Since \textit{Fake News
+Warning} application is open source, any developer can for it and define it
+otherwise; Technically, this would be a different application.\\
+    \hline
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/fnsBinaryClassifier.kif}{fnsBinaryClassifier.kif} &
+    A pre-trained binary classification model for fake news detection &
+    SingularityNET.kif [,..] &
+    Fully decentralized: defined by each algorithm developer independently.
+    Technically, from the platfrom perspective, these will be different
+    algorithms. \\
+    \hline
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
+    NuNetEnabledComputer.kif}{NuNetEnabledComputer.kif} &
+    Each NuNet enabled hardware resource will have to be described accordingly
+    when onboarded to NuNet platfrom &
+    NuNet.kif &
+    Fully decentralized: independently defined by the owner of a hardware
+    resource \\
+    \hline
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
+    uclnlp.kif}{uclnlp.kif} &
+    Forked and adapted component of stance detection algorithm by UCL Machine Reading group &
+    SingularityNET.kif [,..] &
+    Fully decentralized: defined by each algorithm developer independently.
+    Technically, from the platfrom perspective, these will be different
+    algorithms \\
+    \end{tabular}
+  \captionsetup{width=0.7\linewidth}
+  \caption{\label{tbl:all_kif_files}Description of each component of the AI-DSL Ontology prototope and links to related KIF files.}
+\end{table}
+
+\section{The mechanism of constructing ontology}
+
+%Versions / voting / communication
 
 \begin{enumerate}
   \item Upper level SUMO ontology
@@ -702,16 +769,19 @@ hardware and software.
 \nil[inline]{Very cool, I think we want to include the (subclass
   Boolean DataType) lines, etc, as well, as they start touching the
   what matters}
-\kabir[inline]{Yes, we will. The kif files are quite large and I will have to think how to include the most important parts to test; but of course i will provide links to them here.}
+\kabir[inline]{Yes, we will. The kif files are quite large and I will have to
+think how to include the most important parts to test;
+but of course i will provide links to them here.}
 
 \section{Future work}
 
 \begin{itemize}
-  \item In the long term, it may be ideal to develop a converter for converting it to KIF,
-  since OWL may be representable in KIF \cite{martin_translations_nodate} using
-  \href{OWL API}{https://github.com/owlcs/owlapi}; For the purpose of the ontology
-  prototype, we will manually select parts of the this ontology in order to build
-  the prototype and write them in SUO-KIF format;
+  \item In the long term, it may be ideal to develop a converter for converting
+it to KIF, since OWL may be representable in KIF
+\cite{martin_translations_nodate}  using \href{OWL
+API}{https://github.com/owlcs/owlapi}; For the purpose of the ontology
+prototype, we will manually select parts of the this ontology in order to build
+the prototype and write them in SUO-KIF format;
   \item Combining ontology with Idris
 \kabir{It would be good to have a section explaining ideas about that,
 but I cannot do this alone, so probably the best is to reserve it for the end of
