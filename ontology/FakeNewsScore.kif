@@ -1,5 +1,5 @@
 (instance fakeNewsScore SNetAIService)
-(documentation fakeNewsWarning EnglishLanguage "Calls dependent services, calculates summary result from their outputs
+(documentation fakeNewsScore EnglishLanguage "Calls dependent services, calculates summary result from their outputs
 and calculates the overall probability that the provided content contains fake news")
 
 (hasDependency fakeNewsScore uclnlp)

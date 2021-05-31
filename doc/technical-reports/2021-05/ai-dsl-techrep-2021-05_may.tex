@@ -68,8 +68,8 @@ contains
 \end{itemize}
 as well as an example of compositional law,
 \texttt{add\_costs\_min\_quality}, where costs are additive and
-quality is infimumitive\nil{is there a word for that?}.  Below is a
-small snippet of that code to give an idea of how it looks like
+quality is infimum-itive.  Below is a small snippet of that code to
+give an idea of how it looks like
 
 \begin{minted}[mathescape]{idris}
 record RealizedAttributes where
@@ -88,10 +88,10 @@ add_costs_min_quality f_attrs g_attrs = fg_attrs where
                                   (min f_attrs.quality g_attrs.quality)
 \end{minted}
 The full implementation can be found in
-\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/RealizedAttributes.idr}{RealizedAttributes.idr},
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/RealizedAttributes.idr}{\texttt{RealizedAttributes.idr}},
 under the
-\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/}{experimental/realized-function/}
-folder of the \href{https://github.com/singnet/ai-dsl/}{ai-dsl
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/}{\texttt{experimental/realized-function/}}
+folder of the \href{https://github.com/singnet/ai-dsl/}{AI-DSL
   repository}~\cite{AIDSLRepo}.\\
 
 Then we have implemented \texttt{RealizedFunction} that essentially
@@ -116,7 +116,7 @@ compose (MkRealizedFunction g g_attrs) (MkRealizedFunction f f_attrs) =
   MkRealizedFunction (g . f) (add_costs_min_quality f_attrs g_attrs)
 \end{minted}
 The full implementation can be found in
-\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/RealizedFunction.idr}{RealizedFunction.idr}
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/RealizedFunction.idr}{\texttt{RealizedFunction.idr}}
 under the same folder.
 
 \subsection{Objectives and achievements}
@@ -128,10 +128,10 @@ not only able to do that, but to our surprise much faster that Idris1
 (instantaneous instead of seconds to minutes), by bypassing induction
 on numbers and using efficient function-driven rewriting on the
 realized attributes instead.  That experiment can be found in
-\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/RealizedFunction-test.idr}{RealizedFunction-test.idr},
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/RealizedFunction-test.idr}{\texttt{RealizedFunction-test.idr}},
 under the
-\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/}{experimental/realized-function/}
-folder of the \href{https://github.com/singnet/ai-dsl/}{ai-dsl
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/}{\texttt{experimental/realized-function/}}
+folder of the \href{https://github.com/singnet/ai-dsl/}{AI-DSL
   repository}~\cite{AIDSLRepo}.
 
 \subsection{Future work}
@@ -206,25 +206,38 @@ rlz_compo1 : RealizedFunction (Int -> Int) Compo1.rlz_compo1_attrs
 rlz_compo1 = compose rlz_twicer rlz_incrementer
 \end{minted}
 defined in
-\href{https://github.com/singnet/ai-dsl/blob/master/experimental/simple-idris-services/service/Compo1.idr}{experimental/simple-idris-services/service/Compo1.idr},
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/simple-idris-services/service/Compo1.idr}{\texttt{experimental/simple-idris-services/service/Compo1.idr}},
 the corresponding service would raise a type checking error at start
 up.  More details on the experiment and how to run it can be found in
 the
 \href{https://github.com/singnet/ai-dsl/blob/master/experimental/simple-idris-services/README.md}{\texttt{README.md}}
 under the
 \href{https://github.com/singnet/ai-dsl/blob/master/experimental/simple-idris-services/}{\texttt{experimental/simple-idris-services/service/}}
-folder of the \href{https://github.com/singnet/ai-dsl/}{ai-dsl
+folder of the \href{https://github.com/singnet/ai-dsl/}{AI-DSL
   repository}~\cite{AIDSLRepo}.
 
 \subsection{Future work}
 
 Such experiment was good to explore how Idris can be integrated to a
 network of services.  What we need to do next is experiment with
-actual AIs algorithms, ideally making full use of dependent types in
-their specifications.  Such endeavor was actually attempted by using
-an existing set of cooperating AI services\nil{Ref to Kabir's fake
-  news detector}, but it was eventually concluded to be too ambitious
-for that iteration and was postponed for the next.
+actual AI algorithms, ideally making full use of dependent types in
+their specifications.  Such endeavor was actually attempted over the
+AI service collective described in Section
+\ref{domain_model_considerations}, but it was eventually concluded to
+be too ambitious for that iteration and was postponed for the next.
+
+An intermediary step, before moving to actual AI algorithms, is to
+explore multi-facet specifications and their interactions with other
+AI services.  That is, a service A might output a data type satisfying
+a combination of properties, such as, to tie that back to the trivial
+incrementer, twicer and halfer combination, an integer that is both
+even and within a certain interval.  Then two other services, B and C,
+may have partial constraints instead.  For instance B may require an
+even integer, while C may require that integer to be within a certain
+interval.  In other words both can take as input the output of A, for
+different reasons.  It's obviously not conceptual difficult to cast
+the output of A to match the input types of B and C, however it is
+still something we need to explore in practice with Idris.
 
 Obviously we want to be able to reuse existing AI services and write
 their enhanced specifications on top of them, as opposed to writing
@@ -250,17 +263,17 @@ proof-of-concept \emph{registry} to start experimenting with such
 functionalities.
 
 So far we have two versions in the
-\href{https://github.com/singnet/ai-dsl/}{ai-dsl repository}, one
+\href{https://github.com/singnet/ai-dsl/}{AI-DSL repository}, one
 without dependent types support, under
-\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/}{experimental/registry/},
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/registry/}{\texttt{experimental/registry/}},
 and a more recent one with dependent type support that can be found
 under
-\href{https://github.com/singnet/ai-dsl/blob/master/experimental/registry-dtl/}{experimental/registry-dtl/}.
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/registry-dtl/}{\texttt{experimental/registry-dtl/}}.
 We will focus our attention on the latter which is far more
 interesting.\\
 
 The AI-DSL registry (reminiscent of the SingularityNET
-registry~\cite{TODO}) is itself an AI service with the following functions
+registry~\cite{SNETRegistry}) is itself an AI service with the following functions
 \begin{enumerate}
 \item \texttt{retrieve}: find AI services on the network fulfilling a
   given specification.
@@ -356,7 +369,7 @@ found in the
 \href{https://github.com/singnet/ai-dsl/blob/master/experimental/registry-dsl/README.md}{\texttt{README.md}}
 under the
 \href{https://github.com/singnet/ai-dsl/blob/master/experimental/registry-dsl/}{\texttt{experimental/simple-idris-services/service/}}
-folder of the \href{https://github.com/singnet/ai-dsl/}{ai-dsl
+folder of the \href{https://github.com/singnet/ai-dsl/}{AI-DSL
   repository}~\cite{AIDSLRepo}.
 
 \subsection{Objectives and achievements}
@@ -390,11 +403,12 @@ particular order
 
 Also, as of right now, the registry was implemented in
 Python\footnote{because the SingularityNET example it is derived from
-is written in Python}, querying Idris when necessary.  However it is
-likely that this should be better suited to Idris itself.  Which leads
-us to an interesting possibility, maybe the registry, and in fact most
-(perhaps all) components and functions of the AI-DSL could or should
-be implemented in the AI-DSL itself.
+is written in Python, not because Python is thought to be the greatest
+language for this purpose.}, querying Idris when necessary.  However
+it is likely that this should be better suited to Idris itself.  Which
+leads us to an interesting possibility, maybe the registry, and in
+fact most (perhaps all) components and functions of the AI-DSL could
+or should be implemented in the AI-DSL itself.
 
 \chapter{AI-DSL Ontology (Kabir's work)}
 
@@ -482,9 +496,9 @@ probably require some form of voting / global consensus on a platfrom level.
   service and will depend on the immediate context (e.g. price of service, a
   machine on which it is running, possibly reputation score, etc.). It is not
   clear at this point how much of this functionality will be possible (and
-  practical) to implement on available type-dependent, ontology languages or
+  practical) to implement on available dependently typed, ontology languages or
   even if it is possible to use single language. Even it if is possible to
-  implement all AI-DSL purely on the current type-dependent language choice
+  implement all AI-DSL purely on the current dependently typed language choice
   Idris, it will have to interface with the world, deal with indeterministic
   input from network and mutable states -- operations that may fail in run-time
   no matter how careful type checking is done during compile time
@@ -512,8 +526,9 @@ probably require some form of voting / global consensus on a platfrom level.
 \end{description}
 
 \subsection{Domain model considerations}
+\label{domain_model_considerations}
 
-In order to attend to all high level design requirements. all levels of AI-DSL
+In order to attend to all high level design requirements. All levels of AI-DSL
 Ontology should be developed simulatneously, so that we could make sure that the
 work is aligned with the function and role of AI-DSL within SingularityNET
 platform and ecosystem. We therefore use the "AI/computer-scientific"
@@ -550,7 +565,7 @@ functionality explained in section~\ref{aidsl_registry} on AI-DSL Registry,
 namely performance of matching and composition of AI services. This is the main
 reason why we chose \textit{Fake News Warning} application as a domain model
 for early development efforts of AI-DSL. However, we use this domain model
-solely for the appication-independent design of AI-DSL and attend to
+solely for the application-independent design of AI-DSL and attend to
 its application specific aspects only as much as it informs the project.
 
 The idea of dynamic service discovery is to enable application developers to
@@ -612,7 +627,10 @@ graph of \textit{Fake News Warning} app:
     \end{minted}
     \captionsetup{width=0.7\linewidth}
     \caption{\label{lst:dag}A directed acyclic graph (DAT) of
-    \textit{Fake News Warning} app prototype\cite{NuNetFakeNewsWarningAppRepo}}
+      \textit{Fake News Warning} app
+      prototype\cite{NuNetFakeNewsWarningAppRepo}.  Meaning that
+      \texttt{news-score} depends on \texttt{uclnlp} and
+      \texttt{binary-classification}.}
 \end{figure}
 
 The schematic representation of the \textit{Fake News Warning} app deployed as a
@@ -649,16 +667,18 @@ design of AI-DSL Ontology and the prototype.
 After discussing several choices of ontology languages and reusing existing
 ontologies for designing AI-DSL ontology\footnote{See
 \href{https://github.com/singnet/ai-dsl/discussions/18}{Reusing Existing
-Ontologies} discussion on AI-DSL Github Repo\cite{AIDSLRepo}}, we have opted to
-use SUO-KIF as an ontology language \cite{pease_standard_2009} and SUMO as an
-upper-level ontology \cite{NilesPease2001}. The main motivation for this choice
+Ontologies} discussion on AI-DSL Github repository\cite{AIDSLRepo}}, we have opted to
+use SUO-KIF as an ontology language~\cite{pease_standard_2009} and SUMO as an
+upper-level ontology~\cite{NilesPease2001}. The main motivation for this choice
 were the versatility of KIF/SUO-KIF (Knowledge Interchange Format) language,
 which essentially allows to express first order logic statements in a simple
 text format in terms of lisp-like syntax. Due to that, KIF can be easily
 converted to other formats\cite{kalibatiene_survey_2011}. Also, a conversion to
-Atomese -- the OpenCog's language also employoing a list-like syntax -- has been
-successfully attempted in the past\footnote{As informed by Ben Goertzel during
-one of the AI-DSL project meetings.} SUMO and the related ontology design tools
+Atomese -- the OpenCog's language also employing a list-like syntax -- has been
+successfully attempted in the past\footnote{See
+the \href{https://github.com/opencog/external-tools/tree/master/SUMO_importer}{SUMO
+  Importer} in the OpenCog External Tools
+repository\cite{ExternalToolsRepo}}. SUMO and the related ontology design tools
 \cite{pease_sigma_2001} provide a convienent way for starting to design AI-DSL
 Ontology levels and their relations.
 
