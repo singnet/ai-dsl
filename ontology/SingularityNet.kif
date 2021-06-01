@@ -36,6 +36,7 @@
 ; this is subject of the future work
 
 (subclass JSONDef DataType)
+(subclass ProtoBufDef DataType)
 (subclass URL DataType)
 (subclass Text DataType)
 (subclass Boolean DataType)
