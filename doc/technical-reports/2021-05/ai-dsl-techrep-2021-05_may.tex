@@ -7,11 +7,13 @@
 \usepackage[textsize=footnotesize]{todonotes}
 \newcommand{\kabir}[2][]{\todo[color=yellow,author=kabir, #1]{#2}}
 \newcommand{\nil}[2][]{\todo[color=purple,author=nil, #1]{#2}}
-\usepackage{hyperref}
+\usepackage[hyperindex,breaklinks]{hyperref}
+\usepackage{breakurl}
 \usepackage{listings}
 \lstset{basicstyle=\ttfamily\footnotesize,breaklines=false,frame=single}
 \usepackage{float}
 \restylefloat{table}
+\usepackage{longtable}
 \usepackage{graphicx}
 \usepackage[font=small,labelfont=bf]{caption}
 \usepackage{subcaption}
@@ -414,10 +416,11 @@ or should be implemented in the AI-DSL itself.
 \section{Description}
 
 \subsection{Design requirements}
+\label{design-requirements}
 
 At the beginning of the current iteration of the AI-DSL project we had a round
 of discussions about the high level functional and design requirements for
-AI-DSL and its role in SingularityNET platfrom and ecosystem. The discussions
+AI-DSL and its role in SingularityNET platform and ecosystem. The discussions
 were based on
 \cite{GoertzelGeisweillerBlog,singularitynet_foundation_phasetwo_2021}  and are
 \href{https://github.com/nunet-io/ai-dsl-ontology/wiki/AI-DSL\%20requirements}{available
@@ -425,10 +428,10 @@ online} in their original form. Here is the summary of the preliminary design
 requirements informed by those discussions:
 
 \begin{itemize} \item AI-DSL is a language that allows AI agents/services
-running on SinglarityNET platfrom to declare their capabilities and needs for
-data to other AI agents in a rich and versatile machine readible form; This will
+running on SinglarityNET platform to declare their capabilities and needs for
+data to other AI agents in a rich and versatile machine readable form; This will
 enable different AI agents to search, find data sources and other AI services
-whithout human interaction; \item AI-DSL ontology defines data and service
+without human interaction; \item AI-DSL ontology defines data and service
 (task) types to be used by AI-DSL. Requirements for the ontology are shaped by
 the scope and specification of the AI-DSL itself; \end{itemize}
 
@@ -446,19 +449,19 @@ agents to perform reasoning across the whole space of available ontologies
 interoperability of lower level ontologies, AI-DSL ontology will define small
 kernel / vocabulary of globally accessible grounded types, which will be
 built-in into the platform at the deep level. Changing this kernel will most
-probably require some form of voting / global consensus on a platfrom level.
+probably require some form of voting / global consensus on a platform level.
 
   Therefore, it seems best to define AI-DSL Ontology and the mechanism of using
   it on two levels: \begin{itemize} \item \textit{The globally accessible
   vocabulary/root ontology of grounded types}. This vocabulary can be seen as
-  immutable (in short and medium term) kernel. It should be extendible in the
+  immutable (in short and medium term) kernel. It should be extendable in the
   long term, but the mechanisms of changing and extending it will be quite
-  complex, most probably involving theorectical considerations and/or a strict
+  complex, most probably involving theoretical considerations and/or a strict
   procedures of reaching global consensus within the whole platform (a sort of
   voting); \item \textit{A decentralized ontology of types and tasks} which each
   are based (i.e. type-dependent) on the root ontology/vocabulary, but can be
   extended in a decentralized manner -- in the sense that each agent in the
-  platfrom will be able to define, use and share derived types and task
+  platform will be able to define, use and share derived types and task
   definitions at its own discretion without the need of global consensus.
   \end{itemize}
 
@@ -481,7 +484,7 @@ probably require some form of voting / global consensus on a platfrom level.
   allow to find the type / service that does not satisfy all requirements
   exactly, but comes as closely as available in the platform. \item At the
   lowest level of describing each instance of AI service or data source on the
-  platfrom, AI-DSL shall allow maximum extentibility in so that AI service
+  platform, AI-DSL shall allow maximum extendability in so that AI service
   providers and data providers will be able to describe and declare their
   services in the most flexible and unconstrained manner, facilitating
   competition and cooperation between them. \end{itemize}
@@ -497,7 +500,7 @@ probably require some form of voting / global consensus on a platfrom level.
   practical) to implement on available dependently typed, ontology languages or
   even if it is possible to use single language. Even it if is possible to
   implement all AI-DSL purely on the current dependently typed language choice
-  Idris, it will have to interface with the world, deal with indeterministic
+  Idris, it will have to interface with the world, deal with in-deterministic
   input from network and mutable states -- operations that may fail in run-time
   no matter how careful type checking is done during compile time
   \cite{brady_resource-dependent_2015}.
@@ -519,7 +522,7 @@ probably require some form of voting / global consensus on a platfrom level.
   is quite clear however, that in order to enable interaction with and between
   SingularityNET agents (and NuNet adapters) all above properties have to be
   made accessible outside Idris and therefore supported by the code-level /
-  service-level APIs and the SingularityNET platfrom in general.
+  service-level APIs and the SingularityNET platform in general.
 
 \end{description}
 
@@ -527,7 +530,7 @@ probably require some form of voting / global consensus on a platfrom level.
 \label{domain_model_considerations}
 
 In order to attend to all high level design requirements. All levels of AI-DSL
-Ontology should be developed simulatneously, so that we could make sure that the
+Ontology should be developed simultaneously, so that we could make sure that the
 work is aligned with the function and role of AI-DSL within SingularityNET
 platform and ecosystem. We therefore use the "AI/computer-scientific"
 perspective to ontology and ontology building -- emphasizing \textit{what an
@@ -536,7 +539,7 @@ ontologoy is for} -- rather than the "philosophical perspecive" dealing with
 \cite{gruber_translation_1993,sep-logic-ontology}. Therefore we first propose
 the  mechanism of how different levels (upper, domain and the leaf- (or
 service)) of AI-DSL ontology will relate for facilitating interactions between
-AI services on the platfrom.
+AI services on the platform.
 
 Note, that design principles of such mechanism relate to the question how
 abstract and consistent should relate to concrete and possibly inconsistent --
@@ -545,13 +548,13 @@ during the project and presented here. We proceed in most practical manner for
 proposing the AI-DSL ontology prototype, being aware that it may need to (and
 possibly should) be subjected to more conceptual treatment in the future.
 
-For a concrete domain model of AI-DSL ontologoy prototype we use the
+For a concrete domain model of AI-DSL ontology prototype we use the
 \textit{Fake News
 Warning}\footnote{\href{https://gitlab.com/nunet/fake-news-detection}{https://gitlab.com/nunet/fake-news-detection}}
 application being developed by NuNet -- a currently incubated spinoff of
 SingularityNET\footnote{\href{https://nunet.io}{https://nunet.io}}.
 
-NuNet is the platfrom enabling dynamic deployment and up/down-scaling of
+NuNet is the platform enabling dynamic deployment and up/down-scaling of
 SingularityNET AI Services on decentralized hardware devices of potentially any
 type. Importantly for the AI-DSL project, service discovery on NuNet is designed
 in a way that enables dynamic construction of application-specific service
@@ -559,7 +562,7 @@ meshes from several SingularityNET AI services\cite{nunet_nunet_2021}. In order
 for the service mesh to be deployed, NuNet needs only a specification of program
 graph of the application. Note, that conceptually, construction of an
 application from several independent containers is almost equivalent to
-functionality explained in section \ref{aidsl_registry} on AI-DSL Registry,
+functionality explained in section~\ref{aidsl_registry} on AI-DSL Registry,
 namely performance of matching and composition of AI services. This is the main
 reason why we chose \textit{Fake News Warning} application as a domain model
 for early development efforts of AI-DSL. However, we use this domain model
@@ -567,11 +570,11 @@ solely for the application-independent design of AI-DSL and attend to
 its application specific aspects only as much as it informs the project.
 
 The idea of dynamic service discovery is to enable application developers to
-construct working applications (or at least their backends) by simply passing a
+construct working applications (or at least their back-ends) by simply passing a
 declarative definition of program graph to the special platform component
 ("network orchestrator") -- which then searches for appropriate SingularityNET
 AI containers and connects them in to a single workflow (or workflows).
-Suppose, that the backend of \textit{Fake News Warning} app consists of three
+Suppose, that the back-end of \textit{Fake News Warning} app consists of three
 SingularityNET AI containers \textit{news\_score}, \textit{uclnlp} and
 \textit{binary-classification}:
 
@@ -583,7 +586,7 @@ SingularityNET AI containers \textit{news\_score}, \textit{uclnlp} and
     \textbf{Output} &
     \textbf{Source}\\
     \hline
-    binary-classification & A pre-trained binary classification model &
+    binary-classification & A pretrained binary classification model &
     English text of any length & 1 -- the text is categorized
     as fake; 0 -- text is categorized as not-fake & \textcopyright
     \href{https://gitlab.com/nunet/fake-news-detection/binary-classification}{NuNet}
@@ -597,7 +600,7 @@ SingularityNET AI containers \textit{news\_score}, \textit{uclnlp} and
     Machine Reading} 2017; \textcopyright
     \href{https://gitlab.com/nunet/fake-news-detection/uclnlp}{NuNet} 2021\\ \hline
     news-score & Calls dependent services, calculates overall result and sends them
-    to the frontend & URL of the content to be checked & Probability that the content
+    to the front-end & URL of the content to be checked & Probability that the content
     in the URL is fake & \textcopyright
     \href{https://gitlab.com/nunet/fake-news-detection/fake_news_score}{NuNet} 2021 \\
     \end{tabular}
@@ -606,14 +609,14 @@ SingularityNET AI containers \textit{news\_score}, \textit{uclnlp} and
   \texttt{Fake News Warning} application.}
 \end{table}
 
-Each component of application's backend is a SingularityNET AI Service
-registered on the platfrom.  Note, that as SingularityNET AI services are
+Each component of application's back-end is a SingularityNET AI Service
+registered on the platform.  Note, that as SingularityNET AI services are
 defined through their specification and their
 metadata\cite{SNETDocumentationServiceSetup}. The main purpose of the AI-DSL
 Ontology is to be able to describe SNet AI Services in a manner that would allow
-them to search and match each other on the platfrom and compose into complex
+them to search and match each other on the platform and compose into complex
 workflows -- similarly to what is described in Section
-\ref{network_idris_ai_services}. Here is a simple represenation of the program
+\ref{network_idris_ai_services}. Here is a simple representation of the program
 graph of \textit{Fake News Warning} app:
 
 \begin{figure}[h]
@@ -632,9 +635,9 @@ graph of \textit{Fake News Warning} app:
 \end{figure}
 
 The schematic representation of the \textit{Fake News Warning} app deployed as a
-result of processing the DAG is depicted below. The addition of NuNet platfrom
+result of processing the DAG is depicted below. The addition of NuNet platform
 to SingularityNET service discovery is that each service may be deployed on
-different hardware environments, sourced by NuNet. When the application backend
+different hardware environments, sourced by NuNet. When the application back-end
 is deployed, it can be accessed from the GUI interface, which in this case is a
 Brave browser extension.
 
@@ -677,14 +680,226 @@ successfully attempted in the past\footnote{See
 the \href{https://github.com/opencog/external-tools/tree/master/SUMO_importer}{SUMO
   Importer} in the OpenCog External Tools
 repository\cite{ExternalToolsRepo}}. SUMO and the related ontology design tools
-\cite{pease_sigma_2001} provide a convienent way for starting to design AI-DSL
+\cite{pease_sigma_2001} provide a convenient way for starting to design AI-DSL
 Ontology levels and their relations.
-
-\kabir[inline]{Finished here: 2021-05-27T01:37 CET}
 
 \section{Objectives and achievements}
 
-\section{Relations between levels}
+\section{Decentralized ontology}
+
+In order to satisfy the \textit{extendibility} requirement of ontology design
+(see~\ref{design-requirements}), we are proposing a notion and design of a
+\textit{decentralized ontology}, which enables us to work with globally
+consistent and locally incosistent components within the same mechanism of
+AI-DSL. Based on this design, the full ontology of \textit{Fake News Warning}
+application is constructed from a number of separate components, which operate
+at different level of decentralization. Table below describes each of these
+components.
+
+\begin{table}[H]
+%describe each kif file / level of ontology / consistent / inconsistent;
+  \scriptsize
+  \centering
+  \begin{tabular}{p{0.24\linewidth}|p{0.24\linewidth}|p{0.24\linewidth}|p{0.24\linewidth}|}
+    \textbf{Component} &
+    \textbf{Description} &
+    \textbf{Dependencies} &
+    \textbf{Extendability}\\
+    \hline
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/NuNet.kif}{NuNet.kif} &
+    Defines classes to be used for describing each hardware resource eligible
+    for running SingularityNET AI Services via NuNet platform;  &
+    Merge.kif, SingularityNET.kif [,..]&
+    Limited: versioning mechanism controlled by NuNet (to be defined) \\
+    \hline
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
+    SingulairtyNet.kif}{SingularityNet.kif} &
+    Defines global classes and types to be used for describing each
+    SingularityNET AI Service &
+    ComputerInput.kif, Merge.kif [,..]&
+    Limited: versioning mechanism controlled by SingularityNET (to be defined)\\
+    \hline
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
+    FakeNewsScore.kif}{FakeNewsScore.kif} &
+    SingularityNET service responsible for constructing the whole back-end of
+    each \textit{Fake News Warning} application instance i.e. program graph
+    (DAG) of the application.&
+    SingularityNET.kif [,..] &
+    Fully decentralized: defined by application developers; Since \textit{Fake News
+Warning} application is open source, any developer can for it and define it
+otherwise; Technically, this would be a different application.\\
+    \hline
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/fnsBinaryClassifier.kif}{fnsBinaryClassifier.kif} &
+    A pre-trained binary classification model for fake news detection &
+    SingularityNET.kif [,..] &
+    Fully decentralized: defined by each algorithm developer independently.
+    Technically, from the platform perspective, these will be different
+    algorithms. \\
+    \hline
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
+    NuNetEnabledComputer.kif}{NuNetEnabledCompu-ter.kif} &
+    Each NuNet enabled hardware resource will have to be described accordingly
+    when on-boarded to NuNet platform &
+    NuNet.kif &
+    Fully decentralized: independently defined by the owner of a hardware
+    resource \\
+    \hline
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
+    uclnlp.kif}{uclnlp.kif} &
+    Forked and adapted component of stance detection algorithm by UCL Machine Reading group &
+    SingularityNET.kif [,..] &
+    Fully decentralized: defined by each algorithm developer independently.
+    Technically, from the platform perspective, these will be different
+    algorithms \\
+    \hline
+    \href{https://github.com/ontologyportal/sumo/blob/master/Merge.kif}{Merge.kif} &
+    SUMO structural ontology, base ontology, numerical functions, set/class theory, temporal concepts and mereotopology &
+    None - root ontology &
+    Centralized and globally enforced -- defined by \href{http://www.ontologyportal.org/}{ontologyportal.org} \\
+    \end{tabular}
+  \captionsetup{width=0.7\linewidth}
+  \caption{\label{tbl:all_kif_files}Description of each component of the AI-DSL Ontology prototope and links to related KIF files.}
+\end{table}
+
+\section{Ontology prototype}
+
+Using the ontology levels described in Table \ref{tbl:all_kif_files} and
+referenced files, we have described the \textit{Fake News Warning} application.
+
+Each SNet AI Service instance of the application is described as follows:
+
+\begin{figure}[H]
+  \begin{subfigure}[b]{1\textwidth}
+    \centering
+    \inputminted[firstline=1, lastline=2, linenos,tabsize=2,breaklines, fontsize=\small]{scm}{../../../ontology/uclnlp.kif}
+    \captionsetup{width=0.8\linewidth}
+    \caption{Service description}
+  \end{subfigure}
+  \begin{subfigure}[b]{1\textwidth}
+    \centering
+    \inputminted[firstline=4, lastline=8, linenos,tabsize=2,breaklines, fontsize=\small]{scm}{../../../ontology/uclnlp.kif}
+    \captionsetup{width=0.8\linewidth}
+    \caption{Descriptions of service input and output types.}
+  \end{subfigure}
+  \begin{subfigure}[b]{1\textwidth}
+    \centering
+    \inputminted[firstline=10, lastline=26, linenos,tabsize=2,breaklines, fontsize=\small]{scm}{../../../ontology/uclnlp.kif}
+    \captionsetup{width=0.8\linewidth}
+    \caption{Definition of types and their dependencies.}
+  \end{subfigure}
+\caption{\label{fig:serviceDefinitionKif}SNet AI Service definition in KIF
+(uclnlp and binary-classification services are described in this way).}
+\end{figure}
+
+Type definitions and their dependency definitions are actually the domain of
+formal type-checking part of AI-DSL and Idris related research. However,
+irrespectively of which language will be eventually chosen for AI-DSL, Figure
+\ref{fig:serviceDefinitionKif} expresses that we can:
+\begin{enumerate}
+  \item define correct serviceInput and serviceOutput types (unique for each
+  service);
+  \item potentially provide proofs that if a service data of correct type on
+  input, then it will output correctly typed data;
+  \item if that will not be possible (which is the default option when actual
+  service AI are not written in Idris):
+  \begin{enumerate}
+    \item check if input data is of correct type at run-time and refuse to start
+    service if it is not;
+    \item check if output data is of correct type before sending it to the
+    caller and raise error if it is not so;
+  \end{enumerate}
+\end{enumerate}
+
+However, the \textit{FakeNewsScore} AI Service is special in that it calls
+other dependent services (as described by program graph in Figure
+\ref{lst:dag}) and combines their results. We can define the program graph in
+terms of dependencies between services in KIF as follows:
+
+\begin{figure}[H]
+  \captionsetup{width=0.8\linewidth}
+  \inputminted[firstline=1, lastline=11, linenos,tabsize=2,breaklines, fontsize=\small]{scm}{../../../ontology/FakeNewsScore.kif}
+  \caption{\label{fig:serviceDependencies}Defining program graph as an ontology.}
+\end{figure}
+
+SNet AI service class is positioned within the SUMO ontolog as follows:
+
+\begin{table}[H]
+  \scriptsize
+  \centering
+  \begin{tabular}{p{0.2\linewidth}|p{0.7\linewidth}|p{0.1\linewidth}|}
+    \textbf{Class, subclass or instance} &
+    \textbf{Description} &
+    \textbf{Where defined} \\
+    \hline
+    Entity &
+    The universal class of individuals. This is the root node of the ontology. &
+    \href{https://github.com/ontologyportal/sumo/blob/master/Merge.kif}{Merge.kif}\\
+    \hline
+    Abstract &
+    Properties or qualities as distinguished from any particular embodiment of
+    the properties/ qualities in a physical medium. Instances of Abstract can be
+    said to exist in the same sense as mathematical objects such as sets and
+    relations, but they cannot exist at a particular place and time without some
+    physical encoding or embodiment. &
+    \href{https://github.com/ontologyportal/sumo/blob/master/Merge.kif}{Merge.kif}\\
+    \hline
+    Proposition &
+    Propositions are Abstract entities that express a complete thought or a set of
+such thoughts. Note that propositions are not restricted to the content
+expressed by individual sentences of a Language. They may encompass the content
+expressed by theories, books, and even whole libraries. A Proposition is a piece
+of information, e.g. that the cat is on the mat, but a ContentBearingObject is
+an Object that represents this information. A Proposition is an abstraction that
+may have multiple representations: strings, sounds, icons, etc. For example, the
+Proposition that the cat is on the mat is represented here as a string of
+graphical characters displayed on a monitor and/ or printed on paper, but it can
+be represented by a sequence of sounds or by some non-latin alphabet or by some
+cryptographic form. &
+    \href{https://github.com/ontologyportal/sumo/blob/master/Merge.kif}{Merge.kif}\\
+    \hline
+    Procedure &
+    A sequence-dependent specification. Some examples are ComputerPrograms,
+finite-state machines, cooking recipes, musical scores, conference schedules,
+driving directions, and the scripts of plays and movies. &
+    \href{https://github.com/ontologyportal/sumo/blob/master/Merge.kif}{Merge.kif}\\
+    \hline
+    ComputerProgram &
+    A set of instructions in a computer programming language that can be
+    executed by a computer. &
+    \href{https://github.com/ontologyportal/sumo/blob/master/Merge.kif}{Merge.kif}\\
+    \hline
+    SoftwareContainer &
+    &
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
+    SingulairtyNet.kif}{Singularity-Net.kif}\\
+    \hline
+    SNetAIService &
+    Software package exposed via SNetPlatfrom and conforming to the special
+    packaging rules &
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
+    SingulairtyNet.kif}{Singularity-Net.kif}\\
+    \hline
+    NuNetEnabled-SNetAIService &
+    SNetAIService which can be deployed on NuNetEnabledComputers and
+    orchestrated via NuNet platfrom &
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
+    NuNet.kif}{NuNet.kif}\\
+    \hline
+    \quad \textit{uclnlp} &
+    Forked and adapted component of stance detection algorithm by UCL Machine
+    Reading group. &
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
+    uclnp.kif}{uclnlp.kif}
+  \end{tabular}
+\captionsetup{width=0.9\linewidth}
+\caption{\label{tbl:uclnlp_hierarchy}Full hierarchy of depencencies of \textit{uclnlp} SNet AI service instance within SUMO ontology. The same  hierarchy applies to binary-detection and FakeNewsScore services used in the \textit{Fake News Warning} app.}
+\end{table}
+
+\kabir[inline]{Finished here 2021-06-01 03.21}
+
+\section{The mechanism of constructing ontology}
+
+%Versions / voting / communication
 
 \begin{enumerate}
   \item Upper level SUMO ontology
@@ -722,16 +937,19 @@ hardware and software.
 \nil[inline]{Very cool, I think we want to include the (subclass
   Boolean DataType) lines, etc, as well, as they start touching the
   what matters}
-\kabir[inline]{Yes, we will. The kif files are quite large and I will have to think how to include the most important parts to test; but of course i will provide links to them here.}
+\kabir[inline]{Yes, we will. The kif files are quite large and I will have to
+think how to include the most important parts to test;
+but of course i will provide links to them here.}
 
 \section{Future work}
 
 \begin{itemize}
-  \item In the long term, it may be ideal to develop a converter for converting it to KIF,
-  since OWL may be representable in KIF \cite{martin_translations_nodate} using
-  \href{OWL API}{https://github.com/owlcs/owlapi}; For the purpose of the ontology
-  prototype, we will manually select parts of the this ontology in order to build
-  the prototype and write them in SUO-KIF format;
+  \item In the long term, it may be ideal to develop a converter for converting
+it to KIF, since OWL may be representable in KIF
+\cite{martin_translations_nodate}  using \href{OWL
+API}{https://github.com/owlcs/owlapi}; For the purpose of the ontology
+prototype, we will manually select parts of the this ontology in order to build
+the prototype and write them in SUO-KIF format;
   \item Combining ontology with Idris
 \kabir{It would be good to have a section explaining ideas about that,
 but I cannot do this alone, so probably the best is to reserve it for the end of

@@ -8,15 +8,11 @@
 (instance fnsBinaryClassifierOutputType DataType)
 
 (=>
-  (and
-    (hasField ?fnsBinaryClassifierInput mainText Text)
-  )
+  (hasField ?fnsBinaryClassifierInput mainText Text)
   (instance ?fnsBinaryClassifierInput fnsBinaryClassifierInputType)
 )
 
 (=>
-  (and
-    (hasField ?fnsBinaryClassifierOutput fakeOrNot Boolean)
-  )
+  (hasField ?fnsBinaryClassifierOutput fakeOrNot Boolean)
   (instance ?fnsBinaryClassifierOutput fnsBinaryClassifierOutputType)
 )
