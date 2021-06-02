@@ -16,7 +16,7 @@
 \usepackage{longtable}
 \usepackage{graphicx}
 \usepackage[font=small,labelfont=bf]{caption}
-\usepackage{subcaption}
+\usepackage[skip=0pt]{subcaption}
 
 \begin{document}
 
@@ -626,6 +626,7 @@ graph of \textit{Fake News Warning} app:
         "news-score" : ["uclnlp","binary-classification"]
         }
     \end{minted}
+    \vspace{-0.3cm}
     \captionsetup{width=0.7\linewidth}
     \caption{\label{lst:dag}A directed acyclic graph (DAT) of
       \textit{Fake News Warning} app
@@ -772,18 +773,23 @@ Each SNet AI Service instance of the application is described as follows:
   \begin{subfigure}[b]{1\textwidth}
     \centering
     \inputminted[firstline=1, lastline=2, linenos,tabsize=2,breaklines, fontsize=\small]{scm}{../../../ontology/uclnlp.kif}
+    \vspace{-0.3cm}
     \captionsetup{width=0.8\linewidth}
     \caption{Service description}
+    \vspace{0.3cm}
   \end{subfigure}
   \begin{subfigure}[b]{1\textwidth}
     \centering
     \inputminted[firstline=4, lastline=8, linenos,tabsize=2,breaklines, fontsize=\small]{scm}{../../../ontology/uclnlp.kif}
+    \vspace{-0.3cm}
     \captionsetup{width=0.8\linewidth}
     \caption{Descriptions of service input and output types.}
+    \vspace{0.3cm}
   \end{subfigure}
   \begin{subfigure}[b]{1\textwidth}
     \centering
     \inputminted[firstline=10, lastline=26, linenos,tabsize=2,breaklines, fontsize=\small]{scm}{../../../ontology/uclnlp.kif}
+    \vspace{-0.3cm}
     \captionsetup{width=0.8\linewidth}
     \caption{Definition of types and their dependencies.}
   \end{subfigure}
@@ -798,9 +804,9 @@ irrespectively of which language will be eventually chosen for AI-DSL, Figure
 \begin{enumerate}
   \item define correct serviceInput and serviceOutput types (unique for each
   service);
-  \item potentially provide proofs that if a service data of correct type on
-  input, then it will output correctly typed data;
-  \item if that will not be possible (which is the default option when actual
+  \item potentially provide proofs that if a service data of correct type is
+  provided on input, then it will output correctly typed data;
+  \item if the above is not possible (which may be the default option when actual
   service AI are not written in Idris):
   \begin{enumerate}
     \item check if input data is of correct type at run-time and refuse to start
@@ -817,11 +823,111 @@ terms of dependencies between services in KIF as follows:
 
 \begin{figure}[H]
   \captionsetup{width=0.8\linewidth}
-  \inputminted[firstline=1, lastline=11, linenos,tabsize=2,breaklines, fontsize=\small]{scm}{../../../ontology/FakeNewsScore.kif}
-  \caption{\label{fig:serviceDependencies}Defining program graph as an ontology.}
+  \inputminted[firstline=1, lastline=9, linenos,tabsize=2,breaklines, fontsize=\small]{scm}{../../../ontology/FakeNewsScore.kif}
+  \vspace{-0.3cm}
+  \caption{\label{fig:serviceDependencies}Defining program graph as a formal ontology. This is equivalent to DAG of Figure \ref{lst:dag}.}
 \end{figure}
 
-SNet AI service class is positioned within the SUMO ontolog as follows:
+\kabir[inline]{Write about matching inputs and outputs of the sevices.}
+
+All services of \textit{Fake News Warning} application are instances of
+\texttt{NuNetEnablesSNetAIService} subclass, which, in turn, is a subclass of
+\texttt{SNetAIService} class:
+\begin{figure}[H]
+  \begin{subfigure}[t]{1\textwidth}
+    \centering
+    \begin{minted}[linenos,tabsize=2,breaklines,fontsize=\small]{scm}
+(instance fakeNewsScore NuNetEnabledSNetAIService)
+(instance uclnlp NuNetEnabledSNetAIService)
+    \end{minted}
+    \vspace{-0.3cm}
+    \captionsetup{width=0.8\linewidth}
+    \caption{Declaration of \texttt{FakeNewsScore} service in
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
+    FakeNewsScore.kif}{FakeNewsScore.kif} and of \texttt{uclnlp} service
+    in \href{https://github.com/singnet/ai-dsl/blob/master/ontology/uclnlp.kif}{uclnlp.kif}.}
+    \vspace{0.3cm}
+  \end{subfigure}
+  \begin{subfigure}[t]{1\textwidth}
+    \centering
+    \inputminted[firstline=1, lastline=2, linenos,tabsize=2,breaklines, fontsize=\small]{scm}{../../../ontology/NuNet.kif}
+    \vspace{-0.3cm}
+    \captionsetup{width=0.8\linewidth}
+    \caption{Definition of \texttt{NuNetEnabledSNetAIService} in \href{https://github.com/singnet/ai-dsl/blob/master/ontology/NuNet.kif}{NuNet.kif}.}
+  \end{subfigure}
+  \captionsetup{width=0.9\linewidth}
+  \caption{Relation between SingularityNet and NuNet domain ontologies.}
+  \label{fig:SNET_and_NuNet}
+\end{figure}
+
+Figure \ref{fig:SNET_and_NuNet} describes relation between
+SingularityNET and NuNet platforms. \texttt{SNetAIService} class, defined in
+ \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
+SingularityNET.kif}{SingularityNET.kif}, contains all requirements for the
+metadata of the servcie to be published on SingularityNET platform.
+\texttt{NuNetEnabledSNetAIService} extends \texttt{SNetAIService} by adding
+metadata that is needed for this service to be deployed via NuNet APIs:
+
+\begin{figure}[H]
+  \centering
+  \inputminted[firstline=4, lastline=11, linenos,tabsize=2,breaklines,
+  fontsize=\small]{scm}{../../../ontology/NuNet.kif}
+  \captionsetup{width=1\linewidth}
+  \vspace{-0.3cm}
+  \caption{The definition of \texttt{NuNetEnabledSNetAIService} in
+  \href{https://github.com/singnet/ai-dsl/blob/master/ontology/NuNet.kif}{NuNet.kif}
+  requres a service to have compute resource (and possibly other) requirements
+  included in service metadata. The idea is that without required metadata
+  fields, a service would not pass validation allowing it to be deployed via
+  NuNet. An arbitrary amount of requirements could be defined here.}
+  \label{fig:NuNetEnabledAIService_metadata_requirements}
+\end{figure}
+
+\texttt{NuNetEnabledSNetAIService}s can be deployed only on
+\texttt{NuNetEnabledComputer}s, which expose their available computing resources
+in a manner that the ability to run a service is automatically checked
+\textbf{before} a service is dynamically deployed on a computer and a service
+call is actually issued to it (see Figure
+\ref{fig:NuNetEnabledComputer_requirements}). This formally described relation
+between SingularityNET and NuNet ontologies enables to prove at 'compile time'
+that a service will have enough computational  resources to be executed. Recall,
+that SingularityNET ontology alone enables to  prove that a service or a
+collection of services will return correct results when  called with correct
+inputs.
+
+\begin{figure}[H]
+  \centering
+  \inputminted[firstline=13, lastline=31, linenos,tabsize=2,breaklines,
+  fontsize=\small]{scm}{../../../ontology/NuNet.kif}
+  \captionsetup{width=1\linewidth}
+  \vspace{-0.3cm}
+  \caption{The definition of \texttt{NuNetEnabledComputer} in
+  \href{https://github.com/singnet/ai-dsl/blob/master/ontology/NuNet.kif}{NuNet.kif}
+  requires available computing resources, computer type and operating system to
+  be listed in the metadata.}
+  \label{fig:NuNetEnabledComputer_requirements}
+\end{figure}
+
+A \texttt{SNetAIService} can only be deployed on \texttt{NuNetEnabledComputer}
+if available resources on the computer are not less than compute requirements of
+a service:
+
+\begin{figure}[H]
+  \centering
+  \inputminted[firstline=38, lastline=47, linenos,tabsize=2,breaklines,
+  fontsize=\small]{scm}{../../../ontology/NuNet.kif}
+  \captionsetup{width=1\linewidth}
+  \vspace{-0.3cm}
+  \caption{Constraints on eligible match between \texttt{SNetAIService} and
+  \texttt{NuNetEnabledComputer} defined in
+  \href{https://github.com/singnet/ai-dsl/blob/master/ontology/NuNet.kif}{NuNet.kif}
+  required for deployment.}
+  \label{fig:service_deployment_requirements}
+\end{figure}
+
+\kabir[inline]{possibly put graphical representations of ontology hierarchy.}
+
+\texttt{SNetAIService} and \texttt{NuNetEnabledSNetAIService} classes are positioned within the SUMO ontology as follows:
 
 \begin{table}[H]
   \scriptsize
@@ -876,28 +982,25 @@ driving directions, and the scripts of plays and movies. &
     SNetAIService &
     Software package exposed via SNetPlatfrom and conforming to the special
     packaging rules &
-    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
-    SingulairtyNet.kif}{Singularity-Net.kif}\\
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/    SingulairtyNet.kif}{Singularity-Net.kif}\\
     \hline
     NuNetEnabled-SNetAIService &
     SNetAIService which can be deployed on NuNetEnabledComputers and
     orchestrated via NuNet platfrom &
-    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
-    NuNet.kif}{NuNet.kif}\\
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/    NuNet.kif}{NuNet.kif}\\
     \hline
     \quad \textit{uclnlp} &
     Forked and adapted component of stance detection algorithm by UCL Machine
     Reading group. &
-    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
-    uclnp.kif}{uclnlp.kif}
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/    uclnp.kif}{uclnlp.kif}
   \end{tabular}
 \captionsetup{width=0.9\linewidth}
-\caption{\label{tbl:uclnlp_hierarchy}Full hierarchy of depencencies of \textit{uclnlp} SNet AI service instance within SUMO ontology. The same  hierarchy applies to binary-detection and FakeNewsScore services used in the \textit{Fake News Warning} app.}
+\caption{\label{tbl:uclnlp_hierarchy}Full hierarchy of dependencies of \textit{uclnlp} SNet AI service instance within SUMO ontology. The same  hierarchy applies to binary-detection and FakeNewsScore services used in the \textit{Fake News Warning} app.}
 \end{table}
 
-\kabir[inline]{Finished here 2021-06-01 03.21}
+\kabir[inline]{Finished here 2021-06-02 02:14}
 
-\section{The mechanism of constructing ontology}
+\section{The mechanism of dynamic workflow construction}
 
 %Versions / voting / communication
 
@@ -923,23 +1026,6 @@ dependences of AI-DSL Ontology (SingularityNet.kif) }
 
 \kabir[inline]{using ontology for agent communication in decentralized computing
 systems, based on \cite{YvesHellenschmidt2002}}
-
-\subsection{Leaf ontology (fake-news-detection workflow definition)}
-
-The prototype will be the fake-news-detector leaf ontology based on the above
-listed upper and middle ontologies (SUMO) and domain ontologies of computer
-hardware and software.
-
-\begin{figure}[H]
-\inputminted[firstline=2, lastline=12, linenos,tabsize=2,breaklines, fontsize=\small]{scm}{../../../ontology/SingularityNet.kif}
-\caption{\label{lst:singularitynet}Contents of SingularityNet.kif}
-\end{figure}
-\nil[inline]{Very cool, I think we want to include the (subclass
-  Boolean DataType) lines, etc, as well, as they start touching the
-  what matters}
-\kabir[inline]{Yes, we will. The kif files are quite large and I will have to
-think how to include the most important parts to test;
-but of course i will provide links to them here.}
 
 \section{Future work}
 

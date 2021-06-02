@@ -1,14 +1,12 @@
-(instance fakeNewsScore SNetAIService)
+(instance fakeNewsScore NuNetEnabledSNetAIService)
 (documentation fakeNewsScore EnglishLanguage "Calls dependent services, calculates summary result from their outputs
 and calculates the overall probability that the provided content contains fake news")
 
 (hasDependency fakeNewsScore uclnlp)
 (hasInput fakeNewsScore uclnlpOutput)
-; there should be a way to infer this from the previous axiom
 
 (hasDependency fakeNewsScore fnsBinaryClassifier)
 (hasInput fakeNewsScore fnsBinaryClassifierOutput)
-; there should be a way to infer this from the previous axiom
 
 (hasOutput fakeNewsScore fakeNewsScoreOutput)
 (instance fakeNewsScoreOutputType DataType)
