@@ -1089,19 +1089,62 @@ it to KIF, since OWL may be representable in KIF
 API}{https://github.com/owlcs/owlapi}; For the purpose of the ontology
 prototype, we will manually select parts of the this ontology in order to build
 the prototype and write them in SUO-KIF format;
-  \item Combining ontology with Idris
-\kabir{It would be good to have a section explaining ideas about that,
-but I cannot do this alone, so probably the best is to reserve it for the end of
-the monht, when all the other aspects of AI-DSL project (including Idris) are
-explained.}
+  \item Similarly we want to be able to convert SUO-KIF specifications
+    into Idris, and vise versa, to take advantage of the strengths of
+    each formalism.  To start exploring that we have ported the
+    trivial AI services described in Section \ref{aidsl_registry} to
+    SUO-KIF, see
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/TrivialServices.kif}{TrivialServices.kif}
+    under the
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology}{ontology}
+    of the \href{https://github.com/singnet/ai-dsl/}{AI-DSL
+      repository}~\cite{AIDSLRepo}.  As it turns out writing formal
+    specifications of functions in SUO-KIF is reasonably straight
+    forward.  Here's the SUO-KIF implementation of the Twicer service
+    to get a idea
+\begin{minted}[mathescape]{idris}
+(instance TwicerFn UnaryFunction)
+(domain TwicerFn 1 Integer)
+(range TwicerFn EvenInteger)
+(=>
+  (instance ?INTEGER Integer)
+  (equal (TwicerFn ?INTEGER) (MultiplicationFn ?INTEGER 2))))
+\end{minted}
+where \texttt{EvenInteger} happens to be predefined in
+\href{https://github.com/ontologyportal/sumo/blob/master/Merge.kif}{Merge.kif}
+of SUMO, partially recalled below
+\begin{minted}[mathescape]{idris}
+(=>
+  (instance ?NUMBER EvenInteger)
+  (equal (RemainderFn ?NUMBER 2) 0))
+\end{minted}
+Thus one can see that is it easy to specify a function input type,
+using \texttt{domain}, and output type, using \texttt{range}, in
+SUO-KIF, as well its full or partial definition, using \texttt{=>},
+\texttt{equal} and universally quantified variables such as
+\texttt{?NUMBER}.  It should be noted however that the reason it works
+so well in that case is because the output type does not depend on the
+input value, the output is an even integer no matter what.  It is
+expected that porting for instance the \texttt{append} function over
+the dependent type \texttt{Vect}~\cite{Vectors} to SUO-KIF might not
+be as trivial, since the \texttt{domain} and \texttt{range} constructs
+cannot presumably represent such type dependence.  This however can be
+moved to the function definition as offered by SUO-KIF First Order
+Logic expressiveness.  Another aspect we need to explore is how tools,
+such as Automatic Theorem Provers
+(ATPs)~\cite{Baumgartner_automatedreasoning, Urban_anoverview,
+  Alvez_evaluating_atp_adimen_SUMO}, can be used to autonomously
+compose as well as retrieve functions given their input and output
+types.  Obviously if ATP tools running over SUO-KIF turn out to be
+deficient in that respect, we already know from Section
+\ref{aidsl_registry} that Idris can fulfill that purpose.
+
 \end{itemize}
 
 
 \chapter{Eman's work}
 
 \chapter{Sam's work}
-
-
 
 \bibliographystyle{splncs04}
 \bibliography{local}
