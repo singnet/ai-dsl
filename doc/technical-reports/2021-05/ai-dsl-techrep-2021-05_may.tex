@@ -686,16 +686,15 @@ Ontology levels and their relations.
 
 \section{Objectives and achievements}
 
-\section{Decentralized ontology}
+\subsection{Decentralized ontology}
 
-In order to satisfy the \textit{extendibility} requirement of ontology design
-(see~\ref{design-requirements}), we are proposing a notion and design of a
-\textit{decentralized ontology}, which enables us to work with globally
-consistent and locally incosistent components within the same mechanism of
-AI-DSL. Based on this design, the full ontology of \textit{Fake News Warning}
-application is constructed from a number of separate components, which operate
-at different level of decentralization. Table below describes each of these
-components.
+In order to satisfy the \textit{extendibility} requirement of ontology design,
+we are proposing a notion and design of a \textit{decentralized ontology}, which
+enables us to work with globally consistent and locally incosistent components
+within the same mechanism of AI-DSL. Based on our design, the full ontology of
+\textit{Fake News Warning} application is constructed from a number of separate
+components, which operate at different level of decentralization. Table below
+describes each of these components.
 
 \begin{table}[H]
 %describe each kif file / level of ontology / consistent / inconsistent;
@@ -762,12 +761,34 @@ otherwise; Technically, this would be a different application.\\
   \caption{\label{tbl:all_kif_files}Description of each component of the AI-DSL Ontology prototope and links to related KIF files.}
 \end{table}
 
-\section{Ontology prototype}
+\subsection{Ontology prototype}
 
 Using the ontology levels described in Table \ref{tbl:all_kif_files} and
-referenced files, we have described the \textit{Fake News Warning} application.
+referenced files, we prototyped the ontology of \textit{Fake News Warning}
+application.
+\kabir{include link to sigma server with the prototoype ontology
+installed (when ready)}
 
-Each SNet AI Service instance of the application is described as follows:
+\begin{table}[H]
+  \scriptsize
+  \centering
+  \begin{tabular}{p{0.5\linewidth}|p{0.4\linewidth}|}
+    \textbf{Architectural level} & \textbf{Class} \\
+    \hline
+    SingularityNET platform & SNetAIService, SNetAIServiceIO,
+    SNetAIServiceMetadata\\
+    \hline
+    NuNet platform & NuNetEnabledSNetAIService, NuNetEnabledComputer\\
+  \end{tabular}
+  \captionsetup{width=0.9\linewidth}
+  \caption{\label{tbl:custom_classes_prototype}Main classes defined in AI-DSL
+  ontology prototype per level of the \texttt{Fake News Warning} application's
+  stack. Classes defined in SUMO are not included.}
+\end{table}
+
+AI algorithms onboarded on the SNet platfrom are instances of
+\texttt{SNetAIService} class of sublasses of it.
+Services of \texttt{Fake News Warning} application are defined as follows:
 
 \begin{figure}[H]
   \begin{subfigure}[b]{1\textwidth}
@@ -816,7 +837,7 @@ irrespectively of which language will be eventually chosen for AI-DSL, Figure
   \end{enumerate}
 \end{enumerate}
 
-However, the \textit{FakeNewsScore} AI Service is special in that it calls
+\textit{FakeNewsScore} AI Service is special in that it calls
 other dependent services (as described by program graph in Figure
 \ref{lst:dag}) and combines their results. We can define the program graph in
 terms of dependencies between services in KIF as follows:
@@ -828,7 +849,49 @@ terms of dependencies between services in KIF as follows:
   \caption{\label{fig:serviceDependencies}Defining program graph as a formal ontology. This is equivalent to DAG of Figure \ref{lst:dag}.}
 \end{figure}
 
-\kabir[inline]{Write about matching inputs and outputs of the sevices.}
+Figure \ref{fig:serviceDependencies} demonstrates how a workflow of connected
+SingularityNET AI services can be statically defined and proven to work at
+compile time. However, we could go further and define dependencies as
+\textit{subclasses} of services with the same input/output data types. In such case
+any instantiation of the subclass would be able to dynamically compile into the
+workflow. Therefore we would not need to describe concrete dependencies -- they
+would be dynamically resolved at run-time by matching input and output types.
+
+\begin{figure}[H]
+  \captionsetup{width=0.8\linewidth}
+  \inputminted[firstline=1, lastline=22, linenos,tabsize=2,breaklines, fontsize=\small]{scm}{../../../ontology/FakeNewsScoreDynamic.kif}
+  \vspace{-0.3cm}
+  \caption{\label{fig:fakeNewsScoreDynamic}Defining generic input types instead
+  of concrete dependencies in a \textit{FakeNewsScoreDynamic} service.}
+\end{figure}
+
+Any AI service with output type matching input type of the
+\textit{FakeNewsScoreDynamic} could be compiled into the workflow:
+
+\begin{figure}[H]
+  \captionsetup{width=0.8\linewidth}
+  \inputminted[firstline=1, lastline=4, linenos,tabsize=2,breaklines, fontsize=\small]{scm}{../../../ontology/uclnlpDynamic.kif}
+  \vspace{-0.3cm}
+  \caption{\label{fig:uclnlpDynamicOne}Using static globally defined types of
+  input and output data structures of matching services eligible for
+  compilation into a workfow.}
+\end{figure}
+
+However, systems with dependent typing, like Idris, may allow to go even further
+and to find out if composite types are composed of the same components and
+primitive types -- and thus match them.
+
+\begin{figure}[H]
+  \captionsetup{width=0.8\linewidth}
+  \inputminted[firstline=7, lastline=26, linenos,tabsize=2,breaklines, fontsize=\small]{scm}{../../../ontology/uclnlpDynamic.kif}
+  \vspace{-0.3cm}
+  \caption{\label{fig:uclnlpDynamicTwo}Hypothetical usage of dynamic typing
+  (most probably could be achieved in Idris, but not in KIF).}
+\end{figure}
+
+Primitive (or grounded) types (like \texttt{RealNumeber} and \texttt{Text} in
+Figure \ref{fig:uclnlpDynamicTwo}), however, should be globally accessible and
+unambiguously defined for this scheme to work.
 
 All services of \textit{Fake News Warning} application are instances of
 \texttt{NuNetEnablesSNetAIService} subclass, which, in turn, is a subclass of
@@ -864,7 +927,7 @@ Figure \ref{fig:SNET_and_NuNet} describes relation between
 SingularityNET and NuNet platforms. \texttt{SNetAIService} class, defined in
  \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
 SingularityNET.kif}{SingularityNET.kif}, contains all requirements for the
-metadata of the servcie to be published on SingularityNET platform.
+metadata of the service to be published on SingularityNET platform.
 \texttt{NuNetEnabledSNetAIService} extends \texttt{SNetAIService} by adding
 metadata that is needed for this service to be deployed via NuNet APIs:
 
@@ -876,7 +939,7 @@ metadata that is needed for this service to be deployed via NuNet APIs:
   \vspace{-0.3cm}
   \caption{The definition of \texttt{NuNetEnabledSNetAIService} in
   \href{https://github.com/singnet/ai-dsl/blob/master/ontology/NuNet.kif}{NuNet.kif}
-  requres a service to have compute resource (and possibly other) requirements
+  requires a service to have compute resource (and possibly other) requirements
   included in service metadata. The idea is that without required metadata
   fields, a service would not pass validation allowing it to be deployed via
   NuNet. An arbitrary amount of requirements could be defined here.}
@@ -921,11 +984,9 @@ a service:
   \caption{Constraints on eligible match between \texttt{SNetAIService} and
   \texttt{NuNetEnabledComputer} defined in
   \href{https://github.com/singnet/ai-dsl/blob/master/ontology/NuNet.kif}{NuNet.kif}
-  required for deployment.}
+  and required for deployment of a service.}
   \label{fig:service_deployment_requirements}
 \end{figure}
-
-\kabir[inline]{possibly put graphical representations of ontology hierarchy.}
 
 \texttt{SNetAIService} and \texttt{NuNetEnabledSNetAIService} classes are positioned within the SUMO ontology as follows:
 
@@ -995,12 +1056,15 @@ driving directions, and the scripts of plays and movies. &
     \href{https://github.com/singnet/ai-dsl/blob/master/ontology/    uclnp.kif}{uclnlp.kif}
   \end{tabular}
 \captionsetup{width=0.9\linewidth}
-\caption{\label{tbl:uclnlp_hierarchy}Full hierarchy of dependencies of \textit{uclnlp} SNet AI service instance within SUMO ontology. The same  hierarchy applies to binary-detection and FakeNewsScore services used in the \textit{Fake News Warning} app.}
+\caption{\label{tbl:uclnlp_hierarchy}Full hierarchy of dependencies of
+\textit{uclnlp} SNet AI service instance within SUMO ontology. The same
+hierarchy applies to binary-detection and FakeNewsScore services used
+in the \textit{Fake News Warning} app.}
 \end{table}
 
-\kabir[inline]{Finished here 2021-06-02 02:14}
+\kabir[inline]{Finished here 2021-06-03 03:55}
 
-\section{The mechanism of dynamic workflow construction}
+\subsection{The mechanism of dynamic workflow construction}
 
 %Versions / voting / communication
 
@@ -1012,17 +1076,6 @@ driving directions, and the scripts of plays and movies. &
   \item Distributed computing hardware domain ontology in SUO-KIF
 (\href{https://github.com/ontologyportal/sumo/blob/master/QoSontology.kif}{QoSontology.kif});
 \end{enumerate}
-
-\begin{figure}[h] \centering \begin{subfigure}[b]{1\textwidth} \centering
-\includegraphics[width=\textwidth]{../../../ontology/images/SNetAIService.png}
-\caption{Class dependencies of the SNetAIService subclass within the ontology.}
-\label{fig:SNetAIService hierachy} \end{subfigure}
-\begin{subfigure}[b]{1\textwidth} \centering
-\includegraphics[width=\textwidth/4]{example-image-a} \caption{Class
-dependencies of the SNetAppBackend subclass (workflow definition) within the
-ontology.} \label{fig:tSNetAppBackend} \end{subfigure} \caption{Class
-dependences of AI-DSL Ontology (SingularityNet.kif) }
-\label{fig:SingularityNet.kif} \end{figure}
 
 \kabir[inline]{using ontology for agent communication in decentralized computing
 systems, based on \cite{YvesHellenschmidt2002}}
