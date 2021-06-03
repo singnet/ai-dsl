@@ -1,0 +1,26 @@
+(instance uclnlp NuNetEnabledSNetAIService)
+
+(hasInput uclnlp WebContentType)
+(hasInput uclnlp StanceType)
+
+;; alternatively:
+(hasInput uclnlp SomeType)
+(hasInput uclnlp SomeOtherType)
+
+(=>
+  (and
+    (hasField ?data titleText Text)
+    (hasField ?data mainText Text)
+  )
+  (instance ?data SomeType)
+)
+
+(=>
+  (and
+    (hasField ?data agree RealNumber)
+    (hasField ?data disagree RealNumber)
+    (hasField ?data discuss RealNumber)
+    (hasField ?data unrelated RealNumber)
+  )
+  (instance ?data SomeOtherType)
+)
