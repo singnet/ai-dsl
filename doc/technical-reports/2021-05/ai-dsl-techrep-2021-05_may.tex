@@ -666,7 +666,73 @@ explained.}
 
 \chapter{Sam's work}
 
+\section{Service Composition in Idris2}
 
+A key requirement of the AI-DSL is to provide both an ergonomic syntax for
+describing service properties and a robust process for using these descriptions
+to verify the correctness of composed services.  This work involved
+investigating several different methods for meeting this requirement using
+Idris2.
+
+\subsection{\texttt{RealizedFunction} and \texttt{RealizedAttributes}}
+The \texttt{RealizedFunction} and \texttt{RealizedAttributes} data types were an
+early strategy for describing and composing AI services.  They directly
+contained values representing the relevant properties of arbitrary Idris
+functions and made use of a \texttt{compose} function to compute the properties
+of the function resulting from the composition of two others.
+
+While this approach worked to verify that a small, fixed set of attributes was
+correct for a composition of functions, it also presented several issues:
+
+\begin{itemize}
+  \item
+        The \texttt{RealizedFunction} definition contains only the raw data
+        representing function properties, while using a separate function to
+        represent composition logic.  Because the composition logic is not
+        part of the type definition, there is no way for Idris to prove that the
+        correct logic was used to construct any given \texttt{RealizedFunction}.
+
+
+  \item \texttt{RealizedAttributes} represents only a set of example properties.
+        The syntax tree for the AI-DSL should be able to represent any
+        properties specified by the user, assuming the composition laws for
+        those properties are known.
+
+
+\end{itemize}
+
+\subsection{\texttt{Service}}
+To address these problems, we implemented the \texttt{Service} type,
+which can be found in experimental/realized-function/ServiceAttributes.idr.  It
+differs from \texttt{RealizedFunction} in two important ways:
+\begin{itemize}
+  \item Composition logic is represented entirely at the type level as a second
+        constructor for the \texttt{Service} type.
+
+  \item Idris' \texttt{Num} interface is used as a generic representation of any
+        attribute that can be added when two \texttt{Service}s are sequenced.
+
+\end{itemize}
+
+These changes were sufficient to solve the problems with our earlier approach,
+but we still needed to improve the expressiveness of our representation.  Many
+important properties are too complex to be described using only the \texttt{Num}
+interface.
+
+\subsection{A Look into Dependent Pairs}
+Idris represents the intersection between a theorem proof assistant and a
+programming language.  As such, it is often useful to think of types as
+logical propositions, and values as proofs of those propositions.  Since our
+goal is to verify that a desired property is true of some value, we can use
+dependent types to describe a proposition parameterized by a specific value.
+
+Idris provides a special syntax for this.
+\texttt{(x : a ** p)} can be read as ``x is a value of type a such that
+proposition p holds true of x''.  This is called a dependent pair, and it can
+only be constructed by providing both a value and a proof that a desired
+property holds true for that specific value.
+
+As a test to
 
 \bibliographystyle{splncs04}
 \bibliography{local}
