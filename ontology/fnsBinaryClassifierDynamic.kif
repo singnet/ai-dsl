@@ -1,0 +1,18 @@
+(instance fnsBinaryClassifier SNetAIService)
+(documentation fnsBinaryClassifier EnglishLanguage "A pre-trained binary classification model for fake news detection")
+
+(hasInputType fnsBinaryClassifier WebContentType)
+(hasOutputType fnsBinaryClassifier StanceType)
+
+(instance fnsBinaryClassifierInputType DataType)
+(instance fnsBinaryClassifierOutputType DataType)
+
+(=>
+  (hasField ?fnsBinaryClassifierInput mainText Text)
+  (instance ?fnsBinaryClassifierInput fnsBinaryClassifierInputType)
+)
+
+(=>
+  (hasField ?fnsBinaryClassifierOutput fakeOrNot Boolean)
+  (instance ?fnsBinaryClassifierOutput fnsBinaryClassifierOutputType)
+)

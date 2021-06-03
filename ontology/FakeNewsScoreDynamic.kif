@@ -1,0 +1,22 @@
+(instance fakeNewsScore NuNetEnabledSNetAIService)
+
+(hasInputType fakeNewsScore StanceType)
+(hasInputType fakeNewsScore BinaryClassificationType)
+
+(hasOutput fakeNewsScore fakeNewsScoreOutput)
+(instance fakeNewsScoreOutputType DataType)
+
+(=>
+  (and
+    (hasField ?data agree RealNumber)
+    (hasField ?data disagree RealNumber)
+    (hasField ?data discuss RealNumber)
+    (hasField ?data unrelated RealNumber)
+  )
+  (instance ?data StanceType)
+)
+
+(=>
+  (hasField ?data fakeOrNot Boolean)
+  (instance ?data BinaryClassificationType)
+)

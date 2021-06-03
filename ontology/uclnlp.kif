@@ -1,4 +1,4 @@
-(instance uclnlp SNetAIService)
+(instance uclnlp NuNetEnabledSNetAIService)
 (documentation uclnlp EnglishLanguage "Forked and adapted component of stance detection algorithm by UCL Machine Reading group.")
 
 (hasInput uclnlp uclnlpInput)
@@ -9,8 +9,8 @@
 
 (=>
   (and
-    (hasField ?uclnlpInput titleText AlphaNumericString)
-    (hasField ?uclnlpInput mainText AlphaNumericString)
+    (hasField ?uclnlpInput titleText Text)
+    (hasField ?uclnlpInput mainText Text)
   )
   (instance ?uclnlpInput uclnlpInputType)
 )

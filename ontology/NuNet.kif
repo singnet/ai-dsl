@@ -4,11 +4,11 @@
 (=>
   (and
     (hasMetadata ?SNetAIServiceMetadata ?SNetAIService)
-    (hasField ?SNetAIServiceMetadata RequiredComputingResources)
-    ; includes many other prerequisites and special protobuf definitions
+    (hasField ?RequiredComputingResources ?SNetAIServiceMetadata)
   )
   (instance ?SNetAIService NuNetEnabledSNetAIService)
 )
+; may include many other requirements 
 
 (subclass NuNetEnabledComputer Computer)
 (documentation NuNetEnabledComputer EnglishLanguage "A Computer which was onboarded to NuNet platfrom and complies to its requirements.")
