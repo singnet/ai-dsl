@@ -630,7 +630,7 @@ graph of \textit{Fake News Warning} app:
     \captionsetup{width=0.7\linewidth}
     \caption{\label{lst:dag}A directed acyclic graph (DAT) of
       \textit{Fake News Warning} app
-      prototype\cite{NuNetFakeNewsWarningAppRepo}.  Meaning that
+      prototype\cite{NuNetFakeNewsWarningAppRepo}.  It simply says that
       \texttt{news-score} depends on \texttt{uclnlp} and
       \texttt{binary-classification}.}
 \end{figure}
@@ -639,11 +639,11 @@ The schematic representation of the \textit{Fake News Warning} app deployed as a
 result of processing the DAG is depicted below. The addition of NuNet platform
 to SingularityNET service discovery is that each service may be deployed on
 different hardware environments, sourced by NuNet. When the application back-end
-is deployed, it can be accessed from the GUI interface, which in this case is a
-Brave browser extension.
+is deployed, it can be accessed from the GUI interface, which in case of
+\textit{Fake News Warning} is a Brave browser extension.
 
 \begin{figure}[H]
-  \begin{subfigure}[b]{0.50\textwidth}
+  \begin{subfigure}[t]{0.50\textwidth}
     \centering
     \includegraphics[width=0.9\textwidth]{../../../ontology/images/fake_news_detector.png}
     \captionsetup{width=0.8\linewidth}
@@ -651,7 +651,7 @@ Brave browser extension.
     (SingularityNET AI services potentially running on different machines).}
     \label{fig:fake_news_detector_schema}
   \end{subfigure}
-  \begin{subfigure}[b]{0.50\textwidth}
+  \begin{subfigure}[t]{0.50\textwidth}
     \centering
     \includegraphics[width=0.5\textwidth]{../../../ontology/images/fake_news_detector_browser_extension.png}
     \captionsetup{width=0.8\linewidth}
@@ -676,13 +676,33 @@ were the versatility of KIF/SUO-KIF (Knowledge Interchange Format) language,
 which essentially allows to express First Order Logic (FOL) statements in a simple
 text format in terms of lisp-like syntax. Due to that, KIF can be easily
 converted to other formats\cite{kalibatiene_survey_2011}. Also, a conversion to
-Atomese -- the OpenCog's language also employing a list-like syntax -- has been
+Atomese -- the OpenCog's language also employing a lisp-like syntax -- has been
 successfully attempted in the past\footnote{See
 the \href{https://github.com/opencog/external-tools/tree/master/SUMO_importer}{SUMO
   Importer} in the OpenCog External Tools
 repository\cite{ExternalToolsRepo}}. SUMO and the related ontology design tools
 \cite{pease_sigma_2001} provide a convenient way for starting to design AI-DSL
 Ontology levels and their relations.
+
+\subsection{Tools}
+
+For the purposes of design, inital validation and displaying relations between
+classes, subclasses and instances of the ontology, we have used software tools
+which come together with SUMO ontology
+\footnote{\href{https://ontologyportal.org}{https://ontologyportal.org}}:
+\begin{itemize}
+\item Sigma IDE for SUMO\footnote{\href{https://github.com/ontologyportal/sigmakee}
+{https://github.com/ontologyportal/sigmakee}} and
+\item jEdit plugin for SUMO
+\footnote{\href{https://github.com/ontologyportal/SUMOjEdit}
+{https://github.com/ontologyportal/SUMOjEdit}}
+\end{itemize}
+
+The ontology prototype, presented here, is fully accessible for browsing and
+partial validation via the local Sigma installation\footnote{Can be temporarily
+accessed at \href{http://nunetio.ddns.net:8080/sigma/KBs.jsp}
+{http://nunetio.ddns.net:8080/sigma/KBs.jsp} or installed and accessed locally
+by folowing \href{}{these instructions}.}.
 
 \section{Objectives and achievements}
 
@@ -706,11 +726,10 @@ describes each of these components.
     \textbf{Dependencies} &
     \textbf{Extendability}\\
     \hline
-    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/NuNet.kif}{NuNet.kif} &
-    Defines classes to be used for describing each hardware resource eligible
-    for running SingularityNET AI Services via NuNet platform;  &
-    Merge.kif, SingularityNET.kif [,..]&
-    Limited: versioning mechanism controlled by NuNet (to be defined) \\
+    \href{https://github.com/ontologyportal/sumo/blob/master/Merge.kif}{Merge.kif} &
+    SUMO structural ontology, base ontology, numerical functions, set/class theory, temporal concepts and mereotopology &
+    None - root ontology &
+    Centralized and globally enforced -- defined by \href{http://www.ontologyportal.org/}{ontologyportal.org} \\
     \hline
     \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
     SingulairtyNet.kif}{SingularityNet.kif} &
@@ -737,14 +756,6 @@ otherwise; Technically, this would be a different application.\\
     algorithms. \\
     \hline
     \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
-    NuNetEnabledComputer.kif}{NuNetEnabledCompu-ter.kif} &
-    Each NuNet enabled hardware resource will have to be described accordingly
-    when on-boarded to NuNet platform &
-    NuNet.kif &
-    Fully decentralized: independently defined by the owner of a hardware
-    resource \\
-    \hline
-    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
     uclnlp.kif}{uclnlp.kif} &
     Forked and adapted component of stance detection algorithm by UCL Machine Reading group &
     SingularityNET.kif [,..] &
@@ -752,10 +763,19 @@ otherwise; Technically, this would be a different application.\\
     Technically, from the platform perspective, these will be different
     algorithms \\
     \hline
-    \href{https://github.com/ontologyportal/sumo/blob/master/Merge.kif}{Merge.kif} &
-    SUMO structural ontology, base ontology, numerical functions, set/class theory, temporal concepts and mereotopology &
-    None - root ontology &
-    Centralized and globally enforced -- defined by \href{http://www.ontologyportal.org/}{ontologyportal.org} \\
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
+    NuNetEnabledComputer.kif}{NuNetEnabledCompu-ter.kif} &
+    Each NuNet enabled hardware resource will have to be described accordingly
+    when on-boarded to NuNet platform &
+    NuNet.kif &
+    Fully decentralized: independently defined by the owner of a hardware
+    resource \\
+    \hline
+    \href{https://github.com/singnet/ai-dsl/blob/master/ontology/NuNet.kif}{NuNet.kif} &
+    Defines classes to be used for describing each hardware resource eligible
+    for running SingularityNET AI Services via NuNet platform;  &
+    Merge.kif, SingularityNET.kif [,..]&
+    Limited: versioning mechanism controlled by NuNet (to be defined) \\
     \end{tabular}
   \captionsetup{width=0.7\linewidth}
   \caption{\label{tbl:all_kif_files}Description of each component of the AI-DSL Ontology prototope and links to related KIF files.}
