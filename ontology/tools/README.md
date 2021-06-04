@@ -7,4 +7,7 @@
 5. go to `localhost:8080/sigma/login.html' and login with usarname:`admin`, password:`admin`;
 6. Sigma takes a while to load; after it is loaded, one should be able to see something similar to this:
 
-7. If something does not work, please file bug report with the reference to @kabirkbr
+![](sigma_screenshot.png)
+
+7. See running Sigma browser here: http://nunetio.ddns.net:8080/sigma/KBs.jsp (may not be available forever);
+8. If something does not work, please file bug report with the reference to @kabirkbr
