@@ -1,0 +1,13 @@
+version: "3.8"  # optional since v1.27.0
+
+services:
+  sigma:
+    build: .
+    image: sigmakee:kabir
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./SUMO:/sigma/sigmakee/KBs
+      - ./config.xml:/sigma/sigmakee/KBs/config.xml
+      - ./WordNetMappings:/sigma/sigmakee/KBs/WordNetMappings
+    container_name: sigmakee
