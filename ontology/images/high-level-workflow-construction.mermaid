@@ -1,0 +1,20 @@
+sequenceDiagram
+	autonumber
+	participant user as User/Business
+	participant platform as SingularityNET<br>platfrom
+	participant ais as Independent AI services<br>(registered with<br>SNet platform)
+	participant machines as Independent hardware<br>resources<br>(registered with<br>NuNet platform)
+
+user -->> platform: Control: global request to perform work<br>Data: (a) workflow definition (DAG), (b) Input
+loop AI-DSL
+	platform -->> platform: Identifies the number and type of required local requests
+	platform -->> platform: Searches for suitable and available AI Services and machines to run them
+	platform -->> platform: Compiles the workflow and proves that it will be correctly executed
+end
+loop NuNet
+	platform -->> machines: deploys required services on multiple machines
+end
+platform -->> ais: Control: local requests to perform parts of work<br>Data: Input
+ais -->> platform: Control: local response<br>Data: Output 
+platform -->> platform: Collects all results and compiles global response
+platform -->> user: Control: global response<br>Data: Combined output 

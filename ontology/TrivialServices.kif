@@ -1,0 +1,63 @@
+;; SUO-KIF port of trivial services incrementer, twicer and halfer of
+;; experimental/registry-dtl.
+;;
+;; It uses Integer, EvenInteger and operators defined in Merge.kif.
+;;
+;; TODO: explore how to retrieve functions matching a certain
+;; signature and check which compositions are permitted.
+
+;;;;;;;;;;;;;;;;;;;
+;; IncrementerFn ;;
+;;;;;;;;;;;;;;;;;;;
+
+(instance IncrementerFn UnaryFunction)
+(documentation IncrementerFn EnglishLanguage "(&%IncrementerFn ?INTEGER) returns ?INTEGER + 1.")
+(domain IncrementerFn 1 Integer)
+(range IncrementerFn Integer)
+
+;; IncrementerFn is simply equals to SuccessorFn over the domain of
+;; integers.
+(forall (?INTEGER)
+  (=>
+    (instance ?INTEGER Integer)
+    (equal (IncrementerFn ?INTEGER) (SuccessorFn ?INTEGER))))
+
+;; Moreover incrementing an even integer returns an odd integer.
+(forall (?EVEN_INTEGER)
+  (=>
+    (instance ?EVEN_INTEGER EvenInteger)
+    (instance (IncrementerFn ?EVEN_INTEGER) OddInteger)))
+
+;; Vice versa, incrementing an odd integer returns an even integer.
+(forall (?ODD_INTEGER)
+  (=>
+    (instance ?ODD_INTEGER OddInteger)
+    (instance (IncrementerFn ?ODD_INTEGER) EvenInteger)))
+
+;;;;;;;;;;;;;;
+;; TwicerFn ;;
+;;;;;;;;;;;;;;
+
+(instance TwicerFn UnaryFunction)
+(documentation TwicerFn EnglishLanguage "(&%TwicerFn ?INTEGER) returns 2*?INTEGER, an instance of EvenInteger.")
+(domain TwicerFn 1 Integer)
+(range TwicerFn EvenInteger)
+
+(forall (?INTEGER)
+  (=>
+    (instance ?INTEGER Integer)
+    (equal (TwicerFn ?INTEGER) (MultiplicationFn ?INTEGER 2))))
+
+;;;;;;;;;;;;;;
+;; HalferFn ;;
+;;;;;;;;;;;;;;
+
+(instance HalferFn UnaryFunction)
+(documentation HalferFn EnglishLanguage "(&%HalferFn ?EVEN_INTEGER) returns ?EVEN_INTEGER / 2, given that ?EVEN_INTEGER is an instance of EvenInteger.")
+(domain HalferFn 1 EvenInteger)
+(range HalferFn Integer)
+
+(forall (?INTEGER)
+  (=>
+    (instance ?EVEN_INTEGER EvenInteger)
+    (equal (HalferFn ?EVEN_INTEGER) (DivisionFn ?EVEN_INTEGER 2))))

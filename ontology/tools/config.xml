@@ -1,0 +1,46 @@
+<configuration>
+  <preference name="adminBrowserLimit" value="200" />
+  <preference name="baseDir" value="/sigma/sigmakee" />
+  <preference name="cache" value="yes" />
+  <preference name="celtdir" value="" />
+  <preference name="editDir" value="/sigma/sigmakee" />
+  <preference name="eprover" value="/sigma/Programs/E/bin/e_ltb_runner" />
+  <preference name="graphVizDir" value="/usr/bin" />
+  <preference name="holdsPrefix" value="no" />
+  <preference name="hostname" value="localhost" />
+  <preference name="https" value="false" />
+  <preference name="inferenceTestDir" value="/sigma/sigmakee/KBs/tests" />
+  <preference name="jedit" value="jedit" />
+  <preference name="kbDir" value="/sigma/sigmakee/KBs" />
+  <preference name="leoExecutable" value="/home/kabir/leo" />
+  <preference name="lineNumberCommand" value="" />
+  <preference name="loadCELT" value="no" />
+  <preference name="logDir" value="/sigma/sigmakee/logs" />
+  <preference name="logLevel" value="warning" />
+  <preference name="port" value="8080" />
+  <preference name="prolog" value="" />
+  <preference name="reportDup" value="no" />
+  <preference name="reportFnError" value="no" />
+  <preference name="showcached" value="no" />
+  <preference name="sumokbname" value="SUMO" />
+  <preference name="systemsDir" value="/sigma/sigmakee" />
+  <preference name="termFormats" value="no" />
+  <preference name="testOutputDir" value="/var/tomcat/apache-tomcat-5.5.25/webapps/sigma/tests" />
+  <preference name="TPTPDisplay" value="no" />
+  <preference name="tptpHomeDir" value="/sigma/sigmakee" />
+  <preference name="TPTP" value="yes" />
+  <preference name="typePrefix" value="yes" />
+  <preference name="userBrowserLimit" value="25" />
+  <preference name="vampire" value="/sigma/sigmakee/workspace/vampire/vampire" />
+  <kb name="SUMO" >
+    <constituent filename="Merge.kif" />
+    <constituent filename="QoSontology.kif" />
+    <constituent filename="FakeNewsScore.kif" />
+    <constituent filename="NuNetEnabledComputer.kif" />
+    <constituent filename="fnsBinaryClassifier.kif" />
+    <constituent filename="NuNet.kif" />
+    <constituent filename="uclnlp.kif" />
+    <constituent filename="SingularityNet.kif" />
+    <constituent filename="TrivialServices.kif" />
+  </kb>
+</configuration>
