@@ -1,0 +1,19 @@
+sequenceDiagram
+	autonumber 
+	participant fns as fakeNewsScore<br>AI Service
+	participant bc as fnsBinaryClassifier<br>AI Service
+	participant uclnlp as uclnlp<br>AI Service
+	participant verifier as verifier<br>AI Service
+	participant snet as SingularityNET platform
+
+	fns ->> bc: Control: request to do work
+	bc ->> fns: Control: request accepted,<br>Data: [fnsBinaryClassifier.metadata]
+	fns ->> uclnlp: Control: request to do work
+	uclnlp ->> fns: Control: request accepted, Data: [ucnlp.metadata]
+	fns ->> verifier: Control: request to verify, Data [fakeNewsScore.metadata,<br>fnsBinaryClassifier.metadata, ucnlp.metadata, versionNo]
+	loop Verfication
+		verifier -->> snet: Control: request for upper ontology,<br>Data: [versionNo]
+		snet -->> verifier: Control: version exists,<br>Data: [upper-ontology specification]
+		verifier ->> verifier: Compiling and proving correctness
+	end
+	verifier ->> fns: Control: verification passed, Data: [signed proof of verification]
