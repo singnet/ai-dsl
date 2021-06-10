@@ -26,12 +26,129 @@
 \maketitle
 
 \begin{abstract}
-Based on~\cite{GoertzelGeisweillerBlog}.
+This document is a technical report of a work done between February
+and May 2021, based on the \emph{AI-DSL
+Proposal}~\cite{GoertzelGeisweillerBlog} published as a blogpost on
+the SingularityNET website in December 2020.  It is the first
+iteration of a larger endeavor to create a system that enables
+autonomous interoperability between AI services over the network, more
+specifically over the SingularityNET-on-Cardano network.  It presents
+in detail what has been accomplished so far as well as future plans
+for the continuation of that endeavor.
 \end{abstract}
 
 \tableofcontents
 
-\chapter{Nil's work}
+\chapter{Introduction}
+\section{Autonomous Interoperability of AI Services}
+Among the wonders that the blockchain technology and cryptocurrency
+networks enable is the possibility to programmatically exchange values
+and services between parties.  In the context of AI services it
+becomes especially relevant given the inherent complexity and
+decomposability of such systems.  Moreover, the abundance of AI
+algorithms available on the Internet makes it that often creating a
+new AI solution consists of connecting together existing AI
+algorithms.  For instance building a system to discover new drugs may
+consist of
+\begin{enumerate}
+\item a reasoner to extract background knowledge from biological
+  databases,
+\item a principal component analyzer to discover abstractions,
+\item a feature selector to discard irrelevant information,
+\item a learner to generate predictive models relating selected
+  features and drug efficacy.
+\end{enumerate}
+The task of composing such AI algorithms is, in most cases, done by
+humans and, as any AI practitioner knows, is tedious and time
+consuming.  Not just the composition of the whole but also the search
+and the understanding required to find the parts.  Facilitating and
+ultimately automating such process is the goal of the \emph{AI-DSL}.
+
+Another important aspect is the management of resources, both
+financial and computational (CPUs, GPUs, etc).  The AI-DSL is also
+intended to incorporate descriptions of such computational
+requirements as well as measures of expected result quality.
+
+Finally, as described in the blogpost, the current plan is to have
+such system rely on Dependent Types~\cite{Altenkirch05whydependent} to
+express and validate the specifications of the AI services, including
+cost, quality and relationships thereof.  The reason Dependent Types
+have been chosen is because they are geared toward program
+specification checking and program generation, which is our case comes
+close to AI services combination as one can see AI services as
+functions.  More specifically Idris has been chosen as our initial
+Dependently Typed Language (DTL) candidate, due to its efficiency and
+its goal towards verifying and generating actually running programs as
+opposed to just proofs~\footnote{Programs are equivalent to proofs
+according to the Curry-Howard correspondence but some representations
+are more amenable to running actual programs than others}.
+
+\section{Related work}
+To the best of our knowledge there is no existing work on creating
+such autonomous AI services interoperability system using Dependent
+Types, let alone running on a blockchain.  There are however attempts
+using different but related methodologies, involving ontologies and
+more or less explicit forms of automatic theorem proving, outside of
+the context of the blockchain technology.
+
+We are collecting a body of literature in a github
+issue~\cite{AIDSLRelatedWork} serving as a living document and being
+regularly updated with such related work.  We will not describe the
+entire body here due to its volume (over 40 papers so far) and the
+fact that we are still in process of reviewing it.  Here is however a
+sample of the most relevant work we have encountered so far.
+In~\cite{Gruber_anontology} they discuss an ontology called EngMath
+for representing mathematical concepts useful for engineering,
+including quantity units, equations and more in KIF~\cite{KIF} to be
+used in SHADE~\cite{Gruber92towarda} a system for collaborative
+intelligent agents.  It is rather old and it seems development has
+halted, but could nevertheless be interesting to learn more about.
+In~\cite{Brazier1995} they describe a use case of their system called
+DESIRE, formally define inputs and outputs of agents and their control
+flows.  The logic seems somewhat limited but their goals are certainly
+somewhat aligned with ours.  In~\cite{Bourahla20055} an extension of
+Computation Tree Logic (CTL) called multi-modal branching-time logic
+is defined to apply model checking on collections of agent given their
+description in some abstract programming language.  It's not clear the
+specification language they use is very convenient and the model
+checking methodology is open-ended enough, but nevertheless the work
+is solid and relevant.  In~\cite{Desouky2007} is described an
+architecture for distributed multi-agent intelligent system.  The
+paper is a bit vague but they mention important standards such as the
+Agent Communication Language (ACL)~\cite{Labrou99thecurrent} used to
+communicate agents specifications to each other.  \cite{Roelofs2020}
+is centered around validating the consistency of different ontologies.
+This could be relevant towards avoiding centralization of the
+ontology.  \cite{Witherell2009} is especially relevant to the ontology
+aspect, mentioning standards such as SUMO~\cite{pease_standard_2009}
+and SWRL~\cite{SWRL}.
+
+\section{Objectives and accomplishments}
+For that first iteration the goals were to
+\begin{enumerate}
+\item Experiment with matching and retrieval of AI services using
+  Idris~\cite{Idris}, a Dependently Typed Language (DTL)~\cite{DTL},
+  equipped with a powerful type system to express function
+  specifications as types.  That work is described in
+  Chapter~\ref{dependently_typed_registry}.
+\item Start building an AI ontology to ultimately provide a rich and
+  extendable vocabulary for the AI-DSL.  That work is described in
+  Chapter~\ref{aidsl_ontology}.
+\item Start building the AI-DSL itself, from its syntax to its
+  semantics.  Exploratory work on that is described in
+  Chapter~\ref{TODO}.
+\item Integrate all the above into a holistic prototype, running on a
+  real world test case of AI service collective, in real conditions,
+  that is ideally on the SingularityNET-on-Cardano network.
+  Preparatory work on that is described in Chapter~\ref{TODO}.
+\end{enumerate}
+All the objectives above except the last one have been accomplished,
+either completely or partially.  The last, and the most ambitious,
+objective had to be postponed for the next iteration due to its
+complexity.
+
+\chapter{Dependently Typed Registry}
+\label{dependently_typed_registry}
 
 Work done:
 \begin{enumerate}
@@ -191,7 +308,7 @@ prohibit certain combinations such as
 Since the output of \texttt{incrementer . twicer} is provably odd,
 \texttt{halfer} should refuse it and such combination should be
 rejected.  This objective was not reached in this experiment, but
-similar objectives were reached other experiments, see Section
+similar objectives were reached in other experiments, see Section
 \ref{aidsl_registry}\nil{Add ref to Sam's work}.  The other objective
 was to type check that the compositions have realized attributes
 corresponding to the compositional law implemented in Section
@@ -412,7 +529,8 @@ leads us to an interesting possibility, maybe the registry, and in
 fact most (perhaps all) components and functions of the AI-DSL could
 or should be implemented in the AI-DSL itself.
 
-\chapter{AI-DSL Ontology (Kabir's work)}
+\chapter{AI-DSL Ontology}
+\label{aidsl_ontology}
 
 \section{Description}
 
@@ -1314,10 +1432,13 @@ out to be deficient in that respect, we already know from Section
 \ref{aidsl_registry} that Idris can fulfill that purpose.
 \end{itemize}
 
-
 \chapter{Eman's work}
 
 \chapter{Sam's work}
+
+\chapter{Conclusion}
+
+TODO: sum-up, future work, use cases
 
 \bibliographystyle{splncs04}
 \bibliography{local}
