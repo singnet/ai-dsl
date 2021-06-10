@@ -17,6 +17,7 @@
 \usepackage{graphicx}
 \usepackage[font=small,labelfont=bf]{caption}
 \usepackage[skip=0pt]{subcaption}
+\usepackage{circledsteps}
 
 \begin{document}
 
@@ -549,7 +550,7 @@ proposing the AI-DSL ontology prototype, being aware that it may need to (and
 possibly should) be subjected to more conceptual treatment in the future.
 
 For a concrete domain model of AI-DSL ontology prototype we use the
-\textit{Fake News
+\texttt{Fake News
 Warning}\footnote{\href{https://gitlab.com/nunet/fake-news-detection}{https://gitlab.com/nunet/fake-news-detection}}
 application being developed by NuNet -- a currently incubated spinoff of
 SingularityNET\footnote{\href{https://nunet.io}{https://nunet.io}}.
@@ -564,7 +565,7 @@ graph of the application. Note, that conceptually, construction of an
 application from several independent containers is almost equivalent to
 functionality explained in section~\ref{aidsl_registry} on AI-DSL Registry,
 namely performance of matching and composition of AI services. This is the main
-reason why we chose \textit{Fake News Warning} application as a domain model
+reason why we chose \texttt{Fake News Warning} application as a domain model
 for early development efforts of AI-DSL. However, we use this domain model
 solely for the application-independent design of AI-DSL and attend to
 its application specific aspects only as much as it informs the project.
@@ -574,9 +575,9 @@ construct working applications (or at least their back-ends) by simply passing a
 declarative definition of program graph to the special platform component
 ("network orchestrator") -- which then searches for appropriate SingularityNET
 AI containers and connects them in to a single workflow (or workflows).
-Suppose, that the back-end of \textit{Fake News Warning} app consists of three
-SingularityNET AI containers \textit{news\_score}, \textit{uclnlp} and
-\textit{binary-classification}:
+Suppose, that the back-end of \texttt{Fake News Warning} app consists of three
+SingularityNET AI containers \texttt{news\_score}, \texttt{uclnlp} and
+\texttt{binary-classification}:
 
 \begin{table}[H]
   \scriptsize
@@ -617,7 +618,7 @@ Ontology is to be able to describe SNet AI Services in a manner that would allow
 them to search and match each other on the platform and compose into complex
 workflows -- similarly to what is described in Section
 \ref{network_idris_ai_services}. Here is a simple representation of the program
-graph of \textit{Fake News Warning} app:
+graph of \texttt{Fake News Warning} app:
 
 \begin{figure}[h]
   \centering
@@ -629,18 +630,18 @@ graph of \textit{Fake News Warning} app:
     \vspace{-0.3cm}
     \captionsetup{width=0.7\linewidth}
     \caption{\label{lst:dag}A directed acyclic graph (DAT) of
-      \textit{Fake News Warning} app
+      \texttt{Fake News Warning} app
       prototype\cite{NuNetFakeNewsWarningAppRepo}.  It simply says that
       \texttt{news-score} depends on \texttt{uclnlp} and
       \texttt{binary-classification}.}
 \end{figure}
 
-The schematic representation of the \textit{Fake News Warning} app deployed as a
+The schematic representation of the \texttt{Fake News Warning} app deployed as a
 result of processing the DAG is depicted below. The addition of NuNet platform
 to SingularityNET service discovery is that each service may be deployed on
 different hardware environments, sourced by NuNet. When the application back-end
 is deployed, it can be accessed from the GUI interface, which in case of
-\textit{Fake News Warning} is a Brave browser extension.
+\texttt{Fake News Warning} is a Brave browser extension.
 
 \begin{figure}[H]
   \begin{subfigure}[t]{0.50\textwidth}
@@ -656,7 +657,7 @@ is deployed, it can be accessed from the GUI interface, which in case of
     \includegraphics[width=0.5\textwidth]{../../../ontology/images/fake_news_detector_browser_extension.png}
     \captionsetup{width=0.8\linewidth}
     \caption{Brave browser extension which calls the backend of
-    \textit{Fake News Warning} application on each invocation on new
+    \texttt{Fake News Warning} application on each invocation on new
     content displayed in browser tab.}
   \end{subfigure}
 \end{figure}
@@ -712,7 +713,7 @@ In order to satisfy the \textit{extendibility} requirement of ontology design,
 we are proposing a notion and design of a \textit{decentralized ontology}, which
 enables us to work with globally consistent and locally incosistent components
 within the same mechanism of AI-DSL. Based on our design, the full ontology of
-\textit{Fake News Warning} application is constructed from a number of separate
+\texttt{Fake News Warning} application is constructed from a number of separate
 components, which operate at different level of decentralization. Table below
 describes each of these components.
 
@@ -741,10 +742,10 @@ describes each of these components.
     \href{https://github.com/singnet/ai-dsl/blob/master/ontology/
     FakeNewsScore.kif}{FakeNewsScore.kif} &
     SingularityNET service responsible for constructing the whole back-end of
-    each \textit{Fake News Warning} application instance i.e. program graph
+    each \texttt{Fake News Warning} application instance i.e. program graph
     (DAG) of the application.&
     SingularityNET.kif [,..] &
-    Fully decentralized: defined by application developers; Since \textit{Fake News
+    Fully decentralized: defined by application developers; Since \texttt{Fake News
 Warning} application is open source, any developer can for it and define it
 otherwise; Technically, this would be a different application.\\
     \hline
@@ -784,7 +785,7 @@ otherwise; Technically, this would be a different application.\\
 \subsection{Ontology prototype}
 
 Using the ontology levels described in Table \ref{tbl:all_kif_files} and
-referenced files, we prototyped the ontology of \textit{Fake News Warning}
+referenced files, we prototyped the ontology of \texttt{Fake News Warning}
 application\footnote{Can be temporarily
 accessed at \href{http://nunetio.ddns.net:8080/sigma/KBs.jsp}
 {http://nunetio.ddns.net:8080/sigma/KBs.jsp} or installed and accessed locally
@@ -858,9 +859,9 @@ irrespectively of which language will be eventually chosen for AI-DSL, Figure
   \end{enumerate}
 \end{enumerate}
 
-\textit{FakeNewsScore} AI Service is special in that it calls
+\texttt{FakeNewsScore} AI Service is special in that it calls
 other dependent services (as described by program graph in Figure
-\ref{lst:dag}) and combines their results. We can define the program graph in
+\ref{}) and combines their results. We can define the program graph in
 terms of dependencies between services in KIF as follows:
 
 \begin{figure}[H]
@@ -883,11 +884,11 @@ would be dynamically resolved at run-time by matching input and output types.
   \inputminted[firstline=1, lastline=22, linenos,tabsize=2,breaklines, fontsize=\small]{scm}{../../../ontology/FakeNewsScoreDynamic.kif}
   \vspace{-0.3cm}
   \caption{\label{fig:fakeNewsScoreDynamic}Defining generic input types instead
-  of concrete dependencies in a \textit{FakeNewsScoreDynamic} service.}
+  of concrete dependencies in a \texttt{FakeNewsScoreDynamic} service.}
 \end{figure}
 
 Any AI service with output type matching input type of the
-\textit{FakeNewsScoreDynamic} could be compiled into the workflow:
+\texttt{FakeNewsScoreDynamic} could be compiled into the workflow:
 
 \begin{figure}[H]
   \captionsetup{width=0.8\linewidth}
@@ -914,7 +915,7 @@ Primitive (or grounded) types (like \texttt{RealNumeber} and \texttt{Text} in
 Figure \ref{fig:uclnlpDynamicTwo}), however, should be globally accessible and
 unambiguously defined for this scheme to work.
 
-All services of \textit{Fake News Warning} application are instances of
+All services of \texttt{Fake News Warning} application are instances of
 \texttt{NuNetEnablesSNetAIService} subclass, which, in turn, is a subclass of
 \texttt{SNetAIService} class:
 \begin{figure}[H]
@@ -1071,23 +1072,23 @@ driving directions, and the scripts of plays and movies. &
     orchestrated via NuNet platfrom &
     \href{https://github.com/singnet/ai-dsl/blob/master/ontology/    NuNet.kif}{NuNet.kif}\\
     \hline
-    \quad \textit{uclnlp} &
+    \quad \texttt{uclnlp} &
     Forked and adapted component of stance detection algorithm by UCL Machine
     Reading group. &
     \href{https://github.com/singnet/ai-dsl/blob/master/ontology/    uclnp.kif}{uclnlp.kif}
   \end{tabular}
 \captionsetup{width=0.9\linewidth}
 \caption{\label{tbl:uclnlp_hierarchy}Full hierarchy of dependencies of
-\textit{uclnlp} SNet AI service instance within SUMO ontology. The same
-hierarchy applies to binary-detection and FakeNewsScore services used
-in the \textit{Fake News Warning} app.}
+\texttt{uclnlp} SNet AI service instance within SUMO ontology. The same
+hierarchy applies to \texttt{binary-detection} and \texttt{fakeNewsScore} services used
+in the \texttt{Fake News Warning} app.}
 \end{table}
 
 \subsection{The mechanism of dynamic workflow construction}
 
 An important part of the \textit{decentralized ontology} design is the mechanism
 which makes it work in actual scenarios. This mechanism was designed using the
-same domain model of \textit{Fake News Warking} application. It also clarifies
+same domain model of \texttt{Fake News Warnsing} application. It also clarifies
 the reason why we propose this particular concept and design of
 \textit{decentralized ontology}. 
 
@@ -1114,7 +1115,7 @@ AI Service calls involving AI-DSL looks as follows:
 		application-independent SingularityNET calls involving AI-DSL.}
 \end{figure}
 
-Within the domain model of \textit{Fake News Warning} application (Figure 
+Within the domain model of \texttt{Fake News Warning} application (Figure 
 \ref{fig:fake_news_detector_schema}) this scheme works approximately in the following
 way:
 \begin{enumerate}
@@ -1130,8 +1131,8 @@ dependent services are described in terms of their input / output types (as in
 \ref{fig:serviceDependencies}), AI-DSL searches and matches services available
 in the platform that satisfy constraints defined there\footnote{In the future, AI-DSL 
 will aim to accommodate fuzzy service definitions and complex decision functions to 
-search and match them, involving ability for an AI Service to choose its dependent
-services dynamically}. 
+search and match them, involving ability for an AI Service to choose its 
+dependent services.}. 
 \item When matching services are found, AI-DSL engine pulls their individual type
 signatures and other metadata from each service (note, that a decentralized system 
 cannot be built with the assumption of availability of global registry; such registry 
@@ -1149,52 +1150,118 @@ sources) and compiles into a workflow. This operation may be done in a few stage
 	\includegraphics[width=1\textwidth]{../../../ontology/images/uclnp_hierarchy_graph.png}
 	\captionsetup{width=0.9\linewidth}
 	\caption{\label{fig:uclnlp_hierarchy_graph}Graphical form of the hierarchy of 
-	dependencies of \textit{uclnlp} SNet AI service instance of \textit{Fake News Warning} 
+	dependencies of \texttt{uclnlp} SNet AI service instance of \texttt{Fake News Warning} 
 	application within SUMO ontology.}
 \end{figure}
 
+\pgfkeys{/csteps/inner color=white}
+\pgfkeys{/csteps/outer color=black}
+\pgfkeys{/csteps/fill color=black}
+
 	\item Note, that the correctness of type dependencies of decentralized components of 
-	AI-DSL Ontology (\textit{uclnlp}) will be checked against centralized
+	AI-DSL Ontology (\texttt{uclnlp}) will be checked against centralized
 	components versioned by SingularityNET platform (Table \ref{tbl:all_kif_files}). Defining
 	versioning mechanism of global components of the ontology is not within the scope 
 	of this work. However, merely acknowledging the possible existence of different 
 	versions of root and middle level ontologies within the hierarchy requires to 
-	think about reasonable way to accommodate them in the system. A possibility 
-	is to include information about the version of global components of ontology when communicating
-	decentralized components between each other, as suggested by \cite{YvesHellenschmidt2002}.
+	think about reasonable way to accommodate them into the system. A possibility 
+	is to include information about the version of global components of ontology when 
+	communicating decentralized components between each other, 
+	as suggested in \cite{YvesHellenschmidt2002}. 
+	In such case, the stage \Circled{4} of the workflow construction 
+	in Figure \ref{fig:high-level-workflow-construction} would look approximately like this:
 	
-\kabir[inline]{finished here 2021-06-08 03:22}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{../../../ontology/images/verification_for_workflow_correctness.png}
+	\captionsetup{width=0.9\linewidth}
+	\caption{\label{fig:verification-sequence}Stage \Circled{4} of workflow construction 
+		sequence (fully depicted in Figure \ref{fig:high-level-workflow-construction}) -- compiling the workflow and
+		proving its correctness.}
+\end{figure}	
+	
+	\item Service metadata returned by calls \Circled{2} and \Circled{4} include service definitions
+	and the version number of global AI-DSL Ontology that was used to build these definitions. For
+	example, call \Circled{4} may contain the following information:
+
+	\begin{figure}[h]
+		\centering
+		\begin{minted}[linenos,tabsize=2,breaklines, fontsize=\small]{json}
+		{
+			"sender": "uclnlp",
+			"receiver": "fakeNewsScore",
+			"upper-ai-dsl-ontology": "v0.1",
+			"service-metadata": $(include sevice_definition.json),
+			"leaf-ontology": $(include uclnlp.kif)
+		}
+		\end{minted}
+		\vspace{-0.3cm}
+		\captionsetup{width=0.8\linewidth}
+		\caption{\label{lst:uclnlp_metadata}Metadata of the \texttt{uclnlp} service. Sample contents 
+			of included files can be seen separately for each  
+			\href{https://gitlab.com/nunet/fake-news-detection/uclnlp/-/blob/master/service/service_spec/service_definition_prod.json}{service\_definition.json}
+			and \href{https://github.com/singnet/ai-dsl/blob/master/ontology/uclnlp.kif}{uclnlp.kif}.
+		}
+	\end{figure}
+
+	\item When all service definitions are collected and the their versions checked to match, 
+	they can be checked for conformance with the global AI-DSL Ontology of respective version and,
+	if service definitions include type signature -- type-checked.
+	
+	\item The actual compilation of the workflow, compliance to AI-DSL Ontology and type-checking need a
+	dedicated and properly configured execution environment. In the context of this document, 
+	that execution environment may include Idris compiler, an ontology prover that is able to process 
+	SUO-KIF definitions (e.g. Sigma), their dependencies and possibly custom code.
+	For that, it would be most logical to introduce a dedicated 
+	AI service into the platform -- which is the \texttt{verifier} component denoted in Figure 
+	\ref{fig:verification-sequence}. The \texttt{verifier} service will be able to do run any required
+	verification procedures in order to provide a proof that the workflow constructed from 
+	services found in step \Circled{3} is valid and can be correctly executed on the 
+	SingularityNET platform.
+	
+	\item After calls \Circled{1}, \Circled{2}, \Circled{3} and \Circled{4} of 
+	Figure \ref{fig:verification-sequence} are completed, a call \Circled{5} will be issued to
+	 \texttt{verifier} sending all metadata of each  service along
+	 with the AI-DSL Ontology version's identifier. The \texttt{verifier} will then 
+	 request all required dependencies
+	 (listed in Figure \ref{tbl:all_kif_files}) from the central SingularityNET repository 
+	 (or blockchain) and calculate the proof.	 
+	\item After \texttt{verifier} calculates the proof at step \Circled{8}, 
+	the proof is sent to the service that has requested it (in the case of
+	\ref{fig:high-level-workflow-construction} -- to \texttt{fakeNewsScore}). 
+	Additionally, the existence of independent verifiers would allow to optimize the overall computational 
+	costs of calculating proofs on the platform, by recording them into the blokchain and making
+	 searchable by other services that may require the same workflow. One way to do this would be to:
+	\begin{enumerate}
+		\item Calculate a hash from the metadata of each service of the workflow 
+		(i.e. *.kif or *.idr files);
+		\item Construct a Merkle tree
+		\footnote{\href{https://en.wikipedia.org/wiki/Merkle_tree}{https://en.wikipedia.org/wiki/Merkle\_tree}} 
+		from those hashes which would exactly mirror the structure of the workflow 
+		defined in DAG (Figure \ref{lst:dag});
+		\item Record the root hash of the tree into the blockchain with relevant metadata;
+	\end{enumerate}
+
+	 \item Such setup would constitute to an implicit reputation system of workflows in the sense, that 
+	 a workflow with most proofs of correctness on the blockchain could be trusted to work without 
+	 recalculating the proof each time a workflow is constructed. 
 	
 \end{itemize}
 
 \end{enumerate}
 
-%Versions / voting / communication
-
-\begin{enumerate}
-  \item Upper level SUMO ontology
-  (\href{https://github.com/ontologyportal/sumo/blob/master/Merge.kif}{Merge.kif});
-  \item Middle level SUMO ontology
-(\href{https://github.com/ontologyportal/sumo/blob/master/Mid-level-ontology.kif}{Mid-level-ontology.kif});
-  \item Distributed computing hardware domain ontology in SUO-KIF
-(\href{https://github.com/ontologyportal/sumo/blob/master/QoSontology.kif}{QoSontology.kif});
-\end{enumerate}
-
-\kabir[inline]{using ontology for agent communication in decentralized computing
-systems, based on \cite{YvesHellenschmidt2002}}
-
 \section{Future work}
 
 \begin{itemize}
   \item In the long term, it may be ideal to develop a converter for converting
-it to KIF, since OWL may be representable in KIF
-\cite{martin_translations_nodate}  using \href{OWL
-API}{https://github.com/owlcs/owlapi}; For the purpose of the ontology
-prototype, we will manually select parts of the this ontology in order to build
+OWL to KIF, since OWL may be representable in KIF
+\cite{martin_translations_nodate}  using \href{https://github.com/owlcs/owlapi}{OWL
+	API}; For the purpose of the ontology
+prototype, we are manually selecting parts of the existing ontologies in order to build
 the prototype and write them in SUO-KIF format;
   \item Similarly we want to be able to convert SUO-KIF specifications
     into Idris, and vise versa, to take advantage of the strengths of
-    each formalism.  To the best of our knowledge there is no existing
+    each formalism.  To the best of our knowledge there are no existing
     tools to automatically translating SUO-KIF to/from Idris, but
     there is a tool to translate SUO-KIF to
     FOL~\cite{Pease_firstorder} and we have found a paper describing
