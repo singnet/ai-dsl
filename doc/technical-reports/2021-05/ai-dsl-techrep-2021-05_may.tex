@@ -1438,8 +1438,70 @@ out to be deficient in that respect, we already know from Section
 \chapter{Sam's work}
 
 \chapter{Conclusion}
+Below is the list of what we have accomplished so far and what are the
+next steps to bring us closer to the completion of the AI-DSL.  We
+have
+\begin{itemize}
+\item Experimented with Idris to formalize and reason about realized
+  function attributes such as costs and quality, see
+  \ref{realized_function}.  We have done so in a limited manners, only
+  considering additive cost and infimum-itive quality, but we have
+  proven that it is possible and tractable to do in Idris.  More work
+  is required to expand the complexity of such realized function
+  attributes, such as functional or distributional costs and quality.
+\item Experimented with Idris to formalize function properties as
+  dependent types\nil{Ref to Sam's work}.  Again this was done in a
+  limited manner, using trivial properties such as evenness of
+  numbers, but taught us that it is a possible to do in Idris, and
+  provided us insights on how to expand that to more complex
+  properties.
+\item Built a prototype of a Dependently Typed Registry to retrieve,
+  match and connect AI services based on their specifications as
+  dependent types, see \ref{network_idris_ai_services}, using Idris
+  meta-functions for function matching and retrieval.  This prototype
+  has limits, such as returning only the first matching AI service and
+  not performing fully autonomous composition of AI services, but none
+  of these limits seem fundamentally hard to address and should only
+  require more development time.
+\item In see Chapter \ref{aidsl_ontology} we have explored ontologies
+  with the goal of defining a rich and extendable vocabulary for
+  specifying AI services, their algorithms, data types as well as
+  their relationship to real world.  The decision was made to build
+  such AI ontology on top of SUMO due to its openness, breadth and
+  quality.  TODO: concrete extension (read Kabir's work and mention
+  trivial AI services).  More work is required to TODO.  We also
+  explored how to convert SUO-KIF knowledge into Idris, more work is
+  required to automate such conversions.
+\item Reviewed literature of related work to make sure we do not miss
+  anything major and can take advantage of existing technologies.
+  Even though we have found no such related project using Dependent
+  Types as central component, there are related endeavors described in
+  \ref{related_work} with potential reusable ideas, languages or code,
+  such as FIPA-ACL and more.  More exploration is needed on that front
+  as well.
+\item Started building, though more at the preparatory level, a real
+  world AI service assemblage test case, based on Nunet Fake News
+  Warning example.  See Chapter \ref{TODO}.  Such test case is going
+  to be critical to put our AI-DSL prototypes to the test and build
+  the understanding necessary to push it to the next level.
+\end{itemize}
+Much of the work done during this iteration was exploratory due to the
+novel nature of such technology.  The work taking place during the
+next iterations will consist in continuing such exploration, refining
+our existing prototypes and bringing them together in a holistic
+system, guided by real world AI service assemblage test cases.  Such
+test case will initially include the Nunet Fake News Warning
+collective.  Then more test cases will be considered over various
+domains such as bio-informatics, finance, embodied agent control and
+more.
 
-TODO: sum-up, future work, use cases
+\appendix
+\chapter{Glossary}
+\begin{itemize}
+\item \textbf{AI service assemblage}: collection of AI services
+  interacting together to fulfill a given function, such as the Nunet
+  Fake News Warning system.
+\end{itemize}
 
 \bibliographystyle{splncs04}
 \bibliography{local}
