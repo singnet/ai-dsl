@@ -139,53 +139,45 @@ specification language they use is very convenient and the model
 checking methodology is open-ended enough, but nevertheless the work
 is solid and relevant.  In~\cite{Desouky2007} is described an
 architecture for distributed multi-agent intelligent system.  The
-paper is a bit vague but the authors mention Agent Communication
-Language (ACL)~\cite{Labrou99thecurrent} standards such as
-FIPA-ACL~\cite{FIPAACL}, used to communicate agents requests to each
-other.  \cite{Roelofs2020} is centered around validating the
-consistency of different ontologies.  This could be relevant towards
-avoiding centralization of the ontology.  \cite{Witherell2009} is
-especially relevant to the ontology aspect, mentioning standards such
-as SUMO~\cite{pease_standard_2009} and SWRL~\cite{SWRL}.
-
-\section{Objectives and accomplishments}
-For that first iteration the goals were to
-\begin{enumerate}
-\item Experiment with matching and retrieval of AI services using
-  Idris~\cite{Idris}, a Dependently Typed Language (DTL)~\cite{DTL},
-  equipped with a powerful type system to express function
-  specifications as types.  That work is described in
-  Chapter~\ref{dependently_typed_registry}.
-\item Start building an AI ontology to ultimately provide a rich and
-  extendable vocabulary for the AI-DSL.  That work is described in
-  Chapter~\ref{aidsl_ontology}.
-\item Start building the AI-DSL itself, from its syntax to its
-  semantics.  Exploratory work on that is described in
-  Chapter~\ref{TODO}.
-\item Integrate all the above into a holistic prototype, running on a
-  real world test case of AI service assemblage, in real conditions,
-  that is ideally on the SingularityNET-on-Cardano network.
-  Preparatory work on that is described in Chapter~\ref{TODO}.
-\end{enumerate}
-All the objectives above except the last one have been accomplished,
-either completely or partially.  The last, and the most ambitious,
-objective had to be postponed for the next iteration due to its
-complexity.
+description of the architecture is somewhat high level but the authors
+mention Agent Communication Language (ACL)~\cite{Labrou99thecurrent}
+standards such as FIPA-ACL~\cite{FIPAACL}, used to communicate agents
+requests to each other, which is worth further exploration.
+\cite{Roelofs2020} is centered around validating the consistency of
+different ontologies.  This could be relevant towards the goal of
+facilitating the decentralization of the AI-DSL and its ontology.
+\cite{Witherell2009} introduces FIDOE, a tool for analyzing and
+propagating changes across overlapping ontologies according to
+predefined inference rules.  It could be relevant to the ontology
+part, they mention standards such as SUMO~\cite{pease_standard_2009}
+and SWRL~\cite{SWRL} as well.\nil{Add Euzenat, J, Isaac, A, Meilicke,
+  C, Shvaik, P, Stuckenschmidt, H, Šváb, O, Svátek, V, van Hage, W,
+  Yatskevich, M, “Results of the Ontology Alignment Evaluation
+  Initiative 2007”, The Second International Workshop on Ontology
+  Matching, Busan Korea, 2007.  As well as Lee, M., Jung, M., Suh, J.,
+  “Semantic Mapping Based on Ontology and Bayesian Network and its
+  Application to CAD and PDM Integration,” 2006 ASME Computers and
+  Information in Engineering Conference, Philadelphia, PA, September
+  2006 DETC2006-99419, in Github issue}
 
 \chapter{Dependently Typed Registry}
 \label{dependently_typed_registry}
 
-Work done:
-\begin{enumerate}
-\item Implement \texttt{RealizedFunction} as described
-  in~\cite{GoertzelGeisweillerBlog}.
-\item Implement a network of trivially simple AI services implemented
-  in Idris2, and use Idris compiler to type check if they can properly
-  connect to each other.
-\item Implement a Registry prototype, as a proof-of-concept for
-  querying AI services based on their dependently typed
-  specifications.
-\end{enumerate}
+In this chapter we describe a prototype of an AI-DSL registry, a
+service in charge of storing AI service specifications and returning
+matching AI services upon request, given a specification to fulfill.
+In Section \ref{realized_function} we describe experiments for
+implementing the \texttt{RealizedAttributes} and
+\texttt{RealizedFunction} data structures described
+in~\cite{GoertzelGeisweillerBlog} used for capturing financial,
+computation costs, as well as measures of expected result quality.  In
+Section \ref{network_idris_ai_services} we describe the implementation
+of a network of trivially simple AI services implemented in Idris, and
+use Idris compiler to type check if they can properly connect to each
+other.  Finally, in Section \ref{aidsl_registry} we describe the
+implementation of an AI-DSL Registry prototype, as a proof-of-concept
+for querying AI services based on their dependently typed
+specifications.
 
 \section{Realized Function}
 \label{realized_function}
