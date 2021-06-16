@@ -74,23 +74,47 @@ such system rely on Dependent Types~\cite{Altenkirch05whydependent} to
 express and validate the specifications of the AI services, including
 cost, quality and relationships thereof.  The reason Dependent Types
 have been chosen is because they are geared toward program
-specification checking and program generation, which is our case comes
-close to AI services combination as one can see AI services as
-functions.  More specifically Idris has been chosen as our initial
-Dependently Typed Language (DTL) candidate, due to its efficiency and
-its goal towards verifying and generating actually running programs as
-opposed to just proofs~\footnote{Programs are equivalent to proofs
-according to the Curry-Howard correspondence but some representations
-are more amenable to running actual programs than others}.
+specification checking and program generation, which in our case comes
+close to AI services combination if one sees AI services as functions.
+More specifically Idris has been chosen as our initial Dependently
+Typed Language (DTL) candidate, due to its efficiency and the fact
+that is has been designed to verify and generate actual running
+programs as opposed to just proofs~\footnote{Programs are equivalent
+to proofs according to the Curry-Howard correspondence but some
+representations are more amenable to running actual programs than
+others}.
+
+\section{Objectives and accomplishments}
+For that first iteration the goals were to
+\begin{enumerate}
+\item Experiment with matching and retrieval of AI services using
+  Idris~\cite{Idris}, a Dependently Typed Language (DTL)~\cite{DTL},
+  equipped with a powerful type system to express function
+  specifications.  That work is described in
+  Chapter~\ref{dependently_typed_registry}.
+\item Start building an AI ontology to ultimately provide a rich and
+  extendable vocabulary for the AI-DSL.  That work is described in
+  Chapter~\ref{aidsl_ontology}.
+\item Start building the AI-DSL itself, from its syntax to its
+  semantics.  Exploratory work on that is described in
+  Chapter~\ref{TODO}.
+\item Integrate all the above into a holistic prototype, running on a
+  real world test case of AI service assemblage, in real conditions,
+  that is ideally on the SingularityNET-on-Cardano network.
+  Preparatory work on that is described in Chapter~\ref{TODO}.
+\end{enumerate}
+All the objectives above except the last one have been accomplished at
+least to some degree.  The last, and the most ambitious, objective had
+to be postponed for the next iteration due to its complexity.
 
 \section{Related work}
 \label{related_work}
 To the best of our knowledge there is no existing work on creating
-such autonomous AI services interoperability system using Dependent
-Types, let alone running on a blockchain.  There are however attempts
-using different but related methodologies, involving ontologies and
-more or less explicit forms of automatic theorem proving, outside of
-the context of the blockchain technology.
+such AI-DSL to enable autonomous AI services interoperability system
+using Dependent Types, let alone running on a blockchain.  There are
+however attempts using different but related methodologies, involving
+ontologies with more or less explicit forms of reasoning, and
+obviously outside of the context of the blockchain technology.
 
 We are collecting a body of literature in a github
 issue~\cite{AIDSLRelatedWork} serving as a living document and being
@@ -98,16 +122,16 @@ regularly updated with such related work.  We will not describe the
 entire body here due to its volume (over 40 papers so far) and the
 fact that we are still in process of reviewing it.  Here is however a
 sample of the most relevant work we have encountered so far.
-In~\cite{Gruber_anontology} they discuss an ontology called EngMath
-for representing mathematical concepts useful for engineering,
+In~\cite{Gruber_anontology} the authors discuss an ontology called
+EngMath for representing mathematical concepts useful for engineering,
 including quantity units, equations and more in KIF~\cite{KIF} to be
 used in SHADE~\cite{Gruber92towarda} a system for collaborative
 intelligent agents.  It is rather old and it seems development has
 halted, but could nevertheless be interesting to learn more about.
-In~\cite{Brazier1995} they describe a use case of their system called
-DESIRE, formally define inputs and outputs of agents and their control
-flows.  The logic seems somewhat limited but their goals are certainly
-somewhat aligned with ours.  In~\cite{Bourahla20055} an extension of
+In~\cite{Brazier1995} the authors describe a use case of their system
+called DESIRE, formally define inputs and outputs of agents and their
+control flows.  The logic seems somewhat limited but their goals
+aligned with ours.  In~\cite{Bourahla20055} an extension of
 Computation Tree Logic (CTL) called multi-modal branching-time logic
 is defined to apply model checking on collections of agent given their
 description in some abstract programming language.  It's not clear the
