@@ -418,9 +418,9 @@ implementation of gRPC for Idris/AI-DSL could be handy as well.
 One important goal of the AI-DSL is to have a system that can perform
 autonomous matching and composition of AI services, so that provided
 the specification of an AI, it should suffice to find it, complete it
-or even entirely build it from scratch.  We have implemented a
-proof-of-concept \emph{registry} to start experimenting with such
-functionalities.
+or even entirely build it from scratch.  We have implemented an
+\emph{AI-DSL Registry} proof-of-concept to start experimenting with
+such functionality.
 
 So far we have two versions in the
 \href{https://github.com/singnet/ai-dsl/}{AI-DSL repository}, one
@@ -483,7 +483,7 @@ outputs
 \begin{minted}[mathescape]{idris}
 Registry.retreive
 \end{minted}
-which is itself.  Likewise one can query
+which is actually itself.  Likewise one can query
 \begin{minted}[mathescape]{idris}
 Integer -> Integer
 \end{minted}
@@ -512,7 +512,7 @@ Twicer.twicer
 
 At the heart of it is Idris.  Behind the scene the registry
 communicates the type signature to the Idris REPL and requests, via
-the {\texttt :search} meta function, all loaded functions matching the
+the \texttt{:search} meta function, all loaded functions matching the
 type signature.  Then the registry just returns the first match.
 
 Secondly, we can now write composite services with missing parts.  The
@@ -521,11 +521,12 @@ implements the following composition
 \begin{minted}[mathescape]{idris}
 incrementer . halfer . (Registry.retrieve ?type)
 \end{minted}
-Thus upon execution queries the registry to fill the hole with the
-correct, according to its specification, service.
+Thus upon execution, the \texttt{compo} AI service queries the
+registry to fill the hole with the correct, according to its
+specification, service.
 
-More details about this, including steps to reproduce it all, can be
-found in the
+More details about this, including steps to reproduce it, can be found
+in the
 \href{https://github.com/singnet/ai-dsl/blob/master/experimental/registry-dsl/README.md}{\texttt{README.md}}
 under the
 \href{https://github.com/singnet/ai-dsl/blob/master/experimental/registry-dsl/}{\texttt{experimental/simple-idris-services/service/}}
@@ -534,25 +535,24 @@ folder of the \href{https://github.com/singnet/ai-dsl/}{AI-DSL
 
 \subsection{Objectives and achievements}
 
-As shown above we were able to implement a proof-of-concept of an
-AI-DSL registry.  Only the \texttt{retrieve} function was implemented.
-The \texttt{compose} function still remains to be implemented,
-although the \texttt{compo} service is somewhat halfway there, with
-limitations, for instance the missing type, \texttt{?type}, was
-hardwired in the code, \texttt{Integer -> EvenInteger}.  It should be
-noted however that Idris is in principle capable of inferring such
-information but more work is needed to more fully explore that
-functionality.
+As shown above we were able to implement a prototype of an AI-DSL
+registry.  Only the \texttt{retrieve} function was implemented.  The
+\texttt{compose} function still remains to be implemented, although
+the \texttt{compo} service is already somewhat halfway there, with the
+limitation that the missing type, \texttt{?type}, is hardwired in the
+code, \texttt{Integer -> EvenInteger}.  It should be noted however
+that Idris should be capable of inferring such information but more
+work is needed to fully explore that functionality.
 
 Of course it is a very simple example, in fact the simplest we could
 come up with, but we believe serves as a proof-of-concept, and
-demonstrates that AI services matching, using dependent types as
-formal specification language, is possible.
+demonstrates that AI services matching and retrieval, using dependent
+types as formal specification language, is possible.
 
 \subsection{Future work}
 
-There a lot of possible future improvements for this work, in no
-particular order
+There a lot of possible future improvements for this work.  Below are
+a few in no particular order
 \begin{itemize}
 \item Use structured data structures to represent type signatures
   instead of String.
@@ -563,12 +563,12 @@ particular order
 
 Also, as of right now, the registry was implemented in
 Python\footnote{because the SingularityNET example it is derived from
-is written in Python, not because Python is thought to be the greatest
-language for this purpose.}, querying Idris when necessary.  However
-it is likely that this should be better suited to Idris itself.  Which
-leads us to an interesting possibility, maybe the registry, and in
-fact most (perhaps all) components and functions of the AI-DSL could
-or should be implemented in the AI-DSL itself.
+is written in Python, not because Python is thought to be the most
+suitable language for this purpose.}, querying Idris when necessary.
+However it is likely that this should be better suited to Idris
+itself.  Which leads us to an interesting possibility, maybe the
+registry, and in fact most (perhaps all) components and functions of
+the AI-DSL could or should be implemented in the AI-DSL itself.
 
 \chapter{AI-DSL Ontology}
 \label{aidsl_ontology}
