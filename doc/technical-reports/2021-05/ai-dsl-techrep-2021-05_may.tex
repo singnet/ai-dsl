@@ -255,15 +255,35 @@ The full implementation can be found in
 \href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/RealizedFunction.idr}{\texttt{RealizedFunction.idr}}
 under the same folder.
 
+Given such data structure we used the Idris compiler to type check if
+the realized attributes of realized functions, i.e. AI services,
+composed from other realized functions would follow the defined
+compositional law, here \texttt{add\_costs\_min\_quality}.  That is given
+for instance the realized attributes of an incrementer function
+\begin{minted}[mathescape]{idris}
+incrementer_attrs = MkRealizedAttributes (MkCosts 100 10 1) 1
+\end{minted}
+and a twicer function
+\begin{minted}[mathescape]{idris}
+twicer_attrs = MkRealizedAttributes (MkCosts 200 20 2) 0.9
+\end{minted}
+the realized attributes of their compositions must be
+\begin{minted}[mathescape]{idris}
+rlz_compo1_attrs = MkRealizedAttributes (MkCosts 300 30 3) 0.9
+\end{minted}
+otherwise Idris detects a type error.
+
 \subsection{Objectives and achievements}
 
 The objectives of this work was to see if Idris2 was able to type
 check that the realized attributes of composed realized functions
 followed the defined compositional law.  We have found that Idris2 is
-not only able to do that, but to our surprise much faster that Idris1
-(instantaneous instead of seconds to minutes), by bypassing induction
-on numbers and using efficient function-driven rewriting on the
-realized attributes instead.  That experiment can be found in
+not only able of doing that, but to our surprise does it considerably
+faster that Idris1 (instantaneous instead of seconds to minutes), by
+bypassing induction on numbers and using efficient function-driven
+rewriting on the realized attributes instead.
+
+That experiment can be found in
 \href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/RealizedFunction-test.idr}{\texttt{RealizedFunction-test.idr}},
 under the
 \href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/}{\texttt{experimental/realized-function/}}
