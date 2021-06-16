@@ -1541,13 +1541,16 @@ more.
 \item \textbf{AI service assemblage}: collection of AI services
   interacting together to fulfill a given function.  Example of such
   AI service assemblage would be the Nunet Fake News Warning system.
-\item \textbf{Dependent Types}: expressive type system that allows to
-  express types depending on values.  Instead of being limited to
-  constants such as \texttt{Integer} or \texttt{String}, dependent
-  types are functions that take values and return types, usually
-  directly expressed as a term containing free variables such as,
-  \texttt{Vect n a}, representing the class of vectors of size
-  \texttt{n} containing elements of type \texttt{a}.
+\item \textbf{Dependent Types}: types depending on values.  Instead of
+  being limited to constants such as \texttt{Integer} or
+  \texttt{String}, dependent types are essentially functions that take
+  values and return types.  A dependent type is usually expressed as a
+  term containing free variables.  An example of dependent type is
+  \texttt{Vect n a}, representing the class of vectors containing
+  \texttt{n} elements of type \texttt{a}.
+\item \textbf{Dependently Typed Language}: functional programming
+  language using dependent types.  Examples of such languages are
+  Idris, AGDA and Coq.
 \end{itemize}
 
 \bibliographystyle{splncs04}
