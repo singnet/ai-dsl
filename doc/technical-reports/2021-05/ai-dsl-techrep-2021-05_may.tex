@@ -344,14 +344,14 @@ prohibit certain combinations such as
 \end{itemize}
 Since the output of \texttt{incrementer . twicer} is provably odd,
 \texttt{halfer} should refuse it and such combination should be
-rejected.  This objective was not reached in this experiment, but
-similar objectives were reached in other experiments, see Section
-\ref{aidsl_registry}\nil{Add ref to Sam's work}.  The other objective
-was to type check that the compositions have realized attributes
-corresponding to the compositional law implemented in Section
-\ref{realized_function}, which was fully achieved in this experiment.
-For instance by changing either the types, costs or quality of the
-following composition
+rejected.  This objective was not reached in this experiment, but was
+reached in the experiments described in see Section
+\ref{aidsl_registry} as well as\nil{Add ref to Sam's work}.  The other
+objective was to type check that the compositions have realized
+attributes corresponding to the compositional law implemented in
+Section \ref{realized_function}, which was fully achieved in this
+experiment.  For instance by changing either the input/output types,
+costs or quality of the following composition
 \begin{minted}[mathescape]{idris}
 -- Realized (twicer . incrementer).
 rlz_compo1_attrs : RealizedAttributes
@@ -372,6 +372,10 @@ under the
 folder of the \href{https://github.com/singnet/ai-dsl/}{AI-DSL
   repository}~\cite{AIDSLRepo}.
 
+Thus besides the fact that dependent types were ignore in that
+experiment, the objectives were met.  See Section \ref{aidsl_registry}
+for a follow up experiment involving dependent types.
+
 \subsection{Future work}
 
 Such experiment was good to explore how Idris can be integrated to a
@@ -384,26 +388,26 @@ be too ambitious for that iteration and was postponed for the next.
 
 An intermediary step, before moving to actual AI algorithms, is to
 explore multi-facet specifications and their interactions with other
-AI services.  That is, a service A might output a data type satisfying
-a combination of properties, such as, to tie that back to the trivial
-incrementer, twicer and halfer combination, an integer that is both
-even and within a certain interval.  Then two other services, B and C,
-may have partial constraints instead.  For instance B may require an
-even integer, while C may require that integer to be within a certain
-interval.  In other words both can take as input the output of A, for
-different reasons.  It's obviously not conceptual difficult to cast
-the output of A to match the input types of B and C, however it is
-still something we need to explore in practice with Idris.
+AI services.  That is, given AI services A, B and C, let's assume A's
+output must satisfy a combination of properties, such as an integer
+that is both even and within a certain interval.  Then B and C may
+have need partial constraints to be fulfilled.  For instance B may
+require an even integer, while C may require that integer to be within
+a certain interval.  In other words both services B and C may take the
+output of A as input but for different reasons.  It's obviously not
+conceptual difficult to cast the output of A to match the input types
+of B and C, however it is still something we need to explore with
+Idris in its full generality.
 
-Obviously we want to be able to reuse existing AI services and write
-their enhanced specifications on top of them, as opposed to writing
-both specification and code in Idris/AI-DSL.  To that end it was noted
-that having a Protobuf to/from Idris/AI-DSL converter would be useful,
-so that a developer can start from an existing AI service, specified
-in Protobuf, and enriched it with dependent types in Idris/AI-DSL.
-The other way around could be useful as well to enable a developer to
+Also, we obviously want to be able to reuse existing AI services and
+write their specifications on top of them, as opposed to writing both
+specification and code in Idris/AI-DSL.  To that end it was noted that
+having a Protobuf to/from Idris/AI-DSL converter would be useful, so
+that a developer can start from an existing AI service, specified in
+Protobuf, and enriched it with dependent types in Idris/AI-DSL.  The
+other way around could be useful as well to enable a developer to
 implement AI services entirely in Idris/AI-DSL and expose their
-Protobuf specification to the network.  To that end having an
+Protobuf specification to the network.  Relatedly having directly an
 implementation of gRPC for Idris/AI-DSL could be handy as well.
 
 \section{AI-DSL Registry}
