@@ -611,7 +611,7 @@ kernel / vocabulary of globally accessible grounded types, which will be
 built-in into the platform at the deep level. Changing this kernel will most
 probably require some form of voting / global consensus on a platform level.
 
-  Therefore, it seems best to define AI-DSL Ontology and the mechanism of using
+  Therefore, it seems best to define the AI-DSL Ontology and the mechanism of using
   it on two levels: \begin{itemize} \item \textit{The globally accessible
   vocabulary/root ontology of grounded types}. This vocabulary can be seen as
   immutable (in short and medium term) kernel. It should be extendable in the
@@ -832,7 +832,7 @@ is deployed, it can be accessed from the GUI interface, which in case of
 \end{figure}
 
 We will use this application design principles as the domain model for the first
-design of AI-DSL Ontology and the prototype.
+design of the AI-DSL Ontology and its prototype.
 
 \subsection{Ontology language and upper level ontology}
 
@@ -880,7 +880,7 @@ by folowing \href{https://github.com/nunet-io/ai-dsl/blob/master/ontology/tools/
 
 In order to satisfy the \textit{extendibility} requirement of ontology design,
 we are proposing a notion and design of a \textit{decentralized ontology}, which
-enables us to work with globally consistent and locally incosistent components
+enables us to work with globally consistent and locally inconsistent components
 within the same mechanism of AI-DSL. Based on our design, the full ontology of
 \texttt{Fake News Warning} application is constructed from a number of separate
 components, which operate at different level of decentralization. Table below
@@ -915,7 +915,7 @@ describes each of these components.
     (DAG) of the application.&
     SingularityNET.kif [,..] &
     Fully decentralized: defined by application developers; Since \texttt{Fake News
-Warning} application is open source, any developer can for it and define it
+Warning} application is open source, any developer can fork it and define it
 otherwise; Technically, this would be a different application.\\
     \hline
     \href{https://github.com/singnet/ai-dsl/blob/master/ontology/fnsBinaryClassifier.kif}{fnsBinaryClassifier.kif} &
@@ -948,7 +948,7 @@ otherwise; Technically, this would be a different application.\\
     Limited: versioning mechanism controlled by NuNet (to be defined) \\
     \end{tabular}
   \captionsetup{width=0.7\linewidth}
-  \caption{\label{tbl:all_kif_files}Description of each component of the AI-DSL Ontology prototope and links to related KIF files.}
+  \caption{\label{tbl:all_kif_files}Description of each component of the AI-DSL Ontology prototype and links to related KIF files.}
 \end{table}
 
 \subsection{Ontology prototype}
@@ -1163,7 +1163,7 @@ inputs.
   \label{fig:NuNetEnabledComputer_requirements}
 \end{figure}
 
-A \texttt{SNetAIService} can only be deployed on \texttt{NuNetEnabledComputer}
+An \texttt{SNetAIService} can only be deployed on \texttt{NuNetEnabledComputer}
 if available resources on the computer are not less than compute requirements of
 a service:
 
@@ -1258,9 +1258,9 @@ in the \texttt{Fake News Warning} app.}
 
 An important part of the \textit{decentralized ontology} design is the mechanism
 which makes it work in actual scenarios. This mechanism was designed using the
-same domain model of \texttt{Fake News Warnsing} application. It also clarifies
+same domain model of \texttt{Fake News Warning} application. It also clarifies
 the reason why we propose this particular concept and design of
-\textit{decentralized ontology}. 
+\textit{decentralized ontology}.
 
 AI-DSL will allow to search, match, compile and
 execute independently developed AI components in terms of a single veritable
@@ -1293,26 +1293,27 @@ way:
 via browser-extension by sending (a) the definition of the workflow to the
 platform in the form of a DAG (Figure \ref{lst:dag}) and 
 (b) the web content to be checked for probability to contain fake news.
-\item AI-DSL reads the DAG and identifies the dependent SNet AI Services that
-need to be called. 
+\item The AI-DSL engine reads the DAG and identifies the dependent SNet AI Services that
+need to be called.
 \item If dependent services are indicated statically as in \ref{lst:dag},
-then the platform knows immediately names of the services to be called. If, however, 
-dependent services are described in terms of their input / output types (as in 
-\ref{fig:serviceDependencies}), AI-DSL searches and matches services available
-in the platform that satisfy constraints defined there\footnote{In the future, AI-DSL 
-will aim to accommodate fuzzy service definitions and complex decision functions to 
-search and match them, involving ability for an AI Service to choose its 
-dependent services.}. 
-\item When matching services are found, AI-DSL engine pulls their individual type
-signatures and other metadata from each service (note, that a decentralized system 
-cannot be built with the assumption of availability of global registry; such registry 
-can, however, be built as a secondary index of otherwise decentralized information 
+then the platform knows immediately names of the services to be called. If, however,
+dependent services are described in terms of their input / output types (as in
+\ref{fig:serviceDependencies}), the AI-DSL engine searches and matches services available
+in the platform that satisfy constraints defined there\footnote{In the
+future, the AI-DSL engine
+will aim to accommodate fuzzy service definitions and complex decision functions to
+search and match them, involving ability for an AI Service to choose its
+dependent services.}.
+\item When matching services are found, the AI-DSL engine pulls their individual type
+signatures and other metadata from each service (note, that a decentralized system
+cannot be built with the assumption of availability of global registry; such registry
+can, however, be built as a secondary index of otherwise decentralized information
 sources) and compiles into a workflow. This operation may be done in a few stages:
 \begin{itemize}
-	\item When AI-DSL engine requests metadata for the dependent service and receives it, 
+	\item When the AI-DSL engine requests metadata for the dependent service and receives it,
 	it checks the received metadata for conformance to AI-DSL Ontology requirements
 	(e.g. well-formed description in SUO-KIF and correct type dependencies as defined
-	hierarchy in Table \ref{tbl:uclnlp_hierarchy} and displayed graphically in 
+	hierarchy in Table \ref{tbl:uclnlp_hierarchy} and displayed graphically in
 	Figure \ref{fig:uclnlp_hierarchy_graph}):
 	
 \begin{figure}[H]
@@ -1329,7 +1330,7 @@ sources) and compiles into a workflow. This operation may be done in a few stage
 \pgfkeys{/csteps/fill color=black}
 
 	\item Note, that the correctness of type dependencies of decentralized components of 
-	AI-DSL Ontology (\texttt{uclnlp}) will be checked against centralized
+	the AI-DSL Ontology (\texttt{uclnlp}) will be checked against centralized
 	components versioned by SingularityNET platform (Table \ref{tbl:all_kif_files}). Defining
 	versioning mechanism of global components of the ontology is not within the scope 
 	of this work. However, merely acknowledging the possible existence of different 
@@ -1348,10 +1349,11 @@ sources) and compiles into a workflow. This operation may be done in a few stage
 	\caption{\label{fig:verification-sequence}Stage \Circled{4} of workflow construction 
 		sequence (fully depicted in Figure \ref{fig:high-level-workflow-construction}) -- compiling the workflow and
 		proving its correctness.}
-\end{figure}	
-	
-	\item Service metadata returned by calls \Circled{2} and \Circled{4} include service definitions
-	and the version number of global AI-DSL Ontology that was used to build these definitions. For
+\end{figure}
+
+	\item Service metadata returned by calls \Circled{2} and
+          \Circled{4} of Figure \ref{fig:verification-sequence} include service definitions
+	and the version number of the global AI-DSL Ontology that was used to build these definitions. For
 	example, call \Circled{4} may contain the following information:
 
 	\begin{figure}[h]
@@ -1378,24 +1380,25 @@ sources) and compiles into a workflow. This operation may be done in a few stage
 	they can be checked for conformance with the global AI-DSL Ontology of respective version and,
 	if service definitions include type signature -- type-checked.
 	
-	\item The actual compilation of the workflow, compliance to AI-DSL Ontology and type-checking need a
+	\item The actual compilation of the workflow, compliance to
+          the AI-DSL Ontology and type-checking need a
 	dedicated and properly configured execution environment. In the context of this document, 
-	that execution environment may include Idris compiler, an ontology prover that is able to process 
+	that execution environment may include the Idris compiler, an ontology prover that is able to process 
 	SUO-KIF definitions (e.g. Sigma), their dependencies and possibly custom code.
-	For that, it would be most logical to introduce a dedicated 
+	For that, it would be most logical to introduce a dedicated
 	AI service into the platform -- which is the \texttt{verifier} component denoted in Figure 
-	\ref{fig:verification-sequence}. The \texttt{verifier} service will be able to do run any required
+	\ref{fig:verification-sequence}. The \texttt{verifier} service will be able to run any required
 	verification procedures in order to provide a proof that the workflow constructed from 
 	services found in step \Circled{3} is valid and can be correctly executed on the 
 	SingularityNET platform.
-	
+
 	\item After calls \Circled{1}, \Circled{2}, \Circled{3} and \Circled{4} of 
 	Figure \ref{fig:verification-sequence} are completed, a call \Circled{5} will be issued to
 	 \texttt{verifier} sending all metadata of each  service along
 	 with the AI-DSL Ontology version's identifier. The \texttt{verifier} will then 
 	 request all required dependencies
 	 (listed in Figure \ref{tbl:all_kif_files}) from the central SingularityNET repository 
-	 (or blockchain) and calculate the proof.	 
+	 (or blockchain) and calculate the proof.
 	\item After \texttt{verifier} calculates the proof at step \Circled{8}, 
 	the proof is sent to the service that has requested it (in the case of
 	\ref{fig:high-level-workflow-construction} -- to \texttt{fakeNewsScore}). 
@@ -1412,10 +1415,10 @@ sources) and compiles into a workflow. This operation may be done in a few stage
 		\item Record the root hash of the tree into the blockchain with relevant metadata;
 	\end{enumerate}
 
-	 \item Such setup would constitute to an implicit reputation system of workflows in the sense, that 
-	 a workflow with most proofs of correctness on the blockchain could be trusted to work without 
-	 recalculating the proof each time a workflow is constructed. 
-	
+	 \item Such setup would constitute an implicit reputation system of workflows in the sense that
+	 a workflow with most proofs of correctness on the blockchain could be trusted to work without
+	 recalculating the proof each time a workflow is constructed.
+
 \end{itemize}
 
 \end{enumerate}
@@ -1428,13 +1431,13 @@ OWL to KIF, since OWL may be representable in KIF
 \cite{martin_translations_nodate}  using \href{https://github.com/owlcs/owlapi}{OWL
 	API}; For the purpose of the ontology
 prototype, we are manually selecting parts of the existing ontologies in order to build
-the prototype and write them in SUO-KIF format;
+the prototype and write them in SUO-KIF format.
   \item Similarly we want to be able to convert SUO-KIF specifications
-    into Idris, and vise versa, to take advantage of the strengths of
+    into Idris, and possibly vise versa, to take advantage of the strengths of
     each formalism.  To the best of our knowledge there are no existing
-    tools to automatically translating SUO-KIF to/from Idris, but
+    tools to automatically translate SUO-KIF to/from Idris, however
     there is a tool to translate SUO-KIF to
-    FOL~\cite{Pease_firstorder} and we have found a paper describing
+    FOL~\cite{Pease_firstorder} and a paper describing
     the translation from a Dependently Typed Language (DTL) to
     FOL~\cite{SojakovaKristina2009}.  Additionally, to start building
     an understanding about such process, we have manually ported the trivial AI
@@ -1445,8 +1448,7 @@ the prototype and write them in SUO-KIF format;
     of the \href{https://github.com/singnet/ai-dsl/}{AI-DSL
       repository}~\cite{AIDSLRepo}.  As it turns out writing formal
     specifications of functions in SUO-KIF is reasonably straight
-    forward.  Here's the SUO-KIF implementation of the Twicer service
-    to get a idea
+    forward.  Here is for instance the SUO-KIF implementation of the Twicer service
 \begin{minted}[mathescape]{idris}
 (instance TwicerFn UnaryFunction)
 (domain TwicerFn 1 Integer)
@@ -1516,13 +1518,13 @@ have
   properties.
 \item Built a prototype of a Dependently Typed Registry to retrieve,
   match and connect AI services based on their specifications as
-  dependent types, see \ref{network_idris_ai_services}, using Idris
+  dependent types, see Section \ref{sec:network_idris_ai_services}, using Idris
   meta-functions for function matching and retrieval.  This prototype
   has limits, such as returning only the first matching AI service and
   not performing fully autonomous composition of AI services, but none
   of these limits seem fundamentally hard to address and should only
   require more development time.
-\item In see Chapter \ref{aidsl_ontology} we have explored ontologies
+\item In Chapter \ref{chap:aidsl_ontology} we have explored ontologies
   with the goal of defining a rich and extendable vocabulary for
   specifying AI services, their algorithms, data types as well as
   their relationship to real world.  The decision was made to build
@@ -1534,25 +1536,39 @@ have
 \item Reviewed literature of related work to make sure we do not miss
   anything major and can take advantage of existing technologies.
   Even though we have found no such related project using Dependent
-  Types as central component, there are related endeavors described in
-  \ref{related_work} with potential reusable ideas, languages or code,
+  Types as central component, there are related endeavors described in Section
+  \ref{sec:related_work} with potential reusable ideas, languages or code,
   such as FIPA-ACL and more.  More exploration is needed on that front
   as well.
+\item Experimented with various approaches for defining AI-DSL as a
+  Idris eDLS, see Chapter \ref{TODO}.
 \item Started building, though more at the preparatory level, a real
   world AI service assemblage test case, based on Nunet Fake News
   Warning example.  See Chapter \ref{TODO}.  Such test case is going
   to be critical to put our AI-DSL prototypes to the test and build
   the understanding necessary to push it to the next level.
 \end{itemize}
-Much of the work done during this iteration was exploratory due to the
-novel nature of such technology.  The work taking place during the
-next iterations will consist in continuing such exploration, refining
-our existing prototypes and bringing them together in a holistic
-system, guided by real world AI service assemblage test cases.  Such
-test case will initially include the Nunet Fake News Warning
-collective.  Then more test cases will be considered over various
-domains such as bio-informatics, finance, embodied agent control and
-more.
+The work taking place during the next iterations will consist in
+continuing such exploration, refining our existing prototypes and
+bringing them together in a holistic system, guided by real world AI
+service assemblage test cases.  Such test case will initially include
+the Nunet Fake News Warning collective.  Then more test cases will be
+considered over various domains such as bio-informatics, finance,
+embodied agent control and more.
+
+To conclude, even though there is a long way to go, we believe a lot
+has been accomplished already, and we are happy to say that no
+profound difficulties have been revealed so far, although we must
+remain cautious.  One difficulty that is expected to eventually come
+up is the tractability of the verification and automated composition
+process of AI services.  This is generally undecidable, and even when
+restricted to subclasses of functions (as is the case in Idris due to
+being based on Intuitionistic Logic) can still have explosive
+complexity.  However, it is also expected that a tremendous amount of
+value will be created by having such system work with restricted
+applicability.  Ultimately is it expected that the AI-DSL will need to
+synergies with AGI systems which, uncoincidentally, is one of the
+quintessential functions that SingularityNET aims to offer.
 
 \appendix
 \chapter{Glossary}
