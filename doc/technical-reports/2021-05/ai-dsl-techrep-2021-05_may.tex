@@ -1551,7 +1551,7 @@ King    The
   
 Before we make word pairs, however, we perform some common dataset preprocessing such as removing stop words and creating dictionaries.
 
-\begin{minted}
+\begin{minted}[mathescape]{idris}
 removeStopWords :: Str -> [Str]
 removeStopWords line = filter (not . ((flip elem ) stopwords )) (words line)
 \end{minted}
@@ -1563,7 +1563,7 @@ removeStopWords : String -> List String
 removeStopWords line = filter (not . ((flip elem) stopwords)) (words line)
 \end{minted}
 
-\begin{minted}
+\begin{minted}[mathescape]{idris}
 createDictionary::(Integral i) => [Str] -> [(Str, i)]
 createDictionary vocabs = zip  (sort . nub $ vocabs) [1..]
 \end{minted}
@@ -1582,7 +1582,7 @@ createDictionary xss = func 0 tmp
 \end{minted}
 The next step is passing the input to our model. To do so we need to first one-hot encode the inputs and the targets.
 
-\begin{minted}
+\begin{minted}[mathescape]{idris}
 oneHotEncoder :: (Num q) => [Int] -> [q] -> [[q]]
 oneHotEncoder xs zs = foldr (\x acc -> insertAt zs 1 x: acc) [] xs
 \end{minted}
