@@ -1852,9 +1852,13 @@ there should be no need for them to also encode the exact properties of their
 service's output data.  A service developer is not likely to have any knowledge
 of how their service's outputs will be used by other services in the future, so
 the AI-DSL should not force them to describe their output data in any more
-detail than is possible.  In the examples above, the \texttt{incrementer}
-service was forced to describe its inputs and outputs in terms of properties
-that are only relevant to other services.
+detail than is possible\footnote{Of course given a full specification
+of the service, which is admittedly hard but possible to provide, any
+decidable correct property about its output data can be inferred,
+possibly at a prohibitively high cost.}.  In the examples above,
+the \texttt{incrementer} service was forced to describe its inputs and
+outputs in terms of properties that are only relevant to other
+services.
 
 
 \subsection{A Monadic DSL}
