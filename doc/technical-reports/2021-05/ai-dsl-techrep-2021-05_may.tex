@@ -349,13 +349,13 @@ prohibit certain combinations such as
 Since the output of \texttt{incrementer . twicer} is provably odd,
 \texttt{halfer} should refuse it and such combination should be
 rejected.  This objective was not reached in this experiment, but was
-reached in the experiments described in see Section
-\ref{sec:dependently_typed_registry} as well as\nil{Add ref to Sam's work}.  The other
-objective was to type check that the compositions have realized
-attributes corresponding to the compositional law implemented in
-Section \ref{sec:realized_function}, which was fully achieved in this
-experiment.  For instance by changing either the input/output types,
-costs or quality of the following composition
+reached in the experiments described in Sections
+\ref{sec:dependently_typed_registry} and \ref{sec:dependent_pairs}.
+The other objective was to type check that the compositions have
+realized attributes corresponding to the compositional law implemented
+in Section \ref{sec:realized_function}, which was fully achieved in
+this experiment.  For instance by changing either the input/output
+types, costs or quality of the following composition
 \begin{minted}[mathescape]{idris}
 -- Realized (twicer . incrementer).
 rlz_compo1_attrs : RealizedAttributes
@@ -467,7 +467,7 @@ that is a \emph{dependent pair} composed of a \emph{well founded
 integer} of type \texttt{WFInt} and a dependent data structure,
 \texttt{Parity} containing a proof that the first element of the pair,
 \texttt{n}, is even.  More details on that can be found in
-Section\nil{Add ref to Sam's work}.
+Section \ref{sec:dependent_pairs}.
 
 For now our prototype of AI-DSL registry implements the
 \texttt{retreive} function, which, given an Idris type signature,
@@ -1759,6 +1759,7 @@ important properties are too complex to be described using only the \texttt{Num}
 interface.
 
 \subsection{A Look into Dependent Pairs}
+\label{sec:dependent_pairs}
 Idris represents the intersection between a theorem proof assistant and a
 programming language.  As such, it is often useful to think of types as
 logical propositions, and values as proofs of those propositions.  Since our
@@ -1963,11 +1964,11 @@ have
   is required to expand the complexity of such realized function
   attributes, such as functional or distributional costs and quality.
 \item Experimented with Idris to formalize function properties as
-  dependent types\nil{Ref to Sam's work}.  Again this was done in a
-  limited manner, using trivial properties such as evenness of
-  numbers, but taught us that it is a possible to do in Idris, and
-  provided us insights on how to expand that to more complex
-  properties.
+  dependent types, see Chapter \ref{chap:soft_eng_strat}.  Again this
+  was done in a limited manner, using trivial properties such as
+  evenness of numbers, but taught us that it is a possible to do in
+  Idris, and provided us insights on how to expand that to more
+  complex properties.
 \item Built a prototype of a Dependently Typed Registry to retrieve,
   match and connect AI services based on their specifications as
   dependent types, see Section \ref{sec:network_idris_ai_services}, using Idris
