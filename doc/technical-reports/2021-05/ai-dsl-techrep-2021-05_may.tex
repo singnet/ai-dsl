@@ -1923,9 +1923,10 @@ of three categories:
 
   \item \texttt{Deep Embedding:} Similarly to a shallowly-embedded DSL,
         an eDSL with a deep embedding is defined in some host language.
-        Deep embeddings define a custom GADT in the host language and represent
-        all data as values of this type.  Because the entire abstract syntax
-        tree of a deeply-embedded program is a single type, it is simple to
+        Deep embeddings define a custom Generalized Algebraic Data Type
+        (GADT) in the host language and represent
+        all data as values of this type.  Because the entire Abstract Syntax
+        Tree (AST) of a deeply-embedded program is a single type, it is simple to
         write functions in the host language that operate directly on the
         embedded program. This allows for automatic optimization of embedded
         programs, as well as multiple possible interpretations.  However, any
