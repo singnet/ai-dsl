@@ -62,7 +62,8 @@ The task of composing such AI algorithms is, in most cases, done by
 humans and, as any AI practitioner knows, is tedious and time
 consuming.  Not just the composition of the whole but also the search
 and the understanding required to find the parts.  Facilitating and
-ultimately automating such process is the goal of the \emph{AI-DSL}.
+ultimately automating such process is the goal of the \emph{Artificial
+Intelligence Domain Specific Language}, or \emph{AI-DSL} for short.
 
 Another important aspect is the management of resources, both
 financial and computational (CPUs, GPUs, etc).  The AI-DSL is also
@@ -72,10 +73,10 @@ requirements as well as measures of expected result quality.
 Finally, as described in the blogpost, the current plan is to have
 such system rely on Dependent Types~\cite{Altenkirch05whydependent} to
 express and validate the specifications of the AI services, including
-cost, quality and relationships thereof.  The reason Dependent Types
+cost, quality and their relationships thereof.  The reason Dependent Types
 have been chosen is because they are geared toward program
 specification checking and program generation, which in our case comes
-close to AI services combination if one sees AI services as functions.
+close to AI services verification and combination if one sees AI services as functions.
 More specifically Idris has been chosen as our initial Dependently
 Typed Language (DTL) candidate, due to its efficiency and the fact
 that is has been designed to verify and generate actual running
@@ -97,7 +98,7 @@ For that first iteration the goals were to
   Chapter~\ref{chap:aidsl_ontology}.
 \item Start building the AI-DSL itself, from its syntax to its
   semantics.  Exploratory work on that is described in
-  Chapter~\ref{TODO}.
+  Chapter~\ref{chap:soft_eng_strat}.
 \item Integrate all the above into a holistic prototype, running on a
   real world test case of AI service assemblage, in real conditions,
   that is ideally on the SingularityNET-on-Cardano network.
@@ -278,7 +279,7 @@ otherwise Idris detects a type error.
 The objectives of this work was to see if Idris2 was able to type
 check that the realized attributes of composed realized functions
 followed the defined compositional law.  We have found that Idris2 is
-not only able of doing that, but to our surprise does it considerably
+not only able to do that, but to our surprise does it considerably
 faster that Idris1 (instantaneous instead of seconds to minutes), by
 bypassing induction on numbers and using efficient function-driven
 rewriting on the realized attributes instead.
@@ -289,6 +290,9 @@ under the
 \href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/}{\texttt{experimental/realized-function/}}
 folder of the \href{https://github.com/singnet/ai-dsl/}{AI-DSL
   repository}~\cite{AIDSLRepo}.
+
+An improvement of that work is also described in Section
+\ref{sec:service_composition_in_idris2}.
 
 \subsection{Future work}
 
@@ -1698,8 +1702,9 @@ Nonetheless, this is definitely something I would be excited to work on in the f
 
 
 \chapter{Software Engineering Strategies}
-
+\label{chap:soft_eng_strat}
 \section{Service Composition in Idris2}
+\label{sec:service_composition_in_idris2}
 
 A key requirement of the AI-DSL is to provide both an ergonomic syntax for
 describing service properties and a robust process for using these descriptions
@@ -1978,8 +1983,8 @@ have
   \ref{sec:related_work} with potential reusable ideas, languages or code,
   such as FIPA-ACL and more.  More exploration is needed on that front
   as well.
-\item Experimented with various approaches for defining AI-DSL as a
-  Idris eDLS, see Chapter \ref{TODO}.
+\item Experimented with various approaches for defining AI-DSL as an
+  Idris eDLS, see Chapter \ref{chap:soft_eng_strat}.
 \item Started building, though more at the preparatory level, a real
   world AI service assemblage test case, based on Nunet Fake News
   Warning example.  See Chapter \ref{TODO}.  Such test case is going
