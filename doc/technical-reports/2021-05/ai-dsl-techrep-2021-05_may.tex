@@ -1766,8 +1766,8 @@ goal is to verify that a desired property is true of some value, we can use
 dependent types to describe a proposition parameterized by a specific value.
 
 Idris provides a special syntax for this.
-\texttt{(x : a ** p)} can be read as ``x is a value of type a such that
-proposition p holds true of x''.  This is called a dependent pair, and it can
+\texttt{(x : a ** p)} can be read as ``\texttt{x} is a value of type \texttt{a} such that
+proposition \texttt{p} holds true of \texttt{x}''.  This is called a dependent pair, and it can
 only be constructed by providing both a value and a proof that a desired
 property holds true for that specific value.  In the context of service
 composition, we can use dependent pairs as a direct representation of input
