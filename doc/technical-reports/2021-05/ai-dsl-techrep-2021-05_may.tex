@@ -114,38 +114,34 @@ to be postponed for the next iteration due to its complexity.
 To the best of our knowledge there is no existing work on creating
 such AI-DSL system to enable autonomous AI services interoperability
 using Dependent Types, let alone running on a blockchain.  There are
-however attempts using different but related methodologies, involving
+however attempts using related methodologies, usually involving
 ontologies with more or less explicit forms of reasoning, outside of
 the context of the blockchain technology.
 
 We are collecting a body of literature in a github
 issue~\cite{AIDSLRelatedWork} serving as a living document and being
 regularly updated with such related work.  We will not describe the
-entire body here due to its volume (over 70 papers so far) and the
-fact that we are still in the process of reviewing it.  Here is
-however the most relevant work we have encountered so far.
+entire body here due to its volume (over 70 references at the time of
+writing) and the fact that we are still in the process of reviewing
+it.  Here is however the most relevant work we have encountered so
+far.
 
 The most recent and also most relevant work we have found is the
-Function Ontology~\cite{FunctionOntology}. Its goal is to define a
-standard for describing, formally and informally, functions and their
-references to implementations, as well as developing tools for
-retrieving and executing them, remotely or locally.  To the best of
-our knowledge it does not make use of dependent types or blockchain
-technology, however there is a lot of potential for reuse.  More
-investigation will be conducted to precisely determine to what extent.
+Function Ontology~\cite{FunctionOntology, DeMeester2020}. Its goal is
+to define a standard for describing, both formally and informally,
+functions, their references to implementations, as well as developing
+tools for retrieving and executing them, remotely or locally.  To the
+best of our knowledge it does not make use of dependent types or
+blockchain technology, however there is a lot of potential for reuse.
+More investigation will be conducted to precisely determine to what
+extent.
 
-Less relevant, and generally less recent, work with yet potential for
-reuse or just inspirational is describe below.
-In~\cite{Gruber_anontology} the authors discuss an ontology called
-EngMath for representing mathematical concepts useful for engineering,
-including quantity units, equations and more in KIF~\cite{KIF} to be
-used in SHADE~\cite{Gruber92towarda} a system for collaborative
-intelligent agents.  It is rather old and it seems development has
-halted, but could nevertheless be interesting to learn more about.
-In~\cite{Brazier1995} the authors describe a use case of their system
-called DESIRE, formally define inputs and outputs of agents and their
-control flows.  The logic seems somewhat limited but their goals
-aligned with ours.  In~\cite{Bourahla20055} an extension of
+Still relevant work with potential for reuse if only conceptual is
+described below.  Let us start with the multi-agent system (MAS)
+field. In~\cite{Brazier1995} the authors describe a use case of a
+system called DESIRE, to formally define inputs and outputs of agents
+and their control flows.  The logic seems somewhat limited but their
+goals align with ours.  In~\cite{Bourahla20055} an extension of
 Computation Tree Logic (CTL) called multi-modal branching-time logic
 is defined to apply model checking on collections of agent given their
 description in some abstract programming language.  It's not clear the
@@ -153,26 +149,29 @@ specification language they use is very convenient and the model
 checking methodology is open-ended enough, but nevertheless the work
 is solid and relevant.  In~\cite{Desouky2007} is described an
 architecture for distributed multi-agent intelligent system.  The
-description of the architecture is somewhat high level but the authors
-mention Agent Communication Language (ACL)~\cite{Labrou99thecurrent}
-standards such as FIPA-ACL~\cite{FIPAACL}, used to communicate agents
-requests to each other, worth further exploration.  \cite{Roelofs2020}
-is centered around validating the consistency of different ontologies.
-This could be useful for facilitating the decentralization of the
-AI-DSL and its ontology.  \cite{Witherell2009} introduces FIDOE, a
-tool for analyzing and propagating changes across overlapping
-ontologies according to predefined inference rules.  It could be
-relevant to the ontology part, they mention standards such as
-SUMO~\cite{pease_standard_2009} and SWRL~\cite{SWRL} as well.\nil{Add
-  Euzenat, J, Isaac, A, Meilicke, C, Shvaik, P, Stuckenschmidt, H,
-  Šváb, O, Svátek, V, van Hage, W, Yatskevich, M, “Results of the
-  Ontology Alignment Evaluation Initiative 2007”, The Second
-  International Workshop on Ontology Matching, Busan Korea, 2007.  As
-  well as Lee, M., Jung, M., Suh, J., “Semantic Mapping Based on
-  Ontology and Bayesian Network and its Application to CAD and PDM
-  Integration,” 2006 ASME Computers and Information in Engineering
-  Conference, Philadelphia, PA, September 2006 DETC2006-99419, in
-  Github issue}
+description of the architecture is high level but the authors mention
+Agent Communication Language (ACL) standards~\cite{Labrou99thecurrent}
+such as FIPA-ACL~\cite{FIPAACL}, used to communicate agents requests
+to each other.  In the ontology field we have found the following
+papers.  In~\cite{Gruber_anontology} the authors introduce an ontology
+called EngMath for representing mathematical concepts useful for
+engineering, including quantity units, equations and more in
+KIF~\cite{KIF} to be used in SHADE~\cite{Gruber92towarda} a system for
+collaborative intelligent agents.  It is rather old and it seems
+development has halted, but could nevertheless be interesting to learn
+more about.  OpenMath~\cite{Abbot1995} is another old, but still
+maintained, ontology about mathematics.  More recent mathematical
+ontologies worth mentioning are OntoMath~\cite{Elizarov2017} and
+OntoMathPRO~\cite{nevzorova2014ontomathpro}, they seem rather high
+level but could still be useful.  Broadening the scope,
+\cite{Roelofs2020} is focused on validating the consistency of
+ontologies.  Relatedly, in~\cite{Witherell2009}, a tool for analyzing
+and propagating changes across overlapping ontologies according to
+predefined inference rules, called FIDOE, is introduced.  The authors
+mention standards such as SUMO~\cite{pease_standard_2009} and
+SWRL~\cite{SWRL} as well.  Such work could be relevant towards the
+goal of facilitating the decentralization of the AI-DSL and its
+ontology.
 
 \chapter{AI-DSL Registry}
 \label{chap:aidsl_registry}
