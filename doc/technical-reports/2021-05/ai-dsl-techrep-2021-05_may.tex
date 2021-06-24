@@ -1502,19 +1502,24 @@ SUO-KIF, as well its full or partial definition, using \texttt{=>},
 \texttt{?NUMBER}.  It should be noted however that the reason it works
 so well in that case is because the output type does not depend on the
 input value, the output is an even integer no matter what.  It is
-expected that porting for instance the \texttt{append} function of
-the dependent type \texttt{Vect}~\cite{Vectors} to SUO-KIF might not
-be as trivial, since the \texttt{domain} and \texttt{range} constructs
-cannot presumably represent such dependence (i.e. that the size of
-the resulting vector of \texttt{append} is the sum of the sizes of the input vectors).  This however can be
-moved to the function definition as allowed by SUO-KIF expressiveness.
-Another aspect we need to explore is how tools, such as Automatic
-Theorem Provers (ATPs)~\cite{Baumgartner_automatedreasoning,
-  Urban_anoverview, Alvez_evaluating_atp_adimen_SUMO}, can be used to
-autonomously compose as well as retrieve functions given their input
-and output types.  Obviously if ATP tools running over SUO-KIF turn
-out to be deficient in that respect, we already know from Section
-\ref{sec:dependently_typed_registry} that Idris can fulfill that purpose.
+expected that porting for instance the \texttt{append} function of the
+dependent type \texttt{Vect}~\cite{Vectors} to SUO-KIF might not be as
+trivial, since the \texttt{domain} and \texttt{range} constructs may
+not be suitable to represent such dependence (i.e. that the size of
+the resulting vector of \texttt{append} is the sum of the sizes of the
+input vectors).  However, given that dependent types are essentially
+functions, it might be possible to set the \texttt{domain} and
+\texttt{range} with such type functions.  Alternatively such
+dependence can be moved to the function definition as offered by
+SUO-KIF expressiveness.  Another aspect we need to explore is how
+tools, such as Automatic Theorem Provers
+(ATPs)~\cite{Baumgartner_automatedreasoning, Urban_anoverview,
+  Alvez_evaluating_atp_adimen_SUMO}, can be used to autonomously
+compose as well as retrieve functions given their input and output
+types.  Obviously if ATP tools running over SUO-KIF turn out to be
+deficient in that respect, we already know from Section
+\ref{sec:dependently_typed_registry} that Idris can fulfill that
+purpose.
 \end{itemize}
 
 \chapter{Eman's work}
