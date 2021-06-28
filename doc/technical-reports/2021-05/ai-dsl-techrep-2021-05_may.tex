@@ -1851,14 +1851,6 @@ closer to a complete AI-DSL.
   interaction between the AI-DSL and the tokenomics of the network as
   a means to provide soft guaranties when hard guaranties are
   difficult to obtain, see~\ref{sec:monadic_dsl}.
-\item An AI-DSL Registry prototype have been build, to retrieve, match
-  and connect AI services based on their specifications as dependent
-  types, see Section~\ref{sec:network_idris_ai_services}, using Idris
-  meta-functions for function matching and retrieval.  This prototype
-  has limits, such as returning only the first matching AI service and
-  not performing fully autonomous composition of AI services, but none
-  of these limits seem fundamentally hard to address and should only
-  require more development time.
 \item In Chapter \ref{chap:aidsl_ontology} we have explored ontologies
   with the goal of defining a rich and extendable vocabulary for
   specifying AI services, their algorithms, data types as well as
@@ -1872,14 +1864,6 @@ closer to a complete AI-DSL.
   remains to be fully explored is the use of Automatic Theorem Provers
   as complement (or possibly replacement) of Idris for matching and
   composing services.
-\item We started gathering and reviewing literature of related work to
-  make sure we do not miss anything major and can take advantage of
-  existing technologies.  Even though we have found no such related
-  project using dependent types and combined with the blockchain
-  technology, there are related projects, described in Section
-  \ref{sec:related_work}, with potential for re-usability of ideas or
-  implementations such as the Function Ontology, FIPA-ACL or more.
-  More exploration is needed on that front as well.
 \item We have started building, though at the preparatory level, a
   real world AI service assemblage test case, based on Nunet Fake News
   Warning app, see Section \ref{sec:improve_test_cases}.  Such test
