@@ -330,17 +330,17 @@ as well as composite services based on these primary services, such as
 \begin{itemize}
 \item \texttt{incrementer . halfer . twicer}
 \end{itemize}
-with the objective of testing that such compositions were properly
-typed.  The networking part was implemented based on the
-SingularityNET example service~\cite{SNETExampleService} mentioned in
-the SingularityNET tutorial~\cite{SNETTutorial}.  The specifics of
-that implementation are of little importance for that report and thus
-are largely ignored.  The point was to try to be as close as possible
-to real networking conditions.  For the part that matters to us we may
-mention that communications between AI services are handled by
-gRPC~\cite{gRPC}, which has some level of type checking by insuring
-that the data being exchanged fulfill some type structures (list of
-integers, union type of string and bool, etc) specified in Protocol
+to test that such composition, for instance, is properly typed.  The
+networking part was implemented based on the SingularityNET example
+service~\cite{SNETExampleService} mentioned in the SingularityNET
+tutorial~\cite{SNETTutorial}.  The specifics of that implementation
+are of little importance for that report and thus are largely ignored.
+The point was to try to be as close as possible to real networking
+conditions.  For the part that matters to us we may mention that
+communications between AI services are handled by gRPC~\cite{gRPC},
+which has some level of type checking by insuring that the data being
+exchanged fulfill some type structures (list of integers, union type
+of string and bool, etc) specified in Protocol
 Buffers~\cite{Protobuf}.  Thus one may see the usage of Idris in that
 context as adding an enhanced refined verification layer on top of
 gRPC making use of the expressive power of dependent types.
