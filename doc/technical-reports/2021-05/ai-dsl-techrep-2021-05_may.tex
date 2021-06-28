@@ -642,6 +642,247 @@ AI-DSL prototype.
   parts by taking advantage of dependent types.
 \end{itemize}
 
+\chapter{Software Engineering Strategies}
+\label{chap:soft_eng_strat}
+\section{Service Composition in Idris2}
+\label{sec:service_composition_in_idris2}
+
+A key requirement of the AI-DSL is to provide both an ergonomic syntax for
+describing service properties and a robust process for using these descriptions
+to verify the correctness of composed services.  This work involved
+investigating several different methods for meeting this requirement using
+Idris2.
+
+\subsection{\texttt{RealizedFunction} and \texttt{RealizedAttributes}}
+The \texttt{RealizedFunction} and \texttt{RealizedAttributes} data types were an
+early strategy for describing and composing AI services.  They directly
+contained values representing the relevant properties of arbitrary Idris
+functions and made use of a \texttt{compose} function to compute the properties
+of the function resulting from the composition of two others.
+
+While this approach worked to verify that a small, fixed set of attributes was
+correct for a composition of functions, it also presented several issues:
+
+\begin{itemize}
+  \item
+        The \texttt{RealizedFunction} definition contains only the raw data
+        representing function properties, while using a separate function to
+        represent composition logic.  Because the composition logic is not
+        part of the type definition, there is no way for Idris to prove that the
+        correct logic was used to construct any given \texttt{RealizedFunction}.
+
+
+  \item \texttt{RealizedAttributes} represents only a set of example properties.
+        The syntax tree for the AI-DSL should be able to represent any
+        properties specified by the user, assuming the composition laws for
+        those properties are known.
+
+
+\end{itemize}
+
+\subsection{\texttt{Service}}
+To address these problems, we implemented the \texttt{Service} type,
+which can be found in
+\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/ServiceAttributes.idr}{\texttt{experimental/realized-function/ServiceAttributes.idr}}.
+It differs from \texttt{RealizedFunction} in two important ways:
+\begin{itemize}
+  \item Composition logic is represented entirely at the type level as a second
+        constructor for the \texttt{Service} type.
+
+  \item Idris' \texttt{Num} interface is used as a generic representation of any
+        attribute that can be added when two \texttt{Service}s are sequenced.
+
+\end{itemize}
+
+These changes were sufficient to solve the problems with our earlier approach,
+but we still needed to improve the expressiveness of our representation.  Many
+important properties are too complex to be described using only the \texttt{Num}
+interface.
+
+\subsection{A Look into Dependent Pairs}
+\label{sec:dependent_pairs}
+Idris represents the intersection between a theorem proof assistant and a
+programming language.  As such, it is often useful to think of types as
+logical propositions, and values as proofs of those propositions.  Since our
+goal is to verify that a desired property is true of some value, we can use
+dependent types to describe a proposition parameterized by a specific value.
+
+Idris provides a special syntax for this.
+\texttt{(x : a ** p)} can be read as ``\texttt{x} is a value of type \texttt{a} such that
+proposition \texttt{p} holds true of \texttt{x}''.  This is called a dependent pair, and it can
+only be constructed by providing both a value and a proof that a desired
+property holds true for that specific value.  In the context of service
+composition, we can use dependent pairs as a direct representation of input
+values that satisfy some condition.
+
+To demonstrate the practicality of this pairing, consider the following types:
+
+\begin{minted}[mathescape]{idris}
+
+public export
+data WFInt : Type where
+     Nat : (n : Nat) -> WFInt
+     Neg : (n : Nat) -> WFInt --Note: In the negative case, n=Z represents -1.
+
+-- n-parity, i.e. proof that an integer a is evenly divisible by n (or not).
+public export
+data Parity : (a : WFInt) -> (n : WFInt) -> Type where
+     -- a has even n-parity if there exists an integer multiple x s.t. x*n = a.
+     Even : (x : WFInt ** (x * n) = a) -> Parity a n
+
+public export
+data OddParity : (a : WFInt) -> (n : WFInt) -> Type where
+     -- a has odd n-parity if there exists
+     Odd : (b : WFInt ** LT = compare (mag b) (mag n))
+      -> (Parity (a + b) n) ->  OddParity a n
+
+\end{minted}
+
+\texttt{WFInt} is a type describing a well-founded view of an integer.  This
+alternate view is necessary in order to write more flexible inductive proofs for
+integer inputs.
+
+\texttt{Parity} demonstrates the proof obligation necessary to
+show that one integer is evenly divisible by another.  In plain English, it can
+be read as ``If there exists some integer \texttt{x} such that
+\texttt{x * n = a}, then \texttt{a} can be said to have \texttt{n-parity}.''
+\texttt{OddParity} is a type representing the opposite proposition, i.e. that
+dividing two integers will produce a remainder.
+
+For services such as our Halfer example, this allows us to clearly express that
+inputs should be only even numbers, as shown in this function type signature:
+
+\begin{minted}[mathescape]{idris}
+halfer : (a : WFInt ** Parity a 2) -> WFInt
+\end{minted}
+
+Similarly, the type signatures of the Twicer and Incrementer example services
+can express their properties with regards to the 2-parity of the integers they
+operate on:
+
+\begin{minted}[mathescape]{idris}
+-- Guaranteed to produce a value divisible by 2
+twicer : (b : WFInt) -> (a : WFInt ** Parity a 2)
+
+incrementer : (a : WFInt ** Parity a n) -> (b : WFInt ** OddParity b n)
+\end{minted}
+
+Now that the relevant properties for verification are expressed entirely at the
+type level, the Idris2 typechecker can statically check the validity of service
+compositions.
+
+\begin{minted}[mathescape]{idris}
+
+-- A valid sequence of services that successfully typechecks.
+compo1 : WFInt -> WFInt
+compo1 = fst (incrementer . halfer . twicer)
+
+-- An invalid sequence of services that will always fail typechecking
+compo2 : WFInt -> WFInt
+compo2 = fst (halfer . incrementer . twicer)
+\end{minted}
+
+With dependent pairs, arbitrary properties of values can be encoded and formally
+verified.  For an AI-DSL that may need to describe AI services in many different
+contexts, this ability to use custom types instead of a limited set of
+primitives is crucial.  However, this method is not a complete solution, as it
+highlights major practical flaws.
+
+An AI service developer making use of the AI-DSL should be able to adequately
+describe the necessary properties of data their service will take as input, but
+there should be no need for them to also encode the exact properties of their
+service's output data.  A service developer is not likely to have any knowledge
+of how their service's outputs will be used by other services in the future, so
+the AI-DSL should not force them to describe their output data in any more
+detail than is possible\footnote{Of course given a full specification
+of the service, which is admittedly hard but possible to provide, any
+decidable correct property about its output data can be inferred,
+possibly at a prohibitively high cost.}.  In the examples above,
+the \texttt{incrementer} service was forced to describe its inputs and
+outputs in terms of properties that are only relevant to other
+services.
+
+
+\subsection{A Monadic DSL}
+\label{sec:monadic_dsl}
+At this stage, there are two key problems which must be solved:
+
+\begin{enumerate}
+
+  \item At the point of service creation, developers should not be expected to
+        have knowledge of the properties that are only relevant to other
+        services.  They should be able to encode only the properties relevant to
+        their own service.
+
+  \item Due to the limits of computability, some relevant properties of data
+        will not be formally provable.  However, some of these properties might
+        still be safely assumed to hold in certain contexts, even if a formal
+        proof is impossible.  The AI-DSL should be able to represent such cases
+        and provide the strongest possible guarantees.
+
+\end{enumerate}
+
+For the first issue, we borrowed a well-established design pattern from
+strongly-typed functional programming and defined a new \texttt{Service} type
+around the \texttt{Monad} interface\nil{Sam, could you add a citation
+  about that ``well-established design pattern'' you are referring
+  to?}\nil{Sam, could you add reference to the code in question?}.
+Monads are a class of types used to
+describe a context for operations, along with any custom logic necessary to
+combine those operations without imposing any requirement for tight coupling.
+This is perfect for the AI-DSL.
+
+To address the issue of unproveable properties, we experimented with a
+conceptual model of smart contracts as a core language feature within the DSL.
+Because the actual implementation of logic to represent external smart contracts
+was outside the scope of this work, we made the assumption that such contracts
+could be used to represent a financially-backed assurance that some unproveable
+property holds.  In theory, this could allow compositions of AI services to be
+analyzed for their overall financial risk.
+
+
+
+\section{Depth of Embedding}
+\label{sec:depth_embedding}
+\nil{Sam, can you add citations related to that Section?}
+A domain-specific language requires not only a formal specification for its
+semantics, but a software implementation as well.  The relationship between a
+DSL and its implementation can vary, but most strategies fall into one or more
+of three categories:
+
+\begin{enumerate}
+  \item \texttt{Independent Syntax:} A language may be designed completely
+        separately from its implementation.  Such languages typically require
+        dedicated compilers or interpreters, as they are unable to borrow any
+        functionality due to their lack of a host language.
+
+  \item \texttt{Shallow Embedding:} An embedded domain-specific language (eDSL)
+        is written as a module or library for some host language.  Data in the
+        DSL's domain is represented directly as values in the host language.
+        Shallow embeddings tend to be easy to use and extend, but often suffer
+        issues with performance and expressiveness.  Programs written in a
+        shallowly-embedded DSL can only describe operations in the domain of
+        their host language, and thus are limited to a single interpretation.
+
+  \item \texttt{Deep Embedding:} Similarly to a shallowly-embedded DSL,
+        an eDSL with a deep embedding is defined in some host language.
+        Deep embeddings define a custom Generalized Algebraic Data Type
+        (GADT) in the host language and represent
+        all data as values of this type.  Because the entire Abstract Syntax
+        Tree (AST) of a deeply-embedded program is a single type, it is simple to
+        write functions in the host language that operate directly on the
+        embedded program. This allows for automatic optimization of embedded
+        programs, as well as multiple possible interpretations.  However, any
+        extensions to a deep eDSL require significant effort, as changes to the
+        language's AST type incur a requirement to update every function that
+        operates on that type.
+
+\end{enumerate}
+For the AI-DSL, the most promising approach appears to be a hybrid method.
+The basic domain of the DSL can be defined as deep embedding, while more
+specialized features can be shallowly embedded as smaller DSLs within the main
+AI-DSL instead of directly in Idris2.
+
 \chapter{AI-DSL Ontology}
 \label{chap:aidsl_ontology}
 
@@ -1564,270 +1805,43 @@ deficient in that respect, we already know from Section
 purpose.
 \end{itemize}
 
-\chapter{Software Engineering Strategies}
-\label{chap:soft_eng_strat}
-\section{Service Composition in Idris2}
-\label{sec:service_composition_in_idris2}
-
-A key requirement of the AI-DSL is to provide both an ergonomic syntax for
-describing service properties and a robust process for using these descriptions
-to verify the correctness of composed services.  This work involved
-investigating several different methods for meeting this requirement using
-Idris2.
-
-\subsection{\texttt{RealizedFunction} and \texttt{RealizedAttributes}}
-The \texttt{RealizedFunction} and \texttt{RealizedAttributes} data types were an
-early strategy for describing and composing AI services.  They directly
-contained values representing the relevant properties of arbitrary Idris
-functions and made use of a \texttt{compose} function to compute the properties
-of the function resulting from the composition of two others.
-
-While this approach worked to verify that a small, fixed set of attributes was
-correct for a composition of functions, it also presented several issues:
-
-\begin{itemize}
-  \item
-        The \texttt{RealizedFunction} definition contains only the raw data
-        representing function properties, while using a separate function to
-        represent composition logic.  Because the composition logic is not
-        part of the type definition, there is no way for Idris to prove that the
-        correct logic was used to construct any given \texttt{RealizedFunction}.
-
-
-  \item \texttt{RealizedAttributes} represents only a set of example properties.
-        The syntax tree for the AI-DSL should be able to represent any
-        properties specified by the user, assuming the composition laws for
-        those properties are known.
-
-
-\end{itemize}
-
-\subsection{\texttt{Service}}
-To address these problems, we implemented the \texttt{Service} type,
-which can be found in
-\href{https://github.com/singnet/ai-dsl/blob/master/experimental/realized-function/ServiceAttributes.idr}{\texttt{experimental/realized-function/ServiceAttributes.idr}}.
-It differs from \texttt{RealizedFunction} in two important ways:
-\begin{itemize}
-  \item Composition logic is represented entirely at the type level as a second
-        constructor for the \texttt{Service} type.
-
-  \item Idris' \texttt{Num} interface is used as a generic representation of any
-        attribute that can be added when two \texttt{Service}s are sequenced.
-
-\end{itemize}
-
-These changes were sufficient to solve the problems with our earlier approach,
-but we still needed to improve the expressiveness of our representation.  Many
-important properties are too complex to be described using only the \texttt{Num}
-interface.
-
-\subsection{A Look into Dependent Pairs}
-\label{sec:dependent_pairs}
-Idris represents the intersection between a theorem proof assistant and a
-programming language.  As such, it is often useful to think of types as
-logical propositions, and values as proofs of those propositions.  Since our
-goal is to verify that a desired property is true of some value, we can use
-dependent types to describe a proposition parameterized by a specific value.
-
-Idris provides a special syntax for this.
-\texttt{(x : a ** p)} can be read as ``\texttt{x} is a value of type \texttt{a} such that
-proposition \texttt{p} holds true of \texttt{x}''.  This is called a dependent pair, and it can
-only be constructed by providing both a value and a proof that a desired
-property holds true for that specific value.  In the context of service
-composition, we can use dependent pairs as a direct representation of input
-values that satisfy some condition.
-
-To demonstrate the practicality of this pairing, consider the following types:
-
-\begin{minted}[mathescape]{idris}
-
-public export
-data WFInt : Type where
-     Nat : (n : Nat) -> WFInt
-     Neg : (n : Nat) -> WFInt --Note: In the negative case, n=Z represents -1.
-
--- n-parity, i.e. proof that an integer a is evenly divisible by n (or not).
-public export
-data Parity : (a : WFInt) -> (n : WFInt) -> Type where
-     -- a has even n-parity if there exists an integer multiple x s.t. x*n = a.
-     Even : (x : WFInt ** (x * n) = a) -> Parity a n
-
-public export
-data OddParity : (a : WFInt) -> (n : WFInt) -> Type where
-     -- a has odd n-parity if there exists
-     Odd : (b : WFInt ** LT = compare (mag b) (mag n))
-      -> (Parity (a + b) n) ->  OddParity a n
-
-\end{minted}
-
-\texttt{WFInt} is a type describing a well-founded view of an integer.  This
-alternate view is necessary in order to write more flexible inductive proofs for
-integer inputs.
-
-\texttt{Parity} demonstrates the proof obligation necessary to
-show that one integer is evenly divisible by another.  In plain English, it can
-be read as ``If there exists some integer \texttt{x} such that
-\texttt{x * n = a}, then \texttt{a} can be said to have \texttt{n-parity}.''
-\texttt{OddParity} is a type representing the opposite proposition, i.e. that
-dividing two integers will produce a remainder.
-
-For services such as our Halfer example, this allows us to clearly express that
-inputs should be only even numbers, as shown in this function type signature:
-
-\begin{minted}[mathescape]{idris}
-halfer : (a : WFInt ** Parity a 2) -> WFInt
-\end{minted}
-
-Similarly, the type signatures of the Twicer and Incrementer example services
-can express their properties with regards to the 2-parity of the integers they
-operate on:
-
-\begin{minted}[mathescape]{idris}
--- Guaranteed to produce a value divisible by 2
-twicer : (b : WFInt) -> (a : WFInt ** Parity a 2)
-
-incrementer : (a : WFInt ** Parity a n) -> (b : WFInt ** OddParity b n)
-\end{minted}
-
-Now that the relevant properties for verification are expressed entirely at the
-type level, the Idris2 typechecker can statically check the validity of service
-compositions.
-
-\begin{minted}[mathescape]{idris}
-
--- A valid sequence of services that successfully typechecks.
-compo1 : WFInt -> WFInt
-compo1 = fst (incrementer . halfer . twicer)
-
--- An invalid sequence of services that will always fail typechecking
-compo2 : WFInt -> WFInt
-compo2 = fst (halfer . incrementer . twicer)
-\end{minted}
-
-With dependent pairs, arbitrary properties of values can be encoded and formally
-verified.  For an AI-DSL that may need to describe AI services in many different
-contexts, this ability to use custom types instead of a limited set of
-primitives is crucial.  However, this method is not a complete solution, as it
-highlights major practical flaws.
-
-An AI service developer making use of the AI-DSL should be able to adequately
-describe the necessary properties of data their service will take as input, but
-there should be no need for them to also encode the exact properties of their
-service's output data.  A service developer is not likely to have any knowledge
-of how their service's outputs will be used by other services in the future, so
-the AI-DSL should not force them to describe their output data in any more
-detail than is possible\footnote{Of course given a full specification
-of the service, which is admittedly hard but possible to provide, any
-decidable correct property about its output data can be inferred,
-possibly at a prohibitively high cost.}.  In the examples above,
-the \texttt{incrementer} service was forced to describe its inputs and
-outputs in terms of properties that are only relevant to other
-services.
-
-
-\subsection{A Monadic DSL}
-\label{sec:monadic_dsl}
-At this stage, there are two key problems which must be solved:
-
-\begin{enumerate}
-
-  \item At the point of service creation, developers should not be expected to
-        have knowledge of the properties that are only relevant to other
-        services.  They should be able to encode only the properties relevant to
-        their own service.
-
-  \item Due to the limits of computability, some relevant properties of data
-        will not be formally provable.  However, some of these properties might
-        still be safely assumed to hold in certain contexts, even if a formal
-        proof is impossible.  The AI-DSL should be able to represent such cases
-        and provide the strongest possible guarantees.
-
-\end{enumerate}
-
-For the first issue, we borrowed a well-established design pattern from
-strongly-typed functional programming and defined a new \texttt{Service} type
-around the \texttt{Monad} interface\nil{Sam, could you add a citation
-  about that ``well-established design pattern'' you are referring
-  to?}\nil{Sam, could you add reference to the code in question?}.
-Monads are a class of types used to
-describe a context for operations, along with any custom logic necessary to
-combine those operations without imposing any requirement for tight coupling.
-This is perfect for the AI-DSL.
-
-To address the issue of unproveable properties, we experimented with a
-conceptual model of smart contracts as a core language feature within the DSL.
-Because the actual implementation of logic to represent external smart contracts
-was outside the scope of this work, we made the assumption that such contracts
-could be used to represent a financially-backed assurance that some unproveable
-property holds.  In theory, this could allow compositions of AI services to be
-analyzed for their overall financial risk.
-
-
-
-\section{Depth of Embedding}
-\label{sec:depth_embedding}
-\nil{Sam, can you add citations related to that Section?}
-A domain-specific language requires not only a formal specification for its
-semantics, but a software implementation as well.  The relationship between a
-DSL and its implementation can vary, but most strategies fall into one or more
-of three categories:
-
-\begin{enumerate}
-  \item \texttt{Independent Syntax:} A language may be designed completely
-        separately from its implementation.  Such languages typically require
-        dedicated compilers or interpreters, as they are unable to borrow any
-        functionality due to their lack of a host language.
-
-  \item \texttt{Shallow Embedding:} An embedded domain-specific language (eDSL)
-        is written as a module or library for some host language.  Data in the
-        DSL's domain is represented directly as values in the host language.
-        Shallow embeddings tend to be easy to use and extend, but often suffer
-        issues with performance and expressiveness.  Programs written in a
-        shallowly-embedded DSL can only describe operations in the domain of
-        their host language, and thus are limited to a single interpretation.
-
-  \item \texttt{Deep Embedding:} Similarly to a shallowly-embedded DSL,
-        an eDSL with a deep embedding is defined in some host language.
-        Deep embeddings define a custom Generalized Algebraic Data Type
-        (GADT) in the host language and represent
-        all data as values of this type.  Because the entire Abstract Syntax
-        Tree (AST) of a deeply-embedded program is a single type, it is simple to
-        write functions in the host language that operate directly on the
-        embedded program. This allows for automatic optimization of embedded
-        programs, as well as multiple possible interpretations.  However, any
-        extensions to a deep eDSL require significant effort, as changes to the
-        language's AST type incur a requirement to update every function that
-        operates on that type.
-
-\end{enumerate}
-
-For the AI-DSL, the most promising approach appears to be a hybrid method.
-The basic domain of the DSL can be defined as deep embedding, while more
-specialized features can be shallowly embedded as smaller DSLs within the main
-AI-DSL instead of directly in Idris2.
-
-
-
 \chapter{Conclusion}
 
 The novel nature of such a project requires a large amount of
 exploration, which is what this iteration has been all about.  From
 the start we agreed that we wanted to take a holistic approach,
 attempting to achieve a full albeit limited prototype as rapidly as
-possible in order to uncover hidden blocks as early as possible.  Let
-us summarize what we have accomplished so far and what are the next
-steps to bring us closer to a complete AI-DSL.
+possible in order to uncover hidden blocks as early as possible.  Our
+exploration has reflected this approach.  Let us summarize what we
+have accomplished so far and what are the next steps to bring us
+closer to a complete AI-DSL.
 \begin{itemize}
+\item We have started gathering and reviewing literature of related
+  work to make sure we do not miss anything major and can take
+  advantage of existing technologies.  Even though we have found no
+  such related project using dependent types and combined with the
+  blockchain technology, there are related projects, described in
+  Section \ref{sec:related_work}, with potential for re-usability of
+  ideas or implementations such as the Function Ontology, FIPA-ACL or
+  more.  We intend to keep studying the literature of related work.
 \item We have experimented with Idris to formalize and reason about
   realized function attributes such as costs and quality, see
-  Section~\ref{sec:realized_function}.  We have done so in a limited
-  manners, only considering additive cost and infimum-itive quality,
-  but we have proven that it is possible and tractable to do in Idris.
-  More work is required to expand the complexity of such realized
-  function attributes, such as functional or distributional costs and
-  quality.
-\item We have experimented with Idris to formalize function properties
-  as dependent types, see Chapter~\ref{chap:soft_eng_strat}.  This was
+  Section~\ref{sec:realized_function} for more details.  We have done
+  so in a limited manners, only considering additive cost and
+  infimum-itive quality, but we have proven that it is possible and
+  tractable to do in Idris.  More work is required to expand the
+  complexity of such realized function attributes, such as functional
+  or distributional costs and quality.
+\item An AI-DSL Registry prototype have been build, to retrieve, match
+  and connect AI services based on their specifications as dependent
+  types using Idris meta-functions for function matching and retrieval
+  as described in Section~\ref{sec:dependently_typed_registry}.  This
+  prototype has limits, such as returning only the first matching AI
+  service and not performing fully autonomous composition of AI
+  services, but none of these limits seem fundamentally hard to
+  address and should only require more development time.
+\item In Chapter~\ref{chap:soft_eng_strat}, we have experimented with
+  Idris to formalize function properties as dependent types.  This was
   done in a limited manner, using trivial properties such as evenness
   of numbers, but taught us that it is a possible to do in Idris, and
   provided us insights on how to expand that to more complex
