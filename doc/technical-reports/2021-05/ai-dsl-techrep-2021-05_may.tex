@@ -1726,7 +1726,7 @@ services.
 
 
 \subsection{A Monadic DSL}
-
+\label{sec:monadic_dsl}
 At this stage, there are two key problems which must be solved:
 
 \begin{enumerate}
@@ -1765,6 +1765,7 @@ analyzed for their overall financial risk.
 
 
 \section{Depth of Embedding}
+\label{sec:depth_embedding}
 \nil{Sam, can you add citations related to that Section?}
 A domain-specific language requires not only a formal specification for its
 semantics, but a software implementation as well.  The relationship between a
@@ -1807,34 +1808,38 @@ AI-DSL instead of directly in Idris2.
 
 
 
-\chapter{Conclusion (draft)}
+\chapter{Conclusion}
 
 The novel nature of such a project requires a large amount of
 exploration, which is what this iteration has been all about.  From
-the start we agreed that we wanted to take a holistic approach, attempting
-to achieve a full albeit limited prototype as rapidly as possible in
-order to uncover hidden blocks as early as possible.
-
-With that mind let us summarize what we have accomplished so far and
-what are the next steps to bring us closer to a complete AI-DSL.  We
-have
+the start we agreed that we wanted to take a holistic approach,
+attempting to achieve a full albeit limited prototype as rapidly as
+possible in order to uncover hidden blocks as early as possible.  Let
+us summarize what we have accomplished so far and what are the next
+steps to bring us closer to a complete AI-DSL.
 \begin{itemize}
-\item Experimented with Idris to formalize and reason about realized
-  function attributes such as costs and quality, see Section
-  \ref{sec:realized_function}.  We have done so in a limited manners, only
-  considering additive cost and infimum-itive quality, but we have
-  proven that it is possible and tractable to do in Idris.  More work
-  is required to expand the complexity of such realized function
-  attributes, such as functional or distributional costs and quality.
-\item Experimented with Idris to formalize function properties as
-  dependent types, see Chapter \ref{chap:soft_eng_strat}.  Again this
-  was done in a limited manner, using trivial properties such as
-  evenness of numbers, but taught us that it is a possible to do in
-  Idris, and provided us insights on how to expand that to more
-  complex properties.
-\item Built a prototype of a Dependently Typed Registry to retrieve,
-  match and connect AI services based on their specifications as
-  dependent types, see Section \ref{sec:network_idris_ai_services}, using Idris
+\item We have experimented with Idris to formalize and reason about
+  realized function attributes such as costs and quality, see
+  Section~\ref{sec:realized_function}.  We have done so in a limited
+  manners, only considering additive cost and infimum-itive quality,
+  but we have proven that it is possible and tractable to do in Idris.
+  More work is required to expand the complexity of such realized
+  function attributes, such as functional or distributional costs and
+  quality.
+\item We have experimented with Idris to formalize function properties
+  as dependent types, see Chapter~\ref{chap:soft_eng_strat}.  This was
+  done in a limited manner, using trivial properties such as evenness
+  of numbers, but taught us that it is a possible to do in Idris, and
+  provided us insights on how to expand that to more complex
+  properties.  Also, various approaches for defining AI-DSL as an
+  Idris eDLS have explored, see Section~\ref{sec:depth_embedding}.
+  Additional an important idea was approached in this Chapter, the
+  interaction between the AI-DSL and the tokenomics of the network as
+  a means to provide soft guaranties when hard guaranties are
+  difficult to obtain, see~\ref{sec:monadic_dsl}.
+\item An AI-DSL Registry prototype have been build, to retrieve, match
+  and connect AI services based on their specifications as dependent
+  types, see Section~\ref{sec:network_idris_ai_services}, using Idris
   meta-functions for function matching and retrieval.  This prototype
   has limits, such as returning only the first matching AI service and
   not performing fully autonomous composition of AI services, but none
@@ -1843,23 +1848,26 @@ have
 \item In Chapter \ref{chap:aidsl_ontology} we have explored ontologies
   with the goal of defining a rich and extendable vocabulary for
   specifying AI services, their algorithms, data types as well as
-  their relationship to real world.  The decision was made to build
-  such AI ontology on top of SUMO due to its openness, breadth and
-  quality.  TODO: concrete extension (read Kabir's work and mention
-  trivial AI services).  More work is required to TODO.  We also
-  explored how to convert SUO-KIF knowledge into Idris, more work is
-  required to automate such conversions.
-\item Reviewed literature of related work to make sure we do not miss
-  anything major and can take advantage of existing technologies.
-  Even though we have found no such related project using Dependent
-  Types as central component, there are related endeavors described in Section
-  \ref{sec:related_work} with potential reusable ideas, languages or code,
-  such as FIPA-ACL and more.  More exploration is needed on that front
-  as well.
-\item Experimented with various approaches for defining AI-DSL as an
-  Idris eDLS, see Chapter \ref{chap:soft_eng_strat}.
-\item Started building, though more at the preparatory level, a real
-  world AI service assemblage test case, based on Nunet Fake News
+  their relationship to real world.  For now the decision was made to
+  build such AI ontology on top of SUMO due to its openness, breadth
+  and quality, as well as the expressiveness of its representational
+  language, SUO-KIF.  The upper layer of the Fake News Warning app was
+  translated into SUO-KIF as a SUMO extension.  We also explored how
+  to convert SUO-KIF knowledge into Idris, more work is required to
+  automate such conversions.  Something that has been discussed but
+  remains to be fully explored is the use of Automatic Theorem Provers
+  as complement (or possibly replacement) of Idris for matching and
+  composing services.
+\item We started gathering and reviewing literature of related work to
+  make sure we do not miss anything major and can take advantage of
+  existing technologies.  Even though we have found no such related
+  project using dependent types and combined with the blockchain
+  technology, there are related projects, described in Section
+  \ref{sec:related_work}, with potential for re-usability of ideas or
+  implementations such as the Function Ontology, FIPA-ACL or more.
+  More exploration is needed on that front as well.
+\item We have started building, though at the preparatory level, a
+  real world AI service assemblage test case, based on Nunet Fake News
   Warning app, see Section \ref{sec:improve_test_cases}.  Such test
   case is going to be critical to put our AI-DSL prototypes to the
   test and build the understanding necessary to push it to the next
@@ -1874,8 +1882,8 @@ considered over various domains such as bio-informatics, finance,
 embodied agent control and more.
 
 To conclude, even though there is a long way to go, we believe a lot
-has been accomplished already, and we are happy to say that no
-profound difficulties have been revealed so far, although we must
+of progress has been done already, and we are happy to say that no
+profound difficulties have been revealed so far.  We must however
 remain cautious.  One difficulty that is expected to eventually come
 up is the tractability of the verification and automated composition
 process of AI services.  This is generally undecidable, and even when
@@ -1883,9 +1891,10 @@ restricted to subclasses of functions (as is the case in Idris due to
 being based on Intuitionistic Logic) can still have explosive
 complexity.  However, it is also expected that a tremendous amount of
 value will be created by having such system work with restricted
-applicability.  Ultimately is it expected that the AI-DSL will need to
-synergies with AGI systems which, uncoincidentally, is one of the
-quintessential functions that SingularityNET aims to offer.
+applicability, or by relaxing the level of requirements demanded.
+Ultimately it is expected that the AI-DSL will need to synergies with
+AGI systems to reach its full potential, which, fortunately, is one of
+the quintessential functions that SingularityNET aims to offer.
 
 \appendix
 \chapter{Glossary}
