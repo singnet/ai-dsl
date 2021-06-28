@@ -393,62 +393,25 @@ for a follow up experiment involving dependent types.
 
 \subsection{Future work}
 \label{sec:net_ai_future_work}
-Such experiment was good to explore how Idris can be integrated to a
-network of services.  What we need to do next is experiment with
+Such experiment was a good way to explore how Idris can be integrated
+to a network of services.  What we need to do next is experiment with
 actual AI algorithms, making full use of dependent types in their
 specifications.  Such endeavor was actually attempted over the Fake
 News Warning app described in Section
 \ref{sec:domain_model_considerations}, but it was eventually concluded
 to be too ambitious for that iteration and was postponed for the next.
-
-To briefly recall here, the Fake News Warning app is an AI service
-assemblage to estimate if the headline of an article is consistent
-with its body.  Such assemblage is composed of
-\begin{enumerate}
-\item a few classifiers, each attempting to learn to recognize if the
-  headline of an article is consistent with its body;
-\item an aggregator combining the outputs of all classifiers into a
-  single answer.
-\end{enumerate}
-So what we would like to achieve is to
-\begin{enumerate}
-\item formally specify the function of each AI service above (this
-  will require to enrich the leaf ontology described in
-  Section~\ref{sec:ontology_prototype} as well as the composition
-  functions described in Sections~\ref{sec:realized_function} and
-  \ref{sec:service_composition_in_idris2});
-\item populate the AI-DSL registry described in
-  Section~\ref{sec:dependently_typed_registry} with these formal
-  specifications;
-\item TODO
-\end{enumerate}
-
- above likely ca categorical distributions over categories Towards
- that end we did however started to
-
-An intermediary step, before moving to actual AI algorithms, is to
-explore multi-facet specifications and their interactions with other
-AI services.  That is, given AI services A, B and C, let's assume A's
-output must satisfy a combination of properties, such as an integer
-that is both even and within a certain interval.  Then B and C may
-have need partial constraints to be fulfilled.  For instance B may
-require an even integer, while C may require that integer to be within
-a certain interval.  In other words both services B and C may take the
-output of A as input but for different reasons.  It's obviously not
-conceptual difficult to cast the output of A to match the input types
-of B and C, however it is still something we need to explore with
-Idris in its full generality.
+More about that is discussed in Section \ref{sec:improve_test_cases}.
 
 Also, we obviously want to be able to reuse existing AI services and
 write their specifications on top of them, as opposed to writing both
-specification and code in Idris/AI-DSL.  To that end it was noted that
-having a Protobuf to/from Idris/AI-DSL converter would be useful, so
-that a developer can start from an existing AI service, specified in
-Protobuf, and enriched it with dependent types in Idris/AI-DSL.  The
-other way around could be useful as well to enable a developer to
-implement AI services entirely in Idris/AI-DSL and expose their
+specification and code in Idris (and ultimately the AI-DSL).  To that
+end it was noted that having a Protobuf to/from Idris converter would
+be useful, so that a developer can start from an existing AI service,
+specified in Protobuf, and enriched it with dependent types using
+Idris.  The other way around could be useful as well to enable a
+developer to implement AI services entirely in Idris and expose their
 Protobuf specification to the network.  Relatedly having directly an
-implementation of gRPC for Idris/AI-DSL could be handy as well.
+implementation of gRPC for Idris could be handy as well.
 
 \section{Dependently Typed Registry}
 \label{sec:dependently_typed_registry}
@@ -459,8 +422,8 @@ One important goal of the AI-DSL is to have a system that can perform
 autonomous matching and composition of AI services, so that provided
 the specification of an AI, it should suffice to find it, complete it
 or even entirely build it from scratch.  We have implemented an
-\emph{AI-DSL Registry} proof-of-concept to start experimenting with
-such functionality.
+\emph{AI-DSL Registry} prototype to start experimenting with such
+functionality.
 
 So far we have two versions in the
 \href{https://github.com/singnet/ai-dsl/}{AI-DSL repository}, one
@@ -588,30 +551,96 @@ that Idris should be capable of inferring such information but more
 work is needed to fully explore that functionality.
 
 Of course it is a very simple example, in fact the simplest we could
-come up with, but we believe serves as a proof-of-concept, and
+come up with, but we believe serves as a proof of concept, and
 demonstrates that AI services matching and retrieval, using dependent
 types as formal specification language, is possible.
 
 \subsection{Future work}
-
-There a lot of possible future improvements for this work.  Below are
-a few in no particular order
+\label{sec:ai_dsl_future_work}
+There are many possible future improvements for this work, falling
+into two main categories, the prototype itself, and its use cases.
+\subsubsection{Improve the prototype}
+Here is a list in no particular order of possible improvements of that
+AI-DSL prototype.
 \begin{itemize}
-\item Use structured data structures to represent type signatures
-  instead of String.
-\item Return a list of services instead of the first one.
 \item Implement \texttt{compose} for autonomous composition.
-\item Use real AI services instead of trivially simple ones.
+\item Use structured types to represent type signatures instead of
+  String.
+\item Return a list of services instead of the first one.
+\item Allow fuzzy matching and infer \emph{sophisticated casts} to
+  automatically convert data in case of imperfect match between output
+  and input types.
+\item Improve its implementation.  The registry prototype is currently
+  implemented in Python\footnote{because the SingularityNET example it
+  is derived from is written in Python, not because Python is
+  considered to be the most suitable language for this purpose.},
+  querying Idris when necessary.  However it is likely that this
+  should be better suited to Idris itself.  Which leads us to an
+  interesting possibility, maybe the registry, and in fact most
+  (perhaps all) components and functions of the AI-DSL could or should
+  be implemented in the AI-DSL itself.
 \end{itemize}
-
-Also, as of right now, the registry was implemented in
-Python\footnote{because the SingularityNET example it is derived from
-is written in Python, not because Python is considered to be the most
-suitable language for this purpose.}, querying Idris when necessary.
-However it is likely that this should be better suited to Idris
-itself.  Which leads us to an interesting possibility, maybe the
-registry, and in fact most (perhaps all) components and functions of
-the AI-DSL could or should be implemented in the AI-DSL itself.
+\subsubsection{Improve the test cases}
+\label{sec:improve_test_cases}
+\begin{itemize}
+\item First, we want to expand our trivial AI service assemblage by
+  defining more complex properties, making use for instance of product
+  and sum types (corresponding to the logical connectors $\wedge$ and
+  $\vee$), and explore how to cast specialized properties into more
+  abstract ones.  For instance, given the AI services A, B and C,
+  let's assume A's output satisfies a conjunction of properties, such
+  as an integer that is both even and within a certain interval.  Then
+  B and C inputs may only need to partially fulfill such conjunction
+  of properties.  For instance B may require an even integer, while C
+  may require that integer to within a certain interval.  In other
+  words both services B and C may take the output of A as input but
+  for different reasons.  It is not conceptual difficult to cast the
+  output of A to match the input types of B and C, however this is
+  something we still need to explore in its full generality with
+  Idris.
+\item Second, we want to adapt the Fake News Warning app described in
+  Section~\ref{sec:domain_model_considerations} as test case for the
+  AI-DSL Registry.  To briefly explain, the Fake News Warning app is
+  an AI service assemblage estimating if the headline of an article is
+  consistent with its body.  Such assemblage is composed of
+  \begin{enumerate}
+  \item a collection of classifiers, each attempting to learn to
+    recognize if the headline of an article is consistent with its body;
+  \item an aggregator combining the outputs of all classifiers into a
+    single answer.
+  \end{enumerate}
+  So what we would like to achieve is to
+  \begin{enumerate}
+  \item formally specify the functions of each AI service above (which
+    requires to enrich the leaf ontology described in
+    Section~\ref{sec:ontology_prototype} as well as the composition
+    functions described in Sections~\ref{sec:realized_function} and
+    \ref{sec:service_composition_in_idris2});
+  \item populate the AI-DSL registry described in
+    Section~\ref{sec:dependently_typed_registry} with these formal
+    specifications;
+  \item type check combinations of these AI services, rejecting
+    illegal ones, such as two classifiers serially connected, and
+    accepting legal ones, such as classifiers connected in parallel to
+    the aggregator;
+  \item automatically connect the AI services into a valid assemblage
+    given its high level specification of such assemblage.  Such high
+    level specification should include its type signature, the overall
+    financial, temporal and computational cost, as well as the overall
+    expected result quality.  Then the assemblage should be
+    constructed in a way to simultaneously satisfy all the
+    requirements.  For instance in order to reach the expected result
+    quality, the assemblage may require more classifiers, which may
+    however increase the financial cost, etc.
+  \end{enumerate}
+  By now we have a good grasp of how such service assemblage works and
+  some ideas of how to formally specify its subcomponents.  As an
+  intermediary step we have also started porting portions of the Fake
+  News Warning app to Idris, see
+  \href{https://github.com/singnet/ai-dsl/blob/master/ai-algorithms/NeuralNets/README.md}{\texttt{README.md}},
+  with the intension of refining the type signatures of the various
+  parts by taking advantage of dependent types.
+\end{itemize}
 
 \chapter{AI-DSL Ontology}
 \label{chap:aidsl_ontology}
