@@ -493,7 +493,7 @@ instead of
 \begin{minted}[mathescape]{idris}
 twicer : Integer -> Integer
 \end{minted}
-where \texttt{EvenInteger} is actually a shorthand for the following
+where \texttt{EvenInteger} is a shorthand for the following
 dependent type
 \begin{minted}[mathescape]{idris}
 EvenInteger : Type
@@ -523,7 +523,10 @@ outputs
 \begin{minted}[mathescape]{idris}
 Registry.retreive
 \end{minted}
-which is actually itself.  Likewise one can query
+which is actually itself (as the \texttt{retrieve} procedure of the
+\texttt{registry} service takes a string, a type signature, and
+returns two strings, the service and procedure names matching such
+type signature).  Likewise one can query
 \begin{minted}[mathescape]{idris}
 Integer -> Integer
 \end{minted}
@@ -562,8 +565,8 @@ implements the following composition
 incrementer . halfer . (Registry.retrieve ?type)
 \end{minted}
 Thus upon execution, the \texttt{compo} AI service queries the
-registry to fill the hole with the correct, according to its
-specification, service.
+registry to fill the hole with the correct service according to its
+specification, here \texttt{twicer}.
 
 More details about this, including steps to reproduce it, can be found
 in the
@@ -603,7 +606,7 @@ a few in no particular order
 
 Also, as of right now, the registry was implemented in
 Python\footnote{because the SingularityNET example it is derived from
-is written in Python, not because Python is thought to be the most
+is written in Python, not because Python is considered to be the most
 suitable language for this purpose.}, querying Idris when necessary.
 However it is likely that this should be better suited to Idris
 itself.  Which leads us to an interesting possibility, maybe the
