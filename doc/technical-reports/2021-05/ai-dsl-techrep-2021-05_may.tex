@@ -120,7 +120,7 @@ the context of the blockchain technology.
 We are collecting a body of literature in a github
 issue~\cite{AIDSLRelatedWork} serving as a living document and being
 regularly updated with such related work.  We will not describe the
-entire body here due to its volume (over 70 references at the time of
+entire body here due to its volume (over 80 references at the time of
 writing) and the fact that we are still in the process of reviewing
 it.  Here is however the most relevant work we have encountered so
 far.
@@ -172,10 +172,19 @@ SWRL~\cite{SWRL} as well.  Such work could be relevant towards the
 goal of facilitating the decentralization of the AI-DSL and its
 ontology.
 
-%% TODO: dependent types related work cite
-%% https://gist.github.com/mrkgnao/a45059869590d59f05100f4120595623]
-%% and such.  Existing work attempting to formalize AI algorithms with
-%% dependent types should also be noted
+Finally, it is important to mention a rather young field called
+Verified Artificial Intelligence
+(VAI)~\cite{DBLP:journals/corr/SeshiaS16, HAND2020100037,
+  MENZIES2005153}.  The objective of VAI is to bring formal
+verification to AI to insure that algorithms and models meet certain
+mathematical requirements.  This includes work using dependent types
+to that effect~\cite{Diehl2011, Pineyro2019}.  For instance
+\cite{SohamNeural} uses Idris to guaranty that layers of a neural
+network are arranged in a sound manner.  This does not guaranty that
+the neural networks coming out of that program are good models of
+reality, but does eliminate certain types of memory corruption errors
+by forbidding, for instance, to connect an input vector of a size
+unequal to that of the first layer.
 
 \chapter{AI-DSL Registry}
 \label{chap:aidsl_registry}
