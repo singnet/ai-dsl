@@ -838,9 +838,7 @@ At this stage, there are two key problems which must be solved:
 
 For the first issue, we borrowed a well-established design pattern from
 strongly-typed functional programming and defined a new \texttt{Service} type
-around the \texttt{Monad} interface\nil{Sam, could you add a citation
-  about that ``well-established design pattern'' you are referring
-  to?}\nil{Sam, could you add reference to the code in question?}.
+around the \texttt{Monad} interface. \cite{Monads1993}
 Monads are a class of types used to
 describe a context for operations, along with any custom logic necessary to
 combine those operations without imposing any requirement for tight coupling.
@@ -854,11 +852,128 @@ could be used to represent a financially-backed assurance that some unproveable
 property holds.  In theory, this could allow compositions of AI services to be
 analyzed for their overall financial risk.
 
+The following type describes the Abstract Syntax Tree for a deeply-embedded DSL:
+
+\begin{minted}[mathescape]{idris}
+
+public export
+data Service : Type -> Type where
+     ||| A Service that is definitely of type `a`
+     Val     : a -> Service a
+     ||| A contract has promised a reward if `a` is not a Service b
+     Promise : Contract a b ->  Service b
+     ||| Application of a Service to another Service
+     App     : Service (a -> b) -> Service a -> Service b
+     ||| Explicitly construct a Service using monadic binding
+     Bind    : Service a -> (a -> Service b) -> Service b
+
+\end{minted}
+
+This \texttt{Service} type describes a context wherein values may be either
+native Idris2 values or a reference to an external smart contract.
+
+
+Below are some simple definitions for the functions necessary for
+\texttt{Service} to be a member of the \texttt{Monad} typeclass, as well as
+superclasses \texttt{Functor} and \texttt{Applicative}.
+
+\begin{minted}[mathescape]{idris}
+
+public export
+Functor Service where
+        map f (Val a) = Val $ f a
+        map f (Promise c) = Val $ f $ trustContract c
+        map f s = App (Val f) s
+
+public export
+Applicative Service where
+            pure = Val
+            (<*>) = App
+
+public export
+Monad Service where
+      (>>=) = Bind
+      join m = !m
+
+\end{minted}
+
+With these operations defined, sequencing services becomes much simpler.  Idris2
+provides a special /texttt{do}-notation for monads, as well as convenient syntax
+for pattern-matching on intermediate values.
+The following are several example composition scenarios, taken from
+\texttt{experimental/typed-dsl/Compo.idr}:
+
+
+\begin{minted}[mathescape]{idris}
+
+-- composition of Twicer and Incrementer
+compo1 : Integer -> Service (Integer)
+compo1 a = do
+            n <- twicerService a
+            incrementerService n
+
+
+
+-- composition of Twicer, Halfer, and Incrementer
+compo2 : Integer -> Service (Integer)
+compo2 a = do
+            i <- twicerService a
+    -- Because twicerService does not provide its own proof that its
+    -- output is always even, we use a Promise to provide a soft proof
+    -- of this property.
+            p <- Promise ?con
+            j <- halferService (cast i ** p)
+            incrementerService j
+
+
+-- invalid composition of Twicer, Incrementer, and Halfer
+compo3 : Integer -> Service (Integer)
+compo3 a = do
+            i <- twicerService a
+            j <- incrementerService i
+    -- The `resolve` hole shows that the programmer must create apply some logic
+    -- of type Integer -> EvenNumber to resolve the mismatch here.
+            halferService $ ?resolve j
+
+
+-- A potential method to resolve the above mismatch
+compo3sol : Integer -> Service (Integer)
+compo3sol a = do
+            i <- twicerService a
+            j <- incrementerService i
+    -- Because this function contains the actual composition of the various
+    -- Services, this is the point where the programmer is best able to decide
+    -- which measures are acceptable to resolve type mismatches.
+    -- In this case, forceEven is used.
+            halferService $ forceEven j
+
+
+-- In this composition, we have no way to statically prove that
+-- halferService is being passed an even number.
+compo4 : Integer -> Service (Integer)
+compo4 a = do
+    -- i could be even or odd, depending on the value of a
+            i <- incrementerService a
+    -- We can pattern match on the result of a runtime test
+    -- to create a branch in the logic of this Service.
+            Just j <- pure $ maybeEven i
+                 | Nothing => twicerService i
+    -- If there is a Just EvenNumber, run the halferService on it.
+    -- If there is no EvenNumber value to be found, run the twicerService on i.
+            halferService j
+
+
+
+-- Because all of the above examples are Integer -> Service (Integer),
+-- it is relatively trivial to compose them.
+compo5 : Integer -> Service (Integer)
+compo5 a = (compo1 a) >>= compo2 >>= compo3 >>= compo4
+
+\end{minted}
 
 
 \section{Depth of Embedding}
 \label{sec:depth_embedding}
-\nil{Sam, can you add citations related to that Section?}
 A domain-specific language requires not only a formal specification for its
 semantics, but a software implementation as well.  The relationship between a
 DSL and its implementation can vary, but most strategies fall into one or more
@@ -873,6 +988,7 @@ of three categories:
   \item \texttt{Shallow Embedding:} An embedded domain-specific language (eDSL)
         is written as a module or library for some host language.  Data in the
         DSL's domain is represented directly as values in the host language.
+        \cite{EmbedDepth2014}
         Shallow embeddings tend to be easy to use and extend, but often suffer
         issues with performance and expressiveness.  Programs written in a
         shallowly-embedded DSL can only describe operations in the domain of
@@ -882,7 +998,8 @@ of three categories:
         an eDSL with a deep embedding is defined in some host language.
         Deep embeddings define a custom Generalized Algebraic Data Type
         (GADT) in the host language and represent
-        all data as values of this type.  Because the entire Abstract Syntax
+        all data as values of this type. \cite{EmbedDepth2014}
+        Because the entire Abstract Syntax
         Tree (AST) of a deeply-embedded program is a single type, it is simple to
         write functions in the host language that operate directly on the
         embedded program. This allows for automatic optimization of embedded
@@ -1783,6 +1900,7 @@ the prototype and write them in SUO-KIF format.
 (=>
   (instance ?INTEGER Integer)
   (equal (TwicerFn ?INTEGER) (MultiplicationFn ?INTEGER 2))))
+
 \end{minted}
 where \texttt{EvenInteger} happens to be predefined in
 \href{https://github.com/ontologyportal/sumo/blob/master/Merge.kif}{Merge.kif}
