@@ -606,7 +606,7 @@ AI-DSL prototype.
   as an integer that is both even and within a certain interval.  Then
   B and C inputs may only need to partially fulfill such conjunction
   of properties.  For instance B may require an even integer, while C
-  may require that integer to within a certain interval.  In other
+  may require that integer to be within a certain interval.  In other
   words both services B and C may take the output of A as input but
   for different reasons.  It is not conceptual difficult to cast the
   output of A to match the input types of B and C, however this is
@@ -651,9 +651,11 @@ AI-DSL prototype.
   some ideas of how to formally specify its subcomponents.  As an
   intermediary step we have also started porting portions of the Fake
   News Warning app to Idris, see
-  \href{https://github.com/singnet/ai-dsl/blob/master/ai-algorithms/NeuralNets/README.md}{\texttt{README.md}},
-  with the intension of refining the type signatures of the various
-  parts by taking advantage of dependent types.
+  \href{https://github.com/singnet/ai-dsl/blob/master/ai-algorithms/NeuralNets/README.md}{\texttt{ai-algorithms/NeuralNets/README.md}}
+  in the \href{https://github.com/singnet/ai-dsl/}{AI-DSL
+    repository}~\cite{AIDSLRepo}, with the intension of refining the
+  type signatures of the various parts by taking advantage of
+  dependent types.
 \end{itemize}
 
 \chapter{Software Engineering Strategies}
