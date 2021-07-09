@@ -2016,6 +2016,18 @@ closer to a complete AI-DSL.
   remains to be fully explored is the use of Automatic Theorem Provers
   as complement (or possibly replacement) of Idris for matching and
   composing services.
+
+  Future work will likely include
+  \begin{enumerate}
+  \item building base ontology of ground types, needed for any type
+    description, likely based on Idris and/or Hyperon;
+  \item importation of relevant domain-specific data-type ontologies
+    into AI-DSL framework, for instance low hanging fruit will be
+    biomedical and finance domains where existing ontologies are
+    fairly mature;
+  \item specifying a service ontology (as part of AI-DSL ontology) for
+    easier discovery or AI agents based on various criteria.
+  \end{enumerate}
 \item We have started building, though at the preparatory level, a
   real world AI service assemblage test case, based on Nunet Fake News
   Warning app, see Section \ref{sec:improve_test_cases}.  Such test
@@ -2026,25 +2038,25 @@ closer to a complete AI-DSL.
 The work taking place during the next iterations will consist in
 continuing such exploration, refining our existing prototypes and
 bringing them together in a holistic system, guided by real world AI
-service assemblage test cases.  Such test case will initially include
-the Nunet Fake News Warning collective.  Then more test cases will be
-considered over various domains such as bio-informatics, finance,
-embodied agent control and more.
+service assemblage test cases, consolidated as a test suite.  Such
+test cases will initially include the Nunet Fake News Warning app.
+Then more test cases will be considered over various domains such as
+bio-informatics, finance, embodied agent control and more.
 
 To conclude, even though there is a long way to go, we believe a lot
 of progress has been done already, and we are happy to say that no
 profound difficulties have been revealed so far.  We must however
 remain cautious.  One difficulty that is expected to eventually come
-up is the tractability of the verification and automated composition
-process of AI services.  This is generally undecidable, and even when
-restricted to subclasses of functions (as is the case in Idris due to
-being based on Intuitionistic Logic) can still have explosive
-complexity.  However, it is also expected that a tremendous amount of
-value will be created by having such system work with restricted
-applicability, or by relaxing the level of guaranties demanded.
-Ultimately it is expected that the AI-DSL will need to synergies with
-AGI systems to reach its full potential, which, fortunately, is one of
-the quintessential functions that SingularityNET aims to offer.
+up is the tractability of the verification and composition process of
+AI services.  This is generally undecidable, and even when restricted
+to subclasses of functions (as is the case in Idris due to being based
+on Intuitionistic Logic) can still have explosive complexity.
+However, it is also expected that a tremendous amount of value will be
+created by having such system work with restricted applicability, or
+by relaxing the level of required guaranties.  Ultimately it is
+expected that the AI-DSL will need to synergies with AGI systems to
+reach its full potential, which, fortunately, is one of the
+quintessential functions that SingularityNET aims to offer.
 
 \appendix
 \chapter{Glossary}
