@@ -128,22 +128,38 @@ far.
 The most recent and also most relevant work we have found is the
 Function Ontology~\cite{FunctionOntology, DeMeester2020}. Its goal is
 to define a standard for describing, both formally and informally,
-functions, their references to implementations, as well as developing
+functions, their mappings to implementations, as well as developing
 tools for retrieving and executing them, remotely or locally.  To the
-best of our knowledge it does not make use of dependent types or
-blockchain technology, however there is a lot of potential for reuse.
-More investigation will be conducted to precisely determine to what
-extent.
+best of our knowledge, at this stage of its development, it does not
+make use of formal specification to retrieve function, it only uses
+non-dependent types of the inputs and outputs, key words of its
+informal description, as well as ontological constraints pertaining to
+the domain and problem it relates.  However the authors mention the
+idea of formally specifying functions using languages such as
+OWL~\cite{OWL}.  It is clear such feature is planned for future
+development.  So their goal obviously aligns with that of the AI-DSL.
+The technological path they are taking, based on the Semantic Web,
+makes it unclear how much reusable their work would be for the AI-DSL
+though.  They also ignore the aspects of costs and result quality,
+which is essential for integrating such system on the blockchain and
+apply it to Artificial Intelligence, but this could conceivably be
+built on top of it.  On the plus side, their system allows to almost
+seamlessly execute the retrieved function either remotely, as service,
+or locally on the client's machine, as demonstrated in their
+JavaScript example.  Whether their system can be reused or only ideas
+and conventions, it is worth keeping an eye on its future development.
 
-Still relevant work with potential for reuse if only conceptual is
-described below.  Let us start with the multi-agent system (MAS)
-field. In~\cite{Brazier1995} the authors describe a use case of a
-system called DESIRE, to formally define inputs and outputs of agents
-and their control flows.  The logic seems somewhat limited but their
-goals align with ours.  In~\cite{Bourahla20055} an extension of
-Computation Tree Logic (CTL) called multi-modal branching-time logic
-is defined to apply model checking on collections of agent given their
-description in some abstract programming language.  It's not clear the
+Other relevant work with potential for reuse if only conceptual is
+described below.
+
+Let us start with the multi-agent system (MAS) field.
+In~\cite{Brazier1995} the authors describe a use case of a system
+called DESIRE, to formally define inputs and outputs of agents and
+their control flows.  The logic seems somewhat limited but their goals
+align with ours.  In~\cite{Bourahla20055} an extension of Computation
+Tree Logic (CTL) called multi-modal branching-time logic is defined to
+apply model checking on collections of agent given their description
+in some abstract programming language.  It's not clear the
 specification language they use is very convenient and the model
 checking methodology is open-ended enough, but nevertheless the work
 is solid and relevant.  In~\cite{Desouky2007} is described an
@@ -151,16 +167,18 @@ architecture for distributed multi-agent intelligent system.  The
 description of the architecture is high level but the authors mention
 Agent Communication Language (ACL) standards~\cite{Labrou99thecurrent}
 such as FIPA-ACL~\cite{FIPAACL}, used to communicate agents requests
-to each other.  In the ontology field we have found the following
-papers.  In~\cite{Gruber_anontology} the authors introduce an ontology
-called EngMath for representing mathematical concepts useful for
-engineering, including quantity units, equations and more in
-KIF~\cite{KIF} to be used in SHADE~\cite{Gruber92towarda} a system for
-collaborative intelligent agents.  It is rather old and it seems
-development has halted, but could nevertheless be interesting to learn
-more about.  OpenMath~\cite{Abbot1995} is another old, but still
-maintained, ontology about mathematics.  More recent mathematical
-ontologies worth mentioning are OntoMath~\cite{Elizarov2017} and
+to each other.
+
+In the ontology field we have found the following papers.
+In~\cite{Gruber_anontology} the authors introduce an ontology called
+EngMath for representing mathematical concepts useful for engineering,
+including quantity units, equations and more in KIF~\cite{KIF} to be
+used in SHADE~\cite{Gruber92towarda} a system for collaborative
+intelligent agents.  It is rather old and it seems development has
+halted, but could nevertheless be interesting to learn more about.
+OpenMath~\cite{Abbot1995} is another old, but still maintained,
+ontology about mathematics.  More recent mathematical ontologies worth
+mentioning are OntoMath~\cite{Elizarov2017} and
 OntoMathPRO~\cite{nevzorova2014ontomathpro}, they seem rather high
 level but could still be useful.  Broadening the scope,
 \cite{Roelofs2020} is focused on validating the consistency of
@@ -1998,6 +2016,18 @@ closer to a complete AI-DSL.
   remains to be fully explored is the use of Automatic Theorem Provers
   as complement (or possibly replacement) of Idris for matching and
   composing services.
+
+  Future work will likely include
+  \begin{enumerate}
+  \item building base ontology of ground types, needed for any type
+    description, likely based on Idris and/or Hyperon;
+  \item importation of relevant domain-specific data-type ontologies
+    into AI-DSL framework, for instance low hanging fruit will be
+    biomedical and finance domains where existing ontologies are
+    fairly mature;
+  \item specifying a service ontology (as part of AI-DSL ontology) for
+    easier discovery or AI agents based on various criteria.
+  \end{enumerate}
 \item We have started building, though at the preparatory level, a
   real world AI service assemblage test case, based on Nunet Fake News
   Warning app, see Section \ref{sec:improve_test_cases}.  Such test
@@ -2008,25 +2038,25 @@ closer to a complete AI-DSL.
 The work taking place during the next iterations will consist in
 continuing such exploration, refining our existing prototypes and
 bringing them together in a holistic system, guided by real world AI
-service assemblage test cases.  Such test case will initially include
-the Nunet Fake News Warning collective.  Then more test cases will be
-considered over various domains such as bio-informatics, finance,
-embodied agent control and more.
+service assemblage test cases, consolidated as a test suite.  Such
+test cases will initially include the Nunet Fake News Warning app.
+Then more test cases will be considered over various domains such as
+bio-informatics, finance, embodied agent control and more.
 
 To conclude, even though there is a long way to go, we believe a lot
 of progress has been done already, and we are happy to say that no
 profound difficulties have been revealed so far.  We must however
 remain cautious.  One difficulty that is expected to eventually come
-up is the tractability of the verification and automated composition
-process of AI services.  This is generally undecidable, and even when
-restricted to subclasses of functions (as is the case in Idris due to
-being based on Intuitionistic Logic) can still have explosive
-complexity.  However, it is also expected that a tremendous amount of
-value will be created by having such system work with restricted
-applicability, or by relaxing the level of guaranties demanded.
-Ultimately it is expected that the AI-DSL will need to synergies with
-AGI systems to reach its full potential, which, fortunately, is one of
-the quintessential functions that SingularityNET aims to offer.
+up is the tractability of the verification and composition process of
+AI services.  This is generally undecidable, and even when restricted
+to subclasses of functions (as is the case in Idris due to being based
+on Intuitionistic Logic) can still have explosive complexity.
+However, it is also expected that a tremendous amount of value will be
+created by having such system work with restricted applicability, or
+by relaxing the level of required guaranties.  Ultimately it is
+expected that the AI-DSL will need to synergies with AGI systems to
+reach its full potential, which, fortunately, is one of the
+quintessential functions that SingularityNET aims to offer.
 
 \appendix
 \chapter{Glossary}
