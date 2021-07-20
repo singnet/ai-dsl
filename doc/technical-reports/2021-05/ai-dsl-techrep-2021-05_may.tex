@@ -64,13 +64,28 @@ and the understanding required to find the parts.  Facilitating and
 ultimately automating such process is the goal of the \emph{Artificial
 Intelligence Domain Specific Language}, or \emph{AI-DSL} for short.
 
-Another important aspect is the management of resources, both
-financial and computational (CPUs, GPUs, etc).  The AI-DSL is also
-intended to incorporate descriptions of such computational
-requirements as well as measures of expected result quality.
+What are the requirements for such an AI-DSL? At a minimum, an AI-DSL should be able to:
+\begin{enumerate}
+\item	Provide mechanisms to clearly specify requirements, input APIs, output types, desired properties, and constraints;
+\item	Search and discover AI services matching those requirements, input APIs, output types, desired properties and constraints;
+\item	Manage financial and computational resources (CPUs, GPUs, etc); 
+\item	Incorporate measures of expected result quality;
+\item	Search and discover ‘helper’ services such as data cleaning, data pre-processing, and data conversion and transformation services;
+\item	Facilitate chaining of AI services. 
+\end{enumerate}
 
-Finally, as described in the blogpost, the current plan is to have
-such system rely on Dependent Types~\cite{Altenkirch05whydependent} to
+Different algorithms typically ingest and output data of different types and formats. Inputs and output could be, for example, booleans, integers, floating point numbers, strings, matrices, more complex data structures, or even entail specific constraints such as divisibility by particular integers. 
+
+Chaining of AI services necessitates, therefore, the ability to either
+\begin{enumerate}
+\item	match outputs of one service to required inputs of another service, or
+\item	specify and call ‘helper’ services to transform outputs of one service into the required format of another service.
+\end{enumerate}
+
+The AI-DSL search service should, therefore, be able to not only find matching AI services, but also helper services that can serve as intermediate links enabling connections between otherwise incompatible AI services.
+
+As described in the blogpost, the current plan is to have
+such a system rely on Dependent Types~\cite{Altenkirch05whydependent} to
 express and validate the specifications of the AI services, including
 cost, quality and their relationships thereof.  The reason Dependent
 Types have been chosen is because they are geared toward program
@@ -85,7 +100,7 @@ Curry-Howard correspondence but some representations are more amenable
 to running actual programs than others}.
 
 \section{Objectives and accomplishments}
-For that first iteration the goals were to
+For the first iteration the goals were to
 \begin{enumerate}
 \item Experiment with matching and retrieval of AI services using
   Idris~\cite{Idris}, a Dependently Typed Language (DTL)~\cite{DTL},
@@ -105,13 +120,13 @@ For that first iteration the goals were to
   Section~\ref{sec:net_ai_future_work}.
 \end{enumerate}
 All the objectives except the last one have been accomplished at
-least to some degree.  The last, and the most ambitious, objective had
-to be postponed for the next iteration due to its complexity.
+least to some degree.  The last, and the most ambitious, objective is slated
+for the next iteration due to its complexity.
 
 \section{Related work}
 \label{sec:related_work}
 To the best of our knowledge there is no existing work on creating
-such AI-DSL system to enable autonomous AI services interoperability
+an AI-DSL system to enable autonomous AI services interoperability
 using Dependent Types, let alone running on a blockchain.  There are
 however attempts using related methodologies, usually involving
 ontologies with more or less explicit forms of reasoning, outside of
@@ -136,51 +151,49 @@ non-dependent types of the inputs and outputs, key words of its
 informal description, as well as ontological constraints pertaining to
 the domain and problem it relates.  However the authors mention the
 idea of formally specifying functions using languages such as
-OWL~\cite{OWL}.  It is clear such feature is planned for future
-development.  So their goal obviously aligns with that of the AI-DSL.
+OWL~\cite{OWL}.  It is clear such features are planned for future
+development.  Their goal clealy aligns with that of the AI-DSL.
 The technological path they are taking, based on the Semantic Web,
-makes it unclear how much reusable their work would be for the AI-DSL
+makes it unclear how reusable their work would be for the AI-DSL
 though.  They also ignore the aspects of costs and result quality,
-which is essential for integrating such system on the blockchain and
-apply it to Artificial Intelligence, but this could conceivably be
-built on top of it.  On the plus side, their system allows to almost
-seamlessly execute the retrieved function either remotely, as service,
-or locally on the client's machine, as demonstrated in their
-JavaScript example.  Whether their system can be reused or only ideas
-and conventions, it is worth keeping an eye on its future development.
+which are essential for integrating such system on a blockchain marketplace, 
+though these could conceivably be
+built on top of it.  Their system does allow, however  almost
+seamless execution of retrieved functions either remotely, as services,
+or locally on the client's machine. It is worth keeping an eye on its future development.
 
-Other relevant work with potential for reuse if only conceptual is
+Other relevant work with potential for reuse is
 described below.
 
-Let us start with the multi-agent system (MAS) field.
-In~\cite{Brazier1995} the authors describe a use case of a system
-called DESIRE, to formally define inputs and outputs of agents and
+Starting with the field of multi-agent systems (MAS), 
+In~\cite{Brazier1995} the authors describe a system
+called DESIRE which formally defines inputs and outputs of agents and
 their control flows.  The logic seems somewhat limited but their goals
 align with ours.  In~\cite{Bourahla20055} an extension of Computation
-Tree Logic (CTL) called multi-modal branching-time logic is defined to
+Tree Logic (CTL), called multi-modal branching-time logic, is defined to
 apply model checking on collections of agent given their description
-in some abstract programming language.  It's not clear the
-specification language they use is very convenient and the model
-checking methodology is open-ended enough, but nevertheless the work
-is solid and relevant.  In~\cite{Desouky2007} is described an
-architecture for distributed multi-agent intelligent system.  The
-description of the architecture is high level but the authors mention
+in an abstract programming language.  It's not clear whether the
+specification language they use is  convenient and the model
+checking methodology  open-ended enough. Nevertheless the work
+is solid and relevant.  An
+architecture for a distributed multi-agent intelligent system is described in~\cite{Desouky2007}.   
+The architecture description is high level but the authors mention
 Agent Communication Language (ACL) standards~\cite{Labrou99thecurrent}
 such as FIPA-ACL~\cite{FIPAACL}, used to communicate agents requests
 to each other.
 
-In the ontology field we have found the following papers.
+We found the following papers that describe a variety of different ontologies.
 In~\cite{Gruber_anontology} the authors introduce an ontology called
 EngMath for representing mathematical concepts useful for engineering,
-including quantity units, equations and more in KIF~\cite{KIF} to be
-used in SHADE~\cite{Gruber92towarda} a system for collaborative
+including units, equations and more in KIF~\cite{KIF}, to be
+used in SHADE~\cite{Gruber92towarda}, a system for collaborative
 intelligent agents.  It is rather old and it seems development has
 halted, but could nevertheless be interesting to learn more about.
 OpenMath~\cite{Abbot1995} is another old, but still maintained,
-ontology about mathematics.  More recent mathematical ontologies worth
+ontology covering mathematics.  More recent mathematical ontologies worth
 mentioning are OntoMath~\cite{Elizarov2017} and
-OntoMathPRO~\cite{nevzorova2014ontomathpro}, they seem rather high
-level but could still be useful.  Broadening the scope,
+OntoMathPRO~\cite{nevzorova2014ontomathpro}. While they seem rather high
+level, they might still be useful.  Broadening the scope,
 \cite{Roelofs2020} is focused on validating the consistency of
 ontologies.  Relatedly, in~\cite{Witherell2009}, a tool for analyzing
 and propagating changes across overlapping ontologies according to
@@ -213,8 +226,8 @@ matching AI services upon request, given a specification to fulfill.
 In Section \ref{sec:realized_function} we describe experiments for
 implementing the \texttt{RealizedAttributes} and
 \texttt{RealizedFunction} data structures described
-in~\cite{GoertzelGeisweillerBlog} used for capturing financial,
-computation costs, as well as measures of expected result quality.  In
+in~\cite{GoertzelGeisweillerBlog} used for capturing financial and
+computational costs, as well as measures of expected result quality.  In
 Section \ref{sec:network_idris_ai_services} we describe the implementation
 of a network of trivially simple AI services implemented in Idris, and
 use the Idris compiler to type check if they can properly connect to each
@@ -237,7 +250,7 @@ costs (financial, computational, etc) and performances (quality, etc)
 captured in the \texttt{RealizedAttributes} data structure, as
 introduced in~\cite{GoertzelGeisweillerBlog} as well.
 
-For that iteration we have implemented a simple version of
+We implemented a simple version of
 \texttt{RealizedFunction} and \texttt{RealizedAttributes} in
 Idris2~\cite{Idris}.  The \texttt{RealizedAttributes} data structure
 contains
@@ -247,9 +260,9 @@ contains
 \item \texttt{Quality}: as a single \texttt{quality} value.
 \end{itemize}
 as well as an example of compositional law,
-\texttt{add\_costs\_min\_quality}, where costs are additive and
-quality is infimum-itive.  Below is a small snippet of that code to
-give an idea of how it looks like
+\texttt{add\_costs\_min\_quality}, in which the total cost is calculated as the sum of the individual functional costs, and
+overall quality is the minumum of the individual qualities.  Below is a small snippet of that code to
+give an idea of how it looks 
 
 \begin{minted}[mathescape]{idris}
 record RealizedAttributes where
@@ -319,7 +332,7 @@ otherwise Idris detects a type error.
 
 \subsection{Objectives and achievements}
 
-The objectives of this work was to see if Idris2 was able to type
+The objective of this work was to see if Idris2 was able to type
 check that the realized attributes of composed realized functions
 followed the defined compositional law.  We have found that Idris2 is
 not only able to do that, but to our surprise does it considerably
@@ -379,8 +392,8 @@ gRPC making use of the expressive power of dependent types.
 
 \subsection{Objectives and achievements}
 
-As mentioned above the objectives of such an experiment was to see how
-the Idris compiler can be used to type check combinations of AI
+As mentioned above the objective of such an experiment was to see how
+the Idris compiler could be used to type check combinations of AI
 services.  It was initially envisioned to make use of dependent types
 by specifying that the \texttt{twicer} service outputs an even
 integer, as opposed to any integer, and that the \texttt{halfer}
@@ -419,19 +432,19 @@ under the
 folder of the \href{https://github.com/singnet/ai-dsl/}{AI-DSL
   repository}~\cite{AIDSLRepo}.
 
-Thus besides the fact that dependent types were ignore in that
+Thus besides the fact that dependent types were ignored in that
 experiment, the objectives were met.  See Section \ref{sec:dependently_typed_registry}
 for a follow up experiment involving dependent types.
 
 \subsection{Future work}
 \label{sec:net_ai_future_work}
-Such experiment was a good way to explore how Idris can be integrated
-to a network of services.  What we need to do next is experiment with
+Our experiments explored how Idris could be integrated
+into a network of services.  What we need to do next is experiment with
 actual AI algorithms, making full use of dependent types in their
-specifications.  Such endeavor was actually attempted over the Fake
+specifications.  Such an endeavor was attempted using our Fake
 News Warning app described in Section
 \ref{sec:domain_model_considerations}, but it was eventually concluded
-to be too ambitious for that iteration and was postponed for the next.
+to be too ambitious for the first iteration.
 More about that is discussed in Section \ref{sec:improve_test_cases}.
 
 Also, we obviously want to be able to reuse existing AI services and
@@ -439,7 +452,7 @@ write their specifications on top of them, as opposed to writing both
 specification and code in Idris (and ultimately the AI-DSL).  To that
 end it was noted that having a Protobuf to/from Idris converter would
 be useful, so that a developer can start from an existing AI service,
-specified in Protobuf, and enriched it with dependent types using
+specified in Protobuf, and enrich it with dependent types using
 Idris.  The other way around could be useful as well to enable a
 developer to implement AI services entirely in Idris and expose their
 Protobuf specification to the network.  Relatedly having directly an
@@ -951,7 +964,7 @@ compo3 : Integer -> Service (Integer)
 compo3 a = do
             i <- twicerService a
             j <- incrementerService i
-    -- The `resolve` hole shows that the programmer must create apply some logic
+    -- The `resolve` hole shows that the programmer must create and apply some logic
     -- of type Integer -> EvenNumber to resolve the mismatch here.
             halferService $ ?resolve j
 
@@ -1097,7 +1110,7 @@ probably require some form of voting / global consensus on a platform level.
 
   \begin{itemize} \item The globally accessible vocabulary / root ontology of
   grounded types will not allow for competing versions. In a sense, this level
-  will be the true ontology, representable by a one and unique root /
+  will be the true ontology, representable by an  unique root /
   upper-level ontology of the network which users will not be able to modify
   directly; \item All other types and task definitions within the platform will
   be required to be derived from the root ontology (if they will want to be used
@@ -1108,7 +1121,7 @@ probably require some form of voting / global consensus on a platform level.
   allow to find the type / service that does not satisfy all requirements
   exactly, but comes as closely as available in the platform. \item At the
   lowest level of describing each instance of AI service or data source on the
-  platform, AI-DSL shall allow maximum extendability in so that AI service
+  platform, AI-DSL shall allow maximum extendability  so that AI service
   providers and data providers will be able to describe and declare their
   services in the most flexible and unconstrained manner, facilitating
   competition and cooperation between them. \end{itemize}
@@ -1122,9 +1135,9 @@ probably require some form of voting / global consensus on a platform level.
   machine on which it is running, possibly reputation score, etc.). It is not
   clear at this point how much of this functionality will be possible (and
   practical) to implement on available dependently typed, ontology languages or
-  even if it is possible to use single language. Even it if is possible to
+  even if it is possible to use a single language. Even it if is possible to
   implement all AI-DSL purely on the current dependently typed language choice
-  Idris, it will have to interface with the world, deal with in-deterministic
+  Idris, it will have to interface with the world, deal with indeterministic
   input from network and mutable states -- operations that may fail in run-time
   no matter how careful type checking is done during compile time
   \cite{brady_resource-dependent_2015}.
@@ -1168,19 +1181,19 @@ Ontology should be developed simultaneously, so that we could make sure that the
 work is aligned with the function and role of AI-DSL within SingularityNET
 platform and ecosystem. We therefore use the "AI/computer-scientific"
 perspective to ontology and ontology building -- emphasizing \textit{what an
-ontologoy is for} -- rather than the "philosophical perspecive" dealing with
+ontologoy is for} -- rather than the "philosophical perspective" dealing with
 \textit{the study of what there is in terms of basic categories}
 \cite{gruber_translation_1993,sep-logic-ontology}. Therefore we first propose
 the  mechanism of how different levels (upper, domain and the leaf- (or
 service)) of AI-DSL ontology will relate for facilitating interactions between
 AI services on the platform.
 
-Note, that design principles of such mechanism relate to the question how
-abstract and consistent should relate to concrete and possibly inconsistent --
+Note, that design principles of such mechanism relate to the question of how the
+abstract and consistent should relate to the concrete and possibly inconsistent --
 something that may need a deeper conceptual understanding than is attempted
-during the project and presented here. We proceed in most practical manner for
-proposing the AI-DSL ontology prototype, being aware that it may need to (and
-possibly should) be subjected to more conceptual treatment in the future.
+during the project and presented here. We proceed in the most practical manner for
+proposing an AI-DSL ontology prototype, being aware that it may need to (and
+probably should) be subjected to more conceptual treatment in the future.
 
 For a concrete domain model of AI-DSL ontology prototype we use the
 \texttt{Fake News
@@ -1193,12 +1206,12 @@ SingularityNET AI Services on decentralized hardware devices of potentially any
 type. Importantly for the AI-DSL project, service discovery on NuNet is designed
 in a way that enables dynamic construction of application-specific service
 meshes from several SingularityNET AI services\cite{nunet_nunet_2021}. In order
-for the service mesh to be deployed, NuNet needs only a specification of program
+for the service mesh to be deployed, NuNet needs only a specification of the program
 graph of the application. Note, that conceptually, construction of an
 application from several independent containers is almost equivalent to
 functionality explained in Section~\ref{sec:dependently_typed_registry} on AI-DSL Registry,
 namely performance of matching and composition of AI services. This is the main
-reason why we chose \texttt{Fake News Warning} application as a domain model
+reason why we chose the \texttt{Fake News Warning} application as a domain model
 for early development efforts of AI-DSL. However, we use this domain model
 solely for the application-independent design of AI-DSL and attend to
 its application specific aspects only as much as it informs the project.
@@ -1262,7 +1275,7 @@ graph of \texttt{Fake News Warning} app:
     \end{minted}
     \vspace{-0.3cm}
     \captionsetup{width=0.7\linewidth}
-    \caption{\label{lst:dag}A directed acyclic graph (DAT) of
+    \caption{\label{lst:dag}A directed acyclic graph (DAG) of the
       \texttt{Fake News Warning} app
       prototype\cite{NuNetFakeNewsWarningAppRepo}.  It simply says that
       \texttt{news-score} depends on \texttt{uclnlp} and
@@ -1306,7 +1319,7 @@ ontologies for designing AI-DSL ontology\footnote{See
 Ontologies} discussion on AI-DSL Github repository\cite{AIDSLRepo}}, we have opted to
 use SUO-KIF as an ontology language~\cite{pease_standard_2009} and SUMO as an
 upper-level ontology~\cite{NilesPease2001}. The main motivation for this choice
-were the versatility of KIF/SUO-KIF (Knowledge Interchange Format) language,
+was the versatility of KIF/SUO-KIF (Knowledge Interchange Format) language,
 which essentially allows to express First Order Logic (FOL) statements in a simple
 text format in terms of lisp-like syntax. Due to that, KIF can be easily
 converted to other formats\cite{kalibatiene_survey_2011}. Also, a conversion to
@@ -1475,7 +1488,7 @@ Services of \texttt{Fake News Warning} application are defined as follows:
 
 Type definitions and their dependency definitions are actually the domain of
 formal type-checking part of AI-DSL and Idris related research. However,
-irrespectively of which language will be eventually chosen for AI-DSL, Figure
+irrespective of which language we eventually choose for AI-DSL, Figure
 \ref{fig:serviceDefinitionKif} expresses that we can:
 \begin{enumerate}
   \item define correct serviceInput and serviceOutput types (unique for each
@@ -2043,8 +2056,8 @@ test cases will initially include the Nunet Fake News Warning app.
 Then more test cases will be considered over various domains such as
 bio-informatics, finance, embodied agent control and more.
 
-To conclude, even though there is a long way to go, we believe a lot
-of progress has been done already, and we are happy to say that no
+Even though there is much more work to accomplish, we have already made considerable
+progress. We are happy to report that no
 profound difficulties have been revealed so far.  We must however
 remain cautious.  One difficulty that is expected to eventually come
 up is the tractability of the verification and composition process of
@@ -2054,7 +2067,7 @@ on Intuitionistic Logic) can still have explosive complexity.
 However, it is also expected that a tremendous amount of value will be
 created by having such system work with restricted applicability, or
 by relaxing the level of required guaranties.  Ultimately it is
-expected that the AI-DSL will need to synergies with AGI systems to
+expected that the AI-DSL will need to synergize with AGI systems to
 reach its full potential, which, fortunately, is one of the
 quintessential functions that SingularityNET aims to offer.
 
