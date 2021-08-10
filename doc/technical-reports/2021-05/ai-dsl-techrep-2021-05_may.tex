@@ -23,33 +23,78 @@
 
 \title{AI-DSL Technical Report (February to May 2021)}
 \author{Nil Geisweiller, Kabir Veitas, Eman Shemsu Asfaw, Samuel
-  Roberti, Matthew Iklé}
+  Roberti, \\ Matthew Ikl\'e, Ben Goertzel}
 \maketitle
 
 \begin{abstract}
-This document is a technical report of a work done between February
-and May 2021, based on the \emph{AI-DSL
-Proposal}~\cite{GoertzelGeisweillerBlog} published as a blogpost on
-the SingularityNET website in December 2020.  It is the first
-iteration of a larger endeavor to create a system that enables
-autonomous interoperability between AI services over the network, more
-specifically over the SingularityNET-on-Cardano network.  It presents
-in detail what has been accomplished so far as well as future plans
-for the continuation of that endeavor.
-\end{abstract}
+This technical report summarizes work done between February
+and August 2021, toward the realization of the concept of an \emph{AI-DSL
+}~\cite{GoertzelGeisweillerBlog} first articulated in a blogpost on
+the SingularityNET website in December 2020 -- a language for AI agents
+running on a decentralized platform to use to communicate their relevant
+properties to each other, so as to support various forms of agent inter-operation.
+This AI-DSL is a significant component in a  larger endeavor to create a system that enables
+autonomous interoperability between AI services over a decentralized blockchain-based
+network.   This reports presents
+in fair detail what has been accomplished in prototyping efforts so far, as well as plans for future
+implementation and experimentation.  \end{abstract}
 
 \tableofcontents
 
 \chapter{Introduction}
+
+One big part of the SingularityNET vision is the creation of a
+decentralized ``society of minds'' in which multiple AI agents can
+cooperate and collaborate to solve problems together -- so that the
+SingularityNET network as a whole becomes a complex self-organizing
+system in which the intelligence of the whole greatly exceeds the
+intelligence of the parts.
+
+The current SingularityNET marketplace comprises mainly agents that
+carry out AI functions for customers on their own, without referencing
+other agents on the platform in their own back-end operations. There
+is no obstacle to connecting multiple agents on the current network
+into complex assemblages, however, the platform also does not provide
+any particular tools designed to make this easier and more natural.
+
+The SingularityNET whitepaper alludes to a meta-API or API-of-APIs
+according to which AI agents can describe to each other various
+aspects of their operation, to make it easier for agents to make
+automated decisions about which other AIs to connect to for what
+reasons. However, the whitepaper does not describe in any detail how
+this API-of-APIs would be designed or implemented.
+
+This technical gap is filled by the concept of an AI-DSL or ``AI
+Domain-Specific Language'', by which is meant not a language for the
+implementation of the nitty-gritty internal operations of AI
+algorithms or data structures, but rather a language that AI
+algorithms can use to describe their properties to each other, so as
+to allow agent interactions to be automatically determined in an
+appropriately knowledgeable way.
+
+Much as the SingularityNET platform could be used to host any sort of
+software agents, not just AI-based agents, similarly the AI-DSL could
+be used to allow any sorts of software processes to describe their
+properties to other software processes.  However, both SingularityNET
+and the AI-DSL are being initially tuned for particular effectiveness
+in the AI context, in ways that do not constrain their potential for
+more general application.
+
+The high level concept of the AI-DSL, and the first steps toward
+technical specification of the idea, were presented in a December 2020
+blog post, \emph{AI-DSL }~\cite{GoertzelGeisweillerBlog}.  Since
+that time considerable work has been done toward an initial technical
+implementation of the AI-DSL.  This document describes much of that
+work, and then briefly discusses what still needs to be done to move
+from these initial achievements toward an AI-DSL that can be broadly
+and efficiently deployed in the SingularityNET platform.
+
+
 \section{Autonomous Interoperability of AI Services}
-Among the wonders that the blockchain technology enables is the
-possibility to programmatically exchange values and services between
-parties.  In the context of AI services it becomes especially relevant
-given the inherent complexity and decomposability of such systems.
-Moreover, the abundance of AI algorithms available on the Internet
-makes it that often creating a new AI solution consists of connecting
-together existing AI algorithms.  For instance building a system to
-discover new drugs may consist of
+
+As a concrete example of the inter-agent cooperation that the AI-DSL
+is designed to mediate in a decentralized AI network, note that
+building a system to discover new drugs may consist of
 \begin{enumerate}
 \item a reasoner to extract background knowledge from biological
   databases,
@@ -58,35 +103,36 @@ discover new drugs may consist of
 \item a learner to generate predictive models relating selected
   features and drug efficacy.
 \end{enumerate}
-The task of composing such AI algorithms is, in most cases, done by
-humans and, as any AI practitioner knows, is tedious and time
-consuming.  Not just the composition of the whole but also the search
-and the understanding required to find the parts.  Facilitating and
-ultimately automating such process is the goal of the \emph{Artificial
-Intelligence Domain Specific Language}, or \emph{AI-DSL} for short.
+In today's software ecosystem, the task of composing such AI
+algorithms is, in most cases, done by humans -- and, as any AI
+practitioner knows, can grow rather tedious and time consuming.  Not
+just the final composition of the whole, but also the search and the
+understanding required to find the parts.  Facilitating and ultimately
+automating such processes is key for the future of the AI field and
+the success of the SingularityNET platform.
 
 What are the requirements for such an AI-DSL? At a minimum, an AI-DSL should be able to:
 \begin{enumerate}
 \item	Provide mechanisms to clearly specify requirements, input APIs, output types, desired properties, and constraints;
 \item	Search and discover AI services matching those requirements, input APIs, output types, desired properties and constraints;
-\item	Manage financial and computational resources (CPUs, GPUs, etc); 
+\item	Manage financial and computational resources (CPUs, GPUs, etc);
 \item	Incorporate measures of expected result quality;
-\item	Search and discover ‘helper’ services such as data cleaning, data pre-processing, and data conversion and transformation services;
-\item	Facilitate chaining of AI services. 
+\item	Search and discover helper services such as data cleaning, data pre-processing, and data conversion and transformation services;
+\item	Facilitate chaining of AI services.
 \end{enumerate}
 
-Different algorithms typically ingest and output data of different types and formats. Inputs and output could be, for example, booleans, integers, floating point numbers, strings, matrices, more complex data structures, or even entail specific constraints such as divisibility by particular integers. 
+Different algorithms typically ingest and output data of different types and formats. Inputs and output could be, for example, booleans, integers, floating point numbers, strings, matrices, more complex data structures, or even entail specific constraints such as divisibility by particular integers.
 
 Chaining of AI services necessitates, therefore, the ability to either
 \begin{enumerate}
 \item	match outputs of one service to required inputs of another service, or
-\item	specify and call ‘helper’ services to transform outputs of one service into the required format of another service.
+\item	specify and call helper services to transform outputs of one service into the required format of another service.
 \end{enumerate}
 
 The AI-DSL search service should, therefore, be able to not only find matching AI services, but also helper services that can serve as intermediate links enabling connections between otherwise incompatible AI services.
 
-As described in the blogpost, the current plan is to have
-such a system rely on Dependent Types~\cite{Altenkirch05whydependent} to
+As described in the blog post, the design direction we have taken for realizing the AI-DSL vision is to
+rely on Dependent Types~\cite{Altenkirch05whydependent} to
 express and validate the specifications of the AI services, including
 cost, quality and their relationships thereof.  The reason Dependent
 Types have been chosen is because they are geared toward program
@@ -101,7 +147,7 @@ Curry-Howard correspondence but some representations are more amenable
 to running actual programs than others}.
 
 \section{Objectives and accomplishments}
-For the first iteration the goals were to
+For the first iteration of work on the AI-DSL, reported here, the goals were to
 \begin{enumerate}
 \item Experiment with matching and retrieval of AI services using
   Idris~\cite{Idris}, a Dependently Typed Language (DTL)~\cite{DTL},
@@ -121,8 +167,8 @@ For the first iteration the goals were to
   Section~\ref{sec:net_ai_future_work}.
 \end{enumerate}
 All the objectives except the last one have been accomplished at
-least to some degree.  The last, and the most ambitious, objective is slated
-for the next iteration due to its complexity.
+least to some degree.  The last, and the most ambitious, objective on this list (holistic integration toward a real-world test-case) ended up being
+pushed into the next iteration due to its complexity.
 
 \section{Related work}
 \label{sec:related_work}
@@ -1180,9 +1226,9 @@ In order to attend to all high level design requirements. All levels
 of the AI-DSL
 Ontology should be developed simultaneously, so that we could make sure that the
 work is aligned with the function and role of AI-DSL within SingularityNET
-platform and ecosystem. We therefore use the "AI/computer-scientific"
+platform and ecosystem. We therefore use the ``AI/computer-scientific''
 perspective to ontology and ontology building -- emphasizing \textit{what an
-ontologoy is for} -- rather than the "philosophical perspective" dealing with
+ontologoy is for} -- rather than the ``philosophical perspective'' dealing with
 \textit{the study of what there is in terms of basic categories}
 \cite{gruber_translation_1993,sep-logic-ontology}. Therefore we first propose
 the  mechanism of how different levels (upper, domain and the leaf- (or
@@ -1220,7 +1266,7 @@ its application specific aspects only as much as it informs the project.
 The idea of dynamic service discovery is to enable application developers to
 construct working applications (or at least their back-ends) by simply passing a
 declarative definition of program graph to the special platform component
-("network orchestrator") -- which then searches for appropriate SingularityNET
+(``network orchestrator'') -- which then searches for appropriate SingularityNET
 AI containers and connects them in to a single workflow (or workflows).
 Suppose, that the back-end of \texttt{Fake News Warning} app consists of three
 SingularityNET AI containers \texttt{news\_score}, \texttt{uclnlp} and
@@ -1973,12 +2019,11 @@ purpose.
 
 \chapter{Conclusion}
 
-The novel nature of such a project requires a large amount of
-exploration, which is what this iteration has been all about.  From
-the start we agreed that we wanted to take a holistic approach,
-attempting to achieve a full albeit limited prototype as rapidly as
-possible in order to uncover hidden blocks as early as possible.  Our
-exploration has reflected this approach.  Let us summarize what we
+While we have not yet created a fully fleshed out AI-DSL suitable
+for use in the SingularityNET platform, we have made quite significant
+progress toward turning this vision into a reality.
+
+Let us now summarize what we
 have accomplished so far and what are the next steps to bring us
 closer to a complete AI-DSL.
 \begin{itemize}
@@ -1998,7 +2043,7 @@ closer to a complete AI-DSL.
   tractable to do in Idris.  More work is required to expand the
   complexity of such realized function attributes, such as functional
   or distributional costs and quality.
-\item An AI-DSL Registry prototype have been build, to retrieve, match
+\item An AI-DSL Registry prototype has been build, to retrieve, match
   and connect AI services based on their specifications as dependent
   types using Idris meta-functions for function matching and retrieval
   as described in Section~\ref{sec:dependently_typed_registry}.  This
@@ -2021,17 +2066,15 @@ closer to a complete AI-DSL.
   with the goal of defining a rich and extendable vocabulary for
   specifying AI services, their algorithms, data types as well as
   their relationship to real world.  For now the decision was made to
-  build such AI ontology on top of SUMO due to its openness, breadth
+  build such an AI ontology on top of SUMO due to its openness, breadth
   and quality, as well as the expressiveness of its representational
   language, SUO-KIF.  The upper layer of the Fake News Warning app was
   translated into SUO-KIF as a SUMO extension.  We also explored how
   to convert SUO-KIF knowledge into Idris, more work is required to
   automate such conversions.  Something that has been discussed but
   remains to be fully explored is the use of Automatic Theorem Provers
-  as complement (or possibly replacement) of Idris for matching and
-  composing services.
-
-  Future work will likely include
+  as complement (or possibly ultimately replacement) to Idris for matching and
+  composing services.  Future work ontology-wise will centrally include
   \begin{enumerate}
   \item building base ontology of ground types, needed for any type
     description, likely based on Idris and/or Hyperon;
@@ -2042,35 +2085,35 @@ closer to a complete AI-DSL.
   \item specifying a service ontology (as part of AI-DSL ontology) for
     easier discovery or AI agents based on various criteria.
   \end{enumerate}
-\item We have started building, though at the preparatory level, a
-  real world AI service assemblage test case, based on Nunet Fake News
-  Warning app, see Section \ref{sec:improve_test_cases}.  Such test
-  case is going to be critical to put our AI-DSL prototypes to the
-  test and build the understanding necessary to push it to the next
-  level.
 \end{itemize}
-The work taking place during the next iterations will consist in
-continuing such exploration, refining our existing prototypes and
+
+
+The work taking place during the next iterations will continue the
+exploration we have started, refining our existing prototypes and
 bringing them together in a holistic system, guided by real world AI
-service assemblage test cases, consolidated as a test suite.  Such
-test cases will initially include the Nunet Fake News Warning app.
-Then more test cases will be considered over various domains such as
+service assemblage test cases, consolidated as a test suite.  To
+support this future work, we have started building a real world AI
+service assemblage test case, based on Nunet Fake News Warning app,
+see Section \ref{sec:improve_test_cases}.  This first test case is
+going to be critical to put our AI-DSL prototypes to the test and
+build the understanding necessary to push it to the next level.
+Further test cases will be considered over various domains such as
 bio-informatics, finance, embodied agent control and more.
 
 Even though there is much more work to accomplish, we have already made considerable
 progress. We are happy to report that no
-profound difficulties have been revealed so far.  We must however
-remain cautious.  One difficulty that is expected to eventually come
+profound difficulties have been revealed so far.  There are however significant
+challenges to be confronted as the work moves forward.  One difficulty that is expected to eventually come
 up is the tractability of the verification and composition process of
 AI services.  This is generally undecidable, and even when restricted
-to subclasses of functions (as is the case in Idris due to being based
-on Intuitionistic Logic) can still have explosive complexity.
+to subclasses of functions (as is the case in Idris due to its foundation in
+Intuitionistic Logic) can still have explosive complexity.
 However, it is also expected that a tremendous amount of value will be
-created by having such system work with restricted applicability, or
+created by having such systems work with restricted applicability, or
 by relaxing the level of required guaranties.  Ultimately it is
 expected that the AI-DSL will need to synergize with AGI systems to
-reach its full potential, which, fortunately, is one of the
-quintessential functions that SingularityNET aims to offer.
+reach its full potential, a notion that fits very closely with the overall design
+and ambition of SingularityNET.
 
 \appendix
 \chapter{Glossary}
