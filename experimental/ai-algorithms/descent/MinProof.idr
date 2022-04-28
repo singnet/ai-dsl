@@ -52,6 +52,10 @@ lt_asymmetric_prf _ _ _ = believe_me Void
 lt_connected_prf : Ord a => (x, y : a) -> x < y = False -> y < x = False -> x = y
 lt_connected_prf _ _ _ _ = believe_me Void
 
+||| Proof that < is irreflexive (not generally true, assumed for now)
+lt_irreflexive_prf : Ord a => (x : a) -> x < x = False
+lt_irreflexive_prf _ = believe_me Void
+
 ||| Proof that my_min is commutative
 my_min_commutative_prf : Ord a => (x, y: a) -> my_min x y = my_min y x
 my_min_commutative_prf x y with (x < y) proof eq1 | (y < x) proof eq2
