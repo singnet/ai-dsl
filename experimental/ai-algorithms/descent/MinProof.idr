@@ -57,7 +57,7 @@ lt_irreflexive_prf : Ord a => (x : a) -> x < x = False
 lt_irreflexive_prf _ = believe_me Void
 
 ||| Proof that my_min is commutative
-my_min_commutative_prf : Ord a => (x, y: a) -> my_min x y = my_min y x
+my_min_commutative_prf : Ord a => (x, y : a) -> my_min x y = my_min y x
 my_min_commutative_prf x y with (x < y) proof eq1 | (y < x) proof eq2
   _ | True | False = Refl
   _ | False | True = Refl
