@@ -40,11 +40,9 @@ test_my_min_3 = Left Refl
 
 -- NEXT.2: use Not y < x = True instead of y < x = False
 
-||| Proof that my_min x y returns either x or y
-my_min_eq_prf : Ord a => (x, y : a) -> Either (my_min x y = x) (my_min x y = y)
-my_min_eq_prf x y with (x < y)
-  _ | True = Left Refl
-  _ | False = Right Refl
+||| Proof that < is irreflexive (not generally true, assumed for now)
+lt_irreflexive_prf : Ord a => (x : a) -> x < x = False
+lt_irreflexive_prf _ = believe_me Void
 
 ||| Proof that < is asymmetric (not generally true, assumed for now)
 lt_asymmetric_prf : Ord a => (x, y : a) -> x < y = True -> y < x = False
@@ -54,9 +52,20 @@ lt_asymmetric_prf _ _ _ = believe_me Void
 lt_connected_prf : Ord a => (x, y : a) -> x < y = False -> y < x = False -> x = y
 lt_connected_prf _ _ _ _ = believe_me Void
 
-||| Proof that < is irreflexive (not generally true, assumed for now)
-lt_irreflexive_prf : Ord a => (x : a) -> x < x = False
-lt_irreflexive_prf _ = believe_me Void
+||| Proof that <= is reflexive (maybe not generally true, assumed for now)
+gte_reflexive_prf : Ord a => (x : a) -> x <= x = True
+gte_reflexive_prf _ = believe_me Void
+
+||| Proof that <= is the complement of the converse of < (not
+||| generally true, assumed for now)
+gte_converse_complement_prf : Ord a => (x, y : a) -> x < y = False -> y <= x = True
+gte_converse_complement_prf _ _ _ = believe_me Void
+
+||| Proof that my_min x y returns either x or y
+my_min_eq_prf : Ord a => (x, y : a) -> Either (my_min x y = x) (my_min x y = y)
+my_min_eq_prf x y with (x < y)
+  _ | True = Left Refl
+  _ | False = Right Refl
 
 ||| Proof that my_min is commutative
 my_min_commutative_prf : Ord a => (x, y : a) -> my_min x y = my_min y x
