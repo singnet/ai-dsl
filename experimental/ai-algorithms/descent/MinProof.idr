@@ -12,11 +12,12 @@ module MinProof
 -- Alternative implementation of min to have its full control --
 ----------------------------------------------------------------
 
+||| Redefinition of min for more control
 my_min : Ord a => a -> a -> a
-my_min x y = if x < y then x else y -- Maybe try with x <= y
--- my_min x y with (x < y)
---   my_min x y | True = x
---   my_min x y | False = y
+-- my_min x y = if x < y then x else y
+my_min x y with (x < y)
+  _ | True = x
+  _ | False = y
 
 -----------------
 -- Test my_min --
