@@ -94,5 +94,6 @@ my_min_ngt_prf x y with (x < y) proof eq
 
 ||| Proof that my_min x y is equal to or lower than x and y
 my_min_lte_prf : Ord a => (x, y : a) -> (my_min x y <= x = True, my_min x y <= y = True)
-my_min_lte_prf x y = believe_me Void  -- NEXT.3
-
+my_min_lte_prf x y with (x < y) proof eq
+  _ | True = (gte_reflexive_prf x, ?h)  -- NEXT.3: x < y = True -> x <= y = True
+  _ | False = (gte_converse_complement_prf x y eq, gte_reflexive_prf y)
