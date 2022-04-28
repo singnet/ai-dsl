@@ -42,7 +42,10 @@ my_min_eq_prf x y with (x < y)
   _ | True = Left Refl
   _ | False = Right Refl
 
--- NEXT: study Decidable.Order.Strict, for more constrained Ord
+-- NEXT.1: Redefine LT x y as y < x = True and use interfaces in
+-- Control.Relation and Decidable.Order.Strict
+
+-- NEXT.2: use Not y < x = True instead of y < x = False
 
 ||| Proof that < is asymmetric (not generally true, assumed for now)
 lt_asymmetric_prf : Ord a => (x, y : a) -> x < y = True -> y < x = False
