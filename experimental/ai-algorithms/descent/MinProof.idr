@@ -78,13 +78,15 @@ my_min_commutative_prf x y with (x < y) proof eq1 | (y < x) proof eq2
   --                     where x_eq_y : x = y
   --                           x_eq_y = lt_connected_prf x y eq1 eq2
 
-||| Proof that my_min x y is equal to or lower than x and y
-my_min_lte_prf : Ord a => (x, y: a) -> (((my_min x y <= x) = True), ((my_min x y <= y) = True))
-my_min_lte_prf x y = believe_me Void
-
 ||| Proof that my_min x y is not greater than x and y
-my_min_ngt_prf : Ord a => (x, y: a) -> (x < (min x y) = False, y < (min x y) = False)
-my_min_ngt_prf x y = believe_me Void -- NEXT
+my_min_ngt_prf : Ord a => (x, y : a) -> (x < my_min x y = False, y < my_min x y = False)
+my_min_ngt_prf x y with (x < y) proof eq
+  _ | True = (lt_irreflexive_prf x, lt_asymmetric_prf x y eq)
+  _ | False = (eq, lt_irreflexive_prf y)
+
+||| Proof that my_min x y is equal to or lower than x and y
+my_min_lte_prf : Ord a => (x, y : a) -> (my_min x y <= x = True, my_min x y <= y = True)
+my_min_lte_prf x y = believe_me Void  -- NEXT.3
 
 -- -- From Stefan Höck, for more see
 -- -- https://github.com/stefan-hoeck/idris2-prim
