@@ -33,7 +33,9 @@ test_my_min_3 = Left Refl
 -- Proofs about my_min --
 -------------------------
 
--- NEXT.1: Redefine LT x y as y < x = True and use interfaces in
+-- NEXT.0: see if we can use quantifiers (as in QTT)
+
+-- NEXT.1: redefine LT x y as y < x = True and use interfaces in
 -- Control.Relation and Decidable.Order.Strict
 
 -- NEXT.2: use Not y < x = True instead of y < x = False
@@ -85,40 +87,3 @@ my_min_ngt_prf x y with (x < y) proof eq
 my_min_lte_prf : Ord a => (x, y : a) -> (my_min x y <= x = True, my_min x y <= y = True)
 my_min_lte_prf x y = believe_me Void  -- NEXT.3
 
--- -- From Stefan Höck, for more see
--- -- https://github.com/stefan-hoeck/idris2-prim
-
--- -- ||| This is unsafe! We could well implement `Ord` in such a
--- -- ||| way that this does not hold!
--- OrdLaw1 : Ord a => (0 x,y : a) -> (0 prf : (x < y) === False) -> (y <= x) === True
--- OrdLaw1 _ _ _ = believe_me Void
-
--- ||| This is unsafe! We could well implement `Ord` in such a
--- ||| way that this does not hold!
--- OrdLaw2 : Ord a => (0 x : a) -> (x <= x) === True
--- OrdLaw2 _ = believe_me Void
-
--- MyMinLaw2 : Ord a => (x,y : a) -> (my_min x y <= x) === True
--- MyMinLaw2 x y with (x < y) proof prf
---   MyMinLaw2 x y | True  = OrdLaw2 x
---   MyMinLaw2 x y | False = OrdLaw1 x y prf
-
--- From gallais
-
--- Today at 3:12 PM
--- hmm, that's weird:
---
--- my_min_commutative_prf x y
---   with (lt_asymmetric_prf x y) | (y < x) | (x < y)
---
---
--- is rejected but
---
--- my_min_commutative_prf x y
---   with (lt_asymmetric_prf x y) | (y < x)
---   _ | prf | p with (x < y)
---     _ | q = ?a
---
---
--- is accepted
--- (they should be equivalent)
