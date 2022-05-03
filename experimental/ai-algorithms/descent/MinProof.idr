@@ -1,16 +1,44 @@
 module MinProof
 
----------------------------------------------------------------
--- Excercises to prove                                       --
---                                                           --
--- min(x, y) <= x and min(x, y) <= y                         --
---                                                           --
--- and a few other properties like commutativity.            --
----------------------------------------------------------------
+--------------------------------------------------------------------
+-- Excercises to prove                                            --
+--                                                                --
+--   min(x, y) ≤ x and min(x, y) ≤ y                              --
+--                                                                --
+-- and other properties like commutativity.                       --
+--                                                                --
+-- According to                                                   --
+--                                                                --
+-- https://en.wikipedia.org/wiki/Maximal_and_minimal_elements     --
+--                                                                --
+-- The minimal element m of set S, is defined such that           --
+--                                                                --
+--   ∀s∈S, if s ≤ m then m ≤ s                                    --
+--                                                                --
+-- given as only assumption about ≤ that it is a preorder,        --
+-- i.e. reflexive and transitive.                                 --
+--                                                                --
+-- Thus in our case, strictly following the definition, what we   --
+-- want to ensure is that                                         --
+--                                                                --
+--   if x ≤ min(x, y) then min(x, y) ≤ x                          --
+--   if y ≤ min(x, y) then min(x, y) ≤ y                          --
+--                                                                --
+-- If ≤ is antisymmetric, i.e. a partial order, then it becomes   --
+--                                                                --
+--   if x ≤ min(x, y) then min(x, y) = x                          --
+--   if y ≤ min(x, y) then min(x, y) = y                          --
+--                                                                --
+-- Finally if ≤ is total, then it follows that                    --
+--                                                                --
+--   min(x, y) ≤ x and min(x, y) ≤ y                              --
+--                                                                --
+-- which is what we set out to prove at the beginning.            --
+--------------------------------------------------------------------
 
-----------------------------------------------------------------
--- Alternative implementation of min to have its full control --
-----------------------------------------------------------------
+---------------------------------------
+-- Alternative implementation of min --
+---------------------------------------
 
 ||| Redefinition of min for full control
 my_min : Ord a => a -> a -> a
@@ -78,7 +106,7 @@ my_min_commutative_prf x y with (x < y) proof eq1 | (y < x) proof eq2
   -- _ | True | True = absurd f_eq_t -- eq1 := x < y = True, eq2 := y < x = True
   --                   where f_eq_t : False = True
   --                         f_eq_t = trans f_eq_y_lt_x eq2
-  --                         where f_eq_y_lt_x : False = y < x /\ y < x = True
+  --                         where f_eq_y_lt_x : False = y < x
   --                               f_eq_y_lt_x = sym y_lt_x_eq_f
   --                               where y_lt_x_eq_f : y < x = False
   --                                     y_lt_x_eq_f = lt_asymmetric_prf x y eq1
