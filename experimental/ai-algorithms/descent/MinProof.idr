@@ -61,6 +61,8 @@ test_my_min_3 = Left Refl
 -- Proofs about my_min --
 -------------------------
 
+-- NEXT.-1: do the same of minimal element of a container
+
 -- NEXT.0: see if we can use quantifiers (as in QTT)
 
 -- NEXT.1: redefine LT x y as y < x = True and use interfaces in
@@ -86,8 +88,19 @@ gte_reflexive_prf _ = believe_me Void
 
 ||| Proof that <= is the complement of the converse of < (not
 ||| generally true, assumed for now)
-gte_converse_complement_prf : Ord a => (x, y : a) -> x < y = False -> y <= x = True
-gte_converse_complement_prf _ _ _ = believe_me Void
+gte_converse_complement_prf : Ord a => (x, y : a) -> (b : Bool) -> x < y = b -> y <= x = not b
+gte_converse_complement_prf _ _ _ _ = believe_me Void
+
+||| Proof that <= is strongly connected (not generally true, assumed
+||| for now)
+gte_strongly_connected_prf : Ord a => (x, y : a) -> Either (x <= y = True) (y <= x = True)
+gte_strongly_connected_prf _ _ = believe_me Void
+
+||| Implicative form that <= is strongly connected (not generally
+||| true, assumed for now).  This can perhaps be inferred from
+||| gte_strongly_connected_prf.
+gte_strongly_connected_imp_prf : Ord a => (x, y : a) -> x <= y = False -> y <= x = True
+gte_strongly_connected_imp_prf _ _ = believe_me Void
 
 ||| Proof that my_min x y returns either x or y
 my_min_eq_prf : Ord a => (x, y : a) -> Either (my_min x y = x) (my_min x y = y)
@@ -123,5 +136,7 @@ my_min_ngt_prf x y with (x < y) proof eq
 ||| Proof that my_min x y is equal to or lower than x and y
 my_min_lte_prf : Ord a => (x, y : a) -> (my_min x y <= x = True, my_min x y <= y = True)
 my_min_lte_prf x y with (x < y) proof eq
-  _ | True = (gte_reflexive_prf x, ?h)  -- NEXT.3: x < y = True -> x <= y = True
-  _ | False = (gte_converse_complement_prf x y eq, gte_reflexive_prf y)
+  _ | True = (gte_reflexive_prf x, gte_strongly_connected_imp_prf y x x_nlte_y)
+             where x_nlte_y : y <= x = False
+                   x_nlte_y = gte_converse_complement_prf x y True eq
+  _ | False = (gte_converse_complement_prf x y False eq, gte_reflexive_prf y)
