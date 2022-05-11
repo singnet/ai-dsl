@@ -1,6 +1,7 @@
 module MinProof
 
 import Data.Vect
+import Data.Vect.Quantifiers
 
 --------------------------------------------------------------------
 -- Excercises to prove                                            --
