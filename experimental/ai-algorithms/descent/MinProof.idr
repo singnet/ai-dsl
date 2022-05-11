@@ -85,24 +85,24 @@ lt_connected_prf : Ord a => (x, y : a) -> x < y = False -> y < x = False -> x = 
 lt_connected_prf _ _ _ _ = believe_me Void
 
 ||| Proof that <= is reflexive (maybe not generally true, assumed for now)
-gte_reflexive_prf : Ord a => (x : a) -> x <= x = True
-gte_reflexive_prf _ = believe_me Void
+ge_reflexive_prf : Ord a => (x : a) -> x <= x = True
+ge_reflexive_prf _ = believe_me Void
 
 ||| Proof that <= is the complement of the converse of < (not
 ||| generally true, assumed for now)
-gte_converse_complement_prf : Ord a => (x, y : a) -> (b : Bool) -> x < y = b -> y <= x = not b
-gte_converse_complement_prf _ _ _ _ = believe_me Void
+ge_converse_complement_prf : Ord a => (x, y : a) -> (b : Bool) -> x < y = b -> y <= x = not b
+ge_converse_complement_prf _ _ _ _ = believe_me Void
 
 ||| Proof that <= is strongly connected (not generally true, assumed
 ||| for now)
-gte_strongly_connected_prf : Ord a => (x, y : a) -> Either (x <= y = True) (y <= x = True)
-gte_strongly_connected_prf _ _ = believe_me Void
+ge_strongly_connected_prf : Ord a => (x, y : a) -> Either (x <= y = True) (y <= x = True)
+ge_strongly_connected_prf _ _ = believe_me Void
 
 ||| Implicative form that <= is strongly connected (not generally
 ||| true, assumed for now).  This can perhaps be inferred from
-||| gte_strongly_connected_prf.
-gte_strongly_connected_imp_prf : Ord a => (x, y : a) -> x <= y = False -> y <= x = True
-gte_strongly_connected_imp_prf _ _ = believe_me Void
+||| ge_strongly_connected_prf.
+ge_strongly_connected_imp_prf : Ord a => (x, y : a) -> x <= y = False -> y <= x = True
+ge_strongly_connected_imp_prf _ _ = believe_me Void
 
 ||| Proof that my_min x y returns either x or y
 my_min_eq_prf : Ord a => (x, y : a) -> Either (my_min x y = x) (my_min x y = y)
@@ -136,12 +136,12 @@ my_min_ngt_prf x y with (x < y) proof eq
   _ | False = (eq, lt_irreflexive_prf y)
 
 ||| Proof that my_min x y is equal to or lower than x and y
-my_min_lte_prf : Ord a => (x, y : a) -> (my_min x y <= x = True, my_min x y <= y = True)
-my_min_lte_prf x y with (x < y) proof eq
-  _ | True = (gte_reflexive_prf x, gte_strongly_connected_imp_prf y x x_nlte_y)
-             where x_nlte_y : y <= x = False
-                   x_nlte_y = gte_converse_complement_prf x y True eq
-  _ | False = (gte_converse_complement_prf x y False eq, gte_reflexive_prf y)
+my_min_le_prf : Ord a => (x, y : a) -> (my_min x y <= x = True, my_min x y <= y = True)
+my_min_le_prf x y with (x < y) proof eq
+  _ | True = (ge_reflexive_prf x, ge_strongly_connected_imp_prf y x x_nle_y)
+             where x_nle_y : y <= x = False
+                   x_nle_y = ge_converse_complement_prf x y True eq
+  _ | False = (ge_converse_complement_prf x y False eq, ge_reflexive_prf y)
 
 -------------------------------------------------------
 -- Assuming a total order, prove that                --
@@ -155,4 +155,4 @@ min_element (x :: []) = x
 min_element (x :: (y :: xs)) = my_min x (min_element (y :: xs))
 
 ||| Proof that min_element [x₁, ..., xₙ] is equal to or lower than x₁ to xₙ
-min_element_lte_prf : Ord a => Vect (S n) a -> ?h
+min_element_le_prf : Ord a => (xs : Vect (S n) a) -> All (?p (min_element xs)) xs
