@@ -1,5 +1,7 @@
 module MinProof
 
+import Data.Vect
+
 --------------------------------------------------------------------
 -- Excercises to prove                                            --
 --                                                                --
@@ -140,3 +142,17 @@ my_min_lte_prf x y with (x < y) proof eq
              where x_nlte_y : y <= x = False
                    x_nlte_y = gte_converse_complement_prf x y True eq
   _ | False = (gte_converse_complement_prf x y False eq, gte_reflexive_prf y)
+
+-------------------------------------------------------
+-- Assuming a total order, prove that                --
+--                                                   --
+--   If m∈S is a minimal element of S, then ∀s∈S m≤s --
+-------------------------------------------------------
+
+||| Return the minimal element of a vector of at least one element.
+min_element : Ord a => Vect (S n) a -> a
+min_element (x :: []) = x
+min_element (x :: (y :: xs)) = my_min x (min_element (y :: xs))
+
+||| Proof that min_element [x₁, ..., xₙ] is equal to or lower than x₁ to xₙ
+min_element_lte_prf : Ord a => Vect (S n) a -> ?h
