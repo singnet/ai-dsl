@@ -157,3 +157,21 @@ min_element (x :: (y :: xs)) = my_min x (min_element (y :: xs))
 
 ||| Proof that min_element [x₁, ..., xₙ] is equal to or lower than x₁ to xₙ
 min_element_le_prf : Ord a => (xs : Vect (S n) a) -> All (?p (min_element xs)) xs
+
+-- From Thomas (CodingCellist)
+--
+-- -- proof that an `Ord` is less-than-or-equal-to another `Ord`
+-- data ORD_LTE : Ord t => t -> t -> Type where
+--   IsLT :  Ord t
+--        => (x : t)
+--        -> (y : t)
+--        -> {auto 0 prf : (compare x y === LT)}
+--        -> ORD_LTE x y
+--   IsEQ :  Ord t
+--        => (x : t)
+--        -> (y : t)
+--        -> {auto 0 prf : (compare x y === EQ)}
+--        -> ORD_LTE x y
+--
+-- -- Proof that min_element [x₁, ..., xₙ] is equal to or lower than x₁ to xₙ
+-- min_element_leq_prf : Ord a => (xs : Vect (S n) a) -> All (ORD_LTE (min_element xs)) xs
