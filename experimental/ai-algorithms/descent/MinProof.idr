@@ -75,35 +75,36 @@ test_my_min_3 = Left Refl
 
 ||| Proof that < is irreflexive (not generally true, assumed for now)
 lt_irreflexive_prf : Ord a => (x : a) -> x < x = False
-lt_irreflexive_prf _ = believe_me Void
+lt_irreflexive_prf _ = believe_me ()
 
 ||| Proof that < is asymmetric (not generally true, assumed for now)
 lt_asymmetric_prf : Ord a => (x, y : a) -> x < y = True -> y < x = False
-lt_asymmetric_prf _ _ _ = believe_me Void
+lt_asymmetric_prf _ _ _ = believe_me ()
 
 ||| Proof that < is connected (not generally true, assumed for now)
 lt_connected_prf : Ord a => (x, y : a) -> x < y = False -> y < x = False -> x = y
-lt_connected_prf _ _ _ _ = believe_me Void
+lt_connected_prf _ _ _ _ = believe_me ()
 
 ||| Proof that <= is reflexive (maybe not generally true, assumed for now)
+||| NEXT.-1: Ord a => (x, y : a) -> (x = y) -> (x <= y = True)
 ge_reflexive_prf : Ord a => (x : a) -> x <= x = True
-ge_reflexive_prf _ = believe_me Void
+ge_reflexive_prf _ = believe_me ()
 
 ||| Proof that <= is the complement of the converse of < (not
 ||| generally true, assumed for now)
 ge_converse_complement_prf : Ord a => (x, y : a) -> (b : Bool) -> x < y = b -> y <= x = not b
-ge_converse_complement_prf _ _ _ _ = believe_me Void
+ge_converse_complement_prf _ _ _ _ = believe_me ()
 
 ||| Proof that <= is strongly connected (not generally true, assumed
 ||| for now)
 ge_strongly_connected_prf : Ord a => (x, y : a) -> Either (x <= y = True) (y <= x = True)
-ge_strongly_connected_prf _ _ = believe_me Void
+ge_strongly_connected_prf _ _ = believe_me ()
 
 ||| Implicative form that <= is strongly connected (not generally
 ||| true, assumed for now).  This can perhaps be inferred from
 ||| ge_strongly_connected_prf.
 ge_strongly_connected_imp_prf : Ord a => (x, y : a) -> x <= y = False -> y <= x = True
-ge_strongly_connected_imp_prf _ _ = believe_me Void
+ge_strongly_connected_imp_prf _ _ = believe_me ()
 
 ||| Proof that my_min x y returns either x or y
 my_min_eq_prf : Ord a => (x, y : a) -> Either (my_min x y = x) (my_min x y = y)
