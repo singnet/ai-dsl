@@ -21,6 +21,11 @@ import Data.Vect
 |||
 ||| For now the descent algorithm merely iteratively calls the search
 ||| function as long as the cost function over its output is lower.
+|||
+||| TODO: explore returning the whole trace.
+|||
+||| TODO: support backtracking (trace is a tree instead of a vector)
+||| (look at sorted tree).
 descent_rec : Ord cost_t => cnd_t -> cost_t -> (cnd_t -> cost_t) -> (cnd_t -> cnd_t) -> cnd_t
 descent_rec cnd cst cstfn nxtfn =
   if nxtcst < cst then descent_rec nxtcnd nxtcst cstfn nxtfn
