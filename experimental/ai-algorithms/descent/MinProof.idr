@@ -72,37 +72,37 @@ test_my_min_3 = Left Refl
 -- NEXT.2: use Not y < x = True instead of y < x = False
 
 ||| Proof that < is irreflexive (not generally true, assumed for now)
-lt_irreflexive_prf : Ord a => (x : a) -> x < x = False
-lt_irreflexive_prf _ = believe_me ()
+lt_irreflexive_prf : Ord a => {0 x : a} -> x < x = False
+lt_irreflexive_prf = believe_me ()
 
 ||| Proof that < is asymmetric (not generally true, assumed for now)
-lt_asymmetric_prf : Ord a => (x, y : a) -> x < y = True -> y < x = False
-lt_asymmetric_prf _ _ _ = believe_me ()
+lt_asymmetric_prf : Ord a => {0 x, y : a} -> x < y = True -> y < x = False
+lt_asymmetric_prf _ = believe_me ()
 
 ||| Proof that < is connected (not generally true, assumed for now)
-lt_connected_prf : Ord a => (x, y : a) -> x < y = False -> y < x = False -> x = y
-lt_connected_prf _ _ _ _ = believe_me ()
+lt_connected_prf : Ord a => {0 x, y : a} -> x < y = False -> y < x = False -> x = y
+lt_connected_prf _ _ = believe_me ()
 
 ||| Proof that <= is reflexive (maybe not generally true, assumed for now)
 ||| NEXT.-1: Ord a => (x, y : a) -> (x = y) -> (x <= y = True)
-ge_reflexive_prf : Ord a => (x : a) -> x <= x = True
-ge_reflexive_prf _ = believe_me ()
+le_reflexive_prf : Ord a => {0 x : a} -> x <= x = True
+le_reflexive_prf = believe_me ()
 
 ||| Proof that <= is the complement of the converse of < (not
 ||| generally true, assumed for now)
-ge_converse_complement_prf : Ord a => (x, y : a) -> (b : Bool) -> x < y = b -> y <= x = not b
-ge_converse_complement_prf _ _ _ _ = believe_me ()
+le_converse_complement_prf : Ord a => {0 x, y : a} -> {0 b : Bool} -> x < y = b -> y <= x = not b
+le_converse_complement_prf _ = believe_me ()
 
 ||| Proof that <= is strongly connected (not generally true, assumed
 ||| for now)
-ge_strongly_connected_prf : Ord a => (x, y : a) -> Either (x <= y = True) (y <= x = True)
-ge_strongly_connected_prf _ _ = believe_me ()
+le_strongly_connected_prf : Ord a => {0 x, y : a} -> Either (x <= y = True) (y <= x = True)
+le_strongly_connected_prf = believe_me ()
 
 ||| Implicative form that <= is strongly connected (not generally
 ||| true, assumed for now).  This can perhaps be inferred from
-||| ge_strongly_connected_prf.
-ge_strongly_connected_imp_prf : Ord a => (x, y : a) -> x <= y = False -> y <= x = True
-ge_strongly_connected_imp_prf _ _ = believe_me ()
+||| le_strongly_connected_prf.
+le_strongly_connected_imp_prf : Ord a => {0 x, y : a} -> x <= y = False -> y <= x = True
+le_strongly_connected_imp_prf _ = believe_me ()
 
 ||| Proof that my_min x y returns either x or y
 my_min_eq_prf : Ord a => (x, y : a) -> Either (my_min x y = x) (my_min x y = y)
@@ -115,8 +115,8 @@ my_min_commutative_prf : Ord a => (x, y : a) -> my_min x y = my_min y x
 my_min_commutative_prf x y with (x < y) proof eq1 | (y < x) proof eq2
   _ | True | False = Refl
   _ | False | True = Refl
-  _ | False | False = sym (lt_connected_prf x y eq1 eq2)
-  _ | True | True = absurd (trans (sym (lt_asymmetric_prf x y eq1)) eq2)
+  _ | False | False = sym (lt_connected_prf eq1 eq2)
+  _ | True | True = absurd (trans (sym (lt_asymmetric_prf eq1)) eq2)
   -- Below are more decomposed proofs for the absurd and connected cases
   -- _ | True | True = absurd f_eq_t -- eq1 := x < y = True, eq2 := y < x = True
   --                   where f_eq_t : False = True
@@ -124,24 +124,24 @@ my_min_commutative_prf x y with (x < y) proof eq1 | (y < x) proof eq2
   --                         where f_eq_y_lt_x : False = y < x
   --                               f_eq_y_lt_x = sym y_lt_x_eq_f
   --                               where y_lt_x_eq_f : y < x = False
-  --                                     y_lt_x_eq_f = lt_asymmetric_prf x y eq1
+  --                                     y_lt_x_eq_f = lt_asymmetric_prf eq1
   -- _ | False | False = sym x_eq_y
   --                     where x_eq_y : x = y
-  --                           x_eq_y = lt_connected_prf x y eq1 eq2
+  --                           x_eq_y = lt_connected_prf eq1 eq2
 
 ||| Proof that my_min x y is not greater than x and y
 my_min_ngt_prf : Ord a => (x, y : a) -> (x < my_min x y = False, y < my_min x y = False)
 my_min_ngt_prf x y with (x < y) proof eq
-  _ | True = (lt_irreflexive_prf x, lt_asymmetric_prf x y eq)
-  _ | False = (eq, lt_irreflexive_prf y)
+  _ | True = (lt_irreflexive_prf, lt_asymmetric_prf eq)
+  _ | False = (eq, lt_irreflexive_prf)
 
 ||| Proof that my_min x y is equal to or lower than x and y
 my_min_le_prf : Ord a => (x, y : a) -> (my_min x y <= x = True, my_min x y <= y = True)
 my_min_le_prf x y with (x < y) proof eq
-  _ | True = (ge_reflexive_prf x, ge_strongly_connected_imp_prf y x x_nle_y)
+  _ | True = (le_reflexive_prf, le_strongly_connected_imp_prf x_nle_y)
              where x_nle_y : y <= x = False
-                   x_nle_y = ge_converse_complement_prf x y True eq
-  _ | False = (ge_converse_complement_prf x y False eq, ge_reflexive_prf y)
+                   x_nle_y = le_converse_complement_prf eq
+  _ | False = (le_converse_complement_prf eq, le_reflexive_prf)
 
 -------------------------------------------------------
 -- Assuming a total order, prove that                --
