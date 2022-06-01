@@ -84,9 +84,18 @@ lt_connected_prf : Ord a => {0 x, y : a} -> x < y = False -> y < x = False -> x 
 lt_connected_prf _ _ = believe_me ()
 
 ||| Proof that <= is reflexive (maybe not generally true, assumed for now)
-||| NEXT.-1: Ord a => (x, y : a) -> (x = y) -> (x <= y = True)
 le_reflexive_prf : Ord a => {0 x : a} -> x <= x = True
 le_reflexive_prf = believe_me ()
+
+||| Proof that <= is transitive (not generally true, assumed for now)
+le_transitive_prf : Ord a => {0 x, y, z : a} -> x <= y = True -> y <= z = True -> x <= z = True
+le_transitive_prf _ _ = believe_me ()
+
+||| Proof that <= is the reflexive closure of < (or conversely that <
+||| is the irreflexive kernel of <=).  Not generally true, assumed for
+||| now.
+le_reflexive_closure_lt_prf : Ord a => {0 x, y : a} -> Either (x < y = True) (x = y) -> x <= y = True
+le_reflexive_closure_lt_prf _ = believe_me ()
 
 ||| Proof that <= is the complement of the converse of < (not
 ||| generally true, assumed for now)
@@ -152,9 +161,17 @@ my_min_le_prf x y with (x < y) proof eq
 ||| Return the minimal element of a vector of at least one element.
 min_element : Ord a => Vect (S n) a -> a
 min_element (x :: []) = x
-min_element (x :: (y :: xs)) = my_min x (min_element (y :: xs))
+min_element (x :: (y :: ys)) = my_min x (min_element (y :: ys))
 
 ||| Proof that min_element [x₁, ..., xₙ] is equal to or lower than x₁ to xₙ
 min_element_le_prf : Ord a => (xs : Vect (S n) a) -> All (\x : a => (min_element xs) <= x = True) xs
-min_element_le_prf (x :: []) = ge_reflexive_prf x :: []
-min_element_le_prf (x :: (y :: xs)) = fst (my_min_le_prf x (min_element (y :: xs))) :: ?h -- NEXT.3
+min_element_le_prf (x :: []) = le_reflexive_prf :: []
+min_element_le_prf (x :: (y :: ys)) = head_prf :: tail_prf
+  where head_prf : (min_element (x :: (y :: ys))) <= x = True
+        head_prf = fst (my_min_le_prf x (min_element (y :: ys)))
+        tail_prf : All (\z : a => (min_element (x :: (y :: ys))) <= z = True) (y :: ys)
+        tail_prf = mapProperty prf_f (min_element_le_prf (y :: ys))
+        where prf_f : {0 w : a} -> min_element (y :: ys) <= w = True -> min_element (x :: (y :: ys)) <= w = True
+              prf_f prf with (x < min_element (y :: ys)) proof eq
+                _ | True = le_transitive_prf (le_reflexive_closure_lt_prf (Left eq)) prf
+                _ | False = prf
