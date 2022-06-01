@@ -152,6 +152,12 @@ my_min_le_prf x y with (x < y) proof eq
                    x_nle_y = le_converse_complement_prf eq
   _ | False = (le_converse_complement_prf eq, le_reflexive_prf)
 
+||| Minimum function decorated with the proof of its correctness.
+||| This is to explore the pros and cons of having the specification
+||| inside the type signature of the function.
+my_min_with_prf : Ord a => (x, y : a) -> (m : a ** (m <= x = True, m <= y = True))
+my_min_with_prf x y = (my_min x y ** my_min_le_prf x y)
+
 -------------------------------------------------------
 -- Assuming a total order, prove that                --
 --                                                   --
@@ -175,3 +181,9 @@ min_element_le_prf (x :: (y :: ys)) = head_prf :: tail_prf
               prf_f prf with (x < min_element (y :: ys)) proof eq
                 _ | True = le_transitive_prf (le_reflexive_closure_lt_prf (Left eq)) prf
                 _ | False = prf
+
+||| Minimal element function decorated with the proof of its
+||| correctness.  This is to explore the pros and cons of having the
+||| specification inside the type signature of the function.
+min_element_with_prf : Ord a => (xs : Vect (S n) a) -> (m : a ** All (\x : a => m <= x = True) xs)
+min_element_with_prf xs = (min_element xs ** min_element_le_prf xs)
