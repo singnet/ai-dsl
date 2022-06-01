@@ -64,12 +64,10 @@ test_my_min_3 = Left Refl
 -- Proofs about my_min --
 -------------------------
 
--- NEXT.0: see if we can use quantifiers (as in QTT)
-
--- NEXT.1: redefine LT x y as y < x = True and use interfaces in
+-- TODO: redefine LT x y as y < x = True and use interfaces in
 -- Control.Relation and Decidable.Order.Strict
 
--- NEXT.2: use Not y < x = True instead of y < x = False
+-- TODO: use Not y < x = True instead of y < x = False
 
 ||| Proof that < is irreflexive (not generally true, assumed for now)
 lt_irreflexive_prf : Ord a => {0 x : a} -> x < x = False
@@ -114,7 +112,7 @@ le_strongly_connected_imp_prf : Ord a => {0 x, y : a} -> x <= y = False -> y <= 
 le_strongly_connected_imp_prf _ = believe_me ()
 
 ||| Proof that my_min x y returns either x or y
-my_min_eq_prf : Ord a => (x, y : a) -> Either (my_min x y = x) (my_min x y = y) -- TODO: replace (x, y : a) by {0 x, y : a}, if possible
+my_min_eq_prf : Ord a => (x, y : a) -> Either (my_min x y = x) (my_min x y = y)
 my_min_eq_prf x y with (x < y)
   _ | True = Left Refl
   _ | False = Right Refl
