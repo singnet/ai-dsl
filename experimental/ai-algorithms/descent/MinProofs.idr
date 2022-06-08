@@ -1,4 +1,4 @@
-module MinProof
+module MinProofs
 
 import OrdProofs
 
