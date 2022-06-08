@@ -1,5 +1,7 @@
 module MinProof
 
+import OrdProofs
+
 import Data.Vect
 import Data.Vect.Quantifiers
 
@@ -63,53 +65,6 @@ test_my_min_3 = Left Refl
 -------------------------
 -- Proofs about my_min --
 -------------------------
-
--- TODO: redefine LT x y as y < x = True and use interfaces in
--- Control.Relation and Decidable.Order.Strict
-
--- TODO: use Not y < x = True instead of y < x = False
-
-||| Proof that < is irreflexive (not generally true, assumed for now)
-lt_irreflexive_prf : Ord a => {0 x : a} -> x < x = False
-lt_irreflexive_prf = believe_me ()
-
-||| Proof that < is asymmetric (not generally true, assumed for now)
-lt_asymmetric_prf : Ord a => {0 x, y : a} -> x < y = True -> y < x = False
-lt_asymmetric_prf _ = believe_me ()
-
-||| Proof that < is connected (not generally true, assumed for now)
-lt_connected_prf : Ord a => {0 x, y : a} -> x < y = False -> y < x = False -> x = y
-lt_connected_prf _ _ = believe_me ()
-
-||| Proof that <= is reflexive (maybe not generally true, assumed for now)
-le_reflexive_prf : Ord a => {0 x : a} -> x <= x = True
-le_reflexive_prf = believe_me ()
-
-||| Proof that <= is transitive (not generally true, assumed for now)
-le_transitive_prf : Ord a => {0 x, y, z : a} -> x <= y = True -> y <= z = True -> x <= z = True
-le_transitive_prf _ _ = believe_me ()
-
-||| Proof that <= is the reflexive closure of < (or conversely that <
-||| is the irreflexive kernel of <=).  Not generally true, assumed for
-||| now.
-le_reflexive_closure_lt_prf : Ord a => {0 x, y : a} -> Either (x < y = True) (x = y) -> x <= y = True
-le_reflexive_closure_lt_prf _ = believe_me ()
-
-||| Proof that <= is the complement of the converse of < (not
-||| generally true, assumed for now)
-le_converse_complement_prf : Ord a => {0 x, y : a} -> {0 b : Bool} -> x < y = b -> y <= x = not b
-le_converse_complement_prf _ = believe_me ()
-
-||| Proof that <= is strongly connected (not generally true, assumed
-||| for now)
-le_strongly_connected_prf : Ord a => {0 x, y : a} -> Either (x <= y = True) (y <= x = True)
-le_strongly_connected_prf = believe_me ()
-
-||| Implicative form that <= is strongly connected (not generally
-||| true, assumed for now).  This can perhaps be inferred from
-||| le_strongly_connected_prf.
-le_strongly_connected_imp_prf : Ord a => {0 x, y : a} -> x <= y = False -> y <= x = True
-le_strongly_connected_imp_prf _ = believe_me ()
 
 ||| Proof that my_min x y returns either x or y
 my_min_eq_prf : Ord a => (x, y : a) -> Either (my_min x y = x) (my_min x y = y)
