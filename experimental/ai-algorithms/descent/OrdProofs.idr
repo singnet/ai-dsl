@@ -23,6 +23,12 @@ module OrdProofs
 
 -- TODO: use Not y < x = True instead of y < x = False
 
+-- NEXT: add the github url of Mr Big (as it's probably good to study
+-- his work eventually).
+
+-- NEXT: browse my git history to find the alternative suggestion for
+-- representing axioms about <, etc, and paste it here as comment.
+
 ||| Proof that < is irreflexive (not generally true, assumed)
 public export
 lt_irreflexive_prf : Ord a => {0 x : a} -> x < x = False
