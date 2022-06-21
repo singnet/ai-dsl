@@ -21,6 +21,8 @@ import OrdProofs
 |||
 ||| For now the descent algorithm merely iteratively calls the search
 ||| function as long as the cost function over its output is lower.
+-- NEXT: add note about well founded cost to guaranty termination
+-- NEXT: Epsilon
 descent_rec : Ord cost_t =>
               (cnd_t -> cost_t) -> -- Cost function
               (cnd_t -> cnd_t) ->  -- Next function to jump to the next candidate
