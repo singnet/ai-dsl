@@ -93,8 +93,8 @@ public export
 rGetType : List Name -> Elab (List (Name, TTImp))
 rGetType []        = do pure []
 rGetType (n :: ns) = do matches <- getType n
-                        -- doAll $ map (logSugaredTerm "rGetType" 0 "found: ") (map snd matches)
-                        -- doAll $ map (\nst => (logMsg "rGetType found: " 0 ((show (fst nst)) ++ " with type \n " ++ (showTerm $ snd nst)))) matches
+                        doAll $ map (logSugaredTerm "rGetType" 0 "found: ") (map snd matches)
+                        doAll $ map (\nst => (logMsg "rGetType found: " 0 ((show (fst nst)) ++ " with type \n " ++ (showTerm $ snd nst)))) matches
                         rest <- rGetType ns
                         pure $ matches ++ rest
 
@@ -134,8 +134,6 @@ toType t = do check t
 
 
 
-
-
 public export
 tryLocals : (ty : TTImp) -> Elab (Maybe TTImp)
 tryLocals ty = do ns <- localVars
@@ -145,13 +143,32 @@ tryLocals ty = do ns <- localVars
 
 
 public export
+rDoChecks : List TTImp -> Elab ty
+rDoChecks (c::cs) = do try (check c) (rDoChecks cs)
+rDoChecks [] = do fail "No successful checks."
+
+
+public export
+rCheckList : List Name -> Elab ty
+rCheckList ns = do rDoChecks $ map var ns
+
+
+public export
 fillNat : Elab Nat
 fillNat = do analyzeHole
              check `(Z)
 
+-- Attempt to fill a hole of any type
 public export
 fillAny : Elab ty
-fillAny = do analyzeHole
-             (Just g) <- goal | Nothing => fail "No goal for fillAny."
-             (Just v) <- (tryLocals g) | Nothing => fail "No locals of correct type."
-             check v
+fillAny = do (Just g) <- goal | Nothing => fail "No goal for fillAny."
+             analyzeHole
+             ns <- localVars
+             rCheckList ns
+             -- (Just v) <- (tryLocals g) | Nothing => fail "No locals of correct type."
+             -- check v
+
+-- Same as 'fillAny', but with a list of additional names added to the scope of checks.
+public export
+fillAnyWith : List Name -> Elab ty
+fillAnyWith ns = do try fillAny (rCheckList ns)
