@@ -93,8 +93,8 @@ public export
 rGetType : List Name -> Elab (List (Name, TTImp))
 rGetType []        = do pure []
 rGetType (n :: ns) = do matches <- getType n
-                        doAll $ map (logSugaredTerm "rGetType" 0 "found: ") (map snd matches)
-                        doAll $ map (\nst => (logMsg "rGetType found: " 0 ((show (fst nst)) ++ " with type \n " ++ (showTerm $ snd nst)))) matches
+                        -- doAll $ map (logSugaredTerm "rGetType" 0 "found: ") (map snd matches)
+                        -- doAll $ map (\nst => (logMsg "rGetType found: " 0 ((show (fst nst)) ++ " with type \n " ++ (showTerm $ snd nst)))) matches
                         rest <- rGetType ns
                         pure $ matches ++ rest
 
@@ -103,7 +103,7 @@ public export
 rGetLocalType : List Name -> Elab (List (Name, TTImp))
 rGetLocalType []        = do pure []
 rGetLocalType (n :: ns) = do t <- getLocalType n
-                             logSugaredTerm "rGetLocalType" 0 " found: " t
+                             -- logSugaredTerm "rGetLocalType" 0 " found: " t
                              rest <- rGetLocalType ns
                              pure $ (n, t) :: rest
 
@@ -119,7 +119,7 @@ logLocals = do names <- localVars
 public export
 logGoal : Elab ()
 logGoal = do (Just ty) <- goal | Nothing => logMsg "goal" 0 "No goal found."
-             logSugaredTerm "goal" 0 "Hole goal:" ty
+             -- logSugaredTerm "goal" 0 "Hole goal:" ty
              logMsg "goal as Doc" 0 ("\n " ++ (showTerm ty))
 
 
@@ -155,6 +155,3 @@ fillAny = do analyzeHole
              (Just g) <- goal | Nothing => fail "No goal for fillAny."
              (Just v) <- (tryLocals g) | Nothing => fail "No locals of correct type."
              check v
-
-testFun : (a : Type) -> (b : Nat) -> Nat
-testFun a b = %runElab fillAny
