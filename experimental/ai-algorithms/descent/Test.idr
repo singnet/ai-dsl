@@ -1,15 +1,19 @@
 module Test
 
-||| Define foo, which is   foo x = x   in disguise
-foo : Ord a => (x : a) -> a
-foo x = if x < x then x else x
--- foo x = x
+||| Descend as much as possible
+d : Ord a => (f : a -> a) -> (x : a) -> a
+d f x = if (f x) < x then d f (f x) else x
 
-||| Assume that foo f x = x
-eq : Ord a => (f : a -> a) -> (x : a) -> Test.foo x = x
-eq f x = believe_me ()
+||| Assume that d f x = d f (f x)
+dx_eq_dfx : Ord a => (f : a -> a) -> (x : a) -> (f x) < x = True -> d f x = d f (f x)
+dx_eq_dfx f x lt with ((f x) < x)
+  _ | True = Refl
+  _ | False = absurd lt
 
-||| Prove that if x <= y then (foo f x) <= y
-prf : Ord a => (f : a -> a) -> (x, y : a) ->
-      x <= y = True -> Test.foo x <= y = True
-prf f x y le = rewrite (eq f x) in le
+||| Assume that (d f (f x)) is less than or equal to (f x)
+dfx_le_fx : Ord a => (f : a -> a) -> (x : a) -> d f (f x) <= f x = True
+dfx_le_fx f x = believe_me ()
+
+||| Prove that (d f x) is less than or equal to (f x)
+dx_le_fx : Ord a => (f : a -> a) -> (x : a) -> (f x) < x = True -> d f x <= f x = True
+dx_le_fx @{o} f x lt = rewrite (dx_eq_dfx @{o} f x lt) in (dfx_le_fx f x)
