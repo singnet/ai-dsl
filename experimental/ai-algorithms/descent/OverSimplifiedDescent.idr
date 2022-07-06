@@ -18,6 +18,3 @@ dx_le_x f x with ((f x) < x) proof eq
                  fx_le_x = le_reflexive_closure_lt (Left eq)
               in le_transitive dfx_le_fx fx_le_x
   _ | False = le_reflexive
-
--- NEXT.1: see
--- https://gist.github.com/dunhamsteve/9338f18df1a58b64f3376b5ac2cca9cd
