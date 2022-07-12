@@ -1,0 +1,4 @@
+-- Property of gradient descent := gradient is null.
+-- Gradient can be more efficient than matrix inversion.
+-- Approximate gradient.
+-- Prove that the gradient is an actual gradient, or an approximation thereof.

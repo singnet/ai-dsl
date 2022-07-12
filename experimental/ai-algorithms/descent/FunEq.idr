@@ -1,3 +1,5 @@
+module FunEq
+
 successor : Nat -> Nat
 successor k = S k
 
