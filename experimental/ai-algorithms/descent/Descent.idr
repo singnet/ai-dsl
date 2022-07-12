@@ -21,8 +21,6 @@ import OrdProofs
 |||
 ||| For now the descent algorithm merely iteratively calls the search
 ||| function as long as the cost function over its output is lower.
--- NEXT: add note about well founded cost to guaranty termination
--- NEXT: Epsilon
 descent_rec : Ord cost_t =>
               (cnd_t -> cost_t) -> -- Cost function
               (cnd_t -> cnd_t) ->  -- Next function to jump to the next candidate
@@ -46,19 +44,26 @@ descent : Ord cost_t =>
           cnd_t                 -- Output candidate
 descent cstfn nxtfn cnd = fst (descent_rec cstfn nxtfn (cnd, cstfn cnd))
 
--- TODO: explore returning the whole trace.
+-- TODO: Explore returning the whole trace.
 
--- TODO: support backtracking (trace is a tree instead of a vector)
+-- TODO: Support backtracking (trace is a tree instead of a vector)
 -- (look at sorted tree).
+
+-- TODO: Use that delta between costs of cnd and nxtcnd is within an
+-- epsilon as stopping point.
+
+-- TODO: Prove that nxtfn is pointing to the right (or the best)
+-- direction.
+
+-- TODO: Altough the proves are correct, it is somewhat incomplete
+-- since it is not proved that descent is total (cause it is not, it
+-- may descend forever).  One way, suggested by Sam, to prove that it
+-- is total would be to prove that cost_t is well-founded, so that if
+-- nxtfn goes down, it will eventually bottom down to base cases.
 
 --------------------------
 -- Proofs about descent --
 --------------------------
-
--- NEXT.0: Use delta as stopping point
-
--- NEXT.-1: Global vs local (or compare locals)
-
 
 ||| Proof that the output candidate of descent_rec has a cost less
 ||| than or equal to the cost of the input candidate.
