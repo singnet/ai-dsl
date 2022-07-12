@@ -128,7 +128,9 @@ cd_eq_sdr : Ord cost_t =>
             (nxtfn : cnd_t -> cnd_t) ->   -- Next function
             (cnd : cnd_t) ->              -- Input candidate
             (cstfn (descent cstfn nxtfn cnd)) = snd (descent_rec cstfn nxtfn (cnd, cstfn cnd))
-cd_eq_sdr cstfn nxtfn cnd = believe_me () -- NEXT.1
+cd_eq_sdr cstfn nxtfn cnd with ((cstfn (nxtfn cnd)) < (cstfn cnd)) proof eq
+  _ | True = cd_eq_sdr cstfn nxtfn (nxtfn cnd)
+  _ | False = Refl
 
 ||| Proof that the output candidate of descent has a cost less than or
 ||| equal to the cost of the input candidate.
@@ -143,9 +145,9 @@ cd_eq_sdr cstfn nxtfn cnd = believe_me () -- NEXT.1
 |||
 ||| by virtue of the definition of descent.
 descent_le : Ord cost_t =>
-             (cstfn : cnd_t -> cost_t) ->                            -- Cost function
-             (nxtfn : cnd_t -> cnd_t) ->                             -- Next function
-             (cnd : cnd_t) ->                                        -- Input candidate
-             (cstfn (descent cstfn nxtfn cnd)) <= (cstfn cnd) = True -- Theorem
+             (cstfn : cnd_t -> cost_t) ->  -- Cost function
+             (nxtfn : cnd_t -> cnd_t) ->   -- Next function
+             (cnd : cnd_t) ->              -- Input candidate
+             (cstfn (descent cstfn nxtfn cnd)) <= (cstfn cnd) = True
 descent_le cstfn nxtfn cnd = rewrite (cd_eq_sdr cstfn nxtfn cnd)
-                                  in (descent_rec_le cstfn nxtfn (cnd, cstfn cnd))
+                             in (descent_rec_le cstfn nxtfn (cnd, cstfn cnd))
