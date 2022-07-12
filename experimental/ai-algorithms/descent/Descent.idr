@@ -28,7 +28,6 @@ descent_rec : Ord cost_t =>
               (cnd_t -> cnd_t) ->  -- Next function to jump to the next candidate
               (cnd_t, cost_t) ->   -- Input pair of candidate and its cost
               (cnd_t, cost_t)      -- Output pair of candidate and its cost
--- NEXT.1: replace nxtcst < cst by not (nxtcst >= cst) and see if Idris can still handle descent_rec_le
 descent_rec cstfn nxtfn (cnd, cst) =
   if nxtcst < cst then descent_rec cstfn nxtfn (nxtcnd, nxtcst)
                   else (cnd, cst)
@@ -56,35 +55,97 @@ descent cstfn nxtfn cnd = fst (descent_rec cstfn nxtfn (cnd, cstfn cnd))
 -- Proofs about descent --
 --------------------------
 
--- NEXT.2: prove that
--- 1. descent_rec (cnd, cst) cstfn nxtfn === descent_rec (nxtfn cnd, (cstfn (nxtfn cnd))) cstfn nxtfn
--- 2. or descent_rec (cnd, cst) cstfn nxtfn === (cnd, cst)
+-- NEXT.0: Use delta as stopping point
+
+-- NEXT.-1: Global vs local (or compare locals)
+
 
 ||| Proof that the output candidate of descent_rec has a cost less
 ||| than or equal to the cost of the input candidate.
+|||
+||| The simplicity of the proof of descent_rec_le is due to the case
+||| base approach which allows Idris to partially evaluate descent_rec.
+||| This partial evaluation is then reflected inside the target
+||| theorem.  For instance if
+|||
+||| ((cstfn (nxtfn cnd)) < cst) = False
+|||
+||| the target theorem
+|||
+||| (snd (descent_rec cstfn nxtfn cndcst)) <= (snd cndcst) = True
+|||
+||| gets reduced to
+|||
+||| (snd cndcst) <= (snd cndcst)
+|||
+||| which merely requires the axiom of reflexivity of <=.
+|||
+||| Likewise if
+|||
+||| (cstfn (nxtfn cnd) < cst) = True
+|||
+||| the target theorem
+|||
+||| (snd (descent_rec cstfn nxtfn (cnd, cst))) <= (snd (cnd, cst)) = True
+|||
+||| gets reduced to
+|||
+||| (snd (descent_rec cstfn nxtfn (nxtfn cnd, cstfn (nxtfn cnd)))) <= cst = True
+|||
+||| which then merely requires to apply the transitivity axiom of <=
+||| over the recursive theorem
+|||
+||| (snd (descent_rec cstfn nxtfn (nxtfn cnd, cstfn (nxtfn cnd)))) <= cstfn (nxtfn cnd) = True
+|||
+||| and
+|||
+||| (cstfn (nxtfn cnd) <= cst) = True
+|||
+||| which is obtained as the reflexive closure of <= over the
+||| hypothesis.
 descent_rec_le : Ord cost_t =>
                      (cstfn : cnd_t -> cost_t) ->  -- Cost function
                      (nxtfn : cnd_t -> cnd_t) ->   -- Next function
                      (cndcst : (cnd_t, cost_t)) -> -- Input pair of candidate and its cost
-                     -- Property expressing that the output candidate
-                     -- is equal to or better than the input candidate
-                     (snd (descent_rec cstfn nxtfn cndcst)) <= (snd cndcst) = True
+                     (snd (descent_rec cstfn nxtfn cndcst)) <= (snd cndcst) = True -- Theorem
 descent_rec_le cstfn nxtfn (cnd, cst) with ((cstfn (nxtfn cnd)) < cst) proof eq
-  _ | True = ?h1 (le_transitive des_le_nxtcst nxtcst_le_cst)
-             where des_le_nxtcst : (snd (descent_rec cstfn nxtfn (cnd, cst))) <= (cstfn (nxtfn cnd)) = True
-                   des_le_nxtcst = ?h2 (descent_rec_le cstfn nxtfn (nxtfn cnd, (cstfn (nxtfn cnd))))
-                   -- des_le_nxtcst = rewrite ?h2 in (descent_rec_le cstfn nxtfn (nxtfn cnd, (cstfn (nxtfn cnd))))
-                   nxtcst_le_cst : (cstfn (nxtfn cnd)) <= cst = True
-                   nxtcst_le_cst = le_reflexive_closure_lt (Left eq)
+  _ | True = let des_le_nxtcst = descent_rec_le cstfn nxtfn (nxtfn cnd, (cstfn (nxtfn cnd)))
+                 nxtcst_le_cst = le_reflexive_closure_lt (Left eq)
+              in (le_transitive des_le_nxtcst nxtcst_le_cst)
   _ | False = le_reflexive
+
+||| Proof that
+|||
+||| cstfn (descent cstfn nxtfn cnd) = snd (descent_rec cstfn nxtfn (cnd, cstfn cnd))
+|||
+||| This is used by descent_le to get passed
+|||
+|||        snd (descent_rec cstfn nxtfn (cnd, cstfn cnd)) <= cstfn cnd = True
+||| ->
+||| cstfn (fst (descent_rec cstfn nxtfn (cnd, cstfn cnd))) <= cstfn cnd = True
+cd_eq_sdr : Ord cost_t =>
+            (cstfn : cnd_t -> cost_t) ->  -- Cost function
+            (nxtfn : cnd_t -> cnd_t) ->   -- Next function
+            (cnd : cnd_t) ->              -- Input candidate
+            (cstfn (descent cstfn nxtfn cnd)) = snd (descent_rec cstfn nxtfn (cnd, cstfn cnd))
+cd_eq_sdr cstfn nxtfn cnd = believe_me () -- NEXT.1
 
 ||| Proof that the output candidate of descent has a cost less than or
 ||| equal to the cost of the input candidate.
+|||
+||| The target theorem
+|||
+||| (cstfn (descent cstfn nxtfn cnd)) <= (cstfn cnd) = True
+|||
+||| gets reduced to
+|||
+||| (cstfn (fst (descent_rec cstfn nxtfn (cnd, cstfn cnd)))) <= (cstfn cnd) = True
+|||
+||| by virtue of the definition of descent.
 descent_le : Ord cost_t =>
-             (cstfn : cnd_t -> cost_t) ->  -- Cost function
-             (nxtfn : cnd_t -> cnd_t) ->   -- Next function
-             (cnd : cnd_t) ->              -- Input candidate
-             -- Property expressing that the output candidate is
-             -- equal to or better than the input candidate
-             (cstfn (descent cstfn nxtfn cnd)) <= (cstfn cnd) = True
-descent_le cstfn nxtfn cnd = ?h3 -- NEXT.1: fill ?h3
+             (cstfn : cnd_t -> cost_t) ->                            -- Cost function
+             (nxtfn : cnd_t -> cnd_t) ->                             -- Next function
+             (cnd : cnd_t) ->                                        -- Input candidate
+             (cstfn (descent cstfn nxtfn cnd)) <= (cstfn cnd) = True -- Theorem
+descent_le cstfn nxtfn cnd = rewrite (cd_eq_sdr cstfn nxtfn cnd)
+                                  in (descent_rec_le cstfn nxtfn (cnd, cstfn cnd))
