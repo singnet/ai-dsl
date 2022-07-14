@@ -9,7 +9,7 @@ import public Language.Reflection.Derive
 import Data.String
 
 %language ElabReflection
-
+%default total
 
 -- simple function
 public export
@@ -83,6 +83,7 @@ termNameEq _  _ = False
 
 
 -- Use the built-in doc conversion
+partial
 public export
 showTermDoc : TTImp -> String
 showTermDoc t = show $ (the $ Doc TTImp) $ pretty t
