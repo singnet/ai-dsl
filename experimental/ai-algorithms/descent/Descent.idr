@@ -56,10 +56,13 @@ descent cstfn nxtfn cnd = fst (descent_rec cstfn nxtfn (cnd, cstfn cnd))
 -- direction.
 
 -- TODO: Altough the proves are correct, it is somewhat incomplete
--- since it is not proved that descent is total (cause it is not, it
+-- since it is not proven that descent is total (cause it is not, it
 -- may descend forever).  One way, suggested by Sam, to prove that it
 -- is total would be to prove that cost_t is well-founded, so that if
--- nxtfn goes down, it will eventually bottom down to base cases.
+-- nxtfn goes down, it will eventually bottom down to base cases.  See
+-- https://en.wikipedia.org/wiki/Well-founded_relation for more
+-- information, as well as Stefan Hoek Well-founded Recursion example
+-- in idris2-prim.
 
 --------------------------
 -- Proofs about descent --

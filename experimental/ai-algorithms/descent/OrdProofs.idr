@@ -23,11 +23,11 @@ module OrdProofs
 
 -- TODO: use Not y < x = True instead of y < x = False
 
--- NEXT: add the github url of Mr Big (as it's probably good to study
--- his work eventually).
+-- TODO: use Total defined Stefan Hoek idris2-prim package.
 
--- NEXT: browse my git history to find the alternative suggestion for
--- representing axioms about <, etc, and paste it here as comment.
+-- TODO: To guaranty the axioms are met one may use an arbitrary
+-- precision library such as
+-- https://github.com/jumper149/idris2-scientific
 
 ||| Proof that < is irreflexive (not generally true, assumed)
 public export
