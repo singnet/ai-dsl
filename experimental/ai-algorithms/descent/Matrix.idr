@@ -94,16 +94,22 @@ transpose x = MkMatrix (transpose x.vects)
 
 -- Test transpose
 A : Matrix 3 2 Integer
-A = MkMatrix [[1, 2], [3, 4], [5, 6]]
+A = MkMatrix [[1, 2],
+              [3, 4],
+              [5, 6]]
 AT : Matrix 2 3 Integer
-AT = MkMatrix [[1, 3, 5], [2, 4, 6]]
+AT = MkMatrix [[1, 3, 5],
+               [2, 4, 6]]
 transpose_test : AT === transpose A
 transpose_test = Refl
 
 -- Test matrix multiplication
 B : Matrix 2 3 Integer
-B = MkMatrix [[7, 8, 9], [10, 11, 12]]
+B = MkMatrix [[7,   8,  9],
+              [10, 11, 12]]
 AB : Matrix 3 3 Integer
-AB = MkMatrix [[27, 30, 33], [61, 68, 75], [95, 106, 117]]
+AB = MkMatrix [[27,  30,  33],
+               [61,  68,  75],
+               [95, 106, 117]]
 matrix_multiplication_test : AB === A * B
 matrix_multiplication_test = Refl
