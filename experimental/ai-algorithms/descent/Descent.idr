@@ -112,10 +112,10 @@ descent cstfn nxtfn cnd = fst (descent_rec cstfn nxtfn (cnd, cstfn cnd))
 ||| which is obtained as the reflexive closure of <= over the
 ||| hypothesis.
 descent_rec_le : Ord cost_t =>
-                     (cstfn : cnd_t -> cost_t) ->  -- Cost function
-                     (nxtfn : cnd_t -> cnd_t) ->   -- Next function
-                     (cndcst : (cnd_t, cost_t)) -> -- Input pair of candidate and its cost
-                     (snd (descent_rec cstfn nxtfn cndcst)) <= (snd cndcst) = True -- Theorem
+                 (cstfn : cnd_t -> cost_t) ->  -- Cost function
+                 (nxtfn : cnd_t -> cnd_t) ->   -- Next function
+                 (cndcst : (cnd_t, cost_t)) -> -- Input pair of candidate and its cost
+                 (snd (descent_rec cstfn nxtfn cndcst)) <= (snd cndcst) = True -- Theorem
 descent_rec_le cstfn nxtfn (cnd, cst) with ((cstfn (nxtfn cnd)) < cst) proof eq
   _ | True = let des_le_nxtcst = descent_rec_le cstfn nxtfn (nxtfn cnd, (cstfn (nxtfn cnd)))
                  nxtcst_le_cst = le_reflexive_closure_lt (Left eq)
