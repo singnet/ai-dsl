@@ -7,15 +7,18 @@ import Data.Vect
 -----------------------------------
 
 ||| Matrix, m rows by n columns with elements of type a
+public export
 record Matrix (m, n : Nat) (a : Type) where
   constructor MkMatrix
   vects : Vect m (Vect n a)
 
 ||| Row vector, unirow matrix with elements of type a
+public export
 RowVect : (n : Nat) -> (a : Type) -> Type
 RowVect n a = Matrix 1 n a
 
 ||| Column vector, unicolumn matrix with elements of type a
+public export
 ColVect : (m : Nat) -> (a : Type) -> Type
 ColVect m a = Matrix m 1 a
 
@@ -24,10 +27,12 @@ ColVect m a = Matrix m 1 a
 -------------------------------
 
 ||| Implement Functor interface
+public export
 implementation Functor (Matrix m n) where
   map f x = MkMatrix (map (map f) x.vects)
 
 ||| Implement Zippable interface
+public export
 implementation Zippable (Matrix m n) where
   zipWith f x y = MkMatrix (zipWith (zipWith f) x.vects y.vects)
   zipWith3 f x y z = MkMatrix (zipWith3 (zipWith3 f) x.vects y.vects z.vects)
@@ -35,6 +40,7 @@ implementation Zippable (Matrix m n) where
   unzipWith3 = ?unzipWith3
 
 ||| Implement Show interface
+public export
 implementation Show a => Show (Matrix m n a) where
   show = ?s -- NEXT
 
@@ -45,14 +51,17 @@ implementation Show a => Show (Matrix m n a) where
 ----------------------------------------------------------------
 
 ||| Element-wise matrix addition
+public export
 (+) : Num a => Matrix m n a -> Matrix m n a -> Matrix m n a
 (+) = zipWith (+)
 
 ||| Element-wise matrix subtraction
+public export
 (-) : Neg a => Matrix m n a -> Matrix m n a -> Matrix m n a
 (-) = zipWith (-)
 
 ||| Element-wise matrix negation
+public export
 negate : Neg a => Matrix m n a -> Matrix m n a
 negate = map negate
 
@@ -67,22 +76,27 @@ infixr 9 .*
 ||| implement the Num interface), however `*` implements matrix
 ||| multiplication in Matlab and GNU Octave, two well established
 ||| pieces of software for matrix computing.
+public export
 (.*) : Num a => Matrix m n a -> Matrix m n a -> Matrix m n a
 (.*) = zipWith (*)
 
 ||| Dot product between Vect.  To use dot product between RowVect and
 ||| ColVect you may use matrix multiplication combined with matrix
 ||| transpose when necessary.
+public export
 dot : Num a => Vect n a -> Vect n a -> a
 dot x y = foldl (+) 0 (zipWith (*) x y)
 
 ||| Matrix transpose.  The multiplicity of n must be set to
-||| unrestricted because it is unrestricted in Data.Vect.transpose.
+||| unrestricted because it is unrestricted in Data.Vect.transpose,
+||| probably in order to support transpose of Matrix 0 n
+public export
 transpose : {n : Nat} -> Matrix m n a -> Matrix n m a
 transpose x = MkMatrix (transpose x.vects)
 
 ||| Matrix multiplication.  The multiplicity of n must be set to
 ||| unrestricted because it is unrestricted in Matrix.transpose.
+public export
 (*) : {n : Nat} -> Num a => Matrix m k a -> Matrix k n a -> Matrix m n a
 (*) x y = let yt : Matrix n k a
               yt = Matrix.transpose y

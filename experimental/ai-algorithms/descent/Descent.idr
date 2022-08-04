@@ -37,6 +37,7 @@ descent_rec cstfn nxtfn (cnd, cst) =
     nxtcst : cost_t
     nxtcst = cstfn nxtcnd
 
+public export
 descent : Ord cost_t =>
           (cnd_t -> cost_t) ->  -- Cost function
           (cnd_t -> cnd_t) ->   -- Next function
@@ -152,6 +153,7 @@ cd_eq_sdr cstfn nxtfn cnd with ((cstfn (nxtfn cnd)) < (cstfn cnd)) proof eq
 ||| (cstfn (fst (descent_rec cstfn nxtfn (cnd, cstfn cnd)))) <= (cstfn cnd) = True
 |||
 ||| by virtue of the definition of descent.
+public export
 descent_le : Ord cost_t =>
              (cstfn : cnd_t -> cost_t) ->  -- Cost function
              (nxtfn : cnd_t -> cnd_t) ->   -- Next function
