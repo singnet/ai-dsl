@@ -22,9 +22,27 @@ public export
 ColVect : (m : Nat) -> (a : Type) -> Type
 ColVect m a = Matrix m 1 a
 
+------------------
+-- Constructors --
+------------------
+
+||| Fill a matrix m*n with a constant value
+|||
+||| @m number of rows
+||| @n number of columns
+||| @x the value to repeat
+public export
+replicate : {m, n : Nat} -> (x : a) -> Matrix m n a
+replicate {m, n} x = MkMatrix (replicate m (replicate n x))
+
 -------------------------------
 -- Interface implementations --
 -------------------------------
+
+||| Implement Cast interface
+public export
+implementation Cast (Matrix m n a) (Vect (m*n) a) where
+  cast x = concat x.vects
 
 ||| Implement Functor interface
 public export
@@ -102,9 +120,22 @@ public export
               yt = Matrix.transpose y
           in MkMatrix (map (\xv => map (dot xv) yt.vects) x.vects)
 
+||| Scale a matrix by a given factor
+public export
+scale : Num a => a -> Matrix m n a -> Matrix m n a
+scale x m = map (* x) m
+
 ----------
 -- Test --
 ----------
+
+-- Test replicate
+K : ColVect 3 Double
+K = MkMatrix [[-5.0],
+              [-5.0],
+              [-5.0]]
+replicate_test : K === replicate (-5.0)
+replicate_test = Refl
 
 -- Test transpose
 A : Matrix 3 2 Integer
@@ -127,3 +158,11 @@ AB = MkMatrix [[27,  30,  33],
                [95, 106, 117]]
 matrix_multiplication_test : AB === A * B
 matrix_multiplication_test = Refl
+
+-- Test transpose involution
+C : ColVect 3 Integer
+C = MkMatrix [[1],
+              [2],
+              [3]]
+transpose_involution_test : C === transpose (transpose C)
+transpose_involution_test = Refl
