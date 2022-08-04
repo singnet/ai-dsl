@@ -1,5 +1,6 @@
 module Utils
 
+import Language.Reflection
 import Language.Reflection.TT
 import Language.Reflection.TTImp
 import Language.Reflection.Pretty
@@ -75,10 +76,7 @@ showTerm _ = "( unimplemented )"
 
 
 
-
-public export
-termNameEq : TTImp -> TTImp -> Bool
-termNameEq (IVar _ n1) (IVar _ n2) = (show n1) == (show n2)
+public export termNameEq : TTImp -> TTImp -> Bool termNameEq (IVar _ n1) (IVar _ n2) = (show n1) == (show n2)
 termNameEq _  _ = False
 
 
@@ -173,3 +171,24 @@ fillAny = do (Just g) <- goal | Nothing => fail "No goal for fillAny."
 public export
 fillAnyWith : List Name -> Elab ty
 fillAnyWith ns = do try fillAny (rCheckList ns)
+
+
+public export
+fillFunctionType : (f : Elab ty) -> Elab ty
+fillFunctionType f = do (Just g) <- goal | Nothing => fail "No goal found."
+                        case (fst $ unPi g) of
+                             [] => try f $ fail "Elaborator strategy failed at bottom level."
+                             (a :: as) => do t <- check a.type
+                                             lambda t (%runElab fillFunctionType f)
+                                             ?lab
+
+
+public export
+tensShape : Vect (S d) Nat -> Type -> Type
+tensShape (x1::x2::xs) t = Vect x1 (tensShape (x2::xs) t)
+tensShape [x] t = Vect x t
+
+public export
+record Tensor {k : Nat} (dims : Vect (S k) Nat) (a : Type) where
+       constructor MkTensor
+       vects : tensShape dims a
