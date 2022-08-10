@@ -1,5 +1,6 @@
 module MultivariateLinearRegression
 
+import System.Random
 import Data.Vect
 import Matrix
 import Descent
@@ -101,3 +102,56 @@ linreg' : (x : Matrix (S m) (S n) Double) ->
           ColVect (S n) Double
 linreg' x y eta = descent (loss' x y)
                           (\bt => bt - (scale (2 * eta) (grdt' x y bt)))
+
+----------
+-- Test --
+----------
+
+-- Multivariate linear regression example: modeling the AGIX price of
+-- a service given the size of the data set, the number of input
+-- variables and the accuracy of the expected model.
+
+-- Generative model, β₀=10, β₁=20, β₂=30, β₃=40
+true_beta : Vect 4 Double
+true_beta = [10, 20, 30, 40]
+
+-- Calculate the price as the dot product between
+--
+-- xs = [1, data_size, nbr_variables, target_accuracy]
+--
+-- and true_beta, thus
+--
+-- price = β₀ + β₁*data_size + β₂*nbr_variables + β₃*target_accuracy
+price : Vect 4 Double -> Double
+price xs = dot xs true_beta
+
+-- Generate a data set
+
+-- TODO: possibly use https://github.com/idris-bayes/distribution
+
+||| Generate a data set, a pair (x, y), such that
+|||
+||| x is a matrix m*4 where rows represent data points and columns
+||| represent values for each variable.  The first column is filled
+||| with 1s to deal with the bias term.
+|||
+||| y is a column vector m representing the output, here the price, of
+||| each data point.
+gen : (m : Nat) -> IO (Matrix m 4 Double, ColVect m Double)
+-- NEXT: use random generator randomRIO
+
+getRand10to20 : IO Double
+getRand10to20 = randomRIO (10.0, 20.0)
+
+getF : IO String
+getF = pure "Fashion"
+
+main : IO ()
+main = putStrLn "Hello World!"
+
+greet : IO ()
+greet = do putStr "What is your name? "
+           name <- getLine
+           f <- getF
+           r <- getRand10to20
+           putStrLn ("Hello " ++ name ++ " " ++ (show r) ++ " " ++ f)
