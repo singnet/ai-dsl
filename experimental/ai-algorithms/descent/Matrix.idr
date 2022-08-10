@@ -1,5 +1,6 @@
 module Matrix
 
+import System.Random
 import Data.Vect
 
 -----------------------------------
@@ -60,7 +61,23 @@ implementation Zippable (Matrix m n) where
 ||| Implement Show interface
 public export
 implementation Show a => Show (Matrix m n a) where
-  show = ?s -- NEXT
+  show x = show x.vects         -- TODO: improve
+
+||| Implement Foldable
+public export
+implementation Foldable (Matrix m n) where
+  foldr = ?foldr                -- NEXT
+
+||| Implement Traversable
+public export
+implementation Traversable (Matrix m n) where
+  traverse = ?traverse          -- NEXT
+
+||| implement Random interface
+public export
+implementation Random a => Random (Matrix m n a) where
+  randomIO = ?randomIO
+  randomRIO (x, y) = traverse randomRIO (zipWith MkPair x y)
 
 ----------------------------------------------------------------
 -- Matrix operators.  The operator notations, with the        --
