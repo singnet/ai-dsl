@@ -112,13 +112,36 @@ public export
 transpose : {n : Nat} -> Matrix m n a -> Matrix n m a
 transpose x = MkMatrix (transpose x.vects)
 
+||| Like Data.Vect.transpose but assumes non null row
+nnr_transpose : Vect (S m) (Vect n a) -> Vect n (Vect (S m) a)
+nnr_transpose (rx :: []) = map (\x => x :: []) rx
+nnr_transpose (rx :: ry :: rs) = zipWith (::) rx (nnr_transpose (ry :: rs))
+
+||| Like Matrix.transpose but assumes non null row
+public export
+transpose' : Matrix (S m) n a -> Matrix n (S m) a
+transpose' x = MkMatrix (nnr_transpose x.vects)
+
 ||| Matrix multiplication.  The multiplicity of n must be set to
 ||| unrestricted because it is unrestricted in Matrix.transpose.
 public export
-(*) : {n : Nat} -> Num a => Matrix m k a -> Matrix k n a -> Matrix m n a
-(*) x y = let yt : Matrix n k a
-              yt = Matrix.transpose y
-          in MkMatrix (map (\xv => map (dot xv) yt.vects) x.vects)
+mtimes : {n : Nat} -> Num a => Matrix m k a -> Matrix k n a -> Matrix m n a
+mtimes x y = let yT : Matrix n k a
+                 yT = Matrix.transpose y
+             in MkMatrix (map (\xv => map (dot xv) yT.vects) x.vects)
+
+||| Matrix multiplication.  The number of columns must be non-null to
+||| use Matrix.transpose'
+public export
+mtimes' : Num a => Matrix m (S k) a -> Matrix (S k) n a -> Matrix m n a
+mtimes' x y = let yT : Matrix n (S k) a
+                  yT = Matrix.transpose' y
+              in MkMatrix (map (\xv => map (dot xv) yT.vects) x.vects)
+
+||| Matrix multiplication default.
+public export
+(*) : Num a => Matrix m (S k) a -> Matrix (S k) n a -> Matrix m n a
+(*) = mtimes'
 
 ||| Scale a matrix by a given factor
 public export
