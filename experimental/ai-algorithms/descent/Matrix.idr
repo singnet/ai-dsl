@@ -154,15 +154,20 @@ public export
 scale : Num a => a -> Matrix m n a -> Matrix m n a
 scale x m = map (* x) m
 
+-- Operators for joining matrices horizontally and vertically.  Named
+-- after the corresponding Haskell operators.
+infixr 9 <->
+infixr 9 <|>
+
 ||| Horizontally join two matrices
 public export
-horizontal_join : Matrix m n a -> Matrix k n a -> Matrix (m + k) n a
-horizontal_join x y = MkMatrix (x.vects ++ y.vects)
+(<->) : Matrix m n a -> Matrix k n a -> Matrix (m + k) n a
+x <-> y = MkMatrix (x.vects ++ y.vects)
 
 ||| Vertically join two matrices
 public export
-vertical_join : {m, n, k : Nat} -> Matrix m n a -> Matrix m k a -> Matrix m (n + k) a
-vertical_join x y = transpose (horizontal_join (transpose x) (transpose y))
+(<|>) : {m, n, k : Nat} -> Matrix m n a -> Matrix m k a -> Matrix m (n + k) a
+x <|> y = transpose ((transpose x) <-> (transpose y))
 
 ----------
 -- Test --
