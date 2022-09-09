@@ -111,23 +111,21 @@ linreg' x y eta = descent (loss' x y)
 -- a service given the size of the data set, the number of input
 -- variables and the accuracy of the expected model.
 
--- Generative model, β₀=10, β₁=20, β₂=30, β₃=40
+||| Generative model, β₀=10, β₁=20, β₂=30, β₃=40
 true_beta : Vect 4 Double
 true_beta = [10, 20, 30, 40]
 
--- Calculate the price as the dot product between
---
--- xs = [1, data_size, nbr_variables, target_accuracy]
---
--- and true_beta, thus
---
--- price = β₀ + β₁*data_size + β₂*nbr_variables + β₃*target_accuracy
+||| Calculate the price as the dot product between
+|||
+||| xs = [1, data_size, nbr_variables, target_accuracy]
+|||
+||| and true_beta, thus
+|||
+||| price = β₀ + β₁*data_size + β₂*nbr_variables + β₃*target_accuracy
 price : Vect 4 Double -> Double
 price xs = dot xs true_beta
 
 -- Generate a data set
-
--- TODO: possibly use https://github.com/idris-bayes/distribution
 
 ||| Generate a data set, a pair (x, y), such that
 |||
