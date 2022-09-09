@@ -135,7 +135,14 @@ price xs = dot xs true_beta
 |||
 ||| y is a column vector m representing the output, here the price, of
 ||| each data point.
-gen : (m : Nat) -> IO (Matrix m 4 Double, ColVect m Double)
+gen : (m : Nat) -> IO (Matrix m 4 Double)
+gen _ = let min_val = 0.0
+            max_val = 10.0
+        in randomRIO (replicate min_val, replicate max_val)
+-- gen : (m : Nat) -> IO (Matrix m 4 Double, ColVect m Double)
+-- gen = randomRIO
+-- gen : IO (Vect 4 Double)
+-- gen = randomRIO ([0.0, 0.0, 0.0, 0.0], [10.0, 10.0, 10.0, 10.0])
 -- NEXT: use random generator randomRIO
 
 getRand10to20 : IO Double
