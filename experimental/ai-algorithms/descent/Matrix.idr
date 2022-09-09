@@ -210,3 +210,14 @@ C = MkMatrix [[1],
               [3]]
 transpose_involution_test : C === transpose (transpose C)
 transpose_involution_test = Refl
+
+-- Test vertical join
+D : Matrix 2 2 Integer
+D = MkMatrix [[1, 2],
+              [1, 2]]
+vertical_join_test : let c1 : ColVect 2 Integer
+                         c1 = replicate 1
+                         c2 : ColVect 2 Integer
+                         c2 = replicate 2
+                      in D === c1 <|> c2
+vertical_join_test = Refl
