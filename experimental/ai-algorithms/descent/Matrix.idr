@@ -43,7 +43,7 @@ replicate {m, n} x = MkMatrix (replicate m (replicate n x))
 ||| Implement Cast interface
 public export
 implementation Cast (Matrix m n a) (Vect (m*n) a) where
-  cast x = concat x.vects
+  cast x = Data.Vect.concat x.vects
 
 ||| Implement Functor interface
 public export
