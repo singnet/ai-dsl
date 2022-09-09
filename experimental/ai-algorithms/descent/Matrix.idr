@@ -66,17 +66,24 @@ implementation Show a => Show (Matrix m n a) where
 ||| Implement Foldable
 public export
 implementation Foldable (Matrix m n) where
-  foldr = ?foldr                -- NEXT
+  -- Right-fold a matrix, x, starting from its bottom right element.
+  foldr f i x = foldr f i (Data.Vect.concat x.vects)
 
 ||| Implement Traversable
 public export
 implementation Traversable (Matrix m n) where
-  traverse = ?traverse          -- NEXT
+  traverse f x = map MkMatrix (traverse (\e => traverse f e) x.vects)
+
+||| implement Random interface for Vect
+public export
+implementation Random a => Random (Vect k a) where
+  randomIO = ?randomIOVect
+  randomRIO (x, y) = traverse randomRIO (zipWith MkPair x y)
 
 ||| implement Random interface
 public export
 implementation Random a => Random (Matrix m n a) where
-  randomIO = ?randomIO
+  randomIO = ?randomIOMatrix
   randomRIO (x, y) = traverse randomRIO (zipWith MkPair x y)
 
 ----------------------------------------------------------------
