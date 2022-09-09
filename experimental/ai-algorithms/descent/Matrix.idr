@@ -145,9 +145,9 @@ nnr_transpose (rx :: ry :: rs) = zipWith (::) rx (nnr_transpose (ry :: rs))
 ||| unrestricted because it is unrestricted in Matrix.transpose.
 public export
 (*) : {n : Nat} -> Num a => Matrix m k a -> Matrix k n a -> Matrix m n a
-(*) x y = let yT : Matrix n k a
-              yT = Matrix.transpose y
-          in MkMatrix (map (\xv => map (dot xv) yT.vects) x.vects)
+x * y = let yT : Matrix n k a
+            yT = Matrix.transpose y
+        in MkMatrix (map (\xv => map (dot xv) yT.vects) x.vects)
 
 ||| Scale a matrix by a given factor
 public export
