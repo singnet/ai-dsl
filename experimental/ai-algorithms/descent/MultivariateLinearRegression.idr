@@ -52,14 +52,7 @@ loss : (x : Matrix m n Double) ->
        (y : ColVect m Double) ->
        (beta : ColVect n Double) ->
        Double
-loss x y beta = sse (y - (mtimes x beta))
-
-||| Loss function: L(β) = ||Y-Xβ||².  Assuming non null dimensions.
-loss' : (x : Matrix m (S n) Double) ->
-        (y : ColVect m Double) ->
-        (beta : ColVect (S n) Double) ->
-        Double
-loss' x y beta = sse (y - (mtimes' x beta))
+loss x y beta = sse (y - (x * beta))
 
 ||| Gradient descent: ∇L(β) = -2Xᵀ(Y-Xβ).  Using implicit n argument.
 grdt : {n : Nat} ->
@@ -67,14 +60,7 @@ grdt : {n : Nat} ->
        (y : ColVect m Double) ->
        (beta : ColVect n Double) ->
        ColVect n Double
-grdt x y beta = scale (-2) (mtimes (transpose x) (y - (mtimes x beta)))
-
-||| Gradient descent: ∇L(β) = -2Xᵀ(Y-Xβ).  Assuming non null dimensions.
-grdt' : (x : Matrix (S m) (S n) Double) ->
-        (y : ColVect (S m) Double) ->
-        (beta : ColVect (S n) Double) ->
-        ColVect (S n) Double
-grdt' x y beta = scale (-2) (mtimes' (transpose' x) (y - (mtimes' x beta)))
+grdt x y beta = scale (-2) ((transpose x) * (y - (x * beta)))
 
 ||| Multivariate Linear Regression.  Given an input data set x and its
 ||| corresponding output y, a learning rate eta and initial model
@@ -93,15 +79,6 @@ linreg : {n : Nat} ->
          ColVect n Double
 linreg x y eta = descent (loss x y)
                          (\bt => bt - (scale (2 * eta) (grdt x y bt)))
-
-||| Like linreg but assume non null dimensions.
-linreg' : (x : Matrix (S m) (S n) Double) ->
-          (y : ColVect (S m) Double) ->
-          (eta : Double) ->
-          (beta : ColVect (S n) Double) ->
-          ColVect (S n) Double
-linreg' x y eta = descent (loss' x y)
-                          (\bt => bt - (scale (2 * eta) (grdt' x y bt)))
 
 ----------
 -- Test --
