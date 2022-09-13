@@ -104,23 +104,40 @@ price xs = dot xs true_beta
 
 -- Generate a data set
 
-||| Generate a data set, a pair (x, y), such that
-|||
-||| x is a matrix m*4 where rows represent data points and columns
-||| represent values for each variable.  The first column is filled
-||| with 1s to deal with the bias term.
-|||
-||| y is a column vector m representing the output, here the price, of
-||| each data point.
-gen : (m : Nat) -> IO (Matrix m 4 Double)
-gen _ = let min_val = 0.0
-            max_val = 10.0
-        in randomRIO (replicate min_val, replicate max_val)
--- gen : (m : Nat) -> IO (Matrix m 4 Double, ColVect m Double)
--- gen = randomRIO
--- gen : IO (Vect 4 Double)
--- gen = randomRIO ([0.0, 0.0, 0.0, 0.0], [10.0, 10.0, 10.0, 10.0])
--- NEXT: use random generator randomRIO
+||| Make a random generator for the input data set.  That is a matrix
+||| m*4 where the first column is filled with 1s to deal with the bias
+||| term, and the remaining three columns are randomly generated (from
+||| 0 to 10).
+mk_rnd_input_data : (m : Nat) -> IO (Matrix m 4 Double)
+mk_rnd_input_data m = let min_rnd : Matrix m 3 Double
+                          min_rnd = replicate 0.0
+                          max_rnd : Matrix m 3 Double
+                          max_rnd = replicate 10.0
+                          bias_col : ColVect m Double
+                          bias_col = replicate 1.0
+                          min_mt : Matrix m 4 Double
+                          min_mt = bias_col <|> min_rnd
+                          max_mt : Matrix m 4 Double
+                          max_mt = bias_col <|> max_rnd
+                       in randomRIO (min_mt, max_mt)
+
+||| Given a matrix representing the input data set, return a column
+||| vector of the output according to the `price` formula defined
+||| above.
+mk_output_data : Matrix m 4 Double -> ColVect m Double
+mk_output_data x = MkMatrix (map ((::Nil) . price) x.vects)
+
+-- Test linear regression
+
+test_linreg : IO ()
+test_linreg = do let sample_size : Nat
+                     sample_size = 10
+                 input_data <- mk_rnd_input_data sample_size
+                 let output_data = mk_output_data input_data
+                 printLn input_data
+                 printLn output_data
+
+--------------------------- Debugging Test ----------------------------
 
 getRand10to20 : IO Double
 getRand10to20 = randomRIO (10.0, 20.0)
