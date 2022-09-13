@@ -130,12 +130,29 @@ mk_output_data x = MkMatrix (map ((::Nil) . price) x.vects)
 -- Test linear regression
 
 test_linreg : IO ()
-test_linreg = do let sample_size : Nat
+test_linreg = do -- Generate train and test data
+                 let sample_size : Nat
                      sample_size = 10
+                     train_test_ratio : Double
+                     train_test_ratio = 2.0/3.0
+                     train_size : Nat
+                     train_size = cast ((cast sample_size) * train_test_ratio)
                  input_data <- mk_rnd_input_data sample_size
                  let output_data = mk_output_data input_data
-                 printLn input_data
-                 printLn output_data
+                     input_split = splitAtRow train_size input_data
+                     output_split = splitAtRow train_size output_data
+                     train_input_data = fst input_split
+                     train_output_data = fst output_split
+                     test_input_data = snd input_split
+                     test_output_data = snd output_split
+                 putStrLn "\nTrain input data:"
+                 printLn train_input_data
+                 putStrLn "\nTrain output data:"
+                 printLn train_output_data
+                 putStrLn "\nTest input data:"
+                 printLn test_input_data
+                 putStrLn "\nTest output data:"
+                 printLn test_output_data
 
 --------------------------- Debugging Test ----------------------------
 
