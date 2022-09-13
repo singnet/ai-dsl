@@ -1,6 +1,7 @@
 module Matrix
 
 import System.Random
+import Data.String
 import Data.Vect
 
 -----------------------------------
@@ -58,11 +59,6 @@ implementation Zippable (Matrix m n) where
   unzipWith = ?unzipWith
   unzipWith3 = ?unzipWith3
 
-||| Implement Show interface
-public export
-implementation Show a => Show (Matrix m n a) where
-  show x = show x.vects         -- TODO: improve
-
 ||| Implement Foldable
 public export
 implementation Foldable (Matrix m n) where
@@ -85,6 +81,57 @@ public export
 implementation Random a => Random (Matrix m n a) where
   randomIO = ?randomIOMatrix
   randomRIO (x, y) = traverse randomRIO (zipWith MkPair x y)
+
+||| Implement Show interface.  A matrix is represented in the usual
+||| mathematical way, enclosed between two big square brackets.
+|||
+||| For instance the following matrix
+|||
+||| MkMatrix [[ 1,   2],
+|||           [33,   4],
+|||           [ 5, 666]]
+|||
+||| is rendered as
+|||
+||| ┌         ┐
+||| │   1   2 │
+||| │  33   4 │
+||| │   5 666 │
+||| └         ┘
+|||
+||| Note the use the unicode characteres ┌, ┐, └, ┘ and │.
+public export
+implementation Show a => Show (Matrix m n a) where
+  show x = let -- Create a matrix of strings of rendered cells
+               strs : Matrix m n String
+               strs = map show x
+               -- Create a matrix of string lengths of rendered cells
+               lengths : Matrix m n Nat
+               lengths = map length strs
+               -- Get the max length of all rendered cells
+               max_str_len : Nat
+               max_str_len = foldr max 0 lengths
+               -- Left pad all rendered cells to be aligned
+               x_padded_strs : Matrix m n String
+               x_padded_strs = map (padLeft max_str_len ' ') strs
+               -- Function to render a line
+               render_line : Vect n String -> String
+               render_line v = "│ " ++ (joinBy " " (toList v)) ++ " │"
+               -- Create a vector of rendered lines
+               rendered_lines : Vect m String
+               rendered_lines = map render_line x_padded_strs.vects
+               -- Get the max length of all rendered lines
+               max_lines_len : Nat
+               max_lines_len = foldr max 0 (map length rendered_lines)
+               -- Define the spaces of the decorating lines
+               spaces : String
+               spaces = replicate (pred (pred max_lines_len)) ' '
+               -- Decorate with "┌ ... ┐" and "└ ... ┘"
+               decorated_rendered_lines : List String
+               decorated_rendered_lines = [("┌" ++ spaces ++ "┐")] ++
+                                          (toList rendered_lines) ++
+                                          [("└" ++ spaces ++ "┘")]
+            in joinBy "\n" decorated_rendered_lines
 
 ----------------------------------------------------------------
 -- Matrix operators.  The operator notations, with the        --
