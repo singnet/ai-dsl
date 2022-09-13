@@ -74,13 +74,13 @@ public export
 implementation Traversable (Matrix m n) where
   traverse f x = map MkMatrix (traverse (\e => traverse f e) x.vects)
 
-||| implement Random interface for Vect
+||| Implement Random interface for Vect
 public export
 implementation Random a => Random (Vect k a) where
   randomIO = ?randomIOVect
   randomRIO (x, y) = traverse randomRIO (zipWith MkPair x y)
 
-||| implement Random interface
+||| Implement Random interface
 public export
 implementation Random a => Random (Matrix m n a) where
   randomIO = ?randomIOMatrix
