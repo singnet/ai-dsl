@@ -201,6 +201,21 @@ public export
 scale : Num a => a -> Matrix m n a -> Matrix m n a
 scale x m = map (* x) m
 
+||| Split at a given row
+public export
+splitAtRow : (k : Nat) -> Matrix (k + m) n a -> (Matrix k n a, Matrix m n a)
+splitAtRow k x = let (v1, v2) = splitAt k x.vects
+                 in (MkMatrix v1, MkMatrix v2)
+
+||| Split at a given column
+public export
+splitAtCol : {m, n : Nat} ->
+             (k : Nat) ->
+             Matrix m (k + n) a ->
+             (Matrix m k a, Matrix m n a)
+splitAtCol k x = let (xT1, xT2) = splitAtRow k (transpose x)
+                 in (transpose xT1, transpose xT2)
+
 -- Operators for joining matrices horizontally and vertically.  Named
 -- after the corresponding Haskell operators.
 infixr 9 <->
