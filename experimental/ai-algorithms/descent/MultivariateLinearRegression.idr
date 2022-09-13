@@ -135,5 +135,9 @@ greet : IO ()
 greet = do putStr "What is your name? "
            name <- getLine
            f <- getF
+           let f_suffix : String
+               f_suffix = f ++ "_suffix"
+               f_suffix_more : String
+               f_suffix_more = f_suffix ++ "_more"
            r <- getRand10to20
-           putStrLn ("Hello " ++ name ++ " " ++ (show r) ++ " " ++ f)
+           putStrLn ("Hello " ++ name ++ " " ++ (show r) ++ " " ++ f_suffix_more)
