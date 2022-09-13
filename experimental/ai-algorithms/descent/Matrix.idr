@@ -201,13 +201,13 @@ public export
 scale : Num a => a -> Matrix m n a -> Matrix m n a
 scale x m = map (* x) m
 
-||| Split at a given row
+||| Split a matrix at a given row
 public export
 splitAtRow : (k : Nat) -> Matrix (k + m) n a -> (Matrix k n a, Matrix m n a)
 splitAtRow k x = let (v1, v2) = splitAt k x.vects
                  in (MkMatrix v1, MkMatrix v2)
 
-||| Split at a given column
+||| Split a matrix at a given column
 public export
 splitAtCol : {m, n : Nat} ->
              (k : Nat) ->
