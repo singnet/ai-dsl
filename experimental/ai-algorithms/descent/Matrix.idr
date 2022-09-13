@@ -268,3 +268,19 @@ vertical_join_test : let c1 : ColVect 2 Integer
                          c2 = replicate 2
                       in D === c1 <|> c2
 vertical_join_test = Refl
+
+-- Test show
+M : Matrix 3 2 Integer
+M = MkMatrix [[ 1,   2],
+              [33,   4],
+              [ 5, 666]]
+M_rendered : String
+M_rendered = "┌         ┐\n" ++
+             "│   1   2 │\n" ++
+             "│  33   4 │\n" ++
+             "│   5 666 │\n" ++
+             "└         ┘"
+
+-- Disabled because Idris complains with multiple errors
+-- show_test : (show M) === M_rendered
+-- show_test = Refl
