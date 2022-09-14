@@ -125,7 +125,7 @@ implementation Show a => Show (Matrix m n a) where
                max_lines_len = foldr max 0 (map length rendered_lines)
                -- Define the spaces of the decorating lines
                spaces : String
-               spaces = replicate (pred (pred max_lines_len)) ' '
+               spaces = replicate (minus max_lines_len 2) ' '
                -- Decorate with "┌ ... ┐" and "└ ... ┘"
                decorated_rendered_lines : List String
                decorated_rendered_lines = [("┌" ++ spaces ++ "┐")] ++
