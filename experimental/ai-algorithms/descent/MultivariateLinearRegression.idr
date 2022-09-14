@@ -1,6 +1,7 @@
 module MultivariateLinearRegression
 
 import System.Random
+import Data.String
 import Data.Vect
 import Matrix
 import Descent
@@ -128,6 +129,24 @@ mk_output_data : Matrix m 4 Double -> ColVect m Double
 mk_output_data x = MkMatrix (map ((::Nil) . price) x.vects)
 
 -- Test linear regression
+
+||| Wrap a given one-liner message in a box and send to stdout.
+putBoxedStrLn : String -> IO ()
+putBoxedStrLn s =
+  let left_decorator = "║ "
+      right_decorator = " ║"
+      upleft_decorator = "╔═"
+      downleft_decorator = "╚═"
+      upright_decorator = "═╗"
+      downright_decorator = "═╝"
+      updown_decorator = '═'
+      updown_subline = replicate (length s) updown_decorator
+      up_line = upleft_decorator ++ updown_subline ++ upright_decorator
+      center_line = left_decorator ++ s ++ right_decorator
+      down_line = downleft_decorator ++ updown_subline ++ downright_decorator
+  in do putStrLn up_line
+        putStrLn center_line
+        putStrLn down_line
 
 test_linreg : IO ()
 test_linreg = do -- Generate train and test data
