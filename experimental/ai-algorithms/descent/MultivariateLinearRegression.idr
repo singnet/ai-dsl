@@ -149,48 +149,71 @@ putBoxedStrLn s =
         putStrLn down_line
 
 test_linreg : IO ()
-test_linreg = do -- Generate train and test data
-                 let sample_size : Nat
-                     sample_size = 10
-                     train_test_ratio : Double
-                     train_test_ratio = 2.0/3.0
-                     train_size : Nat
-                     train_size = cast ((cast sample_size) * train_test_ratio)
-                 input_data <- mk_rnd_input_data sample_size
-                 let output_data = mk_output_data input_data
-                     input_split = splitAtRow train_size input_data
-                     output_split = splitAtRow train_size output_data
-                     train_input_data = fst input_split
-                     train_output_data = fst output_split
-                     test_input_data = snd input_split
-                     test_output_data = snd output_split
-                 putStrLn "\nTrain input data:"
-                 printLn train_input_data
-                 putStrLn "\nTrain output data:"
-                 printLn train_output_data
-                 putStrLn "\nTest input data:"
-                 printLn test_input_data
-                 putStrLn "\nTest output data:"
-                 printLn test_output_data
+test_linreg =
+  let -- Parameters
+      sample_size : Nat         -- Total sample size
+      sample_size = 30
+      train_test_ratio : Double -- Train/Test ratio
+      train_test_ratio = 2.0/3.0
+      train_size : Nat          -- Train sample size
+      train_size = cast ((cast sample_size) * train_test_ratio)
+      test_size : Nat           -- Test sample size
+      test_size = minus sample_size train_size
+      eta : Double              -- Learning rate
+      eta = 1.0e-4
+      beta : ColVect 4 Double   -- Initial model
+      beta = replicate 0.0
+  in do -- Generate train and test data
+        putStrLn ""
+        putBoxedStrLn "Generating data"
+        x <- mk_rnd_input_data sample_size
+        let y : ColVect sample_size Double
+            y = mk_output_data x
+            x_split : (Matrix train_size 4 Double, Matrix test_size 4 Double)
+            x_split = splitAtRow train_size x
+            y_split : (ColVect train_size Double, ColVect test_size Double)
+            y_split = splitAtRow train_size y
+            x_train : Matrix train_size 4 Double
+            x_train = fst x_split
+            y_train : ColVect train_size Double
+            y_train = fst y_split
+            x_test : Matrix test_size 4 Double
+            x_test = snd x_split
+            y_test : ColVect test_size Double
+            y_test = snd y_split
+        putStrLn "\nTrain input data:"
+        printLn x_train
+        putStrLn "\nTrain output data:"
+        printLn y_train
+        putStrLn "\nTest input data:"
+        printLn x_test
+        putStrLn "\nTest output data:"
+        printLn y_test
 
---------------------------- Debugging Test ----------------------------
+        -- Learn model based on train data
+        putStrLn ""
+        putBoxedStrLn "Learning"
+        let model : ColVect 4 Double
+            model = linreg x_train y_train eta beta
+            train_loss : Double
+            train_loss = loss x_train y_train model
+            y_train_estimate : ColVect train_size Double
+            y_train_estimate = x_train * model
+        putStrLn "\nModel:"
+        printLn model
+        putStrLn "\nTest output estimate:"
+        printLn y_train_estimate
+        putStrLn "\nTrain loss:"
+        printLn train_loss
 
-getRand10to20 : IO Double
-getRand10to20 = randomRIO (10.0, 20.0)
-
-getF : IO String
-getF = pure "Fashion"
-
-main : IO ()
-main = putStrLn "Hello World!"
-
-greet : IO ()
-greet = do putStr "What is your name? "
-           name <- getLine
-           f <- getF
-           let f_suffix : String
-               f_suffix = f ++ "_suffix"
-               f_suffix_more : String
-               f_suffix_more = f_suffix ++ "_more"
-           r <- getRand10to20
-           putStrLn ("Hello " ++ name ++ " " ++ (show r) ++ " " ++ f_suffix_more)
+        -- Test model based on test data
+        putStrLn ""
+        putBoxedStrLn "Testing"
+        let test_loss : Double
+            test_loss = loss x_test y_test model
+            y_test_estimate : ColVect test_size Double
+            y_test_estimate = x_test * model
+        putStrLn "\nTest output estimate:"
+        printLn y_test_estimate
+        putStrLn "\nTest loss:"
+        printLn test_loss
