@@ -183,11 +183,6 @@ public export
 transpose : {n : Nat} -> Matrix m n a -> Matrix n m a
 transpose x = MkMatrix (transpose x.vects)
 
-||| Like Data.Vect.transpose but assumes non null row
-nnr_transpose : Vect (S m) (Vect n a) -> Vect n (Vect (S m) a)
-nnr_transpose (rx :: []) = map (\x => x :: []) rx
-nnr_transpose (rx :: ry :: rs) = zipWith (::) rx (nnr_transpose (ry :: rs))
-
 ||| Matrix multiplication.  The multiplicity of n must be set to
 ||| unrestricted because it is unrestricted in Matrix.transpose.
 public export
