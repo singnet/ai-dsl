@@ -6,6 +6,10 @@ import Data.Vect
 import Matrix
 import Descent
 
+------------------------------
+-- Define Linear Regression --
+------------------------------
+
 -- Multivariate Linear Regression
 --
 -- 1. The data set is stored in a pair of
@@ -80,6 +84,12 @@ linreg : {n : Nat} ->
          ColVect n Double
 linreg x y eta = descent (loss x y)
                          (\bt => bt - (scale (2 * eta) (grdt x y bt)))
+
+------------
+-- Proofs --
+------------
+
+-- NEXT
 
 ----------
 -- Test --
