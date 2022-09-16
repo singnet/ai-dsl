@@ -99,7 +99,13 @@ linreg x y eta = descent (loss x y) (nxtgd x y eta)
 -- Proofs --
 ------------
 
--- NEXT
+linreg_le : {n : Nat} ->
+            (x : Matrix m n Double) ->
+            (y : ColVect m Double) ->
+            (eta : Double) ->
+            (beta : ColVect n Double) ->
+            ((loss x y (linreg x y eta beta)) <= (loss x y beta)) === True
+linreg_le x y eta = descent_le (loss x y) (nxtgd x y eta)
 
 ----------
 -- Test --
