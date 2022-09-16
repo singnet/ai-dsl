@@ -67,6 +67,17 @@ grdt : {n : Nat} ->
        ColVect n Double
 grdt x y beta = scale (-2) ((transpose x) * (y - (x * beta)))
 
+||| Next candidate function using the gradient descent.  Given a
+||| candidate, return a new candidate by taking a step towards the
+||| gradient descent.
+nxtgd : {n : Nat} ->
+        (x : Matrix m n Double) ->
+        (y : ColVect m Double) ->
+        (eta : Double) ->
+        (beta : ColVect n Double) ->
+        ColVect n Double
+nxtgd x y eta beta = beta - (scale (2 * eta) (grdt x y beta))
+
 ||| Multivariate Linear Regression.  Given an input data set x and its
 ||| corresponding output y, a learning rate eta and initial model
 ||| beta, return a model β^ so that x*β^ approximates y.  The returned
@@ -82,8 +93,7 @@ linreg : {n : Nat} ->
          (eta : Double) ->
          (beta : ColVect n Double) ->
          ColVect n Double
-linreg x y eta = descent (loss x y)
-                         (\bt => bt - (scale (2 * eta) (grdt x y bt)))
+linreg x y eta = descent (loss x y) (nxtgd x y eta)
 
 ------------
 -- Proofs --
