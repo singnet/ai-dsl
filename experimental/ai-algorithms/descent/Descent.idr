@@ -77,11 +77,11 @@ descent cstfn nxtfn cnd = fst (descent_rec cstfn nxtfn (cnd, cstfn cnd))
 ||| This partial evaluation is then reflected inside the target
 ||| theorem.  For instance if
 |||
-||| ((cstfn (nxtfn cnd)) < cst) = False
+||| ((cstfn (nxtfn cnd)) < cst) === False
 |||
 ||| the target theorem
 |||
-||| (snd (descent_rec cstfn nxtfn cndcst)) <= (snd cndcst) = True
+||| ((snd (descent_rec cstfn nxtfn cndcst)) <= (snd cndcst)) === True
 |||
 ||| gets reduced to
 |||
@@ -91,24 +91,24 @@ descent cstfn nxtfn cnd = fst (descent_rec cstfn nxtfn (cnd, cstfn cnd))
 |||
 ||| Likewise if
 |||
-||| (cstfn (nxtfn cnd) < cst) = True
+||| ((cstfn (nxtfn cnd) < cst)) === True
 |||
 ||| the target theorem
 |||
-||| (snd (descent_rec cstfn nxtfn (cnd, cst))) <= (snd (cnd, cst)) = True
+||| ((snd (descent_rec cstfn nxtfn (cnd, cst))) <= (snd (cnd, cst))) === True
 |||
 ||| gets reduced to
 |||
-||| (snd (descent_rec cstfn nxtfn (nxtfn cnd, cstfn (nxtfn cnd)))) <= cst = True
+||| ((snd (descent_rec cstfn nxtfn (nxtfn cnd, cstfn (nxtfn cnd)))) <= cst) === True
 |||
 ||| which then merely requires to apply the transitivity axiom of <=
 ||| over the recursive theorem
 |||
-||| (snd (descent_rec cstfn nxtfn (nxtfn cnd, cstfn (nxtfn cnd)))) <= cstfn (nxtfn cnd) = True
+||| ((snd (descent_rec cstfn nxtfn (nxtfn cnd, cstfn (nxtfn cnd)))) <= cstfn (nxtfn cnd)) === True
 |||
 ||| and
 |||
-||| (cstfn (nxtfn cnd) <= cst) = True
+||| (cstfn (nxtfn cnd) <= cst) === True
 |||
 ||| which is obtained as the reflexive closure of <= over the
 ||| hypothesis.
@@ -116,7 +116,7 @@ descent_rec_le : Ord cost_t =>
                  (cstfn : cnd_t -> cost_t) ->  -- Cost function
                  (nxtfn : cnd_t -> cnd_t) ->   -- Next function
                  (cndcst : (cnd_t, cost_t)) -> -- Input pair of candidate and its cost
-                 (snd (descent_rec cstfn nxtfn cndcst)) <= (snd cndcst) = True -- Theorem
+                 ((snd (descent_rec cstfn nxtfn cndcst)) <= (snd cndcst)) === True
 descent_rec_le cstfn nxtfn (cnd, cst) with ((cstfn (nxtfn cnd)) < cst) proof eq
   _ | True = let des_le_nxtcst = descent_rec_le cstfn nxtfn (nxtfn cnd, (cstfn (nxtfn cnd)))
                  nxtcst_le_cst = le_reflexive_closure_lt (Left eq)
@@ -129,14 +129,14 @@ descent_rec_le cstfn nxtfn (cnd, cst) with ((cstfn (nxtfn cnd)) < cst) proof eq
 |||
 ||| This is used by descent_le to get passed
 |||
-|||        snd (descent_rec cstfn nxtfn (cnd, cstfn cnd)) <= cstfn cnd = True
+|||        (snd (descent_rec cstfn nxtfn (cnd, cstfn cnd)) <= cstfn cnd) === True
 ||| ->
-||| cstfn (fst (descent_rec cstfn nxtfn (cnd, cstfn cnd))) <= cstfn cnd = True
+||| (cstfn (fst (descent_rec cstfn nxtfn (cnd, cstfn cnd))) <= cstfn cnd) === True
 cd_eq_sdr : Ord cost_t =>
             (cstfn : cnd_t -> cost_t) ->  -- Cost function
             (nxtfn : cnd_t -> cnd_t) ->   -- Next function
             (cnd : cnd_t) ->              -- Input candidate
-            (cstfn (descent cstfn nxtfn cnd)) = snd (descent_rec cstfn nxtfn (cnd, cstfn cnd))
+            (cstfn (descent cstfn nxtfn cnd)) === snd (descent_rec cstfn nxtfn (cnd, cstfn cnd))
 cd_eq_sdr cstfn nxtfn cnd with ((cstfn (nxtfn cnd)) < (cstfn cnd)) proof eq
   _ | True = cd_eq_sdr cstfn nxtfn (nxtfn cnd)
   _ | False = Refl
@@ -146,11 +146,11 @@ cd_eq_sdr cstfn nxtfn cnd with ((cstfn (nxtfn cnd)) < (cstfn cnd)) proof eq
 |||
 ||| The target theorem
 |||
-||| (cstfn (descent cstfn nxtfn cnd)) <= (cstfn cnd) = True
+||| ((cstfn (descent cstfn nxtfn cnd)) <= (cstfn cnd)) === True
 |||
 ||| gets reduced to
 |||
-||| (cstfn (fst (descent_rec cstfn nxtfn (cnd, cstfn cnd)))) <= (cstfn cnd) = True
+||| ((cstfn (fst (descent_rec cstfn nxtfn (cnd, cstfn cnd)))) <= (cstfn cnd)) === True
 |||
 ||| by virtue of the definition of descent.
 public export
@@ -158,6 +158,6 @@ descent_le : Ord cost_t =>
              (cstfn : cnd_t -> cost_t) ->  -- Cost function
              (nxtfn : cnd_t -> cnd_t) ->   -- Next function
              (cnd : cnd_t) ->              -- Input candidate
-             (cstfn (descent cstfn nxtfn cnd)) <= (cstfn cnd) = True
+             ((cstfn (descent cstfn nxtfn cnd)) <= (cstfn cnd)) === True
 descent_le cstfn nxtfn cnd = rewrite (cd_eq_sdr cstfn nxtfn cnd)
                              in (descent_rec_le cstfn nxtfn (cnd, cstfn cnd))

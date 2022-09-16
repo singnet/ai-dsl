@@ -12,7 +12,7 @@ d : Ord a => (f : a -> a) -> (x : a) -> a
 d f x = if (f x) < x then d f (f x) else x
 
 ||| Proof that the output of d is less than or equal to its input
-dx_le_x : Ord a => (f : a -> a) -> (x : a) -> ((d f x) <= x) = True
+dx_le_x : Ord a => (f : a -> a) -> (x : a) -> ((d f x) <= x) === True
 dx_le_x f x with ((f x) < x) proof eq
   _ | True = let dfx_le_fx = dx_le_x f (f x)
                  fx_le_x = le_reflexive_closure_lt (Left eq)
