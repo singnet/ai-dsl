@@ -56,8 +56,10 @@ public export
 implementation Zippable (Matrix m n) where
   zipWith f x y = MkMatrix (zipWith (zipWith f) x.vects y.vects)
   zipWith3 f x y z = MkMatrix (zipWith3 (zipWith3 f) x.vects y.vects z.vects)
-  unzipWith = ?unzipWith
-  unzipWith3 = ?unzipWith3
+  unzipWith f x = let (lvs, rvs) = unzipWith (unzipWith f) x.vects
+                  in (MkMatrix lvs, MkMatrix rvs)
+  unzipWith3 f x = let (vs1, vs2, vs3) = unzipWith3 (unzipWith3 f) x.vects
+                   in (MkMatrix vs1, MkMatrix vs2, MkMatrix vs3)
 
 ||| Implement Foldable
 public export
