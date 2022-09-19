@@ -144,24 +144,16 @@ true_beta = [10, 20, 30, 40]
 price : Vect 4 Double -> Double
 price xs = dot xs true_beta
 
--- Generate a data set
+-- Generate a train/test data set
 
 ||| Make a random generator for the input data set.  That is a matrix
 ||| m*4 where the first column is filled with 1s to deal with the bias
-||| term, and the remaining three columns are randomly generated (from
-||| 0 to 10).
+||| term, and the remaining three columns are randomly generated with
+||| ranges [0, 100], [0, 10] and [0, 1] respectively.
 mk_rnd_input_data : (m : Nat) -> IO (Matrix m 4 Double)
-mk_rnd_input_data m = let min_rnd : Matrix m 3 Double
-                          min_rnd = replicate 0.0
-                          max_rnd : Matrix m 3 Double
-                          max_rnd = replicate 10.0
-                          bias_col : ColVect m Double
-                          bias_col = replicate 1.0
-                          min_mt : Matrix m 4 Double
-                          min_mt = bias_col <|> min_rnd
-                          max_mt : Matrix m 4 Double
-                          max_mt = bias_col <|> max_rnd
-                       in randomRIO (min_mt, max_mt)
+mk_rnd_input_data m = let rngs : RowVect 4 (Double, Double)
+                          rngs = MkMatrix [[(1, 1), (0, 100), (0, 10), (0, 1)]]
+                      in randomRIO (unzip (replicateRow rngs))
 
 ||| Given a matrix representing the input data set, return a column
 ||| vector of the output according to the `price` formula defined
@@ -201,7 +193,7 @@ test_linreg =
       test_size : Nat           -- Test sample size
       test_size = minus sample_size train_size
       eta : Double              -- Learning rate
-      eta = 1.0e-4
+      eta = 7.0e-6
       beta : ColVect 4 Double   -- Initial model
       beta = replicate 0.0
   in do -- Generate train and test data
