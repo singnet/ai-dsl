@@ -30,12 +30,24 @@ ColVect m a = Matrix m 1 a
 
 ||| Fill a matrix m*n with a constant value
 |||
-||| @m number of rows
-||| @n number of columns
-||| @x the value to repeat
+||| @x the value to replicate
 public export
 replicate : {m, n : Nat} -> (x : a) -> Matrix m n a
-replicate {m, n} x = MkMatrix (replicate m (replicate n x))
+replicate x = MkMatrix (replicate m (replicate n x))
+
+||| Fill a matrix m*n by replicating the row m times
+|||
+||| @row the row to replicate
+public export
+replicateRow : {m, n : Nat} -> RowVect n a -> Matrix m n a
+replicateRow row = MkMatrix (replicate m (head row.vects))
+
+||| Fill a matrix m*n by replicating the column n times
+|||
+||| @col the column to replicate
+public export
+replicateCol : {m, n : Nat} -> ColVect m a -> Matrix m n a
+-- The implementation is further below as it uses transpose
 
 -------------------------------
 -- Interface implementations --
@@ -227,6 +239,9 @@ x <-> y = MkMatrix (x.vects ++ y.vects)
 public export
 (<|>) : {m, n, k : Nat} -> Matrix m n a -> Matrix m k a -> Matrix m (n + k) a
 x <|> y = transpose ((transpose x) <-> (transpose y))
+
+-- Implementation of replicateCol
+replicateCol {m, n} col = transpose (replicateRow (transpose col))
 
 ----------
 -- Test --
