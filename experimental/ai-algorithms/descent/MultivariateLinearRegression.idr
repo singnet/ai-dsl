@@ -234,7 +234,7 @@ test_linreg =
             y_train_estimate = x_train * model
         putStrLn "\nModel:"
         printLn model
-        putStrLn "\nTest output estimate:"
+        putStrLn "\nTrain output prediction:"
         printLn y_train_estimate
         putStrLn "\nTrain loss:"
         printLn train_loss
@@ -246,7 +246,7 @@ test_linreg =
             test_loss = loss x_test y_test model
             y_test_estimate : ColVect test_size Double
             y_test_estimate = x_test * model
-        putStrLn "\nTest output estimate:"
+        putStrLn "\nTest output prediction:"
         printLn y_test_estimate
         putStrLn "\nTest loss:"
         printLn test_loss
