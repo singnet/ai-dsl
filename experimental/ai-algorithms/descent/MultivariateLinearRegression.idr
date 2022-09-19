@@ -100,6 +100,15 @@ linreg x y eta = descent (loss x y) (nxtgd x y eta)
 -- Proofs --
 ------------
 
+||| Proof that the candidate returned by linear regression is better
+||| or equal to the initial candidate.
+|||
+||| TODO: add more properties and proofs pertaining to
+|||
+||| 1. global optimality, if any,
+||| 2. linearity of the model,
+||| 3. sse-ness of the cost function,
+||| 4. gradient-ness of the next function, and more.
 linreg_le : {n : Nat} ->
             (x : Matrix m n Double) ->
             (y : ColVect m Double) ->
