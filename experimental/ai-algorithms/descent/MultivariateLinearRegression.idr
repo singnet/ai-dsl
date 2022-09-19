@@ -125,7 +125,12 @@ linreg_le x y eta = descent_le (loss x y) (nxtgd x y eta)
 -- a service given the size of the data set, the number of input
 -- variables and the accuracy of the expected model.
 
-||| Generative model, β₀=10, β₁=20, β₂=30, β₃=40
+||| Generative model, β₀=10, β₁=20, β₂=30, β₃=40, where
+|||
+||| β₀ is the bias term
+||| β₁ is the data size factor
+||| β₂ is the number of variables factor
+||| β₃ is the target accuracy factor
 true_beta : Vect 4 Double
 true_beta = [10, 20, 30, 40]
 
