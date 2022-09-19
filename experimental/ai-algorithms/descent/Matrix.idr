@@ -75,13 +75,13 @@ implementation Traversable (Matrix m n) where
 ||| Implement Random interface for Vect
 public export
 implementation Random a => Random (Vect k a) where
-  randomIO = ?randomIOVect
+  randomIO = ?randomIOVect      -- TODO
   randomRIO (x, y) = traverse randomRIO (zipWith MkPair x y)
 
 ||| Implement Random interface
 public export
 implementation Random a => Random (Matrix m n a) where
-  randomIO = ?randomIOMatrix
+  randomIO = ?randomIOMatrix    -- TODO
   randomRIO (x, y) = traverse randomRIO (zipWith MkPair x y)
 
 ||| Implement Show interface.  A matrix is represented in the usual
