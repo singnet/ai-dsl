@@ -49,7 +49,8 @@ import Descent
 
 ||| Sum of squared errors
 sse : (e : ColVect m Double) -> Double
-sse e = let ev = Data.Vect.concat e.vects  -- NEXT: ev = cast e
+sse e = let ev = Data.Vect.concat e.vects
+        -- NEXT: let ev = Matrix.Cast.cast e
         in dot ev ev
 
 ||| Loss function: L(β) = ||Y-Xβ||².  Using implicit n argument.
