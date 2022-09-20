@@ -32,13 +32,14 @@ import Descent
 --
 -- L(β) = ||Y-Xβ||²
 --
--- the gradient descent is obtained as follows
+-- the gradient is obtained as follows
 --
 -- ∇L(β) = -2Xᵀ(Y-Xβ)
 --
 -- Thus, given a learning rate 0<η, the model is updated as follows
+-- (subtracting the gradient ascent to become a gradient descent):
 --
--- β ← β + η∇L(β)
+-- β ← β - η∇L(β)
 --
 -- or
 --
