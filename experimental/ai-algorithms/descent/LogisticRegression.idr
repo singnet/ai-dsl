@@ -4,7 +4,7 @@ import System.Random
 import Data.String
 import Data.Vect
 import Matrix
-import Descent
+import GradientDescent
 
 --------------------------------
 -- Define Logistic Regression --
@@ -38,11 +38,11 @@ import Descent
 -- P = expit(Xβ)
 --
 -- where expit is the point-wise standard logistic function applied to
--- a vector of odds, O = (oᵢ) for i≤i≤m, defined as follows
+-- a vector of odds, O = (oᵢ) for i≤i≤m, defined as
 --
 -- expit(oᵢ) = 1 / (1 + exp(-oᵢ))
 --
--- and such vector of odds has been obtained by
+-- where such vector of odds has been obtained by
 --
 -- O = Xβ
 --
@@ -52,7 +52,7 @@ import Descent
 --
 -- Accoding to [1] the following gradient can be derived from L
 --
--- ∇L(β) = -Xᵀ(Y-expit(Xβ))
+-- ∇L(β) = Xᵀ(expit(Xβ)-Y)
 --
 -- Thus, given a learning rate 0<η, the model is updated as follows
 -- (subtracting the gradient ascent to become a gradient descent):
@@ -84,33 +84,37 @@ logistic x0 l k x = l / (1.0 + exp(-k*(x-x0)))
 expit : Double -> Double
 expit = logistic 0 1 1
 
--- NEXT: overwrite loss, grdt and nxtgd
+||| Cross entropy between 2 Bernoulli distributions: p*log(q) + (1-p)*log(1-q)
+bernoulliCrossEntropy : Double -> Double -> Double
+bernoulliCrossEntropy p q = p*log(q) + (1 - p)*log(1 - q)
 
-||| Loss function: L(β) = ||Y-Xβ||².  Using implicit n argument.
+-- NEXT: Add to Cast.idr
+
+||| Cast a Bool into a Double
+public export
+implementation Cast Bool Double where
+  cast True = 1.0
+  cast False = 0.0
+
+||| Loss function: L(β) = -∑ᵢ yᵢlog(pᵢ) + (1-yᵢ)log(1-pᵢ)
 loss : (x : Matrix m n Double) ->
-       (y : ColVect m Double) ->
+       (y : ColVect m Bool) ->
        (beta : ColVect n Double) ->
        Double
-loss x y beta = sse (y - (x * beta))
+loss x y beta = let p = map expit (x * beta)
+                    yd = map cast y
+                in sum (zipWith bernoulliCrossEntropy yd p)
 
-||| Gradient descent: ∇L(β) = -2Xᵀ(Y-Xβ).  Using implicit n argument.
-grdt : {n : Nat} ->
-       (x : Matrix m n Double) ->
-       (y : ColVect m Double) ->
-       (beta : ColVect n Double) ->
-       ColVect n Double
-grdt x y beta = scale (-2) ((transpose x) * (y - (x * beta)))
-
-||| Next candidate function using the gradient descent.  Given a
-||| candidate, return a new candidate by taking a step towards the
-||| gradient descent.
-nxtgd : {n : Nat} ->
-        (x : Matrix m n Double) ->
-        (y : ColVect m Double) ->
-        (eta : Double) ->
-        (beta : ColVect n Double) ->
-        ColVect n Double
-nxtgd x y eta beta = beta - (scale (2 * eta) (grdt x y beta))
+||| Gradient: ∇L(β) = Xᵀ(expit(Xβ)-Y)
+gradient : {n : Nat} ->
+           (x : Matrix m n Double) ->
+           (y : ColVect m Bool) ->
+           (beta : ColVect n Double) ->
+           ColVect n Double
+gradient x y beta = let p = map expit (x * beta)
+                        yd : ColVect m Double
+                        yd = map cast y
+                    in (transpose x) * (p - yd)
 
 ||| Logistic Regression.  Given an input data set x and its
 ||| corresponding output y, a learning rate eta and initial model
@@ -127,13 +131,28 @@ logreg : {n : Nat} ->
          (eta : Double) ->
          (beta : ColVect n Double) ->
          ColVect n Double
-logreg x y eta = descent (loss x y) (nxtgd x y eta)
+logreg x y = gradientDescent (loss x y) (gradient x y)
 
 ------------
 -- Proofs --
 ------------
 
--- NEXT
+||| Proof that the candidate returned by logistic regression is better
+||| or equal to the initial candidate.
+|||
+||| TODO: add more properties and proofs pertaining to
+|||
+||| 1. global optimality, if any,
+||| 2. logistic model,
+||| 3. cross-entropy-ness of the cost function,
+||| 4. gradient-ness of the next function, and more.
+logreg_le : {n : Nat} ->
+            (x : Matrix m n Double) ->
+            (y : ColVect m Bool) ->
+            (eta : Double) ->
+            (beta : ColVect n Double) ->
+            ((loss x y (logreg x y eta beta)) <= (loss x y beta)) === True
+logreg_le x y = gradientDescent_le (loss x y) (gradient x y)
 
 ----------
 -- Test --
