@@ -4,7 +4,7 @@ import System.Random
 import Data.String
 import Data.Vect
 import Matrix
-import Descent
+import GradientDescent
 
 ------------------------------
 -- Define Linear Regression --
@@ -54,31 +54,20 @@ sse e = let ev = Data.Vect.concat e.vects
         -- NEXT: let ev = Matrix.Cast.cast e
         in dot ev ev
 
-||| Loss function: L(β) = ||Y-Xβ||².  Using implicit n argument.
+||| Loss function: L(β) = ||Y-Xβ||²
 loss : (x : Matrix m n Double) ->
        (y : ColVect m Double) ->
        (beta : ColVect n Double) ->
        Double
 loss x y beta = sse (y - (x * beta))
 
-||| Gradient descent: ∇L(β) = -2Xᵀ(Y-Xβ).  Using implicit n argument.
-grdt : {n : Nat} ->
-       (x : Matrix m n Double) ->
-       (y : ColVect m Double) ->
-       (beta : ColVect n Double) ->
-       ColVect n Double
-grdt x y beta = scale (-2) ((transpose x) * (y - (x * beta)))
-
-||| Next candidate function using the gradient descent.  Given a
-||| candidate, return a new candidate by taking a step towards the
-||| gradient descent.
-nxtgd : {n : Nat} ->
-        (x : Matrix m n Double) ->
-        (y : ColVect m Double) ->
-        (eta : Double) ->
-        (beta : ColVect n Double) ->
-        ColVect n Double
-nxtgd x y eta beta = beta - (scale (2 * eta) (grdt x y beta))
+||| Gradient: ∇L(β) = -2Xᵀ(Y-Xβ)
+gradient : {n : Nat} ->
+           (x : Matrix m n Double) ->
+           (y : ColVect m Double) ->
+           (beta : ColVect n Double) ->
+           ColVect n Double
+gradient x y beta = scale (-2) ((transpose x) * (y - (x * beta)))
 
 ||| Multivariate Linear Regression.  Given an input data set x and its
 ||| corresponding output y, a learning rate eta and initial model
@@ -95,7 +84,7 @@ linreg : {n : Nat} ->
          (eta : Double) ->
          (beta : ColVect n Double) ->
          ColVect n Double
-linreg x y eta = descent (loss x y) (nxtgd x y eta)
+linreg x y = gradientDescent (loss x y) (gradient x y)
 
 ------------
 -- Proofs --
@@ -116,7 +105,7 @@ linreg_le : {n : Nat} ->
             (eta : Double) ->
             (beta : ColVect n Double) ->
             ((loss x y (linreg x y eta beta)) <= (loss x y beta)) === True
-linreg_le x y eta = descent_le (loss x y) (nxtgd x y eta)
+linreg_le x y = gradientDescent_le (loss x y) (gradient x y)
 
 ----------
 -- Test --
@@ -194,7 +183,7 @@ test_linreg =
       test_size : Nat           -- Test sample size
       test_size = minus sample_size train_size
       eta : Double              -- Learning rate
-      eta = 7.0e-6
+      eta = 1.0e-5
       beta : ColVect 4 Double   -- Initial model
       beta = replicate 0.0
   in do -- Generate train and test data
