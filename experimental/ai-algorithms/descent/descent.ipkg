@@ -21,6 +21,7 @@ modules = Descent,
           Matrix,
           MinProofs,
           MultivariateLinearRegression,
+          LogisticRegression,
           OrdProofs,
           README
 
