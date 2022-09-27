@@ -88,13 +88,20 @@ expit = logistic 0 1 1
 bernoulliCrossEntropy : Double -> Double -> Double
 bernoulliCrossEntropy p q = p*log(q) + (1 - p)*log(1 - q)
 
--- NEXT: Add to Cast.idr
-
 ||| Cast a Bool into a Double
-public export
-implementation Cast Bool Double where
-  cast True = 1.0
-  cast False = 0.0
+|||
+||| False -> 0.0
+||| True -> 1.0
+|||
+||| Not using the cast interface as it is not necessarily conventional.
+boolToDouble : Bool -> Double
+boolToDouble False = 0.0
+boolToDouble True = 1.0
+
+||| Akin to an indicator function, i.e. point-wise cast a container of
+||| boolean values to a container of double values using boolToDouble.
+indicator : Functor f => f Bool -> f Double
+indicator = map boolToDouble
 
 ||| Loss function: L(β) = -∑ᵢ yᵢlog(pᵢ) + (1-yᵢ)log(1-pᵢ)
 loss : (x : Matrix m n Double) ->
@@ -102,8 +109,7 @@ loss : (x : Matrix m n Double) ->
        (beta : ColVect n Double) ->
        Double
 loss x y beta = let p = map expit (x * beta)
-                    yd = map cast y
-                in sum (zipWith bernoulliCrossEntropy yd p)
+                in sum (zipWith bernoulliCrossEntropy (indicator y) p)
 
 ||| Gradient: ∇L(β) = Xᵀ(expit(Xβ)-Y)
 gradient : {n : Nat} ->
@@ -112,9 +118,7 @@ gradient : {n : Nat} ->
            (beta : ColVect n Double) ->
            ColVect n Double
 gradient x y beta = let p = map expit (x * beta)
-                        yd : ColVect m Double
-                        yd = map cast y
-                    in (transpose x) * (p - yd)
+                    in (transpose x) * (p - (indicator y))
 
 ||| Logistic Regression.  Given an input data set x and its
 ||| corresponding output y, a learning rate eta and initial model
