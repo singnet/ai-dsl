@@ -118,7 +118,8 @@ gradient x y beta = let p = map expit (x * beta)
 
 ||| Logistic Regression.  Given an input data set x and its
 ||| corresponding output y, a learning rate eta and initial model
-||| beta, return a model β^ so that NEXT.  The returned model is
+||| beta, return a model β' so that expit(x*β') approximates the
+||| probabilities of the outcomes of y.  The returned model is
 ||| discovered using gradient descent.
 |||
 ||| @x Matrix of size m*n, samples size m, n input variables

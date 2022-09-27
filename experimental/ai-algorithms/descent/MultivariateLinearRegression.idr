@@ -71,7 +71,7 @@ gradient x y beta = scale (-2) ((transpose x) * (y - (x * beta)))
 
 ||| Multivariate Linear Regression.  Given an input data set x and its
 ||| corresponding output y, a learning rate eta and initial model
-||| beta, return a model β^ so that x*β^ approximates y.  The returned
+||| beta, return a model β' so that x*β' approximates y.  The returned
 ||| model is discovered using gradient descent.
 |||
 ||| @x Matrix of size m*n, samples size m, n input variables
