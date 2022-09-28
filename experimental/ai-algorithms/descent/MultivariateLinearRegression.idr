@@ -5,6 +5,7 @@ import Data.String
 import Data.Vect
 import Matrix
 import GradientDescent
+import Utils
 
 ------------------------------
 -- Define Linear Regression --
@@ -140,36 +141,18 @@ price xs = dot xs true_beta
 ||| m*4 where the first column is filled with 1s to deal with the bias
 ||| term, and the remaining three columns are randomly generated with
 ||| ranges [0, 100], [0, 10] and [0, 1] respectively.
-mk_rnd_input_data : (m : Nat) -> IO (Matrix m 4 Double)
-mk_rnd_input_data m = let rngs : RowVect 4 (Double, Double)
-                          rngs = MkMatrix [[(1, 1), (0, 100), (0, 10), (0, 1)]]
-                      in randomRIO (unzip (replicateRow rngs))
+rnd_input_data : (m : Nat) -> IO (Matrix m 4 Double)
+rnd_input_data m = let rngs : RowVect 4 (Double, Double)
+                       rngs = MkMatrix [[(1, 1), (0, 100), (0, 10), (0, 1)]]
+                   in randomRIO (unzip (replicateRow rngs))
 
 ||| Given a matrix representing the input data set, return a column
 ||| vector of the output according to the `price` formula defined
 ||| above.
-mk_output_data : Matrix m 4 Double -> ColVect m Double
-mk_output_data x = MkMatrix (map ((::Nil) . price) x.vects)
+price_data : Matrix m 4 Double -> ColVect m Double
+price_data x = MkMatrix (map ((::Nil) . price) x.vects)
 
 -- Test linear regression
-
-||| Wrap a given one-liner message in a box and send to stdout.
-putBoxedStrLn : String -> IO ()
-putBoxedStrLn s =
-  let left_decorator = "║ "
-      right_decorator = " ║"
-      upleft_decorator = "╔═"
-      downleft_decorator = "╚═"
-      upright_decorator = "═╗"
-      downright_decorator = "═╝"
-      updown_decorator = '═'
-      updown_subline = replicate (length s) updown_decorator
-      up_line = upleft_decorator ++ updown_subline ++ upright_decorator
-      center_line = left_decorator ++ s ++ right_decorator
-      down_line = downleft_decorator ++ updown_subline ++ downright_decorator
-  in do putStrLn up_line
-        putStrLn center_line
-        putStrLn down_line
 
 test_linreg : IO ()
 test_linreg =

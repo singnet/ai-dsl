@@ -19,6 +19,7 @@ depends = contrib
 modules = Descent,
           GradientDescent,
           Matrix,
+          Utils,
           MinProofs,
           MultivariateLinearRegression,
           LogisticRegression,

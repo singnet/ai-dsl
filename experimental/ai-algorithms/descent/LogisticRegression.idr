@@ -3,6 +3,7 @@ module LogisticRegression
 import System.Random
 import Data.String
 import Data.Vect
+import Utils
 import Matrix
 import GradientDescent
 
@@ -83,25 +84,6 @@ logistic x0 l k x = l / (1.0 + exp(-k*(x-x0)))
 ||| @x the input value
 expit : Double -> Double
 expit = logistic 0 1 1
-
-||| Cross entropy between 2 Bernoulli distributions: p*log(q) + (1-p)*log(1-q)
-bernoulliCrossEntropy : Double -> Double -> Double
-bernoulliCrossEntropy p q = p*log(q) + (1 - p)*log(1 - q)
-
-||| Cast a Bool into a Double
-|||
-||| False -> 0.0
-||| True -> 1.0
-|||
-||| Not using the cast interface as it is not necessarily conventional.
-boolToDouble : Bool -> Double
-boolToDouble False = 0.0
-boolToDouble True = 1.0
-
-||| Akin to an indicator function, i.e. point-wise cast a container of
-||| boolean values to a container of double values using boolToDouble.
-indicator : Functor f => f Bool -> f Double
-indicator = map boolToDouble
 
 ||| Loss function: L(β) = -∑ᵢ yᵢlog(pᵢ) + (1-yᵢ)log(1-pᵢ)
 loss : (x : Matrix m n Double) ->
