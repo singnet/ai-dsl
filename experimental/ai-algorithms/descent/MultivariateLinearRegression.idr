@@ -172,9 +172,12 @@ test_linreg =
   in do -- Generate train and test data
         putStrLn ""
         putBoxedStrLn "Generating data"
-        x <- mk_rnd_input_data sample_size
+        x <- rnd_input_data sample_size
         let y : ColVect sample_size Double
-            y = mk_output_data x
+            y = price_data x
+            -- Below if a convoluted way of saying
+            -- (x_train, x_test) = splitAtRow train_size x
+            -- (y_train, y_test) = splitAtRow train_size y
             x_split : (Matrix train_size 4 Double, Matrix test_size 4 Double)
             x_split = splitAtRow train_size x
             y_split : (ColVect train_size Double, ColVect test_size Double)
