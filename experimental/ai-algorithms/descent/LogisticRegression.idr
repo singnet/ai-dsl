@@ -1,12 +1,11 @@
 module LogisticRegression
 
-import Debug.Trace
 import System.Random
 import Data.String
 import Data.Vect
-import Utils
-import Matrix
+import Data.Matrix
 import GradientDescent
+import Utils
 
 --------------------------------
 -- Define Logistic Regression --

@@ -16,9 +16,10 @@ authors = "Nil Geisweiller"
 depends = contrib
 
 -- modules to install
-modules = Descent,
+modules = Data.Matrix,
+          Debug.NoTrace,
+          Descent,
           GradientDescent,
-          Matrix,
           Utils,
           MinProofs,
           MultivariateLinearRegression,

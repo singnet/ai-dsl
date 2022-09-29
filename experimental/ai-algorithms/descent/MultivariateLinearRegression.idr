@@ -3,7 +3,7 @@ module MultivariateLinearRegression
 import System.Random
 import Data.String
 import Data.Vect
-import Matrix
+import Data.Matrix
 import GradientDescent
 import Utils
 

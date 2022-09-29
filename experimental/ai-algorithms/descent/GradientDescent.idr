@@ -1,7 +1,6 @@
 module GradientDescent
 
-import Debug.Trace
-import Matrix
+import Data.Matrix
 import Descent
 
 -----------------------------

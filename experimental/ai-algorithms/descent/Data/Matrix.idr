@@ -1,4 +1,4 @@
-module Matrix
+module Data.Matrix
 
 import System.Random
 import Data.String
