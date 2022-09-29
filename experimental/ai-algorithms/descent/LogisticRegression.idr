@@ -260,6 +260,8 @@ test_logreg =
             model = logreg x_train y_train eta beta
             train_loss : Double
             train_loss = loss x_train y_train model
+            train_gradient : ColVect 4 Double
+            train_gradient = gradient x_train y_train model
             y_train_estimate : ColVect train_size Double
             y_train_estimate = x_train * model
         putStrLn "\nModel:"
@@ -268,15 +270,21 @@ test_logreg =
         printLn y_train_estimate
         putStrLn "\nTrain loss:"
         printLn train_loss
+        putStrLn "\nTrain gradient:"
+        printLn train_gradient
 
         -- Test model based on test data
         putStrLn ""
         putBoxedStrLn "Testing"
         let test_loss : Double
             test_loss = loss x_test y_test model
+            test_gradient : ColVect 4 Double
+            test_gradient = gradient x_test y_test model
             y_test_estimate : ColVect test_size Double
             y_test_estimate = x_test * model
         putStrLn "\nTest output prediction:"
         printLn y_test_estimate
         putStrLn "\nTest loss:"
         printLn test_loss
+        putStrLn "\nTest gradient:"
+        printLn test_gradient
