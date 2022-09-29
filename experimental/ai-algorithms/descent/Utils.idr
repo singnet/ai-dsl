@@ -69,3 +69,20 @@ putBoxedStrLn s =
   in do putStrLn up_line
         putStrLn center_line
         putStrLn down_line
+
+----------
+-- Test --
+----------
+
+-- Test clamp
+I : (Double, Double)
+I = (0.1, 0.9)
+
+clamp_m_test : clamp I 0.5 === 0.5
+clamp_m_test = Refl
+
+clamp_l_test : clamp I 0.0 === 0.1
+clamp_l_test = Refl
+
+clamp_u_test : clamp I 1.0 === 0.9
+clamp_u_test = Refl
