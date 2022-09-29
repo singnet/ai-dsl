@@ -209,7 +209,7 @@ test_logreg : IO ()
 test_logreg =
   let -- Parameters
       sample_size : Nat         -- Total sample size
-      sample_size = 30
+      sample_size = 100
       train_test_ratio : Double -- Train/Test ratio
       train_test_ratio = 2.0/3.0
       train_size : Nat          -- Train sample size
@@ -217,7 +217,7 @@ test_logreg =
       test_size : Nat           -- Test sample size
       test_size = minus sample_size train_size
       eta : Double              -- Learning rate
-      eta = 1.0e-32
+      eta = 3.0e-5
       beta : ColVect 4 Double   -- Initial model
       beta = replicate 0.0
   in do -- Generate train and test data
