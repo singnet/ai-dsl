@@ -9,10 +9,10 @@ import OrdProofs
 |||
 ||| 1. `cnd`, an initial candidate to start the search from.
 |||
-||| 2. `cstfn`, a cost function that evaluates the cost of any given
+||| 2. `cost`, a cost function that evaluates the cost of any given
 ||| candidate.
 |||
-||| 3. `nxtfn`, a search step function that given a candidate returns
+||| 3. `next`, a search step function that given a candidate returns
 ||| another (supposedly better) candidate.  To do well such function
 ||| should take and return a search state, but for now it is
 ||| stateless.
@@ -26,16 +26,16 @@ descent_rec : Ord cost_t =>
               (cnd_t -> cnd_t) ->  -- Next function to jump to the next candidate
               (cnd_t, cost_t) ->   -- Input pair of candidate and its cost
               (cnd_t, cost_t)      -- Output pair of candidate and its cost
-descent_rec cstfn nxtfn (cnd, cst) =
-  if nxtcst < cst then descent_rec cstfn nxtfn (nxtcnd, nxtcst)
+descent_rec cost next (cnd, cst) =
+  if nxtcst < cst then descent_rec cost next (nxtcnd, nxtcst)
                   else (cnd, cst)
   where
     -- Next candidate
     nxtcnd : cnd_t
-    nxtcnd = nxtfn cnd
+    nxtcnd = next cnd
     -- Cost over next candidate
     nxtcst : cost_t
-    nxtcst = cstfn nxtcnd
+    nxtcst = cost nxtcnd
 
 public export
 descent : Ord cost_t =>
@@ -43,7 +43,7 @@ descent : Ord cost_t =>
           (cnd_t -> cnd_t) ->   -- Next function
           cnd_t ->              -- Input candidate
           cnd_t                 -- Output candidate
-descent cstfn nxtfn cnd = fst (descent_rec cstfn nxtfn (cnd, cstfn cnd))
+descent cost next cnd = fst (descent_rec cost next (cnd, cost cnd))
 
 -- TODO: Explore returning the whole trace.
 
@@ -53,14 +53,14 @@ descent cstfn nxtfn cnd = fst (descent_rec cstfn nxtfn (cnd, cstfn cnd))
 -- TODO: Use that delta between costs of cnd and nxtcnd is within an
 -- epsilon as stopping point.
 
--- TODO: Prove that nxtfn is pointing to the right (or the best)
+-- TODO: Prove that next is pointing to the right (or the best)
 -- direction.
 
 -- TODO: Altough the proves are correct, it is somewhat incomplete
 -- since it is not proven that descent is total (cause it is not, it
 -- may descend forever).  One way, suggested by Sam, to prove that it
 -- is total would be to prove that cost_t is well-founded, so that if
--- nxtfn goes down, it will eventually bottom down to base cases.  See
+-- next goes down, it will eventually bottom down to base cases.  See
 -- https://en.wikipedia.org/wiki/Well-founded_relation for more
 -- information, as well as Stefan Hoek Well-founded Recursion example
 -- in idris2-prim.
@@ -77,11 +77,11 @@ descent cstfn nxtfn cnd = fst (descent_rec cstfn nxtfn (cnd, cstfn cnd))
 ||| This partial evaluation is then reflected inside the target
 ||| theorem.  For instance if
 |||
-||| ((cstfn (nxtfn cnd)) < cst) === False
+||| ((cost (next cnd)) < cst) === False
 |||
 ||| the target theorem
 |||
-||| ((snd (descent_rec cstfn nxtfn cndcst)) <= (snd cndcst)) === True
+||| ((snd (descent_rec cost next cndcst)) <= (snd cndcst)) === True
 |||
 ||| gets reduced to
 |||
@@ -91,54 +91,54 @@ descent cstfn nxtfn cnd = fst (descent_rec cstfn nxtfn (cnd, cstfn cnd))
 |||
 ||| Likewise if
 |||
-||| ((cstfn (nxtfn cnd) < cst)) === True
+||| ((cost (next cnd) < cst)) === True
 |||
 ||| the target theorem
 |||
-||| ((snd (descent_rec cstfn nxtfn (cnd, cst))) <= (snd (cnd, cst))) === True
+||| ((snd (descent_rec cost next (cnd, cst))) <= (snd (cnd, cst))) === True
 |||
 ||| gets reduced to
 |||
-||| ((snd (descent_rec cstfn nxtfn (nxtfn cnd, cstfn (nxtfn cnd)))) <= cst) === True
+||| ((snd (descent_rec cost next (next cnd, cost (next cnd)))) <= cst) === True
 |||
 ||| which then merely requires to apply the transitivity axiom of <=
 ||| over the recursive theorem
 |||
-||| ((snd (descent_rec cstfn nxtfn (nxtfn cnd, cstfn (nxtfn cnd)))) <= cstfn (nxtfn cnd)) === True
+||| ((snd (descent_rec cost next (next cnd, cost (next cnd)))) <= cost (next cnd)) === True
 |||
 ||| and
 |||
-||| (cstfn (nxtfn cnd) <= cst) === True
+||| (cost (next cnd) <= cst) === True
 |||
 ||| which is obtained as the reflexive closure of <= over the
 ||| hypothesis.
 descent_rec_le : Ord cost_t =>
-                 (cstfn : cnd_t -> cost_t) ->  -- Cost function
-                 (nxtfn : cnd_t -> cnd_t) ->   -- Next function
+                 (cost : cnd_t -> cost_t) ->  -- Cost function
+                 (next : cnd_t -> cnd_t) ->   -- Next function
                  (cndcst : (cnd_t, cost_t)) -> -- Input pair of candidate and its cost
-                 ((snd (descent_rec cstfn nxtfn cndcst)) <= (snd cndcst)) === True
-descent_rec_le cstfn nxtfn (cnd, cst) with ((cstfn (nxtfn cnd)) < cst) proof eq
-  _ | True = let des_le_nxtcst = descent_rec_le cstfn nxtfn (nxtfn cnd, (cstfn (nxtfn cnd)))
+                 ((snd (descent_rec cost next cndcst)) <= (snd cndcst)) === True
+descent_rec_le cost next (cnd, cst) with ((cost (next cnd)) < cst) proof eq
+  _ | True = let des_le_nxtcst = descent_rec_le cost next (next cnd, (cost (next cnd)))
                  nxtcst_le_cst = le_reflexive_closure_lt (Left eq)
               in (le_transitive des_le_nxtcst nxtcst_le_cst)
   _ | False = le_reflexive
 
 ||| Proof that
 |||
-||| cstfn (descent cstfn nxtfn cnd) = snd (descent_rec cstfn nxtfn (cnd, cstfn cnd))
+||| cost (descent cost next cnd) = snd (descent_rec cost next (cnd, cost cnd))
 |||
 ||| This is used by descent_le to get passed
 |||
-|||        (snd (descent_rec cstfn nxtfn (cnd, cstfn cnd)) <= cstfn cnd) === True
+|||        (snd (descent_rec cost next (cnd, cost cnd)) <= cost cnd) === True
 ||| ->
-||| (cstfn (fst (descent_rec cstfn nxtfn (cnd, cstfn cnd))) <= cstfn cnd) === True
+||| (cost (fst (descent_rec cost next (cnd, cost cnd))) <= cost cnd) === True
 cd_eq_sdr : Ord cost_t =>
-            (cstfn : cnd_t -> cost_t) ->  -- Cost function
-            (nxtfn : cnd_t -> cnd_t) ->   -- Next function
+            (cost : cnd_t -> cost_t) ->  -- Cost function
+            (next : cnd_t -> cnd_t) ->   -- Next function
             (cnd : cnd_t) ->              -- Input candidate
-            (cstfn (descent cstfn nxtfn cnd)) === snd (descent_rec cstfn nxtfn (cnd, cstfn cnd))
-cd_eq_sdr cstfn nxtfn cnd with ((cstfn (nxtfn cnd)) < (cstfn cnd)) proof eq
-  _ | True = cd_eq_sdr cstfn nxtfn (nxtfn cnd)
+            (cost (descent cost next cnd)) === snd (descent_rec cost next (cnd, cost cnd))
+cd_eq_sdr cost next cnd with ((cost (next cnd)) < (cost cnd)) proof eq
+  _ | True = cd_eq_sdr cost next (next cnd)
   _ | False = Refl
 
 ||| Proof that the output candidate of descent has a cost less than or
@@ -146,18 +146,18 @@ cd_eq_sdr cstfn nxtfn cnd with ((cstfn (nxtfn cnd)) < (cstfn cnd)) proof eq
 |||
 ||| The target theorem
 |||
-||| ((cstfn (descent cstfn nxtfn cnd)) <= (cstfn cnd)) === True
+||| ((cost (descent cost next cnd)) <= (cost cnd)) === True
 |||
 ||| gets reduced to
 |||
-||| ((cstfn (fst (descent_rec cstfn nxtfn (cnd, cstfn cnd)))) <= (cstfn cnd)) === True
+||| ((cost (fst (descent_rec cost next (cnd, cost cnd)))) <= (cost cnd)) === True
 |||
 ||| by virtue of the definition of descent.
 public export
 descent_le : Ord cost_t =>
-             (cstfn : cnd_t -> cost_t) ->  -- Cost function
-             (nxtfn : cnd_t -> cnd_t) ->   -- Next function
+             (cost : cnd_t -> cost_t) ->  -- Cost function
+             (next : cnd_t -> cnd_t) ->   -- Next function
              (cnd : cnd_t) ->              -- Input candidate
-             ((cstfn (descent cstfn nxtfn cnd)) <= (cstfn cnd)) === True
-descent_le cstfn nxtfn cnd = rewrite (cd_eq_sdr cstfn nxtfn cnd)
-                             in (descent_rec_le cstfn nxtfn (cnd, cstfn cnd))
+             ((cost (descent cost next cnd)) <= (cost cnd)) === True
+descent_le cost next cnd = rewrite (cd_eq_sdr cost next cnd)
+                           in (descent_rec_le cost next (cnd, cost cnd))

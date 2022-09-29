@@ -30,12 +30,24 @@ ColVect m a = Matrix m 1 a
 
 ||| Fill a matrix m*n with a constant value
 |||
-||| @m number of rows
-||| @n number of columns
-||| @x the value to repeat
+||| @x the value to replicate
 public export
 replicate : {m, n : Nat} -> (x : a) -> Matrix m n a
-replicate {m, n} x = MkMatrix (replicate m (replicate n x))
+replicate x = MkMatrix (replicate m (replicate n x))
+
+||| Fill a matrix m*n by replicating the row m times
+|||
+||| @row the row to replicate
+public export
+replicateRow : {m, n : Nat} -> RowVect n a -> Matrix m n a
+replicateRow row = MkMatrix (replicate m (head row.vects))
+
+||| Fill a matrix m*n by replicating the column n times
+|||
+||| @col the column to replicate
+public export
+replicateCol : {m, n : Nat} -> ColVect m a -> Matrix m n a
+-- The implementation is further below as it uses transpose
 
 -------------------------------
 -- Interface implementations --
@@ -56,8 +68,10 @@ public export
 implementation Zippable (Matrix m n) where
   zipWith f x y = MkMatrix (zipWith (zipWith f) x.vects y.vects)
   zipWith3 f x y z = MkMatrix (zipWith3 (zipWith3 f) x.vects y.vects z.vects)
-  unzipWith = ?unzipWith
-  unzipWith3 = ?unzipWith3
+  unzipWith f x = let (lvs, rvs) = unzipWith (unzipWith f) x.vects
+                  in (MkMatrix lvs, MkMatrix rvs)
+  unzipWith3 f x = let (vs1, vs2, vs3) = unzipWith3 (unzipWith3 f) x.vects
+                   in (MkMatrix vs1, MkMatrix vs2, MkMatrix vs3)
 
 ||| Implement Foldable
 public export
@@ -72,14 +86,14 @@ implementation Traversable (Matrix m n) where
 
 ||| Implement Random interface for Vect
 public export
-implementation Random a => Random (Vect k a) where
-  randomIO = ?randomIOVect
+implementation {k : Nat} -> Random a => Random (Vect k a) where
+  randomIO = sequence (replicate k randomIO)
   randomRIO (x, y) = traverse randomRIO (zipWith MkPair x y)
 
 ||| Implement Random interface
 public export
-implementation Random a => Random (Matrix m n a) where
-  randomIO = ?randomIOMatrix
+implementation {m, n : Nat} -> Random a => Random (Matrix m n a) where
+  randomIO = sequence (replicate {m, n} randomIO)
   randomRIO (x, y) = traverse randomRIO (zipWith MkPair x y)
 
 ||| Implement Show interface.  A matrix is represented in the usual
@@ -225,6 +239,9 @@ x <-> y = MkMatrix (x.vects ++ y.vects)
 public export
 (<|>) : {m, n, k : Nat} -> Matrix m n a -> Matrix m k a -> Matrix m (n + k) a
 x <|> y = transpose ((transpose x) <-> (transpose y))
+
+-- Implementation of replicateCol
+replicateCol {m, n} col = transpose (replicateRow (transpose col))
 
 ----------
 -- Test --

@@ -4,7 +4,8 @@ import System.Random
 import Data.String
 import Data.Vect
 import Matrix
-import Descent
+import GradientDescent
+import Utils
 
 ------------------------------
 -- Define Linear Regression --
@@ -32,13 +33,14 @@ import Descent
 --
 -- L(β) = ||Y-Xβ||²
 --
--- the gradient descent is obtained as follows
+-- the gradient is obtained as follows
 --
 -- ∇L(β) = -2Xᵀ(Y-Xβ)
 --
 -- Thus, given a learning rate 0<η, the model is updated as follows
+-- (subtracting the gradient ascent to become a gradient descent):
 --
--- β ← β + η∇L(β)
+-- β ← β - η∇L(β)
 --
 -- or
 --
@@ -49,38 +51,28 @@ import Descent
 
 ||| Sum of squared errors
 sse : (e : ColVect m Double) -> Double
-sse e = let ev = Data.Vect.concat e.vects  -- NEXT: ev = cast e
+sse e = let ev = Data.Vect.concat e.vects
+        -- NEXT: let ev = Matrix.Cast.cast e
         in dot ev ev
 
-||| Loss function: L(β) = ||Y-Xβ||².  Using implicit n argument.
+||| Loss function: L(β) = ||Y-Xβ||²
 loss : (x : Matrix m n Double) ->
        (y : ColVect m Double) ->
        (beta : ColVect n Double) ->
        Double
 loss x y beta = sse (y - (x * beta))
 
-||| Gradient descent: ∇L(β) = -2Xᵀ(Y-Xβ).  Using implicit n argument.
-grdt : {n : Nat} ->
-       (x : Matrix m n Double) ->
-       (y : ColVect m Double) ->
-       (beta : ColVect n Double) ->
-       ColVect n Double
-grdt x y beta = scale (-2) ((transpose x) * (y - (x * beta)))
-
-||| Next candidate function using the gradient descent.  Given a
-||| candidate, return a new candidate by taking a step towards the
-||| gradient descent.
-nxtgd : {n : Nat} ->
-        (x : Matrix m n Double) ->
-        (y : ColVect m Double) ->
-        (eta : Double) ->
-        (beta : ColVect n Double) ->
-        ColVect n Double
-nxtgd x y eta beta = beta - (scale (2 * eta) (grdt x y beta))
+||| Gradient: ∇L(β) = -2Xᵀ(Y-Xβ)
+gradient : {n : Nat} ->
+           (x : Matrix m n Double) ->
+           (y : ColVect m Double) ->
+           (beta : ColVect n Double) ->
+           ColVect n Double
+gradient x y beta = scale (-2) ((transpose x) * (y - (x * beta)))
 
 ||| Multivariate Linear Regression.  Given an input data set x and its
 ||| corresponding output y, a learning rate eta and initial model
-||| beta, return a model β^ so that x*β^ approximates y.  The returned
+||| beta, return a model β' so that x*β' approximates y.  The returned
 ||| model is discovered using gradient descent.
 |||
 ||| @x Matrix of size m*n, samples size m, n input variables
@@ -93,19 +85,28 @@ linreg : {n : Nat} ->
          (eta : Double) ->
          (beta : ColVect n Double) ->
          ColVect n Double
-linreg x y eta = descent (loss x y) (nxtgd x y eta)
+linreg x y = gradientDescent (loss x y) (gradient x y)
 
 ------------
 -- Proofs --
 ------------
 
+||| Proof that the candidate returned by linear regression is better
+||| or equal to the initial candidate.
+|||
+||| TODO: add more properties and proofs pertaining to
+|||
+||| 1. global optimality, if any,
+||| 2. linearity of the model,
+||| 3. sse-ness of the cost function,
+||| 4. gradient-ness of the next function, and more.
 linreg_le : {n : Nat} ->
             (x : Matrix m n Double) ->
             (y : ColVect m Double) ->
             (eta : Double) ->
             (beta : ColVect n Double) ->
             ((loss x y (linreg x y eta beta)) <= (loss x y beta)) === True
-linreg_le x y eta = descent_le (loss x y) (nxtgd x y eta)
+linreg_le x y = gradientDescent_le (loss x y) (gradient x y)
 
 ----------
 -- Test --
@@ -115,7 +116,12 @@ linreg_le x y eta = descent_le (loss x y) (nxtgd x y eta)
 -- a service given the size of the data set, the number of input
 -- variables and the accuracy of the expected model.
 
-||| Generative model, β₀=10, β₁=20, β₂=30, β₃=40
+||| Generative model, β₀=10, β₁=20, β₂=30, β₃=40, where
+|||
+||| β₀ is the bias term
+||| β₁ is the data size factor
+||| β₂ is the number of variables factor
+||| β₃ is the target accuracy factor
 true_beta : Vect 4 Double
 true_beta = [10, 20, 30, 40]
 
@@ -129,50 +135,24 @@ true_beta = [10, 20, 30, 40]
 price : Vect 4 Double -> Double
 price xs = dot xs true_beta
 
--- Generate a data set
+-- Generate a train/test data set
 
 ||| Make a random generator for the input data set.  That is a matrix
 ||| m*4 where the first column is filled with 1s to deal with the bias
-||| term, and the remaining three columns are randomly generated (from
-||| 0 to 10).
-mk_rnd_input_data : (m : Nat) -> IO (Matrix m 4 Double)
-mk_rnd_input_data m = let min_rnd : Matrix m 3 Double
-                          min_rnd = replicate 0.0
-                          max_rnd : Matrix m 3 Double
-                          max_rnd = replicate 10.0
-                          bias_col : ColVect m Double
-                          bias_col = replicate 1.0
-                          min_mt : Matrix m 4 Double
-                          min_mt = bias_col <|> min_rnd
-                          max_mt : Matrix m 4 Double
-                          max_mt = bias_col <|> max_rnd
-                       in randomRIO (min_mt, max_mt)
+||| term, and the remaining three columns are randomly generated with
+||| ranges [0, 100], [0, 10] and [0, 1] respectively.
+rnd_input_data : (m : Nat) -> IO (Matrix m 4 Double)
+rnd_input_data m = let rngs : RowVect 4 (Double, Double)
+                       rngs = MkMatrix [[(1, 1), (0, 100), (0, 10), (0, 1)]]
+                   in randomRIO (unzip (replicateRow rngs))
 
 ||| Given a matrix representing the input data set, return a column
 ||| vector of the output according to the `price` formula defined
 ||| above.
-mk_output_data : Matrix m 4 Double -> ColVect m Double
-mk_output_data x = MkMatrix (map ((::Nil) . price) x.vects)
+price_data : Matrix m 4 Double -> ColVect m Double
+price_data x = MkMatrix (map ((::Nil) . price) x.vects)
 
 -- Test linear regression
-
-||| Wrap a given one-liner message in a box and send to stdout.
-putBoxedStrLn : String -> IO ()
-putBoxedStrLn s =
-  let left_decorator = "║ "
-      right_decorator = " ║"
-      upleft_decorator = "╔═"
-      downleft_decorator = "╚═"
-      upright_decorator = "═╗"
-      downright_decorator = "═╝"
-      updown_decorator = '═'
-      updown_subline = replicate (length s) updown_decorator
-      up_line = upleft_decorator ++ updown_subline ++ upright_decorator
-      center_line = left_decorator ++ s ++ right_decorator
-      down_line = downleft_decorator ++ updown_subline ++ downright_decorator
-  in do putStrLn up_line
-        putStrLn center_line
-        putStrLn down_line
 
 test_linreg : IO ()
 test_linreg =
@@ -186,15 +166,18 @@ test_linreg =
       test_size : Nat           -- Test sample size
       test_size = minus sample_size train_size
       eta : Double              -- Learning rate
-      eta = 1.0e-4
+      eta = 1.0e-5
       beta : ColVect 4 Double   -- Initial model
       beta = replicate 0.0
   in do -- Generate train and test data
         putStrLn ""
         putBoxedStrLn "Generating data"
-        x <- mk_rnd_input_data sample_size
+        x <- rnd_input_data sample_size
         let y : ColVect sample_size Double
-            y = mk_output_data x
+            y = price_data x
+            -- Below if a convoluted way of saying
+            -- (x_train, x_test) = splitAtRow train_size x
+            -- (y_train, y_test) = splitAtRow train_size y
             x_split : (Matrix train_size 4 Double, Matrix test_size 4 Double)
             x_split = splitAtRow train_size x
             y_split : (ColVect train_size Double, ColVect test_size Double)
@@ -227,7 +210,7 @@ test_linreg =
             y_train_estimate = x_train * model
         putStrLn "\nModel:"
         printLn model
-        putStrLn "\nTest output estimate:"
+        putStrLn "\nTrain output prediction:"
         printLn y_train_estimate
         putStrLn "\nTrain loss:"
         printLn train_loss
@@ -239,7 +222,7 @@ test_linreg =
             test_loss = loss x_test y_test model
             y_test_estimate : ColVect test_size Double
             y_test_estimate = x_test * model
-        putStrLn "\nTest output estimate:"
+        putStrLn "\nTest output prediction:"
         printLn y_test_estimate
         putStrLn "\nTest loss:"
         printLn test_loss
