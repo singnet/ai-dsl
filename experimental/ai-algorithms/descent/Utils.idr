@@ -1,6 +1,5 @@
 module Utils
 
-import Debug.Trace
 import System.Random
 import Data.String
 
@@ -54,20 +53,11 @@ bernoulliCrossEntropy p q =
       nq = 1.0 - q
       cq = clamp i q
       cnq = clamp i nq
-      ce = if p < epsilon
-           then -np*log(cnq)
-           else if np < epsilon
-                then -p*log(cq)
-                else -p*log(cq) - np*log(cnq)
-  -- in trace ("bernoulliCrossEntropy p:" ++ (show p) ++
-  --           ", q:" ++ (show q) ++
-  --           ", i:" ++ (show i) ++
-  --           ", np:" ++ (show np) ++
-  --           ", nq:" ++ (show nq) ++
-  --           ", cq:" ++ (show cq) ++
-  --           ", cnq:" ++ (show cnq) ++
-  --           " = " ++ (show ce)) ce
-  in ce
+      in if p < epsilon
+         then -np*log(cnq)
+         else if np < epsilon
+              then -p*log(cq)
+              else -p*log(cq) - np*log(cnq)
 
 ||| Generate a random sampler for Boolean value distributed according
 ||| to a Bernoulli distribution of parameter p.

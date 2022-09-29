@@ -83,9 +83,7 @@ logistic x0 l k x = l / (1.0 + exp(-k*(x-x0)))
 |||
 ||| @x the input value
 expit : Double -> Double
-expit x = let l = logistic 0 1 1 x
-          -- in trace ("expit x:" ++ (show x) ++ " = " ++ (show l)) l
-          in l
+expit = logistic 0 1 1
 
 ||| Loss function: L(β) = -∑ᵢ yᵢlog(pᵢ) + (1-yᵢ)log(1-pᵢ)
 loss : (x : Matrix m n Double) ->
@@ -93,9 +91,7 @@ loss : (x : Matrix m n Double) ->
        (beta : ColVect n Double) ->
        Double
 loss x y beta = let p = map expit (x * beta)
-                    l = sum (zipWith bernoulliCrossEntropy (indicator y) p)
-                -- in trace ("loss(" ++ "beta:\n" ++ (show beta) ++ "\n=\n" ++ (show l) ++ "\n)") l
-                in l
+                in sum (zipWith bernoulliCrossEntropy (indicator y) p)
 
 ||| Gradient: ∇L(β) = Xᵀ(expit(Xβ)-Y)
 gradient : {n : Nat} ->
