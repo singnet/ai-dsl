@@ -7,6 +7,22 @@ import Data.String
 -- Miscellaneous utility functions --
 -------------------------------------
 
+||| Clamp to fit a closed interval
+|||
+||| For instance
+|||
+||| clamp (0.1, 0.9) 0.5 = 0.5
+||| clamp (0.1, 0.9) 1.0 = 0.9
+||| clamp (0.1, 0.9) 0.0 = 0.1
+|||
+||| Note that if l is greater than u in
+|||
+||| clamp (l, u)
+|||
+||| the behavior should be considered undefined.
+clamp : Ord a => (a, a) -> a -> a
+clamp (l, u) x = max l (min u x)
+
 ||| Cast a Bool into a Double
 |||
 ||| False -> 0.0
