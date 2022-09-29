@@ -311,3 +311,7 @@ M_rendered = "┌         ┐\n" ++
 -- Disabled because Idris complains with multiple errors
 -- show_test : (show M) === M_rendered
 -- show_test = Refl
+
+-- Other matrix libraries for Idris2:
+--
+-- https://github.com/running-grass/idris2-playground/blob/main/matrix/src/Data/Matrix.idr
