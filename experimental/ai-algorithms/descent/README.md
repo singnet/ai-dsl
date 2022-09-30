@@ -59,3 +59,30 @@ The files are the following, ordered more or less by difficulty:
   regression.
 
 - `LogisticRegression.idr`: Example of logistic regression.
+
+## Usage
+
+To run the various files without having to install the descent package
+simply invoke idris2 from that directory as follows
+
+```
+idris2 --find-ipkg <IDRIS_FILE>
+```
+
+this will look for package in the current or parent directory.  In
+that instance the package it will find is `descent` as defined in the
+`descent.ipkg` package file.
+
+For instance to run the logistic regression example, type the command
+
+```
+idris2 --find-ipkg LogisticRegression.idr
+```
+
+Then once in the Idris2 REPL, type
+
+```idris2
+:exec test_logreg
+```
+
+Beware that this might take a while to complete.
