@@ -1,6 +1,6 @@
-module Descent
+module Search.Descent
 
-import OrdProofs
+import Search.OrdProofs
 
 ||| Descent algorithm, attempts to find the best candidate minimizing
 ||| a cost function.

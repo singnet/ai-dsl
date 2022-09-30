@@ -1,4 +1,4 @@
-module Utils
+module Search.Util
 
 import System.Random
 import Data.String

@@ -1,4 +1,4 @@
-module OrdProofs
+module Search.OrdProofs
 
 --------------------------------------------------------------------------
 -- Assumptions/proofs about the Ord interface.  All assumptions/proofs  --

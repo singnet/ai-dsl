@@ -1,7 +1,7 @@
-module GradientDescent
+module Search.GradientDescent
 
 import Data.Matrix
-import Descent
+import Search.Descent
 
 -----------------------------
 -- Define Gradient Descent --

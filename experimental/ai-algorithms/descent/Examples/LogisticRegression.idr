@@ -1,11 +1,11 @@
-module LogisticRegression
+module Examples.LogisticRegression
 
 import System.Random
 import Data.String
 import Data.Vect
 import Data.Matrix
-import GradientDescent
-import Utils
+import Search.GradientDescent
+import Search.Util
 
 --------------------------------
 -- Define Logistic Regression --

@@ -1,6 +1,6 @@
-module MinProofs
+module Experiments.MinProofs
 
-import OrdProofs
+import Search.OrdProofs
 
 import Data.Vect
 import Data.Vect.Quantifiers
