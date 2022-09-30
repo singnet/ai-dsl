@@ -49,7 +49,7 @@ gradientDescent cost grd eta = descent cost (fixedStepSizeGradientDescent grd et
 ||| 1. check that grd is indeed the derivate of the cost,
 ||| 2. the gradient of the output candidate is approximatively null,
 public export
-gradientDescent_le : (Ord a, Neg a)
+gradientDescent_le : (Ord a, Neg a) =>
                      (cost : ColVect m a -> a) ->           -- Cost function
                      (grd : ColVect m a -> ColVect m a) ->  -- Gradient
                      (eta : a) ->                           -- Step size
