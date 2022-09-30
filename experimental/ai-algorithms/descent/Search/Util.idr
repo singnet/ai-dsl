@@ -7,6 +7,10 @@ import Data.String
 -- Miscellaneous utility functions --
 -------------------------------------
 
+-- TODO: it should probably be sorted out and split into different
+-- modules, because not all functions here belong to the Search
+-- category.
+
 ||| Clamp to fit a closed interval
 |||
 ||| For instance

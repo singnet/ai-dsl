@@ -25,6 +25,9 @@ modules = Debug.NoTrace,
           Search.Descent,
           Search.GradientDescent,
 
+          Search.Regression.Linear,
+          Search.Regression.Logistic,
+
           Examples.LinearRegression,
           Examples.LogisticRegression,
 
