@@ -66,27 +66,6 @@ import Search.Util
 --
 -- [1] https://en.wikipedia.org/wiki/Cross_entropy#Cross-entropy_loss_function_and_logistic_regression
 
-||| Logistic function
-|||
-||| l / (1 + exp(-k*(x-x0)))
-|||
-||| @x0 the value of the sigmoid's midpoint
-||| @l the curve's maximum value
-||| @k k, the logistic growth rate or steepness of the curve
-||| @x the input value
-public export
-logistic : Double -> Double -> Double -> Double -> Double
-logistic x0 l k x = l / (1.0 + exp(-k*(x-x0)))
-
-||| Standard logistic function
-|||
-||| 1 / (1 + exp(-x))
-|||
-||| @x the input value
-public export
-expit : Double -> Double
-expit = logistic 0 1 1
-
 ||| Loss function: L(β) = -∑ᵢ yᵢlog(pᵢ) + (1-yᵢ)log(1-pᵢ)
 public export
 loss : (x : Matrix m n Double) ->
