@@ -27,6 +27,68 @@ import Data.String
 clamp : Ord a => (a, a) -> a -> a
 clamp (l, u) x = max l (min u x)
 
+||| Logistic function
+|||
+||| l / (1 + exp(-k*(x-x0)))
+|||
+||| @x0 the value of the sigmoid's midpoint
+||| @l the curve's maximum value
+||| @k k, the logistic growth rate or steepness of the curve
+||| @x the input value
+public export
+logistic : Double -> Double -> Double -> Double -> Double
+logistic x0 l k x = l / (1.0 + exp(-k*(x-x0)))
+
+||| Standard logistic function
+|||
+||| 1 / (1 + exp(-x))
+|||
+||| @x the input value
+public export
+expit : Double -> Double
+expit = logistic 0 1 1
+
+||| Inverse of the expit function.  Take a probability and return the
+||| corresponding odds.
+|||
+||| log(p / (1 - p))
+|||
+||| @epsilon small value to add/remove to/from p to guaranty p ∈ (0, 1)
+||| @p probability
+public export
+logit : Double -> Double -> Double
+logit epsilon p = let l = epsilon
+                      u = 1.0 - epsilon
+                      np = 1.0 - p
+                      cp = clamp (l, u) p
+                      cnp = clamp (l, u) np
+                  in log(cp / cnp)
+
+||| Given positive and negative counts, calculate the mean of the
+||| corresponding posterior Beta distribution, assuming a Jeffrey's
+||| prior.
+|||
+||| @poscnt positive count
+||| @negcnt negative count
+public export
+betaMean : Integer -> Integer -> Double
+betaMean poscnt negcnt = let a : Double
+                             a = 0.5 + (cast poscnt)
+                             b : Double
+                             b = 0.5 + (cast negcnt)
+                         in a / (a + b)
+
+||| Given positive and negative counts, calculate the odds of the mean
+||| of the corresponding posterior Beta distribution, assuming a
+||| Jeffrey's prior.
+|||
+||| @epsilon to make sure the probability is within [epsilon, 1 - epsilon]
+||| @poscnt positive count
+||| @negcnt negative count
+public export
+betaOdds : Double -> Integer -> Integer -> Double
+betaOdds epsilon poscnt negcnt = logit epsilon (betaMean poscnt negcnt)
+
 ||| Cast a Bool into a Double
 |||
 ||| False -> 0.0
