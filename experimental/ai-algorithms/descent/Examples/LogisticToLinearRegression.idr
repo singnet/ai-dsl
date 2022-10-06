@@ -67,39 +67,6 @@ overpriced_probs_data x = toColVect (map overpriced x.vects)
 rnd_overpriced_data : Matrix m 3 Bool -> IO (ColVect m Bool)
 rnd_overpriced_data x = traverse bernoulliSample (overpriced_probs_data x)
 
-||| Given
-|||
-||| 1. a matrix, X, representing an input data,
-|||
-||| 2. a column vector, Y, representing its corresponding output,
-|||
-||| return a sorted map representing the empirical conditional
-||| distribution P(Y|X).  More specifically, a mapping from each
-||| unique input to a histogram built from its corresponding outputs.
-|||
-||| @x input matrix
-||| @y output column vector
-condHist : Ord a => Matrix m n a -> ColVect m a ->
-            SortedMap (Vect n a) (Counter a Integer)
-condHist x y = let -- Zip x and y
-                   xy : Vect m (Vect n a, a)
-                   xy = zip x.vects (map head y.vects)
-                   -- Build mapping from unique Xᵢ to a histogram
-                   -- of its distribution of Yᵢs.
-                   acchist : (Vect n a, a) ->
-                             SortedMap (Vect n a) (Counter a Integer) ->
-                             SortedMap (Vect n a) (Counter a Integer)
-                   acchist (xi, yi) acc =
-                     case lookup xi acc of
-                          Just c => insert xi (insert yi c) acc
-                          Nothing => insert xi (singleton yi) acc
-               in foldr acchist empty xy
-
-||| Turn a Bernoulli histogram into an estimate of the odds, assuming
-||| an underlying Beta distribution.
-bernoulliHistToOdds : Counter Bool Integer -> Double
-bernoulliHistToOdds c = betaOdds 1.0e-128 (lookup True c) (lookup False c)
-
 ||| Transform a pair (X, Y) of Boolean input matrix X and its Boolean
 ||| output vector Y into a pair (Xᴸ, Yᴸ) of Boolean input matrix Xᴸ
 ||| and its corresponding odds/logit vector Yᴸ.

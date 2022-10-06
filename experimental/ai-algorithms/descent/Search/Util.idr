@@ -2,6 +2,10 @@ module Search.Util
 
 import System.Random
 import Data.String
+import Data.Vect
+import Data.SortedMap
+import Data.Counter
+import Data.Matrix
 
 -------------------------------------
 -- Miscellaneous utility functions --
@@ -88,6 +92,43 @@ betaMean poscnt negcnt = let a : Double
 public export
 betaOdds : Double -> Integer -> Integer -> Double
 betaOdds epsilon poscnt negcnt = logit epsilon (betaMean poscnt negcnt)
+
+||| Turn a Bernoulli histogram into an estimate of the odds, assuming
+||| an underlying Beta distribution.
+|||
+||| @c counter representing a Bernoulli histogram
+public export
+bernoulliHistToOdds : Counter Bool Integer -> Double
+bernoulliHistToOdds c = betaOdds 1.0e-128 (lookup True c) (lookup False c)
+
+||| Given
+|||
+||| 1. a matrix, X, representing an input data,
+|||
+||| 2. a column vector, Y, representing its corresponding output,
+|||
+||| return a sorted map representing the empirical conditional
+||| distribution P(Y|X).  More specifically, a mapping from each
+||| unique input to a histogram built from its corresponding outputs.
+|||
+||| @x input matrix
+||| @y output column vector
+public export
+condHist : Ord a => Matrix m n a -> ColVect m a ->
+            SortedMap (Vect n a) (Counter a Integer)
+condHist x y = let -- Zip x and y
+                   xy : Vect m (Vect n a, a)
+                   xy = zip x.vects (map head y.vects)
+                   -- Build mapping from unique Xᵢ to a histogram
+                   -- of its distribution of Yᵢs.
+                   acchist : (Vect n a, a) ->
+                             SortedMap (Vect n a) (Counter a Integer) ->
+                             SortedMap (Vect n a) (Counter a Integer)
+                   acchist (xi, yi) acc =
+                     case lookup xi acc of
+                          Just c => insert xi (insert yi c) acc
+                          Nothing => insert xi (singleton yi) acc
+               in foldr acchist empty xy
 
 ||| Cast a Bool into a Double
 |||
