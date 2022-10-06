@@ -50,6 +50,16 @@ public export
 replicateCol : {m, n : Nat} -> ColVect m a -> Matrix m n a
 -- The implementation is further below as it uses transpose
 
+||| Make a RowVect from a Vect
+public export
+toRowVect : Vect n a -> RowVect n a
+toRowVect xs = MkMatrix [xs]
+
+||| Make a ColVect from a Vect
+public export
+toColVect : Vect m a -> ColVect m a
+toColVect xs = MkMatrix (map (:: Nil) xs)
+
 -------------------------------
 -- Interface implementations --
 -------------------------------
