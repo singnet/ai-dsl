@@ -19,6 +19,7 @@ depends = contrib
 modules = Debug.NoTrace,
 
           Data.Matrix,
+          Data.Counter,
 
           Search.OrdProofs,
           Search.Util,
