@@ -56,7 +56,7 @@ rnd_input_data m = let rngs : RowVect 4 (Double, Double)
 ||| Given a matrix representing the input data set, create a column
 ||| vector of the probability of success of the logistic model.
 success_probs_data : Matrix m 4 Double -> ColVect m Double
-success_probs_data x = MkMatrix (map ((::Nil) . success) x.vects)
+success_probs_data x = toColVect (map success x.vects)
 
 ||| Given a matrix representing the input data set, sample a column
 ||| vector of the output according to the probability of success of

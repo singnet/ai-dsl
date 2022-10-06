@@ -49,7 +49,7 @@ rnd_input_data m = let rngs : RowVect 4 (Double, Double)
 ||| vector of the output according to the `price` formula defined
 ||| above.
 price_data : Matrix m 4 Double -> ColVect m Double
-price_data x = MkMatrix (map ((::Nil) . price) x.vects)
+price_data x = toColVect (map price x.vects)
 
 -- Test linear regression
 
