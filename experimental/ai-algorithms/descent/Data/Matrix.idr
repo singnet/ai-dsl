@@ -3,6 +3,7 @@ module Data.Matrix
 import System.Random
 import Data.String
 import Data.Vect
+import Data.Vect.Sort
 
 -----------------------------------
 -- Matrix data type definition   --
@@ -242,6 +243,28 @@ x <|> y = transpose ((transpose x) <-> (transpose y))
 
 -- Implementation of replicateCol
 replicateCol {m, n} col = transpose (replicateRow (transpose col))
+
+||| Sort rows
+public export
+sortRows : Ord a => {m, n : Nat} -> Matrix m n a -> Matrix m n a
+sortRows x = MkMatrix (sort x.vects)
+
+||| Remove unique rows
+public export
+nubRows : Eq a => {m, n : Nat} -> Matrix m n a -> (m' ** Matrix m' n a)
+nubRows x = let dp : (m' ** Vect m' (Vect n a))
+                dp = nub x.vects
+            in (fst dp ** MkMatrix (snd dp))
+
+||| Return the number of rows
+public export
+countRows : {m, n : Nat} -> Matrix m n a -> Nat
+countRows _ = m
+
+||| Return the number of unique rows
+public export
+countUniqRows : Eq a => {m, n : Nat} -> Matrix m n a -> Nat
+countUniqRows = fst . nubRows
 
 ----------
 -- Test --
