@@ -141,7 +141,7 @@ condHist x y = let -- Zip x and y
 ||| False -> 0.0
 ||| True -> 1.0
 |||
-||| Not using the cast interface as it is not necessarily unconventional.
+||| Not using the cast interface as it is not necessarily conventional.
 public export
 boolToDouble : Bool -> Double
 boolToDouble False = 0.0
