@@ -15,6 +15,11 @@ import Data.Matrix
 -- modules, because not all functions here belong to the Search
 -- category.
 
+||| Access the third element of a triple
+public export
+trd : (a, b, c) -> c
+trd = snd . snd
+
 ||| Clamp to fit a closed interval
 |||
 ||| For instance
