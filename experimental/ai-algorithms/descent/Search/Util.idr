@@ -33,6 +33,7 @@ trd = snd . snd
 ||| clamp (l, u)
 |||
 ||| the behavior should be considered undefined.
+public export
 clamp : Ord a => (a, a) -> a -> a
 clamp (l, u) x = max l (min u x)
 
