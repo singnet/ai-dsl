@@ -147,6 +147,17 @@ boolToDouble : Bool -> Double
 boolToDouble False = 0.0
 boolToDouble True = 1.0
 
+||| Cast a Double into a Bool
+|||
+||| 0.0 -> False
+||| _ -> True
+|||
+||| Not using the cast interface as it is not necessarily conventional.
+public export
+doubleToBool : Double -> Bool
+doubleToBool 0.0 = False
+doubleToBool _ = True
+
 ||| Akin to an indicator function, i.e. point-wise cast a container of
 ||| boolean values to a container of double values using boolToDouble.
 public export
