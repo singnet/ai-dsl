@@ -20,6 +20,34 @@ public export
 trd : (a, b, c) -> c
 trd = snd . snd
 
+||| Cast a Bool into a Double
+|||
+||| False -> 0.0
+||| True -> 1.0
+|||
+||| Not using the cast interface as it is not necessarily conventional.
+public export
+boolToDouble : Bool -> Double
+boolToDouble False = 0.0
+boolToDouble True = 1.0
+
+||| Cast a Double into a Bool
+|||
+||| 0.0 -> False
+||| _ -> True
+|||
+||| Not using the cast interface as it is not necessarily conventional.
+public export
+doubleToBool : Double -> Bool
+doubleToBool 0.0 = False
+doubleToBool _ = True
+
+||| Akin to an indicator function, i.e. point-wise cast a container of
+||| boolean values to a container of double values using boolToDouble.
+public export
+indicator : Functor f => f Bool -> f Double
+indicator = map boolToDouble
+
 ||| Clamp to fit a closed interval
 |||
 ||| For instance
@@ -136,33 +164,37 @@ condHist x y = let -- Zip x and y
                           Nothing => insert xi (singleton yi) acc
                in foldr acchist empty xy
 
-||| Cast a Bool into a Double
+||| Transform a pair (X, Y) of Boolean input matrix X and its Boolean
+||| output vector Y into a pair (Xᴸ, Yᴸ) of Boolean input matrix Xᴸ
+||| and its corresponding odds/logit vector Yᴸ.
 |||
-||| False -> 0.0
-||| True -> 1.0
+||| Xᴸ is a deduplicated version of X.
 |||
-||| Not using the cast interface as it is not necessarily conventional.
+||| Yᴸ represents an estimates of the odds of Y being true knowing its
+||| corresponding input.  Such estimate is calculated by taking the
+||| mean of the posterior Beta distribution given the positive and
+||| negative counts of the Boolean outcomes from Y for a particular
+||| input.
+|||
+||| An alternative to taking the mean could be to sample the posterior
+||| Beta distribution as a way to tranfer the varying uncertainties
+||| from the counts.  Here though since the input is sampled unformly
+||| it shouldn't matter, but for a real data set it may.  The downside
+||| of that approach is that it may substantially increase the size of
+||| the dataset.  On the contrary, taking the mean tends to decrease
+||| it.
 public export
-boolToDouble : Bool -> Double
-boolToDouble False = 0.0
-boolToDouble True = 1.0
-
-||| Cast a Double into a Bool
-|||
-||| 0.0 -> False
-||| _ -> True
-|||
-||| Not using the cast interface as it is not necessarily conventional.
-public export
-doubleToBool : Double -> Bool
-doubleToBool 0.0 = False
-doubleToBool _ = True
-
-||| Akin to an indicator function, i.e. point-wise cast a container of
-||| boolean values to a container of double values using boolToDouble.
-public export
-indicator : Functor f => f Bool -> f Double
-indicator = map boolToDouble
+logToLinData : (x : Matrix m n Bool) ->
+               (y : ColVect m Bool) ->
+               (m' : Nat ** (Matrix m' n Bool, ColVect m' Double))
+logToLinData x y =
+  let -- Build a conditional histogram from X and Y
+      cds : SortedMap (Vect n Bool) (Counter Bool Integer)
+      cds = condHist x y
+      -- Build Xᴸ and Yᴸ from that conditional histogram
+      xyl : List (Vect n Bool, Double)
+      xyl = map (mapSnd bernoulliHistToOdds) (toList cds)
+  in (length xyl ** bimap MkMatrix toColVect (unzip (fromList xyl)))
 
 ||| Cross entropy between 2 Bernoulli distributions: -p*log(q) - (1-p)*log(1-q)
 public export
@@ -224,3 +256,51 @@ clamp_l_test = Refl
 
 clamp_u_test : clamp I 1.0 === 0.9
 clamp_u_test = Refl
+
+-- Test logToLinData
+X : Matrix 8 2 Bool
+X = MkMatrix [[False, False],
+              [False, True],
+              [True, False],
+              [True, True],
+              [False, False],
+              [False, True],
+              [True, False],
+              [True, True]]
+Y : ColVect 8 Bool
+Y = toColVect [True, False, False, True, False, False, True, True]
+
+nl_XYL : (nl : Nat ** (Matrix nl 2 Bool, ColVect nl Double))
+nl_XYL = logToLinData X Y
+
+N : Nat
+N = fst nl_XYL
+
+XYL : (Matrix N 2 Bool, ColVect N Double)
+XYL = snd nl_XYL
+
+XL : Matrix N 2 Bool
+XL = fst XYL
+
+YL : ColVect N Double
+YL = snd XYL
+
+-- Expected XL and YL
+XL_expect : Matrix 4 2 Bool
+XL_expect = MkMatrix [[False, False],
+                      [False, True],
+                      [True, False],
+                      [True, True]]
+
+YL_expect : ColVect 4 Double
+YL_expect = toColVect [0.0, -1.6094379124341005, 0.0, 1.6094379124341007]
+
+-- TODO: compiling error
+-- XL_eq_test : XL === XL_expect
+-- XL_eq_test = Refl
+
+print_XYL : IO ()
+print_XYL = do printLn X
+               printLn Y
+               printLn XL
+               printLn YL
