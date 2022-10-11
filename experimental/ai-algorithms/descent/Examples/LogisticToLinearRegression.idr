@@ -78,12 +78,6 @@ test_logreg =
       rndseed = 42
       sample_size : Nat         -- Total sample size
       sample_size = 1000
-      train_test_ratio : Double -- Train/Test ratio
-      train_test_ratio = 2.0/3.0
-      train_size : Nat          -- Train sample size
-      train_size = cast ((cast sample_size) * train_test_ratio)
-      test_size : Nat           -- Test sample size
-      test_size = minus sample_size train_size
       eta : Double              -- Learning rate
       eta = 1.0e-2
       beta : ColVect 3 Double   -- Initial model
@@ -96,78 +90,39 @@ test_logreg =
         putBoxedStrLn "Generating data"
         x <- rnd_input_data sample_size
         y <- rnd_overpriced_data x
-        let -- Below if a convoluted way of saying
-            -- (x_train, x_test) = splitAtRow train_size x
-            -- (y_train, y_test) = splitAtRow train_size y
-            x_split : (Matrix train_size 3 Bool, Matrix test_size 3 Bool)
-            x_split = splitAtRow train_size x
-            y_split : (ColVect train_size Bool, ColVect test_size Bool)
-            y_split = splitAtRow train_size y
-            x_train : Matrix train_size 3 Bool
-            x_train = fst x_split
-            y_train : ColVect train_size Bool
-            y_train = fst y_split
-            x_test : Matrix test_size 3 Bool
-            x_test = snd x_split
-            y_test : ColVect test_size Bool
-            y_test = snd y_split
-        putStrLn "\nTrain input data:"
-        printLn x_train
-        putStrLn "\nTrain probability of being overpriced data:"
-        printLn (overpriced_probs_data x_train)
-        putStrLn "\nTrain output data:"
-        printLn y_train
-        putStrLn "\nTest input data:"
-        printLn x_test
-        putStrLn "\nTest probability of being overpriced data:"
-        printLn (overpriced_probs_data x_test)
-        putStrLn "\nTest output data:"
-        printLn y_test
+        putStrLn "\nInput data:"
+        printLn x
+        putStrLn "\nProbability of being overpriced data:"
+        printLn (overpriced_probs_data x)
+        putStrLn "\nOutput data:"
+        printLn y
 
         -- Learn model based on train data
         putStrLn ""
         putBoxedStrLn "Learning"
-        let x_train_d : Matrix train_size 3 Double
-            x_train_d = (map boolToDouble x_train)
-            x_test_d : Matrix test_size 3 Double
-            x_test_d = (map boolToDouble x_test)
+        let x_d : Matrix sample_size 3 Double
+            x_d = map boolToDouble x
             model_ls : (ColVect 3 Double, Nat)
-            model_ls = logreg x_train_d y_train eta (beta, maxsteps)
+            model_ls = logreg x_d y eta (beta, maxsteps)
             model : ColVect 3 Double
             model = fst model_ls
             steps : Nat         -- Actual number of steps used
             steps = minus maxsteps (snd model_ls)
-            train_loss : Double
-            train_loss = loss x_train_d y_train model
-            train_gradient : ColVect 3 Double
-            train_gradient = gradient x_train_d y_train model
-            y_train_prediction : ColVect train_size Bool
-            y_train_prediction = predict x_train_d model
+            x_loss : Double
+            x_loss = loss x_d y model
+            x_gradient : ColVect 3 Double
+            x_gradient = gradient x_d y model
+            y_prediction : ColVect sample_size Bool
+            y_prediction = predict x_d model
         putStrLn ("\nActual number of steps used = " ++ show steps)
         putStrLn "\nModel:"
         printLn model
-        putStrLn "\nTrain output prediction:"
-        printLn y_train_prediction
-        putStrLn "\nTrain loss:"
-        printLn train_loss
-        putStrLn "\nTrain gradient:"
-        printLn train_gradient
-
-        -- Test model based on test data
-        putStrLn ""
-        putBoxedStrLn "Testing"
-        let test_loss : Double
-            test_loss = loss x_test_d y_test model
-            test_gradient : ColVect 3 Double
-            test_gradient = gradient x_test_d y_test model
-            y_test_prediction : ColVect test_size Bool
-            y_test_prediction = predict x_test_d model
-        putStrLn "\nTest output prediction:"
-        printLn y_test_prediction
-        putStrLn "\nTest loss:"
-        printLn test_loss
-        putStrLn "\nTest gradient:"
-        printLn test_gradient
+        putStrLn "\nOutput prediction:"
+        printLn y_prediction
+        putStrLn "\nLoss:"
+        printLn x_loss
+        putStrLn "\nGradient:"
+        printLn x_gradient
 
 -- Test logistic to linear regression
 
@@ -181,8 +136,6 @@ test_loglinreg =
       rndseed = 42
       sample_size : Nat         -- Total sample size
       sample_size = 1000
-      train_test_ratio : Double -- Train/Test ratio
-      train_test_ratio = 2.0/3.0
       eta : Double              -- Learning rate
       eta = 1.0e-2
       beta : ColVect 3 Double   -- Initial model
@@ -201,82 +154,38 @@ test_loglinreg =
             S = fst nss_xyl
             xyl : (Matrix S 3 Bool, ColVect S Double)
             xyl = snd nss_xyl
-            TRS : Nat           -- Train sample size
-            TRS = cast ((cast S) * train_test_ratio)
-            TES : Nat           -- Test sample size
-            TES = minus S TRS
             xl : Matrix S 3 Bool
             xl = fst xyl
             yl : ColVect S Double
             yl = snd xyl
-            xl_split : (Matrix TRS 3 Bool, Matrix TES 3 Bool)
-            xl_split = splitAtRow TRS (believe_me xl)
-            yl_split : (ColVect TRS Double, ColVect TES Double)
-            yl_split = splitAtRow TRS (believe_me yl)
-            xl_train : Matrix TRS 3 Bool
-            xl_train = fst xl_split
-            yl_train : ColVect TRS Double
-            yl_train = fst yl_split
-            xl_test : Matrix TES 3 Bool
-            xl_test = snd xl_split
-            yl_test : ColVect TES Double
-            yl_test = snd yl_split
-        putStrLn "\nLinearized data set:"
-        printLn xyl
-        -- putStrLn "\nTrain input data:"
-        -- printLn x_train
-        -- putStrLn "\nTrain probability of being overpriced data:"
-        -- printLn (overpriced_probs_data x_train)
-        -- putStrLn "\nTrain output data:"
-        -- printLn y_train
-        -- putStrLn "\nTest input data:"
-        -- printLn x_test
-        -- putStrLn "\nTest probability of being overpriced data:"
-        -- printLn (overpriced_probs_data x_test)
-        -- putStrLn "\nTest output data:"
-        -- printLn y_test
+        putStrLn "\nLinearized input data set:"
+        printLn xl
+        putStrLn "\nLinearized output data:"
+        printLn yl
 
-        -- -- Learn model based on train data
-        -- putStrLn ""
-        -- putBoxedStrLn "Learning"
-        -- let x_train_d : Matrix TRS 3 Double
-        --     x_train_d = (map boolToDouble x_train)
-        --     x_test_d : Matrix TES 3 Double
-        --     x_test_d = (map boolToDouble x_test)
-        --     model_ls : (ColVect 3 Double, Nat)
-        --     model_ls = logreg x_train_d y_train eta (beta, maxsteps)
-        --     model : ColVect 3 Double
-        --     model = fst model_ls
-        --     steps : Nat         -- Actual number of steps used
-        --     steps = minus maxsteps (snd model_ls)
-        --     train_loss : Double
-        --     train_loss = loss x_train_d y_train model
-        --     train_gradient : ColVect 3 Double
-        --     train_gradient = gradient x_train_d y_train model
-        --     y_train_prediction : ColVect TRS Bool
-        --     y_train_prediction = predict x_train_d model
-        -- putStrLn ("\nActual number of steps used = " ++ show steps)
-        -- putStrLn "\nModel:"
-        -- printLn model
-        -- putStrLn "\nTrain output prediction:"
-        -- printLn y_train_prediction
-        -- putStrLn "\nTrain loss:"
-        -- printLn train_loss
-        -- putStrLn "\nTrain gradient:"
-        -- printLn train_gradient
-
-        -- -- Test model based on test data
-        -- putStrLn ""
-        -- putBoxedStrLn "Testing"
-        -- let test_loss : Double
-        --     test_loss = loss x_test_d y_test model
-        --     test_gradient : ColVect 3 Double
-        --     test_gradient = gradient x_test_d y_test model
-        --     y_test_prediction : ColVect TES Bool
-        --     y_test_prediction = predict x_test_d model
-        -- putStrLn "\nTest output prediction:"
-        -- printLn y_test_prediction
-        -- putStrLn "\nTest loss:"
-        -- printLn test_loss
-        -- putStrLn "\nTest gradient:"
-        -- printLn test_gradient
+        -- Learn model based on train data
+        putStrLn ""
+        putBoxedStrLn "Learning"
+        let xl_d : Matrix S 3 Double
+            xl_d = (map boolToDouble xl)
+            model_ls : (ColVect 3 Double, Nat)
+            model_ls = linreg xl_d yl eta (beta, maxsteps)
+            model : ColVect 3 Double
+            model = fst model_ls
+            steps : Nat         -- Actual number of steps used
+            steps = minus maxsteps (snd model_ls)
+            xl_loss : Double
+            xl_loss = loss xl_d yl model
+            xl_gradient : ColVect 3 Double
+            xl_gradient = gradient xl_d yl model
+            yl_prediction : ColVect S Bool
+            yl_prediction = predict xl_d model
+        putStrLn ("\nActual number of steps used = " ++ show steps)
+        putStrLn "\nModel:"
+        printLn model
+        putStrLn "\nLinearized output prediction:"
+        printLn yl_prediction
+        putStrLn "\nLinearized loss:"
+        printLn xl_loss
+        putStrLn "\nLinearized gradient:"
+        printLn xl_gradient
