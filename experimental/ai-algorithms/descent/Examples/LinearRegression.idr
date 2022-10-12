@@ -56,6 +56,8 @@ price_data x = toColVect (map price x.vects)
 test_linreg : IO ()
 test_linreg =
   let -- Parameters
+      rndseed : Bits64          -- Random seed
+      rndseed = 42
       sample_size : Nat         -- Total sample size
       sample_size = 30
       train_test_ratio : Double -- Train/Test ratio
@@ -68,27 +70,16 @@ test_linreg =
       eta = 1.0e-5
       beta : ColVect 4 Double   -- Initial model
       beta = replicate 0.0
+      maxsteps : Nat            -- Maximum number of steps
+      maxsteps = 1000000
   in do -- Generate train and test data
+        srand rndseed
         putStrLn ""
         putBoxedStrLn "Generating data"
         x <- rnd_input_data sample_size
-        let y : ColVect sample_size Double
-            y = price_data x
-            -- Below if a convoluted way of saying
-            -- (x_train, x_test) = splitAtRow train_size x
-            -- (y_train, y_test) = splitAtRow train_size y
-            x_split : (Matrix train_size 4 Double, Matrix test_size 4 Double)
-            x_split = splitAtRow train_size x
-            y_split : (ColVect train_size Double, ColVect test_size Double)
-            y_split = splitAtRow train_size y
-            x_train : Matrix train_size 4 Double
-            x_train = fst x_split
-            y_train : ColVect train_size Double
-            y_train = fst y_split
-            x_test : Matrix test_size 4 Double
-            x_test = snd x_split
-            y_test : ColVect test_size Double
-            y_test = snd y_split
+        let y = price_data x
+            (x_train, x_test) = splitAtRow train_size x
+            (y_train, y_test) = splitAtRow train_size y
         putStrLn "\nTrain input data:"
         printLn x_train
         putStrLn "\nTrain output data:"
@@ -101,16 +92,18 @@ test_linreg =
         -- Learn model based on train data
         putStrLn ""
         putBoxedStrLn "Learning"
-        let model : ColVect 4 Double
-            model = linreg x_train y_train eta beta
+        let (model, leftsteps) = linreg x_train y_train eta (beta, maxsteps)
+            steps : Nat         -- Actual number of steps used
+            steps = minus maxsteps leftsteps
             train_loss : Double
             train_loss = loss x_train y_train model
-            y_train_estimate : ColVect train_size Double
-            y_train_estimate = x_train * model
+            y_train_prediction : ColVect train_size Double
+            y_train_prediction = x_train * model
+        putStrLn ("\nActual number of steps used = " ++ show steps)
         putStrLn "\nModel:"
         printLn model
         putStrLn "\nTrain output prediction:"
-        printLn y_train_estimate
+        printLn y_train_prediction
         putStrLn "\nTrain loss:"
         printLn train_loss
 
@@ -119,9 +112,9 @@ test_linreg =
         putBoxedStrLn "Testing"
         let test_loss : Double
             test_loss = loss x_test y_test model
-            y_test_estimate : ColVect test_size Double
-            y_test_estimate = x_test * model
+            y_test_prediction : ColVect test_size Double
+            y_test_prediction = x_test * model
         putStrLn "\nTest output prediction:"
-        printLn y_test_estimate
+        printLn y_test_prediction
         putStrLn "\nTest loss:"
         printLn test_loss

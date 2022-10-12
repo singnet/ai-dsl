@@ -69,6 +69,8 @@ rnd_success_data x = traverse bernoulliSample (success_probs_data x)
 test_logreg : IO ()
 test_logreg =
   let -- Parameters
+      rndseed : Bits64          -- Random seed
+      rndseed = 42
       sample_size : Nat         -- Total sample size
       sample_size = 1000
       train_test_ratio : Double -- Train/Test ratio
@@ -81,26 +83,16 @@ test_logreg =
       eta = 1.0e-6
       beta : ColVect 4 Double   -- Initial model
       beta = replicate 0.0
+      maxsteps : Nat            -- Maximum number of steps
+      maxsteps = 1000000
   in do -- Generate train and test data
+        srand rndseed
         putStrLn ""
         putBoxedStrLn "Generating data"
         x <- rnd_input_data sample_size
         y <- rnd_success_data x
-        let -- Below if a convoluted way of saying
-            -- (x_train, x_test) = splitAtRow train_size x
-            -- (y_train, y_test) = splitAtRow train_size y
-            x_split : (Matrix train_size 4 Double, Matrix test_size 4 Double)
-            x_split = splitAtRow train_size x
-            y_split : (ColVect train_size Bool, ColVect test_size Bool)
-            y_split = splitAtRow train_size y
-            x_train : Matrix train_size 4 Double
-            x_train = fst x_split
-            y_train : ColVect train_size Bool
-            y_train = fst y_split
-            x_test : Matrix test_size 4 Double
-            x_test = snd x_split
-            y_test : ColVect test_size Bool
-            y_test = snd y_split
+        let (x_train, x_test) = splitAtRow train_size x
+            (y_train, y_test) = splitAtRow train_size y
         putStrLn "\nTrain input data:"
         printLn x_train
         putStrLn "\nTrain probability of success data:"
@@ -117,18 +109,20 @@ test_logreg =
         -- Learn model based on train data
         putStrLn ""
         putBoxedStrLn "Learning"
-        let model : ColVect 4 Double
-            model = logreg x_train y_train eta beta
+        let (model, leftsteps) = logreg x_train y_train eta (beta, maxsteps)
+            steps : Nat         -- Actual number of steps used
+            steps = minus maxsteps leftsteps
             train_loss : Double
             train_loss = loss x_train y_train model
             train_gradient : ColVect 4 Double
             train_gradient = gradient x_train y_train model
-            y_train_estimate : ColVect train_size Double
-            y_train_estimate = x_train * model
+            y_train_prediction : ColVect train_size Double
+            y_train_prediction = x_train * model
+        putStrLn ("\nActual number of steps used = " ++ show steps)
         putStrLn "\nModel:"
         printLn model
         putStrLn "\nTrain output prediction:"
-        printLn y_train_estimate
+        printLn y_train_prediction
         putStrLn "\nTrain loss:"
         printLn train_loss
         putStrLn "\nTrain gradient:"
@@ -141,10 +135,10 @@ test_logreg =
             test_loss = loss x_test y_test model
             test_gradient : ColVect 4 Double
             test_gradient = gradient x_test y_test model
-            y_test_estimate : ColVect test_size Double
-            y_test_estimate = x_test * model
+            y_test_prediction : ColVect test_size Double
+            y_test_prediction = x_test * model
         putStrLn "\nTest output prediction:"
-        printLn y_test_estimate
+        printLn y_test_prediction
         putStrLn "\nTest loss:"
         printLn test_loss
         putStrLn "\nTest gradient:"
