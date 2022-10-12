@@ -15,6 +15,11 @@ import Data.Matrix
 -- modules, because not all functions here belong to the Search
 -- category.
 
+||| Access the second element of a triple
+public export
+tnd : (a, b, c) -> b
+tnd = fst . snd
+
 ||| Access the third element of a triple
 public export
 trd : (a, b, c) -> c
