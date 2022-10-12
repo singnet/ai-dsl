@@ -155,8 +155,8 @@ cd_eq_sdr : Ord cost_t =>
             (cost : cnd_t -> cost_t) ->  -- Cost function
             (next : cnd_t -> cnd_t) ->   -- Next function
             (cnd : cnd_t) ->             -- Input candidate
-            (asteps : Nat) ->            -- Allocated steps
-            (cost (fst (descent cost next (cnd, asteps)))) === (tnd (descent_rec cost next (cnd, cost cnd, asteps)))
+            (steps : Nat) ->             -- Allocated steps
+            (cost (fst (descent cost next (cnd, steps)))) === (tnd (descent_rec cost next (cnd, cost cnd, steps)))
 cd_eq_sdr _ _ _ Z = Refl
 cd_eq_sdr cost next cnd (S k) with ((cost (next cnd)) < (cost cnd)) proof eq
   _ | True = cd_eq_sdr cost next (next cnd) k

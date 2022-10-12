@@ -1,5 +1,6 @@
 module Search.Regression.Logistic
 
+import Debug.Trace
 import System.Random
 import Data.String
 import Data.Vect
@@ -73,7 +74,14 @@ loss : (x : Matrix m n Double) ->
        (beta : ColVect n Double) ->
        Double
 loss x y beta = let p = map expit (x * beta)
-                in sum (zipWith bernoulliCrossEntropy (indicator y) p)
+                    l = sum (zipWith bernoulliCrossEntropy (indicator y) p)
+                in l
+                -- Uncomment the following for tracing the loss.  Note
+                -- that Debug.NoTrace does not do its job of not
+                -- slowing down computation so we have to instead
+                -- manual comment/uncomment the code.
+                --
+                -- in trace ("loss = " ++ (show l)) l
 
 ||| Gradient: ∇L(β) = Xᵀ(expit(Xβ)-Y)
 public export
@@ -95,14 +103,25 @@ gradient x y beta = let p = map expit (x * beta)
 ||| @y Column vector of size m
 ||| @eta learning rate, small positive value
 ||| @beta initial model, column vector of n parameters
+||| @steps maximum number of steps allocated
 public export
 logreg : {n : Nat} ->
          (x : Matrix m n Double) ->
          (y : ColVect m Bool) ->
          (eta : Double) ->
-         (beta : ColVect n Double) ->
-         ColVect n Double
+         (beta_steps : (ColVect n Double, Nat)) ->
+         (ColVect n Double, Nat)
 logreg x y = gradientDescent (loss x y) (gradient x y)
+
+||| Takes a input matrix, a logistic model and output a column vector
+||| of predictions.  A True value is predicted if the probability
+||| output by the logistic model is greater than 0.5, False otherwise.
+|||
+||| @x input matrix
+||| @beta logistic model
+public export
+predict : Matrix m n Double -> ColVect n Double -> ColVect m Bool
+predict x beta = map ((0.5 <) . expit) (x * beta)
 
 ------------
 -- Proofs --
@@ -122,6 +141,6 @@ logreg_le : {n : Nat} ->
             (x : Matrix m n Double) ->
             (y : ColVect m Bool) ->
             (eta : Double) ->
-            (beta : ColVect n Double) ->
-            ((loss x y (logreg x y eta beta)) <= (loss x y beta)) === True
+            (beta_steps : (ColVect n Double, Nat)) ->
+            ((loss x y (fst (logreg x y eta beta_steps))) <= (loss x y (fst beta_steps))) === True
 logreg_le x y = gradientDescent_le (loss x y) (gradient x y)

@@ -1,5 +1,6 @@
 module Search.GradientDescent
 
+import Debug.Trace
 import Data.Matrix
 import Search.Descent
 
@@ -28,13 +29,14 @@ fixedStepSizeGradientDescent grd eta cnd = cnd - (scale eta (grd cnd))
 ||| @grd the gradient ascent of the cost, that is its derivative
 ||| @eta the step size factor applied of the gradient descent
 ||| @cnd the initial candidate
+||| @maxsteps maximum number of steps allocated
 public export
 gradientDescent : (Ord a, Neg a) =>
-                  (cost : ColVect m a -> a) ->           -- Cost function
-                  (grd : ColVect m a -> ColVect m a) ->  -- Gradient
-                  (eta : a) ->                           -- Learning rate
-                  (cnd : ColVect m a) ->                 -- Initial candidate
-                  ColVect m a                            -- Final candidate
+                  (cost : ColVect m a -> a) ->          -- Cost function
+                  (grd : ColVect m a -> ColVect m a) -> -- Gradient
+                  (eta : a) ->                          -- Learning rate
+                  (cas : (ColVect m a, Nat)) ->         -- Initial candidate and allocated steps
+                  (ColVect m a, Nat)                    -- Final candidate and steps left
 gradientDescent cost grd eta = descent cost (fixedStepSizeGradientDescent grd eta)
 
 ------------
@@ -53,6 +55,6 @@ gradientDescent_le : (Ord a, Neg a) =>
                      (cost : ColVect m a -> a) ->           -- Cost function
                      (grd : ColVect m a -> ColVect m a) ->  -- Gradient
                      (eta : a) ->                           -- Step size
-                     (cnd : ColVect m a) ->                 -- Initial candidate
-                     ((cost (gradientDescent cost grd eta cnd)) <= (cost cnd)) === True
+                     (cas : (ColVect m a, Nat)) ->          -- Initial candidate and allocated steps
+                     ((cost (fst (gradientDescent cost grd eta cas))) <= (cost (fst cas))) === True
 gradientDescent_le cost grd eta = descent_le cost (fixedStepSizeGradientDescent grd eta)

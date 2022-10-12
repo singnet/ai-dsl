@@ -82,13 +82,14 @@ gradient x y beta = scale (-2) ((transpose x) * (y - (x * beta)))
 ||| @y Column vector of size m
 ||| @eta learning rate, small positive value
 ||| @beta initial model, column vector of n parameters
+||| @steps maximum number of steps allocated
 public export
 linreg : {n : Nat} ->
          (x : Matrix m n Double) ->
          (y : ColVect m Double) ->
          (eta : Double) ->
-         (beta : ColVect n Double) ->
-         ColVect n Double
+         (beta_steps : (ColVect n Double, Nat)) ->
+         (ColVect n Double, Nat)
 linreg x y = gradientDescent (loss x y) (gradient x y)
 
 ------------
@@ -109,6 +110,6 @@ linreg_le : {n : Nat} ->
             (x : Matrix m n Double) ->
             (y : ColVect m Double) ->
             (eta : Double) ->
-            (beta : ColVect n Double) ->
-            ((loss x y (linreg x y eta beta)) <= (loss x y beta)) === True
+            (beta_steps : (ColVect n Double, Nat)) ->
+            ((loss x y (fst (linreg x y eta beta_steps))) <= (loss x y (fst beta_steps))) === True
 linreg_le x y = gradientDescent_le (loss x y) (gradient x y)
