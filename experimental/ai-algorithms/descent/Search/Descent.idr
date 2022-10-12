@@ -1,6 +1,8 @@
 module Search.Descent
 
+import Search.Util
 import Search.OrdProofs
+import Debug.Trace
 
 ||| Descent algorithm, attempts to find the best candidate minimizing
 ||| a cost function.
@@ -22,28 +24,37 @@ import Search.OrdProofs
 ||| For now the descent algorithm merely iteratively calls the search
 ||| function as long as the cost function over its output is lower.
 descent_rec : Ord cost_t =>
-              (cnd_t -> cost_t) -> -- Cost function
-              (cnd_t -> cnd_t) ->  -- Next function to jump to the next candidate
-              (cnd_t, cost_t) ->   -- Input pair of candidate and its cost
-              (cnd_t, cost_t)      -- Output pair of candidate and its cost
-descent_rec cost next (cnd, cst) =
-  if nxtcst < cst then descent_rec cost next (nxtcnd, nxtcst)
-                  else (cnd, cst)
-  where
-    -- Next candidate
-    nxtcnd : cnd_t
-    nxtcnd = next cnd
-    -- Cost over next candidate
-    nxtcst : cost_t
-    nxtcst = cost nxtcnd
+              (cnd_t -> cost_t) ->    -- Cost function
+              (cnd_t -> cnd_t) ->     -- Next function to jump to the next candidate
+              (cnd_t, cost_t, Nat) -> -- Input candidate, cost and allocated steps
+              (cnd_t, cost_t, Nat)    -- Output candidate, cost and steps left
+descent_rec _ _ (cnd, cst, Z) = (cnd, cst, Z)
+descent_rec cost next (cnd, cst, S k) =
+    if nxtcst < cst then descent_rec cost next (nxtcnd, nxtcst, k)
+                    else (cnd, cst, (S k))
+    where
+      -- Next candidate
+      nxtcnd : cnd_t
+      nxtcnd = next cnd
+      -- Cost over next candidate
+      nxtcst : cost_t
+      nxtcst = cost nxtcnd
 
 public export
 descent : Ord cost_t =>
           (cnd_t -> cost_t) ->  -- Cost function
           (cnd_t -> cnd_t) ->   -- Next function
-          cnd_t ->              -- Input candidate
-          cnd_t                 -- Output candidate
-descent cost next cnd = fst (descent_rec cost next (cnd, cost cnd))
+          (cnd_t, Nat) ->       -- Input candidate and allocated steps
+          (cnd_t, Nat)          -- Output candidate and steps left
+descent cost next (cnd, ast) =
+  let nu : (cnd_t, cost_t, Nat)
+      nu = descent_rec cost next (cnd, cost cnd, ast)
+      nucnd : cnd_t
+      nucnd = fst nu
+      steps : Nat
+      steps = trd nu
+  in (nucnd, steps)
+  -- in trace "descent" (nucnd, steps)
 
 -- TODO: Explore returning the whole trace.
 
@@ -73,9 +84,16 @@ descent cost next cnd = fst (descent_rec cost next (cnd, cost cnd))
 ||| than or equal to the cost of the input candidate.
 |||
 ||| The simplicity of the proof of descent_rec_le is due to the case
-||| base approach which allows Idris to partially evaluate descent_rec.
-||| This partial evaluation is then reflected inside the target
-||| theorem.  For instance if
+||| base approach which allows Idris to partially evaluate
+||| descent_rec.  This partial evaluation is then reflected inside the
+||| target theorem.
+|||
+||| Note: that in the following proof sketch in this comment, as well
+||| as the comments of the other proofs, the step count is ignored,
+||| and cndcst is a pair (candidate, cost), not a triple as in the
+||| code.
+|||
+||| For instance if
 |||
 ||| ((cost (next cnd)) < cst) === False
 |||
@@ -113,14 +131,15 @@ descent cost next cnd = fst (descent_rec cost next (cnd, cost cnd))
 ||| which is obtained as the reflexive closure of <= over the
 ||| hypothesis.
 descent_rec_le : Ord cost_t =>
-                 (cost : cnd_t -> cost_t) ->  -- Cost function
-                 (next : cnd_t -> cnd_t) ->   -- Next function
-                 (cndcst : (cnd_t, cost_t)) -> -- Input pair of candidate and its cost
-                 ((snd (descent_rec cost next cndcst)) <= (snd cndcst)) === True
-descent_rec_le cost next (cnd, cst) with ((cost (next cnd)) < cst) proof eq
-  _ | True = let des_le_nxtcst = descent_rec_le cost next (next cnd, (cost (next cnd)))
+                 (cost : cnd_t -> cost_t) ->      -- Cost function
+                 (next : cnd_t -> cnd_t) ->       -- Next function
+                 (ccas : (cnd_t, cost_t, Nat)) -> -- Input candidate, cost and allocated steps
+                 ((tnd (descent_rec cost next ccas)) <= (tnd ccas)) === True
+descent_rec_le _ _ (_, _, Z) = le_reflexive
+descent_rec_le cost next (cnd, cst, S k) with ((cost (next cnd)) < cst) proof eq
+  _ | True = let des_le_nxtcst = descent_rec_le cost next (next cnd, cost (next cnd), k)
                  nxtcst_le_cst = le_reflexive_closure_lt (Left eq)
-              in (le_transitive des_le_nxtcst nxtcst_le_cst)
+              in le_transitive des_le_nxtcst nxtcst_le_cst
   _ | False = le_reflexive
 
 ||| Proof that
@@ -135,10 +154,12 @@ descent_rec_le cost next (cnd, cst) with ((cost (next cnd)) < cst) proof eq
 cd_eq_sdr : Ord cost_t =>
             (cost : cnd_t -> cost_t) ->  -- Cost function
             (next : cnd_t -> cnd_t) ->   -- Next function
-            (cnd : cnd_t) ->              -- Input candidate
-            (cost (descent cost next cnd)) === snd (descent_rec cost next (cnd, cost cnd))
-cd_eq_sdr cost next cnd with ((cost (next cnd)) < (cost cnd)) proof eq
-  _ | True = cd_eq_sdr cost next (next cnd)
+            (cnd : cnd_t) ->             -- Input candidate
+            (asteps : Nat) ->            -- Allocated steps
+            (cost (fst (descent cost next (cnd, asteps)))) === (tnd (descent_rec cost next (cnd, cost cnd, asteps)))
+cd_eq_sdr _ _ _ Z = Refl
+cd_eq_sdr cost next cnd (S k) with ((cost (next cnd)) < (cost cnd)) proof eq
+  _ | True = cd_eq_sdr cost next (next cnd) k
   _ | False = Refl
 
 ||| Proof that the output candidate of descent has a cost less than or
@@ -157,7 +178,7 @@ public export
 descent_le : Ord cost_t =>
              (cost : cnd_t -> cost_t) ->  -- Cost function
              (next : cnd_t -> cnd_t) ->   -- Next function
-             (cnd : cnd_t) ->              -- Input candidate
-             ((cost (descent cost next cnd)) <= (cost cnd)) === True
-descent_le cost next cnd = rewrite (cd_eq_sdr cost next cnd)
-                           in (descent_rec_le cost next (cnd, cost cnd))
+             (cas : (cnd_t, Nat)) ->      -- Input candidate and allocated steps
+             ((cost (fst (descent cost next cas))) <= (cost (fst cas))) === True
+descent_le cost next (cnd, ast) = rewrite (cd_eq_sdr cost next cnd ast)
+                                  in (descent_rec_le cost next (cnd, cost cnd, ast))
