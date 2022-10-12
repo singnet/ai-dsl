@@ -1,8 +1,9 @@
-module Matrix
+module Data.Matrix
 
 import System.Random
 import Data.String
 import Data.Vect
+import Data.Vect.Sort
 
 -----------------------------------
 -- Matrix data type definition   --
@@ -48,6 +49,16 @@ replicateRow row = MkMatrix (replicate m (head row.vects))
 public export
 replicateCol : {m, n : Nat} -> ColVect m a -> Matrix m n a
 -- The implementation is further below as it uses transpose
+
+||| Make a RowVect from a Vect
+public export
+toRowVect : Vect n a -> RowVect n a
+toRowVect xs = MkMatrix [xs]
+
+||| Make a ColVect from a Vect
+public export
+toColVect : Vect m a -> ColVect m a
+toColVect xs = MkMatrix (map (:: Nil) xs)
 
 -------------------------------
 -- Interface implementations --
@@ -243,6 +254,28 @@ x <|> y = transpose ((transpose x) <-> (transpose y))
 -- Implementation of replicateCol
 replicateCol {m, n} col = transpose (replicateRow (transpose col))
 
+||| Sort rows
+public export
+sortRows : Ord a => {m, n : Nat} -> Matrix m n a -> Matrix m n a
+sortRows x = MkMatrix (sort x.vects)
+
+||| Remove unique rows
+public export
+nubRows : Eq a => {m, n : Nat} -> Matrix m n a -> (m' ** Matrix m' n a)
+nubRows x = let dp : (m' ** Vect m' (Vect n a))
+                dp = nub x.vects
+            in (fst dp ** MkMatrix (snd dp))
+
+||| Return the number of rows
+public export
+countRows : {m, n : Nat} -> Matrix m n a -> Nat
+countRows _ = m
+
+||| Return the number of unique rows
+public export
+countUniqRows : Eq a => {m, n : Nat} -> Matrix m n a -> Nat
+countUniqRows = fst . nubRows
+
 ----------
 -- Test --
 ----------
@@ -311,3 +344,7 @@ M_rendered = "┌         ┐\n" ++
 -- Disabled because Idris complains with multiple errors
 -- show_test : (show M) === M_rendered
 -- show_test = Refl
+
+-- Other matrix libraries for Idris2:
+--
+-- https://github.com/running-grass/idris2-playground/blob/main/matrix/src/Data/Matrix.idr

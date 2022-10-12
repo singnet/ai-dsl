@@ -1,6 +1,6 @@
-module OverSimplifiedDescent
+module Experiments.OverSimplifiedDescent
 
-import OrdProofs
+import Search.OrdProofs
 
 -- Over simplified descent algorithm that does not take a candidate.
 -- Instead it just takes a cost and jumps from cost to cost.

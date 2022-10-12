@@ -1,5 +1,5 @@
 package descent
--- version =
+version = 0.1
 authors = "Nil Geisweiller"
 -- maintainers =
 -- license =
@@ -16,15 +16,28 @@ authors = "Nil Geisweiller"
 depends = contrib
 
 -- modules to install
-modules = Descent,
-          GradientDescent,
-          Matrix,
-          Utils,
-          MinProofs,
-          MultivariateLinearRegression,
-          LogisticRegression,
-          OrdProofs,
-          README
+modules = Debug.NoTrace,
+
+          Data.Matrix,
+          Data.Counter,
+
+          Search.OrdProofs,
+          Search.Util,
+          Search.Descent,
+          Search.GradientDescent,
+
+          Search.Regression.Linear,
+          Search.Regression.Logistic,
+
+          Examples.LinearRegression,
+          Examples.LogisticRegression,
+          Examples.LogisticToLinearRegression,
+
+          Experiments.FunEq,
+          Experiments.MinProofs,
+          Experiments.OverSimplifiedDescent,
+          Experiments.SuperOverSimplifiedDescent,
+          Experiments.TestRewrite
 
 -- main file (i.e. file to load at REPL)
 -- main =

@@ -1,4 +1,4 @@
-module TestRewrite
+module Experiments.TestRewrite
 
 ||| Assume that f x = x
 fx_eq_x : Ord a => (f : a -> a) -> (x : a) -> f x === x

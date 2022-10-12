@@ -1,6 +1,6 @@
-module SuperOverSimplifiedDescent
+module Experiments.SuperOverSimplifiedDescent
 
-import OrdProofs
+import Search.OrdProofs
 
 -- Super over simplified descent algorithm that does not take a
 -- candidate.  Instead it just takes a cost and jumps from cost to
