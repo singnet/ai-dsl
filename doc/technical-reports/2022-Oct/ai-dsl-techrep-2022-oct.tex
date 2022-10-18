@@ -1,5 +1,5 @@
-%% Technical Report for the work on the AI-DSL over the period of
-%% March to May 2021.
+%% Technical Report for the work on the AI-DSL over the period of May
+%% to September 2022.
 
 \documentclass[]{report}
 \usepackage{url}
@@ -32,6 +32,80 @@
 
 \chapter{Introduction}
 
+\section{Setting the Scene}
+
+In the previous iteration we explored using Dependent Types to express
+formal specifications of AI services, with the ultimate goal of
+building a language for easily writing those specifications, the
+AI-DSL itself, as well as services to automatically connect AI
+services together, the AI-DSL Registry~\cite{AIDSLReport2021}.
+
+Back then we experimented with trivial AI services, computing simple
+arithmetic, described by trivial properties, such as the parity of
+their inputs/outputs.  We were able to demonstrate that Idris, our DTL
+of choice, could be used to verify the correctness of such AI service
+assemblages.  The approach seemed promising, but to really put the
+idea to the test we had to make progress on two fronts:
+
+\begin{enumerate}
+\item Replace trivial AI services by actual AI algorithms.
+\item Explore program synthesis, as it became clear that it was at the
+  heart of this endeavor.  First, for building the AI service
+  assemblages themselves.  Second, for achieving fuzzy matching, that
+  is when AI services almost fit together but not quite yet.  And
+  third, for completing assemblages when some AI services are outright
+  missing.
+\end{enumerate}
+That is what we have done during that iteration.
+
+\section{Work Accomplished}
+
+First we have implemented three AI algorithms in Idris:
+\begin{enumerate}
+\item Gradient descent
+\item Linear regression
+\item Logistic regression
+\end{enumerate}
+These algorithms were chosen because they are relatively simple, yet
+extensively use in real world applications, as well as tightly related
+to each other.  Linear regression can be framed as a gradient descent
+problem, and logistic regression can be framed both as gradient
+descent and linear regression problems, thus constituting an excellent
+case study for the AI-DSL.  Alongside these implementations, a
+descending property was formulated and formally proved for each
+algorithm.
+
+Finally, we have explored ways to perform program synthesis of
+dependently typed programs.  While we have only achieved partial
+success as far as program synthesis is concerned, we were able to
+demonstrate its feasibility within the Idris ecosystem.  It was clear
+from the start anyway that to be done well and fully, program
+synthesis essentially requires achieving AGI.  Indeed, it is one of
+these AI-complete problems.  That is any problem can be framed as a
+program synthesis problem and vice versa.  The idea being that such
+functionality can be progressively grown, deferred less and less to
+human intervention, as the network and the AI-DSL evolve.
+
+\section{Related Work}
+
+Here's a list of projects and publications we have discovered along
+the way that relate to the work done during that iteration.  TODO
+
+\chapter{Implementation and Verification of AI Algorithms}
+
+
+\chapter{Program Synthesis}
+
+\section{Language Framework}
+
+\section{Idris Elaboration}
+
+\section{Idris Proof Search}
+
+Idris proof search, contrary to what its name may suggest, can be used
+for program synthesis in general, not just proof search -- which is no
+surprise to those familiar with the Curry-Howard correspondence.
+
 \chapter{Conclusion}
 
 \appendix
@@ -50,6 +124,7 @@
 \item \textbf{Dependently Typed Language}: functional programming
   language using dependent types.  Examples of such languages are
   Idris, AGDA and Coq.
+\item \textbf{DTL}: Shorthand for Dependently Typed Language.
 \end{itemize}
 
 \bibliographystyle{splncs04}
