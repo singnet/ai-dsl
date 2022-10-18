@@ -1,0 +1,58 @@
+%% Technical Report for the work on the AI-DSL over the period of
+%% March to May 2021.
+
+\documentclass[]{report}
+\usepackage{url}
+\usepackage{minted}
+\usepackage[textsize=footnotesize]{todonotes}
+\newcommand{\kabir}[2][]{\todo[color=yellow,author=kabir, #1]{#2}}
+\newcommand{\nil}[2][]{\todo[color=purple,author=nil, #1]{#2}}
+\usepackage[hyperindex,breaklinks]{hyperref}
+\usepackage{breakurl}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=false,frame=single}
+\usepackage{float}
+\restylefloat{table}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage[skip=0pt]{subcaption}
+\usepackage{circledsteps}
+
+\begin{document}
+
+\title{AI-DSL Technical Report (May to Septembre 2022)}
+\author{Nil Geisweiller, Samuel Roberti}
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+
+\tableofcontents
+
+\chapter{Introduction}
+
+\chapter{Conclusion}
+
+\appendix
+\chapter{Glossary}
+\begin{itemize}
+\item \textbf{AI service assemblage}: collection of AI services
+  interacting together to fulfill a given function.  Example of such
+  AI service assemblage would be the Nunet Fake News Warning system.
+\item \textbf{Dependent Types}: types depending on values.  Instead of
+  being limited to constants such as \texttt{Integer} or
+  \texttt{String}, dependent types are essentially functions that take
+  values and return types.  A dependent type is usually expressed as a
+  term containing free variables.  An example of dependent type is
+  \texttt{Vect n a}, representing the class of vectors containing
+  \texttt{n} elements of type \texttt{a}.
+\item \textbf{Dependently Typed Language}: functional programming
+  language using dependent types.  Examples of such languages are
+  Idris, AGDA and Coq.
+\end{itemize}
+
+\bibliographystyle{splncs04}
+\bibliography{local}
+
+\end{document}
