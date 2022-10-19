@@ -25,7 +25,7 @@ import Debug.Trace
 ||| function as long as the cost function over its output is lower.
 descent_rec : Ord cost_t =>
               (cnd_t -> cost_t) ->    -- Cost function
-              (cnd_t -> cnd_t) ->     -- Next function to jump to the next candidate
+              (cnd_t -> cnd_t) ->     -- Step function to jump to the next candidate
               (cnd_t, cost_t, Nat) -> -- Input candidate, cost and allocated steps
               (cnd_t, cost_t, Nat)    -- Output candidate, cost and steps left
 descent_rec _ _ (cnd, cst, Z) = (cnd, cst, Z)
@@ -43,7 +43,7 @@ descent_rec cost next (cnd, cst, S k) =
 public export
 descent : Ord cost_t =>
           (cnd_t -> cost_t) ->  -- Cost function
-          (cnd_t -> cnd_t) ->   -- Next function
+          (cnd_t -> cnd_t) ->   -- Step function
           (cnd_t, Nat) ->       -- Input candidate and allocated steps
           (cnd_t, Nat)          -- Output candidate and steps left
 descent cost next (cnd, ast) =
@@ -132,7 +132,7 @@ descent cost next (cnd, ast) =
 ||| hypothesis.
 descent_rec_le : Ord cost_t =>
                  (cost : cnd_t -> cost_t) ->      -- Cost function
-                 (next : cnd_t -> cnd_t) ->       -- Next function
+                 (next : cnd_t -> cnd_t) ->       -- Step function
                  (ccas : (cnd_t, cost_t, Nat)) -> -- Input candidate, cost and allocated steps
                  ((tnd (descent_rec cost next ccas)) <= (tnd ccas)) === True
 descent_rec_le _ _ (_, _, Z) = le_reflexive
@@ -153,7 +153,7 @@ descent_rec_le cost next (cnd, cst, S k) with ((cost (next cnd)) < cst) proof eq
 ||| (cost (fst (descent_rec cost next (cnd, cost cnd))) <= cost cnd) === True
 cd_eq_sdr : Ord cost_t =>
             (cost : cnd_t -> cost_t) ->  -- Cost function
-            (next : cnd_t -> cnd_t) ->   -- Next function
+            (next : cnd_t -> cnd_t) ->   -- Step function
             (cnd : cnd_t) ->             -- Input candidate
             (steps : Nat) ->             -- Allocated steps
             (cost (fst (descent cost next (cnd, steps)))) === (tnd (descent_rec cost next (cnd, cost cnd, steps)))
@@ -177,7 +177,7 @@ cd_eq_sdr cost next cnd (S k) with ((cost (next cnd)) < (cost cnd)) proof eq
 public export
 descent_le : Ord cost_t =>
              (cost : cnd_t -> cost_t) ->  -- Cost function
-             (next : cnd_t -> cnd_t) ->   -- Next function
+             (next : cnd_t -> cnd_t) ->   -- Step function
              (cas : (cnd_t, Nat)) ->      -- Input candidate and allocated steps
              ((cost (fst (descent cost next cas))) <= (cost (fst cas))) === True
 descent_le cost next (cnd, ast) = rewrite (cd_eq_sdr cost next cnd ast)

@@ -45,7 +45,7 @@ Here is the detail of the folders and their files:
 - `Examples` contains:
   - `LinearRegression.idr`: Example of multivariate linear regression.
   - `LogisticRegression.idr`: Example of logistic regression.
-  - `LogisticToLinearRegression.idr`: Example of solving a logistic
+  - `LogisticLinearRegression.idr`: Example of solving a logistic
     regression problem by mapping it into a linear regression.
 
 - `Experiments` contains a collections of experiments to learn about
@@ -84,6 +84,8 @@ Here is the detail of the folders and their files:
       descends.
     - `Logistic.idr`: logistic regression algorithm and the proof that
       it descends.
+    - `LogisticLinear.idr`: logistic regression algorithm reframed as
+      linear regression and the proof that it descends.
 
 ## Usage
 
