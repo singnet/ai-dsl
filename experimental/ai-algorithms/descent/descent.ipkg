@@ -24,14 +24,16 @@ modules = Debug.NoTrace,
           Search.OrdProofs,
           Search.Util,
           Search.Descent,
+          Search.SimplifiedDescent,
           Search.GradientDescent,
 
           Search.Regression.Linear,
           Search.Regression.Logistic,
+          Search.Regression.LogisticLinear,
 
           Examples.LinearRegression,
           Examples.LogisticRegression,
-          Examples.LogisticToLinearRegression,
+          Examples.LogisticLinearRegression,
 
           Experiments.FunEq,
           Experiments.MinProofs,
