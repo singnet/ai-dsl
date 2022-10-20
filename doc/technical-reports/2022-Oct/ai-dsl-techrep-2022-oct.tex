@@ -198,10 +198,11 @@ one, could be verifying the AI algorithms themselves, or their output
 models, either using crisp mathematical properties, or empirical fuzzy
 NEXT
 
-Here we focus on the simplest one we could possibly come up with in
-this situation, which is that the algorithm must descend, or at least
-not ascend.  In other words, that the final candidate must be better,
-or at least not worse, that the initial one.  This may seem like an
+\subsection{Descending Property for Descent}
+Here we focus on the simplest one we could possibly imagine in this
+situation, which is that the algorithm must descend, or at least not
+ascend.  In other words, that the final candidate must be better, or
+at least not worse, that the initial one.  This may seem like an
 overly simplistic property, and it is.  However, as we will see,
 working with that was already quite an educational journey.
 
@@ -221,7 +222,10 @@ descent cost next (cnd, S k) = if cost (next cnd) < cost cnd
 It essentially expresses that if the cost of the next candidate is
 less than the cost of the initial candidate, it should recursively
 descend from the next candidate, otherwise return the initial
-candidate.  The descending property can then be formalized as follows:
+candidate.  Note that \texttt{cnd\_t} and \texttt{cost\_t} are type
+variables, that is they may be substituted by any type, up to some
+constraints, at function call.  The descending property can then be
+formalized as follows:
 \begin{minted}[mathescape]{idris}
 descent_le : Ord cost_t =>
              (cost : cnd_t -> cost_t) -> -- Cost function
@@ -234,8 +238,8 @@ than or equal to the cost of the initial candidate\footnote{For
   information, \texttt{===} denotes the equality type, a dependent
   type with \texttt{Refl} as sole constructor corresponding to the
   reflexivity axiom of equality.}.  Obviously such property should be
-trivial to proof given how the algorithm has been written.  In
-practice however, it is not so trivial, for two reasons:
+trivial to prove given how the algorithm has been written.  In
+practice however, it is not so, for two reasons:
 \begin{enumerate}
 \item Idris makes no assumption about the comparison operators
   \texttt{<}, \texttt{>}, \texttt{<=} and \texttt{>=}.  The interface
@@ -243,20 +247,55 @@ practice however, it is not so trivial, for two reasons:
   operators, but not how they should behave.  Thus one needs to encode
   these assumptions and make sure that they are true for the types of
   interest, which is not always easy, or even possible, especially for
-  primitive types like \texttt{Double}.  NEXT: Stefane prim vs
-  implementing ourselves.
-\item As the algorithm is recursive, it requires a recursive proof.
+  primitive types like \texttt{Double}.
+\item Since the algorithm is recursive, it requires a recursive proof.
 \end{enumerate}
-Here is a proof of \texttt{descent\_le}, slightly simplified as
-\texttt{descent}.  Let us first deal with the case where the number of
-allocated steps is zero:
+To address the first reason we added a number of functions formalizing
+the usual axioms of total strict and non-strict orders of \texttt{<},
+\texttt{>}, \texttt{<=} and \texttt{>=}.  A small snippet is given
+below:
+\begin{minted}[mathescape]{idris}
+||| Assume that < is irreflexive
+lt_irreflexive : Ord a => {0 x : a} -> (x < x) === False
+lt_irreflexive = believe_me ()
+
+||| Assume that < is connected
+lt_connected : Ord a => {0 x, y : a}
+                     -> (x < y) === False
+                     -> (y < x) === False
+                     -> x === y
+lt_connected _ _ = believe_me ()
+
+||| Assume that <= is reflexive
+le_reflexive : Ord a => {0 x : a} -> (x <= x) === True
+le_reflexive = believe_me ()
+
+||| Assume that <= is transitive
+public export
+le_transitive : Ord a => {0 x, y, z : a}
+                      -> (x <= y) === True
+                      -> (y <= z) === True
+                      -> (x <= z) === True
+le_transitive _ _ = believe_me ()
+\end{minted}
+The whole list of axioms can be found in
+file~\href{https://github.com/singnet/ai-dsl/blob/master/experimental/ai-algorithms/descent/Search/OrdProofs.idr}{OrdProofs.idr}
+of the~\href{https://github.com/singnet/ai-dsl}{ai-dsl} repository.
+We also attempted to use an existing library from Stefan H\"ock
+called~\href{https://github.com/stefan-hoeck/idris2-prim}{idris2-prim},
+but decided to write our own for more flexibility.\\
+
+The proof of \texttt{descent\_le}, slightly simplified to suit our
+simplified version of \texttt{descent}, is presented below.  Let us
+first deal with the base case where the number of allocated steps is
+zero:
 \begin{minted}[mathescape]{idris}
 descent_le _ _ (_, Z) = le_reflexive
 \end{minted}
-In order to proof the descending property it suffices to invoke the
+In order to prove the descending property it suffices to invoke the
 reflexivity of \texttt{<=} since for that case \texttt{descent} merely
-becomes the identity function.  Let us now examine the case where the
-number of allocated steps is greater than zero:
+becomes the identity function.  Let us now examine the recursive case
+where the number of allocated steps is greater than zero:
 \begin{minted}[mathescape]{idris}
 descent_le cost next (cnd, S k)
            with ((cost (next cnd)) < (cost cnd)) proof eq
@@ -268,13 +307,81 @@ descent_le cost next (cnd, S k)
 The proof considers the two branches of the conditional.  If the
 condition is false then invoking the reflexivity of \texttt{<=}
 suffices for the same reason as above.  If the condition is true then
-the proof needs to combine more axioms pertaining to comparison with
-the recursion of \texttt{descent\_le}.  That proof, even simplified,
-is already somewhat substantial, likely too substantial to be rapidly
-discovered by greedy proof search.  And the non simplified version,
-which can be found here~\cite{TODO} is about twice that size.
+the proof needs to combine axioms about comparison with the recursion
+of \texttt{descent\_le} and the transitivity of \texttt{<=}.
 
-NEXT: other algorithms.
+That simplified proof is already somewhat substantial, likely too
+substantial to be rapidly discovered by a greedy proof search
+algorithm.  The non simplified version of Descent as well as the proof
+of its descending property, about the double the size of the
+simplified one, can be found in
+file~\href{https://github.com/singnet/ai-dsl/blob/master/experimental/ai-algorithms/descent/Search/Descent.idr}{Descent.idr}
+of the~\href{https://github.com/singnet/ai-dsl}{ai-dsl} repository.
+Discovering such a proof automatically or semi-automatically still
+remains relatively practical, either by requiring human intervention,
+using proof tactics or more sophisticated inference control
+techniques~\cite{Goertzel2014EGI2Chapt18}.
+
+\subsection{Descending Property for Other Algorithms}
+Once the descending property has been proved for Descent, proving it
+for the remaining algorithms is now truly trivial, for the most part
+anyway.
+
+Let us provide an example for Gradient Descent, starting by recalling
+what is the gradient descent algorithm.  Given a loss function $L$ and
+a learning rate $\eta$, the gradient descent algorithm works by
+updating the candidate $\beta$ as follows
+$$\beta := \beta - \eta \nabla L(\beta)$$
+in other words, the step function takes the opposite direction of the
+gradient by a factor of $\eta$.  The Idris code of Gradient Descent is
+given below:
+\begin{minted}[mathescape]{idris}
+gradientDescent : (Ord a, Neg a) =>
+  (cost : ColVect m a -> a) ->          -- Cost function
+  (grd : ColVect m a -> ColVect m a) -> -- Gradient
+  (eta : a) ->                          -- Learning rate
+  (cas : (ColVect m a, Nat)) ->         -- Init candidate, steps
+  (ColVect m a, Nat)                    -- Final candidate, steps
+gradientDescent cost grd eta = descent cost (fsgrd grd eta)
+\end{minted}
+where \texttt{fsgrd} is a function that takes a gradient,
+\texttt{grd}, a learning rate, \texttt{eta}, and produces the step
+function described above.  The type of a candidate for Gradient
+Descent is now more specific.  Instead of being the variable type
+\texttt{cnd\_t}, it is a column vector of size \texttt{m} and type
+\texttt{a} represented by \texttt{ColVect m a}.
+
+The descending property for Gradient Descent is expressed as follows:
+\begin{minted}[mathescape]{idris}
+gradientDescent_le : (Ord a, Neg a) =>
+  (cost : ColVect m a -> a) ->           -- Cost function
+  (grd : ColVect m a -> ColVect m a) ->  -- Gradient
+  (eta : a) ->                           -- Step size
+  (cas : (ColVect m a, Nat)) ->          -- Init candidate, steps
+  (cost (fst (gradientDescent cost grd eta cas)) <= cost (fst cas))
+   === True
+\end{minted}
+And its proof is simply
+\begin{minted}[mathescape]{idris}
+gradientDescent_le cost grd eta = descent_le cost (fsgrd grd eta)
+\end{minted}
+that is the proof of the descending property of Descent. Idris is able
+to directly reuse it because it automatically applies the rule of
+replacement in the type definition on the function calls present in it
+by using their definitions.  So for instance
+\begin{minted}[mathescape]{idris}
+(cost (fst (gradientDescent cost grd eta cas)) <= cost (fst cas))
+\end{minted}
+is automatically replaced by
+\begin{minted}[mathescape]{idris}
+(cost (fst (descent cost (fsgrd grd eta) cas)) <= cost (fst cas))
+\end{minted}
+which is what \texttt{descent\_le} proves.
+
+Proving the descending properties on the other algorithms, with the
+exception of Logistic-Linear Regression, is equally trivial.  Proving
+it for Logistic-Linear Regression requires an explicit use of the rule
+of replacement.
 
 \chapter{Program Synthesis}
 \label{chap:program_synthesis}
@@ -284,12 +391,117 @@ NEXT: other algorithms.
 \section{Idris Elaboration}
 
 \section{Idris Proof Search}
+Since recently, Idris2 has introduced a functionality called Proof
+Search.  Contrary to what its name suggests however, it can be used
+for program synthesis, not just proof search -- which should be no
+surprise to those familiar with the Curry-Howard correspondence.  It
+has however, at the time of writing this document, a number of
+downsides.  The main one being it can only access
+\begin{enumerate}
+\item data type constructors,
+\item variables in its current environments.
+\end{enumerate}
+Meaning, it does not have access to functions or constants defined in
+the current and imported modules.  The other downsides are that it is
+poorly documented and difficult to control, likely due to having being
+introduced so recently.
 
-Idris proof search, contrary to what its name may suggest, can be used
-for program synthesis in general, not just proof search -- which is no
-surprise to those familiar with the Curry-Howard correspondence.
+Nonetheless, in this section we explore how such functionality can be
+used for program synthesis in spite of its current limitations.
 
+\subsection{Program Synthesis with Abstract Syntax Trees}
+\label{subsec:AST}
+The idea is to represent programs as Abstract Syntax Trees.  Each
+operator can be represented as a constructor of that data structure of
+that Abstract Syntax Tree, which Idris can access to generate trees
+representing programs.  Here is a minimal example:
+\begin{minted}[mathescape]{idris}
+||| Abstract Syntax Tree Types
+data Ty = TyDouble | TyCandidate | TyFun Ty Ty
+
+||| Abstract Syntax Tree Terms
+data Expr : Ty -> Type where
+    Candidate : Expr TyCandidate
+    Loss : Expr (TyFun TyCandidate TyDouble)
+    Gradient : Expr (TyFun TyCandidate TyCandidate)
+    Descent : Expr (TyFun TyCandidate TyDouble) ->
+              Expr (TyFun TyCandidate TyCandidate) ->
+              Expr TyCandidate ->
+              Expr TyCandidate
+\end{minted}
+Then one can ask Idris to fill the hole of the following definition
+\begin{minted}[mathescape]{idris}
+linearRegression : Expr TyCandidate
+linearRegression = ?hole
+\end{minted}
+which it successfully does by suggesting a number of candidates to
+replace \texttt{?hole} by, such as
+\begin{minted}[mathescape]{idris}
+Candidate
+Descent Loss Gradient Candidate
+Descent Loss Gradient (Descent Loss Gradient Candidate)
+...
+\end{minted}
+The second suggestion corresponds to implementation we are looking
+for.
+
+\subsection{Program Synthesis with Variables}
+Let us now explore using environment variables to represent constant
+and functions instead of constructors.  The meta-function \texttt{syn}
+described below:
+\begin{minted}[mathescape]{idris}
+syn : (a -> b -> c) ->
+      (a -> b -> c) ->
+      (a -> b -> c) ->
+      a -> b -> c
+syn f g h x y = ?hole
+\end{minted}
+and takes 3 functions, \texttt{f}, \texttt{g} and \texttt{h}, as
+arguments, and outputs a function that takes 2 arguments of types
+\texttt{a} and \texttt{b} respectively.  Idris can successfully
+attempt to can fill the hole by suggesting the following candidates
+\begin{minted}[mathescape]{idris}
+h x y
+g x y
+f x y
+\end{minted}
+which cover all possibilities in that instance.
+
+Here is another example attempting to reproduce the one using Abstract
+Syntax Trees provided in Section~\ref{subsec:AST}.
+\begin{minted}[mathescape]{idris}
+syn : (cnd -> cnd) ->                          -- Step function
+      ((cnd -> cost) -> (cnd -> cnd) -> cnd -> cnd) -> -- Descent
+      (cnd -> cost) ->                         -- Cost function
+      cnd ->                                   -- Init candidate
+      cnd                                      -- Final candidate
+syn n d c i = ?hole
+\end{minted}
+Idris again finds the candidate we are looking for, that is the second
+suggestion in the list below:
+\begin{minted}[mathescape]{idris}
+i
+d c n i
+d c n (d c n i)
+...
+\end{minted}
+
+The full experiments can be found in folder~\href{https://github.com/singnet/ai-dsl/blob/master/experimental/program-synthesis/idris-proofsearch}{idris-proofsearch}
+of the~\href{https://github.com/singnet/ai-dsl}{ai-dsl} repository,
+and contain more attempts including unsuccessful ones using the
+\texttt{let} keyword not covered here.  Of course these experiments
+are both very simplistic and too unconstrained but the fact that they
+work indicates that synthesizing programs, with more operators and
+types, including dependent types representing properties, should be
+possible with standalone Idris.  And as Idris Proof Search
+functionality improves, it might even become a viable option in
+practice.  Other options that would be worth exploring would be to
+experiment with the Proof Search functionalities of other DTLs such as
+AGDA and Coq.
 \chapter{Conclusion}
+
+Determinstic -> Stochastic
+Crisp mathematical -> Empirical
 
 \appendix
 \chapter{Glossary}
