@@ -181,6 +181,6 @@ fillFunctionType f v = do (Just g) <- goal | Nothing => fail "No goal found."
                           case (fst $ unPi g) of
                                [] => try f $ fail "Elaborator strategy failed at bottom level."
                                (a :: as) => do t <- check a.type
-                                               pure $ lambda t (%runElab fillFunctionType f)
+                                               -- pure $ lambda t (%runElab fillFunctionType f)
+                                               pure $ lam lambdaArg
                                                ?lab
-
