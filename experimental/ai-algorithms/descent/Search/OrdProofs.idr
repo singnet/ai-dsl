@@ -23,7 +23,7 @@ module Search.OrdProofs
 
 -- TODO: use Not ((y < x) === True) instead of (y < x) === False
 
--- TODO: use Total defined Stefan Hoek idris2-prim package.
+-- TODO: use Total defined Stefan Hoeck idris2-prim package.
 
 -- TODO: To guaranty the axioms are met one may use an arbitrary
 -- precision library such as

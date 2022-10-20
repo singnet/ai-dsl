@@ -8,7 +8,7 @@ import Search.Descent
 -- Define Gradient Descent --
 -----------------------------
 
-||| Convert a gradient into a next function corresponding to a
+||| Convert a gradient into a step function corresponding to a
 ||| gradient descent with a fixed step size.  Note that the gradient
 ||| is the actual gradient ascent function, ∇L, the derivative of the
 ||| loss function L, not the gradient descent.
@@ -16,11 +16,11 @@ public export
 fixedStepSizeGradientDescent : (Ord a, Neg a) =>
                                (grd : ColVect m a -> ColVect m a) -> -- Gradient
                                (eta : a) ->                          -- Step size
-                               ColVect m a -> ColVect m a            -- Next function
+                               ColVect m a -> ColVect m a            -- Step function
 fixedStepSizeGradientDescent grd eta cnd = cnd - (scale eta (grd cnd))
 
 ||| Specialization of the descent algorithm using the gradient of the
-||| cost function to build a next function.  Currently the next
+||| cost function to build a step function.  Currently the step
 ||| function is built using a fixed step size, or learning rate, by
 ||| moving the candidate towards the gradient descent by a factor of
 ||| that learning rate.

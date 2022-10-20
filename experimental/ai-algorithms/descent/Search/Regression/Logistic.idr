@@ -1,7 +1,6 @@
 module Search.Regression.Logistic
 
 import Debug.Trace
-import System.Random
 import Data.String
 import Data.Vect
 import Data.Matrix
@@ -105,13 +104,13 @@ gradient x y beta = let p = map expit (x * beta)
 ||| @beta initial model, column vector of n parameters
 ||| @steps maximum number of steps allocated
 public export
-logreg : {n : Nat} ->
-         (x : Matrix m n Double) ->
-         (y : ColVect m Bool) ->
-         (eta : Double) ->
-         (beta_steps : (ColVect n Double, Nat)) ->
-         (ColVect n Double, Nat)
-logreg x y = gradientDescent (loss x y) (gradient x y)
+logisticRegression : {n : Nat} ->
+                     (x : Matrix m n Double) ->
+                     (y : ColVect m Bool) ->
+                     (eta : Double) ->
+                     (beta_steps : (ColVect n Double, Nat)) ->
+                     (ColVect n Double, Nat)
+logisticRegression x y = gradientDescent (loss x y) (gradient x y)
 
 ||| Takes a input matrix, a logistic model and output a column vector
 ||| of predictions.  A True value is predicted if the probability
@@ -135,12 +134,13 @@ predict x beta = map ((0.5 <) . expit) (x * beta)
 ||| 1. global optimality, if any,
 ||| 2. logistic model,
 ||| 3. cross-entropy-ness of the cost function,
-||| 4. gradient-ness of the next function, and more.
+||| 4. gradient-ness of the step function, and more.
 public export
-logreg_le : {n : Nat} ->
-            (x : Matrix m n Double) ->
-            (y : ColVect m Bool) ->
-            (eta : Double) ->
-            (beta_steps : (ColVect n Double, Nat)) ->
-            ((loss x y (fst (logreg x y eta beta_steps))) <= (loss x y (fst beta_steps))) === True
-logreg_le x y = gradientDescent_le (loss x y) (gradient x y)
+logisticRegression_le : {n : Nat} ->
+                        (x : Matrix m n Double) ->
+                        (y : ColVect m Bool) ->
+                        (eta : Double) ->
+                        (beta_steps : (ColVect n Double, Nat)) ->
+                        ((loss x y (fst (logisticRegression x y eta beta_steps))) <=
+                         (loss x y (fst beta_steps))) === True
+logisticRegression_le x y = gradientDescent_le (loss x y) (gradient x y)

@@ -84,13 +84,13 @@ gradient x y beta = scale (-2) ((transpose x) * (y - (x * beta)))
 ||| @beta initial model, column vector of n parameters
 ||| @steps maximum number of steps allocated
 public export
-linreg : {n : Nat} ->
+linearRegression : {n : Nat} ->
          (x : Matrix m n Double) ->
          (y : ColVect m Double) ->
          (eta : Double) ->
          (beta_steps : (ColVect n Double, Nat)) ->
          (ColVect n Double, Nat)
-linreg x y = gradientDescent (loss x y) (gradient x y)
+linearRegression x y = gradientDescent (loss x y) (gradient x y)
 
 ------------
 -- Proofs --
@@ -104,12 +104,13 @@ linreg x y = gradientDescent (loss x y) (gradient x y)
 ||| 1. global optimality, if any,
 ||| 2. linearity of the model,
 ||| 3. sse-ness of the cost function,
-||| 4. gradient-ness of the next function, and more.
+||| 4. gradient-ness of the step function, and more.
 public export
-linreg_le : {n : Nat} ->
+linearRegression_le : {n : Nat} ->
             (x : Matrix m n Double) ->
             (y : ColVect m Double) ->
             (eta : Double) ->
             (beta_steps : (ColVect n Double, Nat)) ->
-            ((loss x y (fst (linreg x y eta beta_steps))) <= (loss x y (fst beta_steps))) === True
-linreg_le x y = gradientDescent_le (loss x y) (gradient x y)
+            ((loss x y (fst (linearRegression x y eta beta_steps))) <=
+             (loss x y (fst beta_steps))) === True
+linearRegression_le x y = gradientDescent_le (loss x y) (gradient x y)

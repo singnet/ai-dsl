@@ -92,7 +92,7 @@ test_linreg =
         -- Learn model based on train data
         putStrLn ""
         putBoxedStrLn "Learning"
-        let (model, leftsteps) = linreg x_train y_train eta (beta, maxsteps)
+        let (model, leftsteps) = linearRegression x_train y_train eta (beta, maxsteps)
             steps : Nat         -- Actual number of steps used
             steps = minus maxsteps leftsteps
             train_loss : Double
