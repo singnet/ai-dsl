@@ -144,7 +144,7 @@ TODO
 
 ## K. Links to other relevant project sources or documents. Please also include a link to your video here.
 
-### Video, code and report
+### Video, repository and report
 
 * [Video demo]()
 * [Project repository](https://github.com/singnet/ai-dsl)
