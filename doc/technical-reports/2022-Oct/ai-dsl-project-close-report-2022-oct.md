@@ -74,7 +74,7 @@ underpins them.
 Three approaches to program synthesis were explored:
 
 1. via developing our own language framework;
-2. via using the Idris elaboration and reflection framework [3][3];
+2. via using the Idris elaboration and reflection framework [3][];
 3. via using the Idris API for interactive type driven programming;
 
 As program synthesis is a very hard problem, only partial practical
@@ -132,10 +132,10 @@ time permits, include:
   user.
 * Explore seamless integration of crisp mathematical properties and
   uncertain, empirically based ones.  Existing framework such as the
-  Probabilistic Logic Network may be used for that [2][2].
+  Probabilistic Logic Network may be used for that [2][].
 * Integrate properties pertaining to run-time performances and
   hardware considerations.  This was explored during the previous
-  phase [1][1] and should be eventually brought back.
+  phase [1][] and should be eventually brought back.
 
 ## J. Final thoughts/comments
 
@@ -151,13 +151,13 @@ TODO
 
 ### References
 
-[1] AI-DSL Technical Report, February to May 2021, Nil Geisweiller,
-    Kabir Veitas, Eman Shemsu Asfaw, Samuel Roberti, Matthew Ikle, Ben
-    Goertzel. https://github.com/singnet/ai-dsl/blob/master/doc/technical-reports/2021-May/ai-dsl-techrep-2021-05_may.pdf
+[1]: AI-DSL Technical Report, February to May 2021, Nil Geisweiller,
+     Kabir Veitas, Eman Shemsu Asfaw, Samuel Roberti, Matthew Ikle, Ben
+     Goertzel. https://github.com/singnet/ai-dsl/blob/master/doc/technical-reports/2021-May/ai-dsl-techrep-2021-05_may.pdf
 
-[2] Probabilistic Logic Networks: A Comprehensive Framework for
-    Uncertain Inference, Ben Goertzel, Matthew Iklé, Izabela Freire
-    Goertzel, Ari Heljakka.
+[2]: Probabilistic Logic Networks: A Comprehensive Framework for
+     Uncertain Inference, Ben Goertzel, Matthew Iklé, Izabela Freire
+     Goertzel, Ari Heljakka.
 
-[3] Elaborator reflection: extending Idris in Idris, David
-    Christiansen and Edwin Brady In proceedings of ICFP 2016.
+[3]: Elaborator reflection: extending Idris in Idris, David
+     Christiansen and Edwin Brady In proceedings of ICFP 2016.
