@@ -74,7 +74,7 @@ underpins them.
 Three approaches to program synthesis were explored:
 
 1. via developing our own language framework;
-2. via using the Idris elaboration and reflection framework [3][];
+2. via using the Idris elaboration and reflection framework [3][3];
 3. via using the Idris API for interactive type driven programming;
 
 As program synthesis is a very hard problem, only partial practical
