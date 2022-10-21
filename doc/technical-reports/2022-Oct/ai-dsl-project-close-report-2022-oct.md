@@ -153,5 +153,7 @@ TODO
 ### References
 
 [1]: AI-DSL Technical Report, February to May 2021, Nil Geisweiller, Kabir Veitas, Eman Shemsu Asfaw, Samuel Roberti, Matthew Ikle, Ben Goertzel. https://github.com/singnet/ai-dsl/blob/master/doc/technical-reports/2021-May/ai-dsl-techrep-2021-05_may.pdf
+
 [2]: Probabilistic Logic Networks: A Comprehensive Framework for Uncertain Inference, Ben Goertzel, Matthew Iklé, Izabela Freire Goertzel, Ari Heljakka.
+
 [3]: Elaborator reflection: extending Idris in Idris, David Christiansen and Edwin Brady In proceedings of ICFP 2016.
