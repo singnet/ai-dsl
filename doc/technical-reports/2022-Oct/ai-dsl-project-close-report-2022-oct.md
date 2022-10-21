@@ -71,12 +71,11 @@ AI services that almost fit but not quite yet) were explored via the
 more generic problem of *Program Synthesis* that theoretically
 underpins them.
 
-Four approaches to program synthesis were explored:
+Three approaches to program synthesis were explored:
 
 1. via developing our own language framework;
-2. via using the Idris elaboration and reflection framework;
+2. via using the Idris elaboration and reflection framework [3][3];
 3. via using the Idris API for interactive type driven programming;
-4. via using the SISTER framework.
 
 As program synthesis is a very hard problem, only partial practical
 success were achieved, yet promising nonetheless.  Small programs
@@ -99,8 +98,8 @@ We also discovered that the formal specification of a function should
 probably not solely be coded in its type signature.  Even though Idris
 allows that (via Dependent Pairs and Subsets), it may not be the most
 practical because the set of properties that is required to take into
-consideration for a given set of services to connect is usually not
-known until these services are attemped to be connected.  In other
+consideration for a given set of services to get connected is usually
+not known until these services are attemped to be connected.  In other
 words, the proof that an AI service assemblage is correct is likely to
 be specific to that particular assemblage.
 
@@ -133,10 +132,10 @@ time permits, include:
   user.
 * Explore seamless integration of crisp mathematical properties and
   uncertain, empirically based ones.  Existing framework such as the
-  Probabilistic Logic Network may be used for that [CITE].
+  Probabilistic Logic Network may be used for that [2][2].
 * Integrate properties pertaining to run-time performances and
   hardware considerations.  This was explored during the previous
-  phase [CITE] and should be eventually brought back.
+  phase [1][1] and should be eventually brought back.
 
 ## J. Final thoughts/comments
 
@@ -146,10 +145,19 @@ TODO
 
 ### Video, code and report
 
-* ()[Video]
-* (https://github.com/singnet/ai-dsl)[Project repository]
-* (https://raw.githubusercontent.com/singnet/ai-dsl/master/doc/technical-reports/2022-Oct/ai-dsl-techrep-2022-oct.pdf)[Full report (draft)]
+* [Video demo]()
+* [Project repository](https://github.com/singnet/ai-dsl)
+* [Technical report](https://raw.githubusercontent.com/singnet/ai-dsl/master/doc/technical-reports/2022-Oct/ai-dsl-techrep-2022-oct.pdf)
 
 ### References
 
-TODO
+[1] AI-DSL Technical Report, February to May 2021, Nil Geisweiller,
+    Kabir Veitas, Eman Shemsu Asfaw, Samuel Roberti, Matthew Ikle, Ben
+    Goertzel. https://github.com/singnet/ai-dsl/blob/master/doc/technical-reports/2021-May/ai-dsl-techrep-2021-05_may.pdf
+
+[2] Probabilistic Logic Networks: A Comprehensive Framework for
+    Uncertain Inference, Ben Goertzel, Matthew Iklé, Izabela Freire
+    Goertzel, Ari Heljakka.
+
+[3] Elaborator reflection: extending Idris in Idris, David
+    Christiansen and Edwin Brady In proceedings of ICFP 2016.
