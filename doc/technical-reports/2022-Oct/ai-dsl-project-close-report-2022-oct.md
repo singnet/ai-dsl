@@ -64,6 +64,9 @@ discriminative pairing (so that only truly compatible services can
 connect to each other), the results were already promising,
 demonstrating further the soundness and feasablility of the approach.
 
+More information can be found in the Chapter *Implementation and
+Verification of AI Algorithms* of the [Technical report][3].
+
 ### AI service composition and fuzzy matching
 
 As planned, AI service composition and fuzzy matching (for composing
@@ -75,12 +78,21 @@ Three approaches to program synthesis were explored:
 
 1. via developing our own language framework;
 2. via using the Idris elaboration and reflection framework
-   [Christiansen2016][3];
+   [Christiansen2016][6];
 3. via using the Idris API for interactive type driven programming;
+4. via a coevolutionary intelligent agent market simulation in which
+   agents categorize themselves into emergent roles needed for program
+   synthesis.  The AI-DSL would formally verify whether programs have
+   the role requirements after they are induced from the emergent role
+   categories.  The agents categorize into emergent roles via a vector
+   of floats that form a functional space, which may be used for fuzzy
+   matching. [Duong 2018][7].
 
 As program synthesis is a very hard problem, only partial practical
-success were achieved, yet promising nonetheless.  Small programs
-involving a handful of targeted functions were synthesized.
+success were achieved, still promising nonetheless.  For instance,
+small programs involving a handful of targeted functions were
+synthesized.  More information can be found in the Chapter *Program
+Synthesis* of the [Technical report][3].
 
 ## H. Key learnings
 
@@ -133,10 +145,10 @@ time permits, include:
   user.
 * Explore seamless integration of crisp mathematical properties and
   uncertain, empirically based ones.  Existing framework such as the
-  Probabilistic Logic Network may be used for that [Goertzel2008][2].
+  Probabilistic Logic Network may be used for that [Goertzel2008][5].
 * Integrate properties pertaining to run-time performances and
   hardware considerations.  This was explored during the previous
-  phase [Geisweiller2021][1] and should be eventually brought back.
+  phase [Geisweiller2021][4] and should be eventually brought back.
 
 ## J. Final thoughts/comments
 
@@ -146,14 +158,18 @@ TODO
 
 ### Video, repository and report
 
-* [Video demo]()
-* [Project repository](https://github.com/singnet/ai-dsl)
-* [Technical report](https://raw.githubusercontent.com/singnet/ai-dsl/master/doc/technical-reports/2022-Oct/ai-dsl-techrep-2022-oct.pdf)
+[1]: [Video demo]()
 
-### References
+[2]: [Project repository](https://github.com/singnet/ai-dsl)
 
-[1]: AI-DSL Technical Report, February to May 2021, Nil Geisweiller, Kabir Veitas, Eman Shemsu Asfaw, Samuel Roberti, Matthew Ikle, Ben Goertzel. https://github.com/singnet/ai-dsl/blob/master/doc/technical-reports/2021-May/ai-dsl-techrep-2021-05_may.pdf
+[3]: [Technical report](https://raw.githubusercontent.com/singnet/ai-dsl/master/doc/technical-reports/2022-Oct/ai-dsl-techrep-2022-oct.pdf)
 
-[2]: Probabilistic Logic Networks: A Comprehensive Framework for Uncertain Inference, Ben Goertzel, Matthew Iklé, Izabela Freire Goertzel, Ari Heljakka.
+### Other References
 
-[3]: Elaborator reflection: extending Idris in Idris, David Christiansen and Edwin Brady In proceedings of ICFP 2016.
+[4]: AI-DSL Technical Report, February to May 2021, Nil Geisweiller, Kabir Veitas, Eman Shemsu Asfaw, Samuel Roberti, Matthew Ikle, Ben Goertzel. https://github.com/singnet/ai-dsl/blob/master/doc/technical-reports/2021-May/ai-dsl-techrep-2021-05_may.pdf
+
+[5]: Probabilistic Logic Networks: A Comprehensive Framework for Uncertain Inference, Ben Goertzel, Matthew Iklé, Izabela Freire Goertzel, Ari Heljakka.
+
+[6]: Elaborator reflection: extending Idris in Idris, David Christiansen and Edwin Brady In proceedings of ICFP 2016.
+
+[7]: SingularityNET’s First Simulation is Open to the Community. Deborah Duong, 2018, https://blog.singularitynet.io/singularitynets-first-simulation-is-open-to-the-community-37445cb81bc4
