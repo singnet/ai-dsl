@@ -13,11 +13,11 @@ import Search.Descent
 ||| is the actual gradient ascent function, ∇L, the derivative of the
 ||| loss function L, not the gradient descent.
 public export
-fixedStepSizeGradientDescent : (Ord a, Neg a) =>
-                               (grd : ColVect m a -> ColVect m a) -> -- Gradient
-                               (eta : a) ->                          -- Step size
-                               ColVect m a -> ColVect m a            -- Step function
-fixedStepSizeGradientDescent grd eta cnd = cnd - (scale eta (grd cnd))
+fixedStepSizeGD : (Ord a, Neg a) =>
+                  (grd : ColVect m a -> ColVect m a) -> -- Gradient
+                  (eta : a) ->                          -- Step size
+                  ColVect m a -> ColVect m a            -- Step function
+fixedStepSizeGD grd eta cnd = cnd - (scale eta (grd cnd))
 
 ||| Specialization of the descent algorithm using the gradient of the
 ||| cost function to build a step function.  Currently the step
@@ -37,7 +37,7 @@ gradientDescent : (Ord a, Neg a) =>
                   (eta : a) ->                          -- Learning rate
                   (cas : (ColVect m a, Nat)) ->         -- Initial candidate and allocated steps
                   (ColVect m a, Nat)                    -- Final candidate and steps left
-gradientDescent cost grd eta = descent cost (fixedStepSizeGradientDescent grd eta)
+gradientDescent cost grd eta = descent cost (fixedStepSizeGD grd eta)
 
 ------------
 -- Proofs --
@@ -57,4 +57,4 @@ gradientDescent_le : (Ord a, Neg a) =>
                      (eta : a) ->                           -- Step size
                      (cas : (ColVect m a, Nat)) ->          -- Initial candidate and allocated steps
                      ((cost (fst (gradientDescent cost grd eta cas))) <= (cost (fst cas))) === True
-gradientDescent_le cost grd eta = descent_le cost (fixedStepSizeGradientDescent grd eta)
+gradientDescent_le cost grd eta = descent_le cost (fixedStepSizeGD grd eta)
