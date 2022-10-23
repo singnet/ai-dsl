@@ -1,8 +1,10 @@
 module Search.GradientDescent
 
+import Data.DPair
 import Debug.Trace
 import Data.Matrix
 import Search.Descent
+import Search.OrdProofs
 
 -----------------------------
 -- Define Gradient Descent --
@@ -39,9 +41,9 @@ gradientDescent : (Ord a, Neg a) =>
                   (ColVect m a, Nat)                    -- Final candidate and steps left
 gradientDescent cost grd eta = descent cost (fixedStepSizeGD grd eta)
 
-------------
--- Proofs --
-------------
+-----------
+-- Proof --
+-----------
 
 ||| Proof that the candidate returned by gradient descent is better or
 ||| equal to the initial candidate.
@@ -58,3 +60,55 @@ gradientDescent_le : (Ord a, Neg a) =>
                      (cas : (ColVect m a, Nat)) ->          -- Initial candidate and allocated steps
                      ((cost (fst (gradientDescent cost grd eta cas))) <= (cost (fst cas))) === True
 gradientDescent_le cost grd eta = descent_le cost (fixedStepSizeGD grd eta)
+
+---------------------------
+-- Definition with Proof --
+---------------------------
+
+||| Helper to define the descending property for gradient descent
+public export
+descendingPropertyGD : (Ord a, Neg a) =>
+                       (cost : ColVect m a -> a) ->          -- Cost function
+                       (grd : ColVect m a -> ColVect m a) -> -- Gradient
+                       (eta : a) ->                          -- Learning rate
+                       (cas : (ColVect m a, Nat)) ->         -- Init candidate and steps
+                       (res : (ColVect m a, Nat)) ->         -- Final candidate and steps
+                       Type
+descendingPropertyGD cost grd eta = descendingProperty cost (fixedStepSizeGD grd eta)
+
+||| Move the descending proposition in the type signature, and its
+||| proof in the program, using a dependent pair.
+gradientDescentDPair : (Ord a, Neg a) =>
+                       (cost : ColVect m a -> a) ->          -- Cost function
+                       (grd : ColVect m a -> ColVect m a) -> -- Gradient
+                       (eta : a) ->                          -- Learning rate
+                       (cas : (ColVect m a, Nat)) ->         -- Init candidate and steps
+                       (res : (ColVect m a, Nat) ** descendingPropertyGD cost grd eta cas res)
+gradientDescentDPair cost grd eta cas =
+  (gradientDescent cost grd eta cas ** gradientDescent_le cost grd eta cas)
+
+||| Like gradientDescentDPair, but using Subset instead of a dependent
+||| pair.
+gradientDescentSubset : (Ord a, Neg a) =>
+                        (cost : ColVect m a -> a) ->          -- Cost function
+                        (grd : ColVect m a -> ColVect m a) -> -- Gradient
+                        (eta : a) ->                          -- Learning rate
+                        (cas : (ColVect m a, Nat)) ->         -- Init candidate and steps
+                        Subset (ColVect m a, Nat) (descendingPropertyGD cost grd eta cas)
+gradientDescentSubset cost grd eta cas =
+  Element (gradientDescent cost grd eta cas) (gradientDescent_le cost grd eta cas)
+
+-- TODO: simplify the code above by using a composer of type:
+--
+-- (c -> d -> e) -> (a -> c) -> (b -> d) -> a -> b -> e
+--
+-- Likely this can be implement with bimap, as in
+--
+-- :let uncurryBimap : (a' -> b' -> c) -> (a -> a') -> (b -> b') -> (a, b) -> c
+-- :let uncurryBimap f g h = uncurry f . bimap g h
+
+---------------
+-- Synthesis --
+---------------
+
+-- ||| Attempt program synthesis via Idris proof search

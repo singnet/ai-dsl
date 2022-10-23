@@ -92,9 +92,9 @@ linearRegression : {n : Nat} ->
          (ColVect n Double, Nat)
 linearRegression x y = gradientDescent (loss x y) (gradient x y)
 
-------------
--- Proofs --
-------------
+-----------
+-- Proof --
+-----------
 
 ||| Proof that the candidate returned by linear regression is better
 ||| or equal to the initial candidate.

@@ -1,5 +1,6 @@
 module Search.Descent
 
+import Data.DPair
 import Search.Util
 import Search.OrdProofs
 import Debug.Trace
@@ -182,3 +183,36 @@ descent_le : Ord cost_t =>
              ((cost (fst (descent cost next cas))) <= (cost (fst cas))) === True
 descent_le cost next (cnd, ast) = rewrite (cd_eq_sdr cost next cnd ast)
                                   in (descent_rec_le cost next (cnd, cost cnd, ast))
+
+---------------------------
+-- Definition with Proof --
+---------------------------
+
+||| Helper to define the descending property
+public export
+descendingProperty : Ord cost_t =>
+                    (cost : cnd_t -> cost_t) ->  -- Cost function
+                    (next : cnd_t -> cnd_t) ->   -- Step function
+                    (cas : (cnd_t, Nat)) ->      -- Input candidate and allocated steps
+                    (res : (cnd_t, Nat)) ->      -- Output candidate and remaing steps
+                    Type
+descendingProperty cost next cas res = (((cost (fst res)) <= (cost (fst cas))) === True)
+
+||| Move the descending proposition in the type signature, and its
+||| proof in the program, using a dependent pair.
+public export
+descentDPair : Ord cost_t =>
+               (cost : cnd_t -> cost_t) ->  -- Cost function
+               (next : cnd_t -> cnd_t) ->   -- Step function
+               (cas : (cnd_t, Nat)) ->      -- Input candidate and allocated steps
+               (res : (cnd_t, Nat) ** descendingProperty cost next cas res)
+descentDPair cost next cas = (descent cost next cas ** descent_le cost next cas)
+
+||| Like descentDPair, but uses Subset instead of a dependent pair.
+public export
+descentSubset : Ord cost_t =>
+                (cost : cnd_t -> cost_t) ->  -- Cost function
+                (next : cnd_t -> cnd_t) ->   -- Step function
+                (cas : (cnd_t, Nat)) ->      -- Input candidate and allocated steps
+                Subset (cnd_t, Nat) (descendingProperty cost next cas)
+descentSubset cost next cas = Element (descent cost next cas) (descent_le cost next cas)
