@@ -68,29 +68,29 @@ import Search.Util
 
 ||| Loss function: L(β) = -∑ᵢ yᵢlog(pᵢ) + (1-yᵢ)log(1-pᵢ)
 public export
-loss : (x : Matrix m n Double) ->
-       (y : ColVect m Bool) ->
-       (beta : ColVect n Double) ->
-       Double
-loss x y beta = let p = map expit (x * beta)
-                    l = sum (zipWith bernoulliCrossEntropy (indicator y) p)
-                in l
-                -- Uncomment the following for tracing the loss.  Note
-                -- that Debug.NoTrace does not do its job of not
-                -- slowing down computation so we have to instead
-                -- manual comment/uncomment the code.
-                --
-                -- in trace ("loss = " ++ (show l)) l
+logLoss : (x : Matrix m n Double) ->
+          (y : ColVect m Bool) ->
+          (beta : ColVect n Double) ->
+          Double
+logLoss x y beta = let p = map expit (x * beta)
+                       l = sum (zipWith bernoulliCrossEntropy (indicator y) p)
+                   in l
+                   -- Uncomment the following for tracing the loss.  Note
+                   -- that Debug.NoTrace does not do its job of not
+                   -- slowing down computation so we have to instead
+                   -- manual comment/uncomment the code.
+                   --
+                   -- in trace ("loss = " ++ (show l)) l
 
 ||| Gradient: ∇L(β) = Xᵀ(expit(Xβ)-Y)
 public export
-gradient : {n : Nat} ->
-           (x : Matrix m n Double) ->
-           (y : ColVect m Bool) ->
-           (beta : ColVect n Double) ->
-           ColVect n Double
-gradient x y beta = let p = map expit (x * beta)
-                    in (transpose x) * (p - (indicator y))
+logGradient : {n : Nat} ->
+              (x : Matrix m n Double) ->
+              (y : ColVect m Bool) ->
+              (beta : ColVect n Double) ->
+              ColVect n Double
+logGradient x y beta = let p = map expit (x * beta)
+                       in (transpose x) * (p - (indicator y))
 
 ||| Logistic Regression.  Given an input data set x and its
 ||| corresponding output y, a learning rate eta and initial model
@@ -110,7 +110,7 @@ logisticRegression : {n : Nat} ->
                      (eta : Double) ->
                      (beta_steps : (ColVect n Double, Nat)) ->
                      (ColVect n Double, Nat)
-logisticRegression x y = gradientDescent (loss x y) (gradient x y)
+logisticRegression x y = gradientDescent (logLoss x y) (logGradient x y)
 
 ||| Takes a input matrix, a logistic model and output a column vector
 ||| of predictions.  A True value is predicted if the probability
@@ -141,6 +141,6 @@ logisticRegression_le : {n : Nat} ->
                         (y : ColVect m Bool) ->
                         (eta : Double) ->
                         (beta_steps : (ColVect n Double, Nat)) ->
-                        ((loss x y (fst (logisticRegression x y eta beta_steps))) <=
-                         (loss x y (fst beta_steps))) === True
-logisticRegression_le x y = gradientDescent_le (loss x y) (gradient x y)
+                        ((logLoss x y (fst (logisticRegression x y eta beta_steps))) <=
+                         (logLoss x y (fst beta_steps))) === True
+logisticRegression_le x y = gradientDescent_le (logLoss x y) (logGradient x y)

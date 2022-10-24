@@ -58,20 +58,20 @@ sse e = let ev = Data.Vect.concat e.vects
 
 ||| Loss function: L(β) = ||Y-Xβ||²
 public export
-loss : (x : Matrix m n Double) ->
-       (y : ColVect m Double) ->
-       (beta : ColVect n Double) ->
-       Double
-loss x y beta = sse (y - (x * beta))
+linLoss : (x : Matrix m n Double) ->
+          (y : ColVect m Double) ->
+          (beta : ColVect n Double) ->
+          Double
+linLoss x y beta = sse (y - (x * beta))
 
 ||| Gradient: ∇L(β) = -2Xᵀ(Y-Xβ)
 public export
-gradient : {n : Nat} ->
-           (x : Matrix m n Double) ->
-           (y : ColVect m Double) ->
-           (beta : ColVect n Double) ->
-           ColVect n Double
-gradient x y beta = scale (-2) ((transpose x) * (y - (x * beta)))
+linGradient : {n : Nat} ->
+              (x : Matrix m n Double) ->
+              (y : ColVect m Double) ->
+              (beta : ColVect n Double) ->
+              ColVect n Double
+linGradient x y beta = scale (-2) ((transpose x) * (y - (x * beta)))
 
 ||| Multivariate Linear Regression.  Given an input data set x and its
 ||| corresponding output y, a learning rate eta and initial model
@@ -90,7 +90,7 @@ linearRegression : {n : Nat} ->
          (eta : Double) ->
          (beta_steps : (ColVect n Double, Nat)) ->
          (ColVect n Double, Nat)
-linearRegression x y = gradientDescent (loss x y) (gradient x y)
+linearRegression x y = gradientDescent (linLoss x y) (linGradient x y)
 
 -----------
 -- Proof --
@@ -111,6 +111,6 @@ linearRegression_le : {n : Nat} ->
             (y : ColVect m Double) ->
             (eta : Double) ->
             (beta_steps : (ColVect n Double, Nat)) ->
-            ((loss x y (fst (linearRegression x y eta beta_steps))) <=
-             (loss x y (fst beta_steps))) === True
-linearRegression_le x y = gradientDescent_le (loss x y) (gradient x y)
+            ((linLoss x y (fst (linearRegression x y eta beta_steps))) <=
+             (linLoss x y (fst beta_steps))) === True
+linearRegression_le x y = gradientDescent_le (linLoss x y) (linGradient x y)

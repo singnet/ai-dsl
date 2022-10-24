@@ -110,9 +110,9 @@ test_logreg =
             steps : Nat         -- Actual number of steps used
             steps = minus maxsteps (snd model_ls)
             x_loss : Double
-            x_loss = loss x_d y model
+            x_loss = logLoss x_d y model
             x_gradient : ColVect 3 Double
-            x_gradient = gradient x_d y model
+            x_gradient = logGradient x_d y model
             y_prediction : ColVect sample_size Bool
             y_prediction = predict x_d model
         putStrLn ("\nActual number of steps used = " ++ show steps)
@@ -177,7 +177,7 @@ test_loglinreg =
             steps : Nat         -- Actual number of steps used
             steps = minus maxsteps (snd model_ls)
             xl_loss : Double
-            xl_loss = linloss x y model
+            xl_loss = llLoss x y model
             xl_gradient : ColVect 3 Double
             xl_gradient = lingradient x y model
         putStrLn ("\nActual number of steps used = " ++ show steps)
