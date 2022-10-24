@@ -126,7 +126,7 @@ AI services that almost fit but not quite yet) were explored via the
 more generic problem of *Program Synthesis* that theoretically
 underpins them.
 
-Three approaches to program synthesis were explored:
+Four approaches to program synthesis were explored:
 
 1. via developing our own language framework;
 2. via using the Idris elaboration and reflection framework
