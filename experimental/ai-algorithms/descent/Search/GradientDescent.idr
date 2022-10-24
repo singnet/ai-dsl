@@ -16,9 +16,9 @@ import Search.OrdProofs
 ||| loss function L, not the gradient descent.
 public export
 fixedStepSizeGD : (Ord a, Neg a) =>
-                  (grd : ColVect m a -> ColVect m a) -> -- Gradient
+                  (grd : ColVect n a -> ColVect n a) -> -- Gradient
                   (eta : a) ->                          -- Step size
-                  ColVect m a -> ColVect m a            -- Step function
+                  ColVect n a -> ColVect n a            -- Step function
 fixedStepSizeGD grd eta cnd = cnd - (scale eta (grd cnd))
 
 ||| Specialization of the descent algorithm using the gradient of the
@@ -34,11 +34,11 @@ fixedStepSizeGD grd eta cnd = cnd - (scale eta (grd cnd))
 ||| @maxsteps maximum number of steps allocated
 public export
 gradientDescent : (Ord a, Neg a) =>
-                  (cost : ColVect m a -> a) ->          -- Cost function
-                  (grd : ColVect m a -> ColVect m a) -> -- Gradient
+                  (cost : ColVect n a -> a) ->          -- Cost function
+                  (grd : ColVect n a -> ColVect n a) -> -- Gradient
                   (eta : a) ->                          -- Learning rate
-                  (cas : (ColVect m a, Nat)) ->         -- Initial candidate and allocated steps
-                  (ColVect m a, Nat)                    -- Final candidate and steps left
+                  (cas : (ColVect n a, Nat)) ->         -- Initial candidate and allocated steps
+                  (ColVect n a, Nat)                    -- Final candidate and steps left
 gradientDescent cost grd eta = descent cost (fixedStepSizeGD grd eta)
 
 -----------
@@ -54,10 +54,10 @@ gradientDescent cost grd eta = descent cost (fixedStepSizeGD grd eta)
 ||| 2. the gradient of the output candidate is approximatively null,
 public export
 gradientDescent_le : (Ord a, Neg a) =>
-                     (cost : ColVect m a -> a) ->           -- Cost function
-                     (grd : ColVect m a -> ColVect m a) ->  -- Gradient
+                     (cost : ColVect n a -> a) ->           -- Cost function
+                     (grd : ColVect n a -> ColVect n a) ->  -- Gradient
                      (eta : a) ->                           -- Step size
-                     (cas : (ColVect m a, Nat)) ->          -- Initial candidate and allocated steps
+                     (cas : (ColVect n a, Nat)) ->          -- Initial candidate and allocated steps
                      ((cost (fst (gradientDescent cost grd eta cas))) <= (cost (fst cas))) === True
 gradientDescent_le cost grd eta = descent_le cost (fixedStepSizeGD grd eta)
 
@@ -68,33 +68,33 @@ gradientDescent_le cost grd eta = descent_le cost (fixedStepSizeGD grd eta)
 ||| Helper to define the descending property for gradient descent
 public export
 descendingPropertyGD : (Ord a, Neg a) =>
-                       (cost : ColVect m a -> a) ->          -- Cost function
-                       (grd : ColVect m a -> ColVect m a) -> -- Gradient
+                       (cost : ColVect n a -> a) ->          -- Cost function
+                       (grd : ColVect n a -> ColVect n a) -> -- Gradient
                        (eta : a) ->                          -- Learning rate
-                       (cas : (ColVect m a, Nat)) ->         -- Init candidate and steps
-                       (res : (ColVect m a, Nat)) ->         -- Final candidate and steps
+                       (cas : (ColVect n a, Nat)) ->         -- Init candidate and steps
+                       (res : (ColVect n a, Nat)) ->         -- Final candidate and steps
                        Type
 descendingPropertyGD cost grd eta = descendingProperty cost (fixedStepSizeGD grd eta)
 
 ||| Move the descending proposition in the type signature, and its
 ||| proof in the program, using a dependent pair.
 gradientDescentDPair : (Ord a, Neg a) =>
-                       (cost : ColVect m a -> a) ->          -- Cost function
-                       (grd : ColVect m a -> ColVect m a) -> -- Gradient
+                       (cost : ColVect n a -> a) ->          -- Cost function
+                       (grd : ColVect n a -> ColVect n a) -> -- Gradient
                        (eta : a) ->                          -- Learning rate
-                       (cas : (ColVect m a, Nat)) ->         -- Init candidate and steps
-                       (res : (ColVect m a, Nat) ** descendingPropertyGD cost grd eta cas res)
+                       (cas : (ColVect n a, Nat)) ->         -- Init candidate and steps
+                       (res : (ColVect n a, Nat) ** descendingPropertyGD cost grd eta cas res)
 gradientDescentDPair cost grd eta cas =
   (gradientDescent cost grd eta cas ** gradientDescent_le cost grd eta cas)
 
 ||| Like gradientDescentDPair, but using Subset instead of a dependent
 ||| pair.
 gradientDescentSubset : (Ord a, Neg a) =>
-                        (cost : ColVect m a -> a) ->          -- Cost function
-                        (grd : ColVect m a -> ColVect m a) -> -- Gradient
+                        (cost : ColVect n a -> a) ->          -- Cost function
+                        (grd : ColVect n a -> ColVect n a) -> -- Gradient
                         (eta : a) ->                          -- Learning rate
-                        (cas : (ColVect m a, Nat)) ->         -- Init candidate and steps
-                        Subset (ColVect m a, Nat) (descendingPropertyGD cost grd eta cas)
+                        (cas : (ColVect n a, Nat)) ->         -- Init candidate and steps
+                        Subset (ColVect n a, Nat) (descendingPropertyGD cost grd eta cas)
 gradientDescentSubset cost grd eta cas =
   Element (gradientDescent cost grd eta cas) (gradientDescent_le cost grd eta cas)
 
@@ -125,11 +125,11 @@ gradientDescentSubset cost grd eta cas =
 ||| as step function, instead of building the step function with
 ||| grd2stp.
 synGD : (Ord a, Neg a) =>
-        (dsnt : (ColVect m a -> a) -> (ColVect m a -> ColVect m a) -> (ColVect m a, Nat) -> (ColVect m a, Nat)) -> -- Descent
-        (grd2stp : (ColVect m a -> ColVect m a) -> (eta : a) -> ColVect m a -> ColVect m a) -> -- Gradient to Step
-        (grd : ColVect m a -> ColVect m a) -> -- Gradient
+        (dsnt : (ColVect n a -> a) -> (ColVect n a -> ColVect n a) -> (ColVect n a, Nat) -> (ColVect n a, Nat)) -> -- Descent
+        (grd2stp : (ColVect n a -> ColVect n a) -> (eta : a) -> ColVect n a -> ColVect n a) -> -- Gradient to Step
+        (grd : ColVect n a -> ColVect n a) -> -- Gradient
         (eta : a) ->                          -- Learning rate
-        (cost : ColVect m a -> a) ->          -- Cost function
-        (cas : (ColVect m a, Nat)) ->         -- Initial candidate and allocated steps
-        (ColVect m a, Nat)                    -- Final candidate and steps left
+        (cost : ColVect n a -> a) ->          -- Cost function
+        (cas : (ColVect n a, Nat)) ->         -- Initial candidate and allocated steps
+        (ColVect n a, Nat)                    -- Final candidate and steps left
 synGD dsnt grd2stp grd eta cost cas = ?synGD_rhs
