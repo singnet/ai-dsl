@@ -1,14 +1,20 @@
 # Project Close Report
 
 ## A. Name of project and Project URL on Ideascale/Fund
+Project Name: An AI Domain Specific Language
+Project URL: https://cardano.ideascale.com/c/idea/384112
 
 ## B. Name of project manager
+Matthew Iklé
 
 ## C. Date project started
+1 March 2022
 
 ## D. Date project completed
+30 September 2022
 
 ## E. List of challenge KPIs and how the project addressed them
+
 
 ## F. List of project KPIs and how the project addressed them
 
@@ -89,7 +95,7 @@ Three approaches to program synthesis were explored:
    matching. [Duong 2018][7].
 
 As program synthesis is a very hard problem, only partial practical
-success were achieved, still promising nonetheless.  For instance,
+success was achieved, still promising nonetheless.  For instance,
 small programs involving a handful of targeted functions were
 synthesized.  More information can be found in the Chapter *Program
 Synthesis* of the [Technical report][3].
