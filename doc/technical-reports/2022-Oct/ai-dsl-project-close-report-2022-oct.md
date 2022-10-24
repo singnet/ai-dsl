@@ -15,7 +15,7 @@ Matthew Iklé
 30 September 2022
 
 ## E. List of challenge KPIs and how the project addressed them
-This Fund 7 project was designed to support Phase 2 of research and development of the AI Domain Specific Language (AI-DSL) designed to automatically discover and connect available AI services on the SingularityNET platform/marketplace to facilitate solving given real-world problems. With this goal in mind, in this phase we ended up concentrating on more fundamental research questions, especially in terms of program synthesis and verification, than we had initially anticipated. 
+This Fund 7 project was designed to support Phase 2 of research and development of the AI Domain Specific Language (AI-DSL) designed to automatically discover and connect available AI services on the SingularityNET platform/marketplace to facilitate solving given real-world problems. With this goal in mind, in this phase we ended up concentrating on more fundamental research questions, especially in terms of program synthesis and verification, than we had initially anticipated.
 
 We made substantial progress on this front as described in section G and in our technical report, but full program synthesis is considered one of computing's "grand" challenges. We have learned a considerable amount from our explorations and plan to incorporate our newly-gained knowledge into a more concrete, if somewhat scaled-back, product proposal for our next funding round in support of phase 3 development for release of our AI-DSL proof of concept (POC) in the second or third quarter of 2023.
 
@@ -34,7 +34,7 @@ We planned work in six broad research areas:
 
 6) Co-Evolutionary Tasks
 
-In our intital plan, we created sub-tasks for these broader task categories, but for reasons described in more detail in section G and in our technical report [3], our exploratory research deviated quite a bit from those initial sub-tasks. We nonetheless made significant progress on tasks 1, 4, and 6, and we had previsously made substantial progress on tasks 2 and 3, in our phase 1 work detailed in "AI-DSL Technical Report, February to May 2021" [4]. 
+In our intital plan, we created sub-tasks for these broader task categories, but for reasons described in more detail in section G and in our technical report [3], our exploratory research deviated quite a bit from those initial sub-tasks. We nonetheless made significant progress on tasks 1, 4, and 6, and we had previsously made substantial progress on tasks 2 and 3, in our phase 1 work detailed in "AI-DSL Technical Report, February to May 2021" [4].
 
 In phase 2, we began by exploring how to design, connect, and verify several useful real-world AI applications that were significantly more complex than the simple programs we used in phase 1. This process proved even more challenging than we had expected and ended up taking up the bulk or our time and effort. We nonetheless gained much experience and the knowledge we learned should provide good direction for completing and releasing a product in Q2 or Q3 of 2023.
 
