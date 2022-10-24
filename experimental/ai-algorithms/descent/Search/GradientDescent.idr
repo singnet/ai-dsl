@@ -111,4 +111,25 @@ gradientDescentSubset cost grd eta cas =
 -- Synthesis --
 ---------------
 
--- ||| Attempt program synthesis via Idris proof search
+-- NEXT: Try to synthesize
+-- 1. gradientDescent cost grd eta cas
+-- 2. Element (gradientDescent cost grd eta cas) (gradientDescent_le cost grd eta cas)
+-- 3. same as 1. using descent
+-- 4. same as 2. using descent_le
+
+||| Attempt to synthesize
+|||
+||| dsnt cost (grd2stp grd eta) cas
+|||
+||| via Idris proof search.  Fails so far because it uses the gradient
+||| as step function, instead of building the step function with
+||| grd2stp.
+synGD : (Ord a, Neg a) =>
+        (dsnt : (ColVect m a -> a) -> (ColVect m a -> ColVect m a) -> (ColVect m a, Nat) -> (ColVect m a, Nat)) -> -- Descent
+        (grd2stp : (ColVect m a -> ColVect m a) -> (eta : a) -> ColVect m a -> ColVect m a) -> -- Gradient to Step
+        (grd : ColVect m a -> ColVect m a) -> -- Gradient
+        (eta : a) ->                          -- Learning rate
+        (cost : ColVect m a -> a) ->          -- Cost function
+        (cas : (ColVect m a, Nat)) ->         -- Initial candidate and allocated steps
+        (ColVect m a, Nat)                    -- Final candidate and steps left
+synGD dsnt grd2stp grd eta cost cas = ?synGD_rhs
