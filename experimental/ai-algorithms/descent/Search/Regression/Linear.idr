@@ -2,6 +2,7 @@ module Search.Regression.Linear
 
 import System.Random
 import Data.String
+import Data.DPair
 import Data.Vect
 import Data.Matrix
 import Search.GradientDescent
@@ -81,15 +82,14 @@ linGradient x y beta = scale (-2) ((transpose x) * (y - (x * beta)))
 ||| @x Matrix of size m*n, samples size m, n input variables
 ||| @y Column vector of size m
 ||| @eta learning rate, small positive value
-||| @beta initial model, column vector of n parameters
-||| @steps maximum number of steps allocated
+||| @bst initial model, column vector of n parameters, and steps allocated
 public export
 linearRegression : {n : Nat} ->
-         (x : Matrix m n Double) ->
-         (y : ColVect m Double) ->
-         (eta : Double) ->
-         (beta_steps : (ColVect n Double, Nat)) ->
-         (ColVect n Double, Nat)
+                   (x : Matrix m n Double) ->
+                   (y : ColVect m Double) ->
+                   (eta : Double) ->
+                   (bst : (ColVect n Double, Nat)) ->
+                   (ColVect n Double, Nat)
 linearRegression x y = gradientDescent (linLoss x y) (linGradient x y)
 
 -----------
@@ -110,7 +110,126 @@ linearRegression_le : {n : Nat} ->
             (x : Matrix m n Double) ->
             (y : ColVect m Double) ->
             (eta : Double) ->
-            (beta_steps : (ColVect n Double, Nat)) ->
-            ((linLoss x y (fst (linearRegression x y eta beta_steps))) <=
-             (linLoss x y (fst beta_steps))) === True
+            (bst : (ColVect n Double, Nat)) ->
+            ((linLoss x y (fst (linearRegression x y eta bst))) <=
+             (linLoss x y (fst bst))) === True
 linearRegression_le x y = gradientDescent_le (linLoss x y) (linGradient x y)
+
+---------------------------
+-- Definition with Proof --
+---------------------------
+
+||| Helper to define the descending property for linear regression
+public export
+descendingPropertyLR : (n : Nat) ->
+                       (x : Matrix m n Double) ->
+                       (y : ColVect m Double) ->
+                       (eta : Double) ->
+                       (bst : (ColVect n Double, Nat)) ->
+                       (res : (ColVect n Double, Nat)) ->
+                       Type
+descendingPropertyLR n x y eta bst res =
+  ((linLoss x y (fst res)) <= (linLoss x y (fst bst))) === True
+
+||| Move the descending proposition in the type signature, and its
+||| proof in the program, using a dependent pair.
+linearRegressionDPair : (n : Nat) ->
+                        (x : Matrix m n Double) ->
+                        (y : ColVect m Double) ->
+                        (eta : Double) ->
+                        (bst : (ColVect n Double, Nat)) ->
+                        (res : (ColVect n Double, Nat) ** descendingPropertyLR n x y eta bst res)
+linearRegressionDPair n x y eta bst =
+  (linearRegression x y eta bst ** linearRegression_le x y eta bst)
+
+||| Like linearRegressionDPair, but using Subset instead of a
+||| dependent pair.
+linearRegressionSubset : (n : Nat) ->
+                         (x : Matrix m n Double) ->
+                         (y : ColVect m Double) ->
+                         (eta : Double) ->
+                         (bst : (ColVect n Double, Nat)) ->
+                         Subset (ColVect n Double, Nat) (descendingPropertyLR n x y eta bst)
+linearRegressionSubset n x y eta bst =
+  Element (linearRegression x y eta bst) (linearRegression_le x y eta bst)
+
+---------------
+-- Synthesis --
+---------------
+
+synLR : (loss_xy : cnd_t -> cst_t) ->
+        (grd_xy : cnd_t -> cnd_t) ->
+        (grdsnt : (cnd_t -> cst_t) -> (cnd_t -> cnd_t) -> cnd_t -> cnd_t) ->
+        (cnd : cnd_t) ->
+        cnd_t
+synLR loss_xy grd_xy grdsnt cnd = ?synLR_rhs -- grdsnt loss_xy grd_xy cnd
+
+synLRP : Ord cst_t =>
+         (loss_xy : cnd_t -> cst_t) ->
+         (grd_xy : cnd_t -> cnd_t) ->
+         (grdsnt : (cnd_t -> cst_t) -> (cnd_t -> cnd_t) -> cnd_t -> cnd_t) ->
+         (cnd : cnd_t) ->
+         (prf : ((loss_xy (grdsnt loss_xy grd_xy cnd)) <= (loss_xy cnd)) === True) ->
+         (res : cnd_t ** ((loss_xy res) <= (loss_xy cnd)) === True)
+synLRP loss_xy grd_xy grdsnt cnd prf = ?synLRP_rhs -- (grdsnt loss_xy grd_xy cnd ** prf)
+
+synLRS : Ord cst_t =>
+         (loss_xy : cnd_t -> cst_t) ->
+         (grd_xy : cnd_t -> cnd_t) ->
+         (grdsnt : (cnd_t -> cst_t) -> (cnd_t -> cnd_t) -> cnd_t -> cnd_t) ->
+         (cnd : cnd_t) ->
+         (prf : ((loss_xy (grdsnt loss_xy grd_xy cnd)) <= (loss_xy cnd)) === True) ->
+         Subset cnd_t (\res : cnd_t => ((loss_xy res) <= (loss_xy cnd)) === True)
+synLRS loss_xy grd_xy grdsnt cnd prf = ?synLRS_rhs -- Element (grdsnt loss_xy grd_xy cnd) prf
+
+-- ||| Attempt to synthesize
+-- |||
+-- ||| gradientdescent (linloss x y) (lingrd x y) eta bst
+-- |||
+-- ||| via Idris proof search.  Fails so far because it uses the gradient
+-- ||| as step function, instead of building the step function with
+-- ||| grd2stp.
+-- |||
+-- ||| Fails due to a variaty of reasons described below
+-- synLR : (gradientdescent : (ColVect n Double -> Double) -> (ColVect n Double -> ColVect n Double) -> Double -> (ColVect n Double, Nat)) ->
+--         (linloss : Matrix m n Double -> ColVect n Double -> ColVect n Double -> Double) ->
+--         (lingrd : Matrix m n Double -> ColVect m Double -> ColVect n Double -> ColVect n Double) ->
+--         (x : Matrix m n Double) ->
+--         (y : ColVect m Double) ->
+--         (eta : Double) ->
+--         (cnd : ColVect n Double) ->
+--         (ColVect n Double)
+-- -- synLR gradientdescent linloss lingrd x y eta bst = ?synLR_rhs
+
+-- Fails because Idris does not like ColVect n Double, apparently.
+-- synLR : (grdsnt : (ColVect n Double -> Double) -> (ColVect n Double) -> (ColVect n Double)) ->
+--         (loss : (ColVect n Double -> Double)) ->
+--         (cnd : (ColVect n Double)) ->
+--         (ColVect n Double)
+-- synLR grdsnt loss cnd = ?synLR_rhs
+
+-- -- Fails because Idris cannot create (loss x y) and (grd x y)
+-- synLR : (loss : mat_t -> col_t -> cnd_t -> cst_t) ->
+--         (grd : mat_t -> col_t -> cnd_t -> cnd_t) ->
+--         (grdsnt : (cnd_t -> cst_t) -> (cnd_t -> cnd_t) -> cnd_t -> cnd_t) ->
+--         (cnd : cnd_t) ->
+--         (x : mat_t) ->
+--         (y : col_t) ->
+--         cnd_t
+-- synLR loss grd grdsnt x y cnd = ?synLR_rhs
+
+-- -- Fails because Idris cannot create (loss xy) and (grd xy)
+-- synLR : (grdsnt : (cnd_t -> cst_t) -> cnd_t -> cnd_t) ->
+--         (loss : (mat_t, col_t) -> cnd_t -> cst_t) ->
+--         (xy : (mat_t, col_t)) ->
+--         (cnd : cnd_t) ->
+--         cnd_t
+-- synLR grdsnt loss xy cnd = ?synLR_rhs
+
+-- -- Fails because cnd is missing in the definition of synLR
+-- synLR : (loss_xy : cnd_t -> cst_t) ->
+--         (grd_xy : cnd_t -> cnd_t) ->
+--         (grdsnt : (cnd_t -> cst_t) -> (cnd_t -> cnd_t) -> cnd_t -> cnd_t) ->
+--         (cnd : cnd_t) ->
+--         cnd_t
+-- synLR loss_xy grd_xy grdsnt = ?synLR_rhs
