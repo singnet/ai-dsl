@@ -21,12 +21,12 @@ import Search.Util
 ||| linear regression.  This is not required by
 ||| logisticLinearRegression, but is useful to have for debugging.
 public export
-linloss : (x : Matrix m n Bool) ->
-          (y : ColVect m Bool) ->
-          (beta : ColVect n Double) ->
-          Double
-linloss x y = let (m' ** (xl, yl)) = logToLinData x y
-              in loss (map boolToDouble xl) yl
+llLoss : (x : Matrix m n Bool) ->
+       (y : ColVect m Bool) ->
+       (beta : ColVect n Double) ->
+       Double
+llLoss x y = let (m' ** (xl, yl)) = logToLinData x y
+              in linLoss (map boolToDouble xl) yl
 
 ||| Gradient function obtained by reframing the data set to be suited
 ||| for linear regression.  This is not required by
@@ -38,7 +38,7 @@ lingradient : {n : Nat} ->
               (beta : ColVect n Double) ->
               (ColVect n Double)
 lingradient x y = let (m' ** (xl, yl)) = logToLinData x y
-                  in gradient (map boolToDouble xl) yl
+                  in linGradient (map boolToDouble xl) yl
 
 ||| Logistic-Linear Regression.  Given
 |||
@@ -76,8 +76,8 @@ logisticLinearRegression_le : {n : Nat} ->
             (y : ColVect m Bool) ->
             (eta : Double) ->
             (beta_steps : (ColVect n Double, Nat)) ->
-            ((linloss x y (fst (logisticLinearRegression x y eta beta_steps))) <=
-             (linloss x y (fst beta_steps))) === True
+            ((llLoss x y (fst (logisticLinearRegression x y eta beta_steps))) <=
+             (llLoss x y (fst beta_steps))) === True
 -- NEXT: fix error
 logisticLinearRegression_le x y = believe_me ()
 -- logisticLinearRegression_le x y = let (m' ** (xl, yl)) = logToLinData x y

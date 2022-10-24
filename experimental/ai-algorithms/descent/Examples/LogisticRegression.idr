@@ -113,9 +113,9 @@ test_logreg =
             steps : Nat         -- Actual number of steps used
             steps = minus maxsteps leftsteps
             train_loss : Double
-            train_loss = loss x_train y_train model
+            train_loss = logLoss x_train y_train model
             train_gradient : ColVect 4 Double
-            train_gradient = gradient x_train y_train model
+            train_gradient = logGradient x_train y_train model
             y_train_prediction : ColVect train_size Double
             y_train_prediction = x_train * model
         putStrLn ("\nActual number of steps used = " ++ show steps)
@@ -132,9 +132,9 @@ test_logreg =
         putStrLn ""
         putBoxedStrLn "Testing"
         let test_loss : Double
-            test_loss = loss x_test y_test model
+            test_loss = logLoss x_test y_test model
             test_gradient : ColVect 4 Double
-            test_gradient = gradient x_test y_test model
+            test_gradient = logGradient x_test y_test model
             y_test_prediction : ColVect test_size Double
             y_test_prediction = x_test * model
         putStrLn "\nTest output prediction:"

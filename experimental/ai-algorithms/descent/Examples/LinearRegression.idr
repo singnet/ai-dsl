@@ -96,7 +96,7 @@ test_linreg =
             steps : Nat         -- Actual number of steps used
             steps = minus maxsteps leftsteps
             train_loss : Double
-            train_loss = loss x_train y_train model
+            train_loss = linLoss x_train y_train model
             y_train_prediction : ColVect train_size Double
             y_train_prediction = x_train * model
         putStrLn ("\nActual number of steps used = " ++ show steps)
@@ -111,7 +111,7 @@ test_linreg =
         putStrLn ""
         putBoxedStrLn "Testing"
         let test_loss : Double
-            test_loss = loss x_test y_test model
+            test_loss = linLoss x_test y_test model
             y_test_prediction : ColVect test_size Double
             y_test_prediction = x_test * model
         putStrLn "\nTest output prediction:"
