@@ -40,7 +40,7 @@ We planned work in six broad research areas:
 
 2) Ontology Tasks
 
-3) Exploratory Tasks
+3) Exploratory Smartcontract Tasks
 
 4) Test Cases
 
