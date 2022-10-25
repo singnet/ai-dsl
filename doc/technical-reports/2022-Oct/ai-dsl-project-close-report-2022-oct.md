@@ -52,7 +52,7 @@ In our intital plan, we created sub-tasks for these broader task
 categories, but for reasons described in more detail in section G and
 in our technical report [3], our exploratory research deviated quite a
 bit from those initial sub-tasks. We nonetheless made significant
-progress on tasks 1, 4, and 6, and we had previsously made substantial
+progress on tasks 1, 4, and 6, and we had previously made substantial
 progress on tasks 2 and 3, in our phase 1 work detailed in "AI-DSL
 Technical Report, February to May 2021" [4].
 
@@ -70,7 +70,7 @@ for completing and releasing a product in Q2 or Q3 of 2023.
 
 Initially it was planned to collaborate with the NuNet team to use the
 Fake News Network application as a test case for our AI-DSL prototype.
-Since the NuNet team abandonned that test case we decided to reorient
+Since the NuNet team abandoned that test case we decided to reorient
 our attention to the following three AI algorithms:
 
 1. Gradient Descent
@@ -92,7 +92,7 @@ They were subdivided into five AI services:
 3. Linear Regression: optimization algorithm specialized to learning
    multivariate linear models, using Gradient Descent.
 4. Logistic Regression: optimization algorithm specialized to learning
-   logisitic models, using Gradient Descent.
+   logistic models, using Gradient Descent.
 5. Logistic-Linear Regression: another version of Logistic Regression
    using Linear Regression instead of Gradient Descent.
 
@@ -114,10 +114,10 @@ autonomous interoperability of AI services.  Even though such
 descending property was too simple for achieving precise
 discriminative pairing (so that only truly compatible services can
 connect to each other), the results were already promising,
-demonstrating further the soundness and feasablility of the approach.
+demonstrating further the soundness and feasibility of the approach.
 
 More information can be found in the Chapter *Implementation and
-Verification of AI Algorithms* of the [Technical report][3].
+Verification of AI Algorithms* of the [Technical Report][3].
 
 ### AI service composition and fuzzy matching
 
