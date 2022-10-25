@@ -50,11 +50,11 @@ We planned work in six broad research areas:
 
 In our intital plan, we created sub-tasks for these broader task
 categories, but for reasons described in more detail in section G and
-in our technical report [3], our exploratory research deviated quite a
+in our [Technical Report][3], our exploratory research deviated quite a
 bit from those initial sub-tasks. We nonetheless made significant
 progress on tasks 1, 4, and 6, and we had previously made substantial
 progress on tasks 2 and 3, in our phase 1 work detailed in "AI-DSL
-Technical Report, February to May 2021" [4].
+Technical Report, February to May 2021" [Geisweiller2021][4].
 
 In phase 2, we began by exploring how to design, connect, and verify
 several useful real-world AI applications that were significantly more
@@ -138,13 +138,13 @@ Four approaches to program synthesis were explored:
    the role requirements after they are induced from the emergent role
    categories.  The agents categorize into emergent roles via a vector
    of floats that form a functional space, which may be used for fuzzy
-   matching. [Duong 2018][7].
+   matching. [Duong2018][7].
 
 As program synthesis is a very hard problem, only partial practical
 success was achieved, still promising nonetheless.  For instance,
 small programs involving a handful of targeted functions were
 synthesized.  More information can be found in the Chapter *Program
-Synthesis* of the [Technical report][3].
+Synthesis* of the [Technical Report][3].
 
 ## H. Key learnings
 
@@ -217,9 +217,9 @@ SingularityNET platform and marketplace sometime in Q2 or Q3 of 2023
 
 [1]: [Video demo]()
 
-[2]: [Project repository](https://github.com/singnet/ai-dsl)
+[2]: [Project Repository](https://github.com/singnet/ai-dsl)
 
-[3]: [Technical report](https://raw.githubusercontent.com/singnet/ai-dsl/master/doc/technical-reports/2022-Oct/ai-dsl-techrep-2022-oct.pdf)
+[3]: [Technical Report](https://raw.githubusercontent.com/singnet/ai-dsl/master/doc/technical-reports/2022-Oct/ai-dsl-techrep-2022-oct.pdf)
 
 ### Other References
 
