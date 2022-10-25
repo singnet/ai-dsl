@@ -50,11 +50,11 @@ We planned work in six broad research areas:
 
 In our initial plan, we created sub-tasks for these broader task
 categories, but for reasons described in more detail in section G and
-in our [Technical Report][3], our exploratory research deviated quite a
-bit from those initial sub-tasks. We nonetheless made significant
-progress on tasks 1, 4, and 6, and we had previously made substantial
-progress on tasks 2 and 3, in our phase 1 work detailed in "AI-DSL
-Technical Report, February to May 2021" [Geisweiller2021][4].
+in our [Technical Report 2022][3], our exploratory research deviated
+quite a bit from those initial sub-tasks. We nonetheless made
+significant progress on tasks 1, 4, and 6, and we had previously made
+substantial progress on tasks 2 and 3, in our phase 1 work detailed in
+the [Technical Report 2021][4].
 
 In phase 2, we began by exploring how to design, connect, and verify
 several useful real-world AI applications that were significantly more
@@ -117,7 +117,7 @@ connect to each other), the results were already promising,
 demonstrating further the soundness and feasibility of the approach.
 
 More information can be found in the Chapter *Implementation and
-Verification of AI Algorithms* of the [Technical Report][3].
+Verification of AI Algorithms* of the [Technical Report 2022][3].
 
 ### AI service composition and fuzzy matching
 
@@ -130,7 +130,7 @@ Four approaches to program synthesis were explored:
 
 1. via developing our own language framework;
 2. via using the Idris elaboration and reflection framework
-   [Christiansen2016][6];
+   [Christiansen 2016][6];
 3. via using the Idris API for interactive type driven programming;
 4. via a coevolutionary intelligent agent market simulation in which
    agents categorize themselves into emergent roles needed for program
@@ -138,13 +138,13 @@ Four approaches to program synthesis were explored:
    the role requirements after they are induced from the emergent role
    categories.  The agents categorize into emergent roles via a vector
    of floats that form a functional space, which may be used for fuzzy
-   matching. [Duong2018][7].
+   matching. [Duong 2018][7].
 
 As program synthesis is a very hard problem, only partial practical
 success was achieved, still promising nonetheless.  For instance,
 small programs involving a handful of targeted functions were
 synthesized.  More information can be found in the Chapter *Program
-Synthesis* of the [Technical Report][3].
+Synthesis* of the [Technical Report 2022][3].
 
 ## H. Key learnings
 
@@ -154,7 +154,7 @@ logic to be formalized well, and even more so to be proved.  Proof
 discovery can be automated in principle, but in practice it often
 requires the input of an advanced user.  This has confirmed what we
 already suspected, the AI-DSL should be designed to serve two classes
-of users, regular and power user.  Whether the interfaces for one or
+of users, regular and power users.  Whether the interfaces for one or
 the other should be fundamentally different, or may simply be obtained
 by masking power-user functionalities from the regular user remains to
 be determined.
@@ -196,11 +196,12 @@ time permits, include:
   Idris) taking into account the dichotomy between regular and power
   user.
 * Explore seamless integration of crisp mathematical properties and
-  uncertain, empirically based ones.  Existing framework such as the
-  Probabilistic Logic Network may be used for that [Goertzel2008][5].
+  uncertain, empirically based ones.  Existing framework such as
+  Probabilistic Logic Networks may be used for that [Goertzel 2008][5].
 * Integrate properties pertaining to run-time performances and
   hardware considerations.  This was explored during the previous
-  phase [Geisweiller2021][4] and should be eventually brought back.
+  phase [Technical Report 2021][4] and should be eventually brought
+  back.
 
 ## J. Final thoughts/comments
 
