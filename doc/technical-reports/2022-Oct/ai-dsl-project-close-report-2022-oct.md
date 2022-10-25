@@ -215,7 +215,7 @@ SingularityNET platform and marketplace sometime in Q2 or Q3 of 2023
 
 ### Video, repository and report
 
-[1]: [Video demo]()
+[1]: [Video Demo](https://drive.google.com/file/d/1QpACs68HNJO0WH0IEL5y7tuNbwb84uL9/view?usp=sharing)
 
 [2]: [Project Repository](https://github.com/singnet/ai-dsl)
 
