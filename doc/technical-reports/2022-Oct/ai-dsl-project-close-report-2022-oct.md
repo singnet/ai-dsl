@@ -40,7 +40,7 @@ We planned work in six broad research areas:
 
 2) Ontology Tasks
 
-3) Exploratory Tasks
+3) Exploratory Smartcontract Tasks
 
 4) Test Cases
 
@@ -48,13 +48,13 @@ We planned work in six broad research areas:
 
 6) Co-Evolutionary Tasks
 
-In our intital plan, we created sub-tasks for these broader task
+In our initial plan, we created sub-tasks for these broader task
 categories, but for reasons described in more detail in section G and
-in our technical report [3], our exploratory research deviated quite a
-bit from those initial sub-tasks. We nonetheless made significant
-progress on tasks 1, 4, and 6, and we had previsously made substantial
-progress on tasks 2 and 3, in our phase 1 work detailed in "AI-DSL
-Technical Report, February to May 2021" [4].
+in our [Technical Report 2022][3], our exploratory research deviated
+quite a bit from those initial sub-tasks. We nonetheless made
+significant progress on tasks 1, 4, and 6, and we had previously made
+substantial progress on tasks 2 and 3, in our phase 1 work detailed in
+the [Technical Report 2021][4].
 
 In phase 2, we began by exploring how to design, connect, and verify
 several useful real-world AI applications that were significantly more
@@ -70,7 +70,7 @@ for completing and releasing a product in Q2 or Q3 of 2023.
 
 Initially it was planned to collaborate with the NuNet team to use the
 Fake News Network application as a test case for our AI-DSL prototype.
-Since the NuNet team abandonned that test case we decided to reorient
+Since the NuNet team abandoned that test case we decided to reorient
 our attention to the following three AI algorithms:
 
 1. Gradient Descent
@@ -92,7 +92,7 @@ They were subdivided into five AI services:
 3. Linear Regression: optimization algorithm specialized to learning
    multivariate linear models, using Gradient Descent.
 4. Logistic Regression: optimization algorithm specialized to learning
-   logisitic models, using Gradient Descent.
+   logistic models, using Gradient Descent.
 5. Logistic-Linear Regression: another version of Logistic Regression
    using Linear Regression instead of Gradient Descent.
 
@@ -114,10 +114,10 @@ autonomous interoperability of AI services.  Even though such
 descending property was too simple for achieving precise
 discriminative pairing (so that only truly compatible services can
 connect to each other), the results were already promising,
-demonstrating further the soundness and feasablility of the approach.
+demonstrating further the soundness and feasibility of the approach.
 
 More information can be found in the Chapter *Implementation and
-Verification of AI Algorithms* of the [Technical report][3].
+Verification of AI Algorithms* of the [Technical Report 2022][3].
 
 ### AI service composition and fuzzy matching
 
@@ -126,11 +126,11 @@ AI services that almost fit but not quite yet) were explored via the
 more generic problem of *Program Synthesis* that theoretically
 underpins them.
 
-Three approaches to program synthesis were explored:
+Four approaches to program synthesis were explored:
 
 1. via developing our own language framework;
 2. via using the Idris elaboration and reflection framework
-   [Christiansen2016][6];
+   [Christiansen 2016][6];
 3. via using the Idris API for interactive type driven programming;
 4. via a coevolutionary intelligent agent market simulation in which
    agents categorize themselves into emergent roles needed for program
@@ -144,7 +144,7 @@ As program synthesis is a very hard problem, only partial practical
 success was achieved, still promising nonetheless.  For instance,
 small programs involving a handful of targeted functions were
 synthesized.  More information can be found in the Chapter *Program
-Synthesis* of the [Technical report][3].
+Synthesis* of the [Technical Report 2022][3].
 
 ## H. Key learnings
 
@@ -154,7 +154,7 @@ logic to be formalized well, and even more so to be proved.  Proof
 discovery can be automated in principle, but in practice it often
 requires the input of an advanced user.  This has confirmed what we
 already suspected, the AI-DSL should be designed to serve two classes
-of users, regular and power user.  Whether the interfaces for one or
+of users, regular and power users.  Whether the interfaces for one or
 the other should be fundamentally different, or may simply be obtained
 by masking power-user functionalities from the regular user remains to
 be determined.
@@ -164,7 +164,7 @@ probably not solely be coded in its type signature.  Even though Idris
 allows that (via Dependent Pairs and Subsets), it may not be the most
 practical because the set of properties that is required to take into
 consideration for a given set of services to get connected is usually
-not known until these services are attemped to be connected.  In other
+not known until these services are attempted to be connected.  In other
 words, the proof that an AI service assemblage is correct is likely to
 be specific to that particular assemblage.
 
@@ -196,25 +196,31 @@ time permits, include:
   Idris) taking into account the dichotomy between regular and power
   user.
 * Explore seamless integration of crisp mathematical properties and
-  uncertain, empirically based ones.  Existing framework such as the
-  Probabilistic Logic Network may be used for that [Goertzel2008][5].
+  uncertain, empirically based ones.  Existing framework such as
+  Probabilistic Logic Networks may be used for that [Goertzel 2008][5].
 * Integrate properties pertaining to run-time performances and
   hardware considerations.  This was explored during the previous
-  phase [Geisweiller2021][4] and should be eventually brought back.
+  phase [Technical Report 2021][4] and should be eventually brought
+  back.
 
 ## J. Final thoughts/comments
 
-TODO
+Due to the challenging nature of our project, in this phase we ended
+up primarily focused on exploring the underlying technologies required
+to create the AI-DSL. We believe that our exploratory research has now
+provided our team with the requisite knowledge and skills to create
+and release the first iteration of our AI-DSL prototype running on the
+SingularityNET platform and marketplace sometime in Q2 or Q3 of 2023
 
 ## K. Links to other relevant project sources or documents. Please also include a link to your video here.
 
 ### Video, repository and report
 
-[1]: [Video demo]()
+[1]: [Video Demo](https://drive.google.com/file/d/1QpACs68HNJO0WH0IEL5y7tuNbwb84uL9/view?usp=sharing)
 
-[2]: [Project repository](https://github.com/singnet/ai-dsl)
+[2]: [Project Repository](https://github.com/singnet/ai-dsl)
 
-[3]: [Technical report](https://raw.githubusercontent.com/singnet/ai-dsl/master/doc/technical-reports/2022-Oct/ai-dsl-techrep-2022-oct.pdf)
+[3]: [Technical Report](https://raw.githubusercontent.com/singnet/ai-dsl/master/doc/technical-reports/2022-Oct/ai-dsl-techrep-2022-oct.pdf)
 
 ### Other References
 
