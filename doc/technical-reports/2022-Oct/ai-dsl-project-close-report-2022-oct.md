@@ -204,7 +204,12 @@ time permits, include:
 
 ## J. Final thoughts/comments
 
-Due to the challenging nature of our project, in this phase we ended up primarily focused on exploring the underlying technologies required to create the AI-DSL. We believe that our exploratory research has now provided our team with the requisite knowledge and skills to create and release the first iteration of our AI-DSL prototype running on the SingularityNET platform and marketplace sometime in Q2 or Q3 of 2023
+Due to the challenging nature of our project, in this phase we ended
+up primarily focused on exploring the underlying technologies required
+to create the AI-DSL. We believe that our exploratory research has now
+provided our team with the requisite knowledge and skills to create
+and release the first iteration of our AI-DSL prototype running on the
+SingularityNET platform and marketplace sometime in Q2 or Q3 of 2023
 
 ## K. Links to other relevant project sources or documents. Please also include a link to your video here.
 
