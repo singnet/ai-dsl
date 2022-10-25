@@ -48,7 +48,7 @@ We planned work in six broad research areas:
 
 6) Co-Evolutionary Tasks
 
-In our intital plan, we created sub-tasks for these broader task
+In our initial plan, we created sub-tasks for these broader task
 categories, but for reasons described in more detail in section G and
 in our [Technical Report][3], our exploratory research deviated quite a
 bit from those initial sub-tasks. We nonetheless made significant
@@ -164,7 +164,7 @@ probably not solely be coded in its type signature.  Even though Idris
 allows that (via Dependent Pairs and Subsets), it may not be the most
 practical because the set of properties that is required to take into
 consideration for a given set of services to get connected is usually
-not known until these services are attemped to be connected.  In other
+not known until these services are attempted to be connected.  In other
 words, the proof that an AI service assemblage is correct is likely to
 be specific to that particular assemblage.
 
