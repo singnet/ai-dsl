@@ -603,14 +603,15 @@ yet to be determined, but could include:
 \item The cost function has a certain topology, such as being convex.
   This is useful to know for instance if the resulting candidate
   approximates the global optimum or not.
+\item Linearity of the models in the case of linear regression.
 \end{itemize}
 These are just examples of properties that are immediately applicable
 to our five AI algorithms.  More broadly there are many more
 properties of interest, pertaining not only to the algorithms
-themselves but as they interaction with reality.  For instance a
-property could express the impossibility or the impracticality of
-introducing backdoors during training~\cite{TODO}.  The breadth and
-utility of what can be formalized is enormous.
+themselves but as they interact with the real world.  For instance a
+property could express the impracticality of introducing backdoors
+during training~\cite{Menisov2022}.  The breadth and utility of what
+can be formalized is simply enormous.
 
 \subsection{Axioms and Uncertainty}
 They are a few of problems regarding the assumptions about the
@@ -636,23 +637,27 @@ especially relevant to AI algorithms that are not only often
 nondeterministic but also have their performances typically measured
 in terms of their fitness to the real world, which is intrinsically
 and profoundly uncertain.  Fortunately, to address that, logic
-frameworks such as Probabilistic Logic Networks~\cite{TODO} can
-be used.\\
+frameworks such as Probabilistic Logic Networks~\cite{Goertzel09PLN}
+can be used.\\
 
 \subsection{More, More and More Algorithms}
 In the long run we want to provide formal specifications to \emph{all}
 AI algorithms, ranging from the most specialized, such as Cyclical
-Stochastic Gradient MCMC for Bayesian Deep Learning~\cite{TODO}, to
-the most general, such as Solomonoff Universal Induction~\cite{TODO}.
-Of course we, the members of the AI-DSL team, cannot do it all by
-ourselves.  This is a monumental task that will have to be
-progressively crowdsourced to the community, and eventually to the
-network itself.  The latter has the interesting ramification that the
-network should progressively take the role of an AI researcher
-conceiving its own AI algorithms in a justified and principled way.
-For starter, however, it is important that we provide an initial
-kernel that can be used in practical applications and serve as
-didactic example.
+Stochastic Gradient MCMC for Bayesian Deep Learning~\cite{Zhang2020},
+to the most general, such as Solomonoff Universal
+Induction~\cite{Solomonoff1964}.  Of course we, the members of the
+AI-DSL team, cannot do it all by ourselves.  This is a monumental task
+that will have to be progressively crowdsourced to the community, and
+eventually to the network itself.  The latter has the interesting
+ramification that the network should progressively take the role of an
+AI researcher conceiving its own AI algorithms in a justified and
+principled way.  For starter, however, it is important that we provide
+an initial kernel that can be used in practical applications and serve
+as didactic example.
+
+\subsection{Program Synthesis}
+
+\subsection{AI-DSL Syntax and Users}
 
 \appendix
 \chapter{Glossary}
