@@ -32,7 +32,8 @@ services involved already exist on the SingularityNET platform.
 \section{AI Services Assemblages}
 Each assemblage is shown with:
 \begin{enumerate}
-\item a flowchart, arrows representing the flow of information;
+\item a flowchart, arrows representing the flow of information between
+  AI services represented as blue boxes;
 \item a type signature using types provided by an imaginary possible
   future version of the AI-DSL, for now expressed in Idris;
 \item optionally an implementation of such assemblage, again expressed
@@ -52,11 +53,10 @@ that.
 handwritingEmotionRecognition : HandWriting -> Emotion
 handwritingEmotionRecognition = emotionRecognition . handWritingToText
 \end{minted}
-The type signature could assumes the types \texttt{HandWriting} as
-being a special type of image and \texttt{Emotion} as being a
-category, or possibly categorical distribution, of emotions.  The
-composition operator \texttt{.} can be used for the implementation
-given the simplicity of the assemblage.
+The type \texttt{HandWriting} could be specialized type of image and
+\texttt{Emotion} could be a category, or possibly categorical
+distribution, of emotions.  The composition operator \texttt{.} can be
+used for the implementation given the simplicity of the assemblage.
 
 \subsection{Topic Analysis of Speech}
 \begin{figure}[H]
@@ -67,9 +67,9 @@ given the simplicity of the assemblage.
 speechTopicAnalysis : Speech -> Topic
 speechTopicAnalysis = topicAnalysis . speechToText
 \end{minted}
-\texttt{Speech} is assumed to be a special type of sound and
-\texttt{Topic} a special type of text, or maybe category, or
-categorical distribution, of topics.
+\texttt{Speech} could be a special type of sound and \texttt{Topic} a
+special type of text, or maybe category, or categorical distribution,
+of topics.
 
 \subsection{Topic Analysis of Text from Any Language}
 This assemblage is simply doing topic analysis but for any language by
@@ -101,11 +101,11 @@ used to express the guaranty that the language of the output topic is
 the same as the one of the text.
 
 \subsection{Recognize Emotion from Speech}
-That assemblage is more complicated and combines a Speech Emotion
-Recognition service with a sub-assemblage of speech-to-text and
-text-emotion-recognition services.  The idea is that such assemblage
-would improve the performance of emotion recognition by combining
-different services and aggregating their results.
+That assemblage combines a Speech Emotion Recognition service with a
+sub-assemblage of speech-to-text and text-emotion-recognition
+services.  The idea is that such assemblage would improve the
+performance of emotion recognition by combining different services and
+aggregating their results.
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.55]{figs/SpeechEmotionRecognition.png}
@@ -116,15 +116,13 @@ speechEmotionRecognizer = ?h
 \end{minted}
 
 \subsection{Turn an English Song into a Chinese Song}
-This assemblage aims at turning a English song into the same song but
+This assemblage aims at turning an English song into the same song but
 sang in Chinese.
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.55]{figs/EnglishToChineseSong.png}
 \end{figure}
 \begin{minted}[mathescape]{idris}
-Spleeter : Song l -> (Singing, Intrumental)
-Spleeter song = ?h
 englishSongToChineseSong : Song English -> Song Chinese
 englishSongToChineseSong x = let (enSing, accomp) = Spleeter x
                                  enLyrics = toText enSing
@@ -132,17 +130,22 @@ englishSongToChineseSong x = let (enSing, accomp) = Spleeter x
                                  notes = toMidi enSing
                                  chSing = chineseSing notes chLyrics
                              in accomp + chSing
+Spleeter : Song l -> (Singing l, Intrumental)
+Spleeter song = ?h
 \end{minted}
 Note the use of the parameterized type \texttt{Song} that could be a
-special type of audio being a song in a given language.  The
+specialized type of audio, a song in a given language.  The
 implementation involves the \texttt{let} construct.  There are
 certainly ways to replace that by something purely compositional,
 something we may want to consider to make the AI-DSL language more
-composition friendly.
+composition friendly.  In addition we provide an example of type
+signature of the AI service \texttt{Spleeter}, using dependent types
+again.
 
-All services involved with the exception of \texttt{toMidi} exist on
-SingularityNET.  For \texttt{toMidi} we have however found a number of
-open source projects that could potentially be used
+All services involved in that assemblage with the exception of
+\texttt{toMidi} exist on SingularityNET.  To create \texttt{toMidi} we
+have however found a number of open source projects that could
+potentially be used
 \begin{itemize}
 \item
   \href{https://basicpitch.spotify.com}{https://basicpitch.spotify.com}
@@ -175,7 +178,7 @@ The type signatures are fairly simple in these examples, they could of
 course be made more sophisticated, or additional properties could be
 added.  These aspects are important and have been previously explored
 to some degree.  But they will likely not be the main focus of the
-next phase and so are left out or simplified for now.  The purpose of
-the next phase will be to build a rudimentary, yet working from
+next phase, so are left out or simplified for now.  The purpose of the
+next phase will be to build a rudimentary, yet working from
 end-to-end, AI-DSL prototype.
 \end{document}
