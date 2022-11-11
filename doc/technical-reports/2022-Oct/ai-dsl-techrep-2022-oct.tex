@@ -2,6 +2,7 @@
 %% to September 2022.
 
 \documentclass[]{report}
+\usepackage{amssymb}
 \usepackage{url}
 \usepackage{minted}
 \usepackage[textsize=footnotesize]{todonotes}
@@ -90,6 +91,43 @@ human intervention, as the network and the AI-DSL evolve.
 
 Here's a list of projects and publications we have discovered along
 the way that relate to the work done during that iteration.
+
+\subsection{Machine Learning Formal Verification}
+
+The most relevant work we have found so far is described in a paper
+entitled \emph{Developing Bug-Free Machine Learning Systems With
+  Formal Mathematics}~\cite{DBLP:journals/corr/SelsamLD17}.  In that
+paper a formal specification of a class of stochastic gradient descent
+algorithms operating on stochastic computation graphs is implemented
+in Lean~\cite{Lean}, alongside a property expressing that the back
+propagation correction points, in average, towards the gradient
+descent of the cost.  Mathematically, this may be expressed by the
+following equality
+$$\mathbb{E}_{g,\theta}[\texttt{bprop}(g,\theta,\bold{X})] = \nabla_{\theta}(\mathbb{E}_{g,\theta}[\texttt{cost}(g,\bold{X})])$$
+where $g$ is a stochastic computation graph parameterized by $\theta$,
+$\bold{X}$ is a random vector describing the values sampled from $g$,
+$\texttt{bprop}$ the is back propagation function and $\texttt{cost}$
+is the cost function.  Such equality is formally expressed in Lean
+using existing and introduced mathematical vocabulary to express
+notions of probability and measure theory such as expectation,
+integration and derivation, then proved using tactics developed for
+that purpose.  The authors admit that their prove assumes
+infinite-precision real numbers as opposed to finite-precision
+floating point numbers used in practice.  However, they point to a
+couple of papers addressing the use of floating point numbers in the
+context of automatic theorem proving~\cite{Harrison2006,
+  Ramananandro2016}.
+
+Another related work presented in~\cite{Bagnall2019} aims to prove
+properties about learned models, as opposed to learning algorithms.
+Formalizing Hoeffding's inequality~\cite{Hoeffding1963} in
+Coq~\cite{Bertot2004}, the authors show how to automatically prove the
+extend to which a given model, such as a perception, generalizes on
+unknown data.
+
+TODO: mention various relevant Idris projects.
+
+\subsection{Program and Proof Synthesis}
 
 TODO
 
