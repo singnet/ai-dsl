@@ -15,22 +15,22 @@ The general idea of the AI-DSL is to provide
    or otherwise.
 
 2. A tool set for not only verifying the validity of such assemblages
-   but also automatically create such assemblages when possible.
-   Basically, if a user can formalize precisely enough the desired
-   function, then the AI-DSL tool set should be able to automatically
-   fetch and combine the right AI services to deliver that function.
+   but also automatically create such assemblages.  Basically, if a
+   user can formalize precisely enough the desired function, then the
+   AI-DSL tool set should be able to automatically fetch and combine
+   the right AI services to deliver that function.
 
 ## Status
 
 Up to now the work has been mostly exploratory resulting into
-prototypes and experimental code covering various features in
-isolation as opposed to a final product.  This is justified by the
-fact that it is an ambitious project and requires a fair bit of
+prototypes and experimental code covering various aspects of the
+AI-DSL in isolation as opposed to a final product.  This is justified
+by the fact that it is an ambitious project and requires a fair bit of
 research and development.
 
-Progress has been taking place into phases, where details can be found
-in technical reports written at the end of each phase.  An overview of
-each phase is given below.
+Progress has been taking place into phases.  Details can be found in
+technical reports written at the end of each phase.  An overview of is
+given below.
 
 ### Phase 1
 
