@@ -36,11 +36,13 @@ each phase is given below.
 
 * Overview:
   1. Formalize trivial properties about service resources,
-     computational, finantial and performance using [Idris]().
+     computational, finantial and performance using
+     [Idris](https://www.idris-lang.org/).
   2. Formalize trivial properties of services doing simple arithmetic
      operations using Idris to experiment with dependent type checking
      based service assemblage validation.
-  3. Explore existing ontologies such as [SUMO]() to provide a rich
+  3. Explore existing ontologies such as
+     [SUMO](http://www.ontologyportal.org/) to provide a rich
      vocabulary to the AI-DSL.
 * [Technical Report of May 2021](doc/technical-reports/2021-May/ai-dsl-techrep-2021-05_may.pdf)
 
