@@ -24,9 +24,9 @@ The general idea of the AI-DSL is to provide
 
 Up to now the work has been mostly exploratory resulting into
 prototypes and experimental code covering various aspects of the
-AI-DSL in isolation as opposed to a final product.  This is justified
-by the fact that it is an ambitious project and requires a fair bit of
-research and development.
+AI-DSL as opposed to a final product.  This is justified by the fact
+that it is an ambitious project and requires a fair bit of research
+and development.
 
 Progress has been taking place into phases.  Details can be found in
 technical reports written at the end of each phase.  An overview of is
