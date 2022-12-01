@@ -127,6 +127,48 @@ unknown data.
 
 TODO: mention various relevant Idris projects.
 
+\subsection{Smart Contract Formal Verification}
+
+Over the past years the subject of formal verification of smart
+contract has also gathered some attention.
+
+A formal specification of the Ethereum Virtual Machine (EVM) has been
+provided~\cite{Hildenbrandt2018} using the $\mathbb{K}$
+framework~\cite{Xiaohong2019}, enabling formal verification based on
+Reachability Logic~\cite{Alechina2000}.  Approaches for doing formal
+verification on higher level languages targeting the EVM have also
+exist.  In 2016 a Master's thesis~\cite{Pettersson2016} was conducted
+to explore how Idris can be used to write smart contracts avoiding
+common failures such as stack overflow or lack of cryptography when
+required.  On top using Idris to detect these failures, the authors
+extended the Idris compiler to support Serpent, a high level language
+for the EVM.  To our knowledge unfortunately that work has not been
+further pursued.  Similarly, a system called,
+ConCert~\cite{Annenkov2020} has been developed to do formal
+verification of smart contracts written in $\lambda_{smart}$, a high
+level language for smart contracts, using Coq~\cite{Bertot2004}.
+
+Then they are blockchains that have been created to support formal
+verification more or less from the beginning.  Tezos~\cite{Tezos2014},
+using Michelson as low level smart contract language, now comes with a
+formal verification tool called Mi-Cho-Coq~\cite{Bernardo2019}
+developed in Coq.  Higher level languages targeting Michelson also
+exist such as Albert~\cite{Bernardo2020}.
+\textsc{Zilliqa}~\cite{Zilliqa2017} comes with
+\textsc{Scilla}~\cite{Ilya2018}, an intermediate-level language
+enabling formal verification with Coq.  The Zen
+protocol~\cite{Zen2017} also supports formal verification via
+F*~\cite{Swamy2013}.  Notably, the type of verification described in
+its white paper also includes computational resources, to formally
+guaranty that a contract will be allocated enough gaz before it is
+run.
+
+These are the main publications we have found so far, although a few
+more can be found in that study~\cite{Pace2020}.  It is a rapidly
+growing field and there is no doubt that formal verification is
+progressively becoming an indissociable part of the blockchain
+technology.
+
 \subsection{Program and Proof Synthesis}
 
 TODO

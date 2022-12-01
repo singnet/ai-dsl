@@ -741,9 +741,24 @@ doi={10.1109/CSF.2018.00022}
 }
 
 @paper{Zen2017,
-tital={An Introduction to the Zen Protocol},
+author={{Zen Protocol Development}},
+title={An Introduction to the Zen Protocol},
 year={2017},
 url={https://www.zenprotocol.com/en/white_paper.pdf}
+}
+
+@paper{Zilliqa2017,
+author={{The \textsc{Zilliqa} Team}},
+title={The \textsc{Zilliqa} Technical Paper},
+year={2017},
+url={https://docs.zilliqa.com/whitepaper.pdf}
+}
+
+@paper{Tezos2014,
+author={{L.M Goodman}},
+title={Tezos -- a self-amending crypto-ledger White paper},
+year={2014},
+url={https://tezos.com/whitepaper.pdf}
 }
 
 @inproceedings{Bernardo2020,
@@ -773,4 +788,52 @@ isbn="978-3-030-54455-3"
   author={Jack Pettersson and Robert Edstr{\"o}m},
   booktitle={Master's thesis},
   year={2016}
+}
+
+@inproceedings{Swamy2013,
+author = {Swamy, Nikhil and Chen, Juan and Livshits, Ben},
+title = {Verifying Higher-order Programs with the Dijkstra Monad},
+booktitle = {ACM Programming Language Design and Implementation (PLDI) 2013},
+year = {2013},
+month = {June},
+abstract = {Modern programming languages, ranging from Haskell and ML, to JavaScript, C# and Java, all make extensive use of higher-order state. This paper advocates a new verification methodology for higher-order stateful programs, based on a new monad of predicate transformers called the Dijkstra monad.
+Using the Dijkstra monad has a number of benefits. First, the monad naturally yields a weakest pre-condition calculus. Second, the computed specifications are structurally simpler in several ways, e.g., single-state post-conditions are sufficient (rather than the more complex two-state post-conditions). Finally, the monad can easily be varied to handle features like exceptions and heap invariants, while retaining the same type inference algorithm.
+We implement the Dijkstra monad and its type inference algorithm for the F* programming language. Our most extensive case study evaluates the Dijkstra monad and its F* implementation by using it to verify JavaScript programs.
+Specifically, we describe a tool chain that translates programs in a subset of JavaScript decorated with assertions and loop invariants to F*. Once in F*, our type inference algorithm computes verification conditions and automatically discharges their proofs using an SMT solver. We use our tools to prove that a core model of the JavaScript runtime in F* respects various invariants and that a suite of JavaScript source programs are free of runtime errors.},
+publisher = {ACM},
+url = {https://www.microsoft.com/en-us/research/publication/verifying-higher-order-programs-with-the-dijkstra-monad/},
+edition = {ACM Programming Language Design and Implementation (PLDI) 2013},
+}
+
+@article{Alechina2000,
+    author = {Alechina, N and Immerman, N},
+    title = "{Reachability logic: an efficient fragment of transitive closure logic}",
+    journal = {Logic Journal of the IGPL},
+    volume = {8},
+    number = {3},
+    pages = {325-337},
+    year = {2000},
+    month = {05},
+    abstract = "{We define reachability logic (RL), a fragment of FO2(TC) (with boolean variables) that admits efficient model checking - linear time with a small constant - as a function of the size of the structure being checked. RL is expressive enough so that modal logics PDL and CTL* can be linearly embedded in it. The model checking algorithm is also linear in the size of the formula, but exponential in the number of boolean variables occurring in it. In practice this number is very small. In particular, for CTL and PDL formulas the resulting model checking algorithm remains linear. For CTL* the complexity of model checking - which is PSPACE complete in the worst case - can be read from the face of the translated formula.}",
+    issn = {1367-0751},
+    doi = {10.1093/jigpal/8.3.325},
+    url = {https://doi.org/10.1093/jigpal/8.3.325},
+    eprint = {https://academic.oup.com/jigpal/article-pdf/8/3/325/2419781/080325.pdf},
+}
+
+
+@inproceedings{Xiaohong2019,
+title = "Matching µ-logic: Foundation of K framework",
+abstract = "K framework is an effort in realizing the ideal language framework where programming languages must have formal semantics and all languages tools are automatically generated from the formal semantics in a correct-by-construction manner at no additional costs. In this extended abstract, we present matching µ-logic as the foundation of K and discuss some of its applications in defining constructors, transition systems, modal µ-logic and temporal logic variants, and reachability logic.",
+keywords = "Matching µ-logic, Program verification, Reachability logic",
+author = "Xiaohong Chen and Grigore Ro{\c s}u",
+note = "Publisher Copyright: {\textcopyright} Xiaohong Chen and Grigore Ro{\c s}u.; 8th Conference on Algebra and Coalgebra in Computer Science, CALCO 2019 ; Conference date: 03-06-2019 Through 06-06-2019",
+year = "2019",
+month = nov,
+doi = "10.4230/LIPIcs.CALCO.2019.1",
+language = "English (US)",
+series = "Leibniz International Proceedings in Informatics, LIPIcs",
+publisher = "Schloss Dagstuhl- Leibniz-Zentrum fur Informatik GmbH, Dagstuhl Publishing",
+editor = "Markus Roggenbach and Ana Sokolova",
+booktitle = "8th Conference on Algebra and Coalgebra in Computer Science, CALCO 2019"
 }
