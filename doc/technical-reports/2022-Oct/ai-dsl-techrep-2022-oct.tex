@@ -135,26 +135,34 @@ contract has also gathered some attention.
 A formal specification of the Ethereum Virtual Machine (EVM) has been
 provided~\cite{Hildenbrandt2018} using the $\mathbb{K}$
 framework~\cite{Xiaohong2019}, enabling formal verification based on
-Reachability Logic~\cite{Alechina2000}.  Approaches for doing formal
-verification on higher level languages targeting the EVM have also
-exist.  In 2016 a Master's thesis~\cite{Pettersson2016} was conducted
-to explore how Idris can be used to write smart contracts avoiding
-common failures such as stack overflow or lack of cryptography when
-required.  On top using Idris to detect these failures, the authors
-extended the Idris compiler to support Serpent, a high level language
-for the EVM.  To our knowledge unfortunately that work has not been
-further pursued.  Similarly, a system called,
+Reachability Logic~\cite{Alechina2000}.
+
+Approaches for doing formal verification on higher level languages
+targeting the EVM also exist.  In 2016 a Master's
+thesis~\cite{Pettersson2016} was conducted to explore how Idris can be
+used to write smart contracts avoiding common failures such as stack
+overflow or lack of cryptographic encryption when required.  On top of
+using Idris to detect such failures, the authors extended the Idris
+compiler to support Serpent~\cite{Delmolino2015}, a high level
+language for the EVM.  To our knowledge unfortunately that work has
+not been pursued any further.  Similarly, a system called,
 ConCert~\cite{Annenkov2020} has been developed to do formal
-verification of smart contracts written in $\lambda_{smart}$, a high
-level language for smart contracts, using Coq~\cite{Bertot2004}.
+verification of smart contracts written in $\lambda_{smart}$, a
+fragment of the \textsc{Acorn} smart contract language, using
+Coq~\cite{Bertot2004}.
 
 Then they are blockchains that have been created to support formal
 verification more or less from the beginning.  Tezos~\cite{Tezos2014},
-using Michelson as low level smart contract language, now comes with a
-formal verification tool called Mi-Cho-Coq~\cite{Bernardo2019}
-developed in Coq.  Higher level languages targeting Michelson also
-exist such as Albert~\cite{Bernardo2020}.
-\textsc{Zilliqa}~\cite{Zilliqa2017} comes with
+using Michelson, a stack-based low level smart contract language, now
+comes with a formal verification tool called
+Mi-Cho-Coq~\cite{Bernardo2019} developed in Coq.  Higher level
+languages targeting Michelson also exist such as
+Albert~\cite{Bernardo2020}, an Intermediate Level Language, and
+Juvix~\cite{Goes2020} a Dependently Typed Language (DTL) based on
+Quantitative Type Theory (QTT)~\cite{Atkey2018} that not only allows
+to reason about smart contracts at a high level, but also produces
+optimized Michelson code by taking advantage of the quantitative
+aspect of QTT.  \textsc{Zilliqa}~\cite{Zilliqa2017} comes with
 \textsc{Scilla}~\cite{Ilya2018}, an intermediate-level language
 enabling formal verification with Coq.  The Zen
 protocol~\cite{Zen2017} also supports formal verification via
@@ -164,14 +172,28 @@ guaranty that a contract will be allocated enough gaz before it is
 run.
 
 These are the main publications we have found so far, although a few
-more can be found in that study~\cite{Pace2020}.  It is a rapidly
-growing field and there is no doubt that formal verification is
-progressively becoming an indissociable part of the blockchain
+more can be found in that study~\cite{Pace2020}, as well as other
+articles from that same book of proceedings.  It is a rapidly growing
+field and there is no doubt that formal verification will
+progressively become an indissociable part of the blockchain
 technology.
 
 \subsection{Program and Proof Synthesis}
 
-TODO
+As far as we can tell, the literature on that subject, that is
+automatically synthesizing programs and proofs satisfying a formal
+description, is very lacking.  The reasons probably being that it is a
+hard problem and language frameworks, such as Idris, dedicated to that
+are fairly new.  It seems the best publication on the matter is the
+Idris hand book~\cite{}.  There is other related work such as Magic
+Haskell~\cite{} although fairly limited since such system only
+supports case-based descriptions due to the lack of expressive power
+of Haskell.  There is other similar work coming from the Inductive
+Programming Logic community, essentially suffering from the same
+limitations as Magic Haskell.
+
+MOSES
+https://cseweb.ucsd.edu/~npolikarpova/
 
 % - [ ] Mention the following Idris2 packages
 %   - [ ] https://github.com/stefan-hoeck/idris2-graph
@@ -194,6 +216,31 @@ TODO
 % - [ ] The AI-DSL is a language of composition, not application!!!
 % - [ ] Look into AGDA https://wiki.portal.chalmers.se/agda/pmwiki.php
 % - [ ] https://epistasislab.github.io/tpot/
+
+\subsection{Comparing Formal Languages}
+
+The reader may have noticed in these publications the use of other
+language frameworks beside Idris, such as Lean, Coq and F*.  It is
+still not completely clear what are the pros and cons of each
+framework and is something we intend to investigate further.  However
+already some observations can be made.  Lean and Coq are more oriented
+towards proving mathematical theorems, while Idris is more oriented
+towards writing and verifying programs.
+
+The advantage of Idris, as far as we have experienced, is that proofs
+and programs are based on the same language, and in fact share a lot
+vocabulary.  For instance the function \texttt{map}, from the
+\texttt{Functor} interface, may be used inside proofs or programs
+alike.  Beside being very elegant, it brings the notion of reusability
+to a new level.  It should be noted that Juvix~\cite{Goes2020},
+although dedicated to smart contract programming, is very closed
+conceptually to Idris.  It is a fairly new language and we may want to
+keep a close eye on its development.
+
+Lean and Coq have other advantages, such as having large libraries of
+mathematical theories that can be reused when proving properties of
+programs.  There is no doubt that Idris mathematical library will grow
+but as of today it is lagging behind.
 
 \chapter{Implementation and Verification of AI Algorithms}
 
