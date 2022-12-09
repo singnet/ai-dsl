@@ -127,6 +127,28 @@ unknown data.
 
 TODO: mention various relevant Idris projects.
 
+% - [ ] Mention the following Idris2 packages
+%   - [ ] https://github.com/stefan-hoeck/idris2-graph
+%   - [ ] https://github.com/idris-bayes/log-domain
+%   - [ ] https://github.com/idris-bayes/prob-fx
+%   - [ ] https://github.com/madman-bob/idris2-jupyter
+%   - [ ] https://github.com/joelberkeley/spidr
+%   - [ ] https://github.com/stefan-hoeck/idris2-prim
+%   - [ ] https://github.com/madman-bob/idris2-python
+% - [ ] Newton, Preconditioning, step size cycling scheduling, etc
+% - [ ] ConCert https://arxiv.org/pdf/1907.10674.pdf
+% - [ ] A Coq-based synthesis of Scala programs which are
+%   correct-by-construction
+%   https://cedric.cnam.fr/fichiers/art_4027.pdf
+%   https://github.com/JBakouny/Scallina
+% - [ ] https://stackoverflow.com/questions/23436823/converting-coq-to-idris
+% - [ ] See paper Learning to Prove Theorems via Interacting with
+%   Proof Assistants
+% - [ ] http://ace.cs.ohio.edu/~gstewart/mlcert.html
+% - [ ] The AI-DSL is a language of composition, not application!!!
+% - [ ] Look into AGDA https://wiki.portal.chalmers.se/agda/pmwiki.php
+% - [ ] https://epistasislab.github.io/tpot/
+
 \subsection{Smart Contract Formal Verification}
 
 Over the past years the subject of formal verification of smart
@@ -185,37 +207,46 @@ automatically synthesizing programs and proofs satisfying a formal
 description, is very lacking.  The reasons probably being that it is a
 hard problem and language frameworks, such as Idris, dedicated to that
 are fairly new.  It seems the best publication on the matter is the
-Idris hand book~\cite{}.  There is other related work such as Magic
-Haskell~\cite{} although fairly limited since such system only
-supports case-based descriptions due to the lack of expressive power
-of Haskell.  There is other similar work coming from the Inductive
-Programming Logic community, essentially suffering from the same
-limitations as Magic Haskell.
+Idris hand book~\cite{Brady2017}.
+
+There is other related work such as Magic Haskell~\cite{} although
+fairly limited since such system only supports case-based descriptions
+due to the lack of expressive power of Haskell.  There is other
+similar work coming from the Inductive Programming Logic community,
+essentially suffering from the same limitations as Magic Haskell.
 
 MOSES
 https://cseweb.ucsd.edu/~npolikarpova/
 
-% - [ ] Mention the following Idris2 packages
-%   - [ ] https://github.com/stefan-hoeck/idris2-graph
-%   - [ ] https://github.com/idris-bayes/log-domain
-%   - [ ] https://github.com/idris-bayes/prob-fx
-%   - [ ] https://github.com/madman-bob/idris2-jupyter
-%   - [ ] https://github.com/joelberkeley/spidr
-%   - [ ] https://github.com/stefan-hoeck/idris2-prim
-%   - [ ] https://github.com/madman-bob/idris2-python
-% - [ ] Newton, Preconditioning, step size cycling scheduling, etc
-% - [ ] ConCert https://arxiv.org/pdf/1907.10674.pdf
-% - [ ] A Coq-based synthesis of Scala programs which are
-%   correct-by-construction
-%   https://cedric.cnam.fr/fichiers/art_4027.pdf
-%   https://github.com/JBakouny/Scallina
-% - [ ] https://stackoverflow.com/questions/23436823/converting-coq-to-idris
-% - [ ] See paper Learning to Prove Theorems via Interacting with
-%   Proof Assistants
-% - [ ] http://ace.cs.ohio.edu/~gstewart/mlcert.html
-% - [ ] The AI-DSL is a language of composition, not application!!!
-% - [ ] Look into AGDA https://wiki.portal.chalmers.se/agda/pmwiki.php
-% - [ ] https://epistasislab.github.io/tpot/
+Component-based synthesis, or modular synthesis.
+
+Probably the most relevant work we have found regarding program
+synthesis can be found in~\cite{Guo2022}.  In this work, RESTful APIs
+function calls are composed to fulfill a given specification.  Since
+RESTful types are rather limited, their system begins by enhancing
+type signatures with \emph{Semantic Types}, exploiting the RESTful
+type descriptions to heuristically replace non-semantic types like
+\texttt{String} by semantic types like \texttt{User} or \texttt{Id}.
+Then performs
+% TODO: shouldn't Type Transition Nets be Abstract Transition Networks?
+component-based synthesis using Type Transition Nets
+(TTN)~\cite{Feng2017, Guo2020}, a special kind of Petri Nets.  Since
+Semantic Types are still rather limited, at least compared to
+Dependent Types, their system also uses input-output examples to
+further narrow down the search.  Overall, it is a very relevant work
+and contains parts that could potentially be reused, such as the
+TTN-based search.
+
+The last one is not program synthesis per say but rather program
+specification synthesis using Liquid Types, short for \emph{Logically
+  Qualified Data Types}~\cite{Rondon2008}.  Liquid Types are a
+decidable fragment of Refinement Types.  Their system was able to
+automatically infer the correct specifications of all functions of an
+Array OCAML library.  A bug that had remained hidden so far was
+revealed and corrected in the process.  This work could potentially be
+used to infer the specifications of existing AI services that can then
+be manually corrected, which is easier than having to write a
+specification from scratch.
 
 \subsection{Comparing Formal Languages}
 

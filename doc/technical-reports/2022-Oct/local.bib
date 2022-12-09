@@ -866,4 +866,71 @@ year={2015},
 url={http://mc2-umd.github.io/ethereumlab/docs/serpent_tutorial.pdf}
 }
 
+@inproceedings{Rondon2008,
+  title={Liquid types},
+  author={Rondon, Patrick Maxim and Kawaguchi, Ming and Jhala, Ranjit},
+  booktitle={ACM-SIGPLAN Symposium on Programming Language Design and Implementation},
+  year={2008}
+}
 
+@inproceedings{Feng2017,
+author = {Feng, Yu and Martins, Ruben and Wang, Yuepeng and Dillig, Isil and Reps, Thomas W.},
+title = {Component-Based Synthesis for Complex APIs},
+year = {2017},
+isbn = {9781450346603},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3009837.3009851},
+doi = {10.1145/3009837.3009851},
+abstract = {Component-based approaches to program synthesis assemble programs from a database of existing components, such as methods provided by an API. In this paper, we present a novel type-directed algorithm for component-based synthesis. The key novelty of our approach is the use of a compact Petri-net representation to model relationships between methods in an API. Given a target method signature S, our approach performs reachability analysis on the underlying Petri-net model to identify sequences of method calls that could be used to synthesize an implementation of S. The programs synthesized by our algorithm are guaranteed to type check and pass all test cases provided by the user. We have implemented this approach in a tool called SyPet, and used it to successfully synthesize real-world programming tasks extracted from on-line forums and existing code repositories. We also compare SyPet with two state-of-the-art synthesis tools, namely InSynth and CodeHint, and demonstrate that SyPet can synthesize more programs in less time. Finally, we compare our approach with an alternative solution based on hypergraphs and demonstrate its advantages.},
+booktitle = {Proceedings of the 44th ACM SIGPLAN Symposium on Principles of Programming Languages},
+pages = {599–612},
+numpages = {14},
+keywords = {Component-based, Petri-net, Type-directed, Program Synthesis},
+location = {Paris, France},
+series = {POPL '17}
+}
+
+@article{Guo2020,
+author = {Guo, Zheng and James, Michael and Justo, David and Zhou, Jiaxiao and Wang, Ziteng and Jhala, Ranjit and Polikarpova, Nadia},
+title = {Program Synthesis by Type-Guided Abstraction Refinement},
+year = {2019},
+issue_date = {January 2020},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {4},
+number = {POPL},
+url = {https://doi.org/10.1145/3371080},
+doi = {10.1145/3371080},
+abstract = {We consider the problem of type-directed component-based synthesis where, given a set of (typed) components and a query type, the goal is to synthesize a term that inhabits the query. Classical approaches based on proof search in intuitionistic logics do not scale up to the standard libraries of modern languages, which span hundreds or thousands of components. Recent graph reachability based methods proposed for Java do scale, but only apply to monomorphic data and components: polymorphic data and components infinitely explode the size of the graph that must be searched, rendering synthesis intractable. We introduce type-guided abstraction refinement (TYGAR), a new approach for scalable type-directed synthesis over polymorphic datatypes and components. Our key insight is that we can overcome the explosion by building a graph over abstract types which represent a potentially unbounded set of concrete types. We show how to use graph reachability to search for candidate terms over abstract types, and introduce a new algorithm that uses proofs of untypeability of ill-typed candidates to iteratively refine the abstraction until a well-typed result is found. We have implemented TYGAR in H+, a tool that takes as input a set of Haskell libraries and a query type, and returns a Haskell term that uses functions from the provided libraries to implement the query type. Our support for polymorphism allows H+ to work with higher-order functions and type classes, and enables more precise queries due to parametricity. We have evaluated H+ on 44 queries using a set of popular Haskell libraries with a total of 291 components. H+ returns an interesting solution within the first five results for 32 out of 44 queries. Our results show that TYGAR allows H+ to rapidly return well-typed terms, with the median time to first solution of just 1.4 seconds. Moreover, we observe that gains from iterative refinement over exhaustive enumeration are more pronounced on harder queries.},
+journal = {Proc. ACM Program. Lang.},
+month = {dec},
+articleno = {12},
+numpages = {28},
+keywords = {Program Synthesis, Abstract Interpretation, Type Systems}
+}
+
+@inproceedings{Guo2022,
+author = {Guo, Zheng and Cao, David and Tjong, Davin and Yang, Jean and Schlesinger, Cole and Polikarpova, Nadia},
+title = {Type-Directed Program Synthesis for RESTful APIs},
+year = {2022},
+isbn = {9781450392655},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3519939.3523450},
+doi = {10.1145/3519939.3523450},
+abstract = {With the rise of software-as-a-service and microservice architectures, RESTful APIs are now ubiquitous in mobile and web applications. A service can have tens or hundreds of API methods, making it a challenge for programmers to find the right combination of methods to solve their task. We present APIphany, a component-based synthesizer for programs that compose calls to RESTful APIs. The main innovation behind APIphany is the use of precise semantic types, both to specify user intent and to direct the search. APIphany contributes three novel mechanisms to overcome challenges in adapting component-based synthesis to the REST domain: (1) a type inference algorithm for augmenting REST specifications with semantic types; (2) an efficient synthesis technique for "wrangling" semi-structured data, which is commonly required in working with RESTful APIs; and (3) a new form of simulated execution to avoid executing APIs calls during synthesis. We evaluate APIphany on three real-world APIs and 32 tasks extracted from GitHub repositories and StackOverflow. In our experiments, APIphany found correct solutions to 29 tasks, with 23 of them reported among top ten synthesis results.},
+booktitle = {Proceedings of the 43rd ACM SIGPLAN International Conference on Programming Language Design and Implementation},
+pages = {122–136},
+numpages = {15},
+keywords = {RESTful API, Type Inference, Program Synthesis},
+location = {San Diego, CA, USA},
+series = {PLDI 2022}
+}
+
+@book{Brady2017,
+author={Edwin Brady},
+title={Type-Driven Development with Idris},
+publisher={Manning},
+year={2017},
+}
