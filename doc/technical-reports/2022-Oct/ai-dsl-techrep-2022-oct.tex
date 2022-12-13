@@ -229,13 +229,23 @@ type descriptions to heuristically replace non-semantic types like
 \texttt{String} by semantic types like \texttt{User} or \texttt{Id}.
 Then performs
 % TODO: shouldn't Type Transition Nets be Abstract Transition Networks?
-component-based synthesis using Type Transition Nets
-(TTN)~\cite{Feng2017, Guo2020}, a special kind of Petri Nets.  Since
-Semantic Types are still rather limited, at least compared to
-Dependent Types, their system also uses input-output examples to
-further narrow down the search.  Overall, it is a very relevant work
-and contains parts that could potentially be reused, such as the
-TTN-based search.
+component-based synthesis using \emph{Type Transition Nets}
+(TTN)~\cite{Feng2017}, a special kind of Petri Nets.  Since Semantic
+Types are still rather limited, at least compared to Dependent Types,
+their system also uses input-output examples to further narrow down
+the search.  TTN-based synthesis works well on \emph{Concrete Data
+  Types}, like \texttt{List Int}, but not so well on \emph{Abstract
+  Data Types}, like \texttt{List a} where \texttt{a} is a variable.
+To address that a variation of TTN has been introduced called
+\emph{Abstract Transition Network} (ATN)~\cite{Guo2020}.  Such
+structure is used by \textsc{Hoogle+}~\cite{Michael2020}, a search
+engine similar to \textsc{Hoogle}~\cite{Mitchell2004}, that is, it
+searches the entire Haskell standard library, but returns function
+compositions given a type signature, instead of standalone functions.
+Overall, even though that work is still limited to Non-Dependent Type,
+it is nonetheless quite relevant and contains parts that could
+potentially be reused for Dependent Types, such as ATN-based
+synthesis.
 
 The last one is not program synthesis per say but rather program
 specification synthesis using Liquid Types, short for \emph{Logically
