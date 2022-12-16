@@ -202,50 +202,73 @@ technology.
 
 \subsection{Program and Proof Synthesis}
 
-As far as we can tell, the literature on that subject, that is
-automatically synthesizing programs and proofs satisfying a formal
-description, is very lacking.  The reasons probably being that it is a
-hard problem and language frameworks, such as Idris, dedicated to that
-are fairly new.  It seems the best publication on the matter is the
-Idris hand book~\cite{Brady2017}.
+One of the most relevant work on program and proof synthesis for
+dependent types seems to be the Idris hand book~\cite{Brady2017} as
+well as the more recent paper describing QTT as the theoretical
+foundation of Idris2~\cite{Brady2021}.  An AGDA tutorial is also
+frequently cited~\cite{Norell2009} that we have yet to review.
 
-There is other related work such as Magic Haskell~\cite{} although
-fairly limited since such system only supports case-based descriptions
-due to the lack of expressive power of Haskell.  There is other
-similar work coming from the Inductive Programming Logic community,
-essentially suffering from the same limitations as Magic Haskell.
-
-MOSES
-https://cseweb.ucsd.edu/~npolikarpova/
-
-Component-based synthesis, or modular synthesis.
-
-Probably the most relevant work we have found regarding program
-synthesis can be found in~\cite{Guo2022}.  In this work, RESTful APIs
-function calls are composed to fulfill a given specification.  Since
-RESTful types are rather limited, their system begins by enhancing
-type signatures with \emph{Semantic Types}, exploiting the RESTful
-type descriptions to heuristically replace non-semantic types like
+Beside that, we have found a collection of relevant works aim to
+address the problem of \emph{Composition-Based Synthesis}~\cite{TODO},
+also called \emph{Modular Synthesis}~\cite{TODO}.  Meaning, how to
+synthesize functions by composing available functions from a large
+library, such as typically provided by programming language
+ecosystems, like C++ STL, Python Standard Library and so on.
+In~\cite{Guo2022}, a system capable of composing RESTful APIs
+functions to fulfill a given specification is described.  Since
+RESTful types are limited, their system begins by enhancing type
+signatures with \emph{Semantic Types}, exploiting the RESTful type
+descriptions to heuristically replace non-semantic types like
 \texttt{String} by semantic types like \texttt{User} or \texttt{Id}.
-Then performs
-% TODO: shouldn't Type Transition Nets be Abstract Transition Networks?
-component-based synthesis using \emph{Type Transition Nets}
-(TTN)~\cite{Feng2017}, a special kind of Petri Nets.  Since Semantic
-Types are still rather limited, at least compared to Dependent Types,
-their system also uses input-output examples to further narrow down
-the search.  TTN-based synthesis works well on \emph{Concrete Data
-  Types}, like \texttt{List Int}, but not so well on \emph{Abstract
-  Data Types}, like \texttt{List a} where \texttt{a} is a variable.
-To address that a variation of TTN has been introduced called
-\emph{Abstract Transition Network} (ATN)~\cite{Guo2020}.  Such
+Then performs component-based synthesis using \emph{Type Transition
+  Nets} (TTN)~\cite{Feng2017}, a special kind of Petri Nets.  Since
+Semantic Types are still rather limited, at least compared to
+Dependent Types, they also use input-output examples to further narrow
+down the search.  TTN-based synthesis works well on \emph{Concrete
+  Data Types}, like \texttt{List Int}, but not so well on
+\emph{Abstract Data Types}, like \texttt{List a} where \texttt{a} is a
+variable.  To address that a variation of TTN has also been proposed
+called \emph{Abstract Transition Network} (ATN)~\cite{Guo2020}.  Such
 structure is used by \textsc{Hoogle+}~\cite{Michael2020}, a search
 engine similar to \textsc{Hoogle}~\cite{Mitchell2004}, that is, it
-searches the entire Haskell standard library, but returns function
-compositions given a type signature, instead of standalone functions.
-Overall, even though that work is still limited to Non-Dependent Type,
-it is nonetheless quite relevant and contains parts that could
-potentially be reused for Dependent Types, such as ATN-based
-synthesis.
+searches the entire Haskell Standard Library, but returns function
+compositions satisfying a type signature, instead of standalone
+functions.  Overall, even though that work is still limited to
+Non-Dependent Type, it is nonetheless quite relevant and contains
+parts that could potentially be reused for Dependent Types, such as
+ATN-based synthesis.
+
+Work towards addressing composition-based synthesis using more
+expressive types, approaching full blown dependent types, also exists.
+The most relevant work seems to be
+\textsc{Synquid}~\cite{Polikarpova2016}, a system that can perform
+composition-based synthesis on functions formally specified with
+\emph{Refinement Types}~\cite{Flanagan2006}.  Refinement types are
+like regular types decorated with predicates.  Below is an example of
+Refinement Type expressing the type of strictly positive integers
+$$\{\nu : \texttt{Int}\ |\ 0 < \nu\}$$
+They are generally less powerful than dependent types, although it may
+depend on the particular systems being compared.  Unlike dependent
+types they do not require proof terms, meaning the function
+definitions are identical with or without refinement types, only the
+types, complemented with predicates when desired, differ.  The
+advantage of such approach is that it makes adding refinement types to
+existing programs easier.  The inconvenient is that the proofs are
+obfuscated, synthesized only at compile time by a separate component
+like an SMT prover.  In comparison dependent types treat proofs and
+programs on the exact same footing.  It means that any synthesis
+method developed for programs de facto works on proofs and vice versa.
+Beside giving full visibility of proofs, this also gives more freedom
+of action when synthesis requires assistance.  That is said,
+refinement types can be very expressive and composition-based
+synthesis already exist for them thus they should be carefully
+considered.
+
+It is also worthwhile to mention that work~\cite{} which provided a
+type-theoretic interpretation of example-directed So more wothwhile mention
+IO as types.
+
+Resource as types.
 
 The last one is not program synthesis per say but rather program
 specification synthesis using Liquid Types, short for \emph{Logically
@@ -257,6 +280,10 @@ revealed and corrected in the process.  This work could potentially be
 used to infer the specifications of existing AI services that can then
 be manually corrected, which is easier than having to write a
 specification from scratch.
+
+To the best of our knowledge there is no method for component-based
+synthesis using dependent types.  Which is precisely what we need for
+the AI-DSL.
 
 \subsection{Comparing Formal Languages}
 

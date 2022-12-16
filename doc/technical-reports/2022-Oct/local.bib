@@ -960,3 +960,58 @@ title={Type-Driven Development with Idris},
 publisher={Manning},
 year={2017},
 }
+
+@inproceedings{Polikarpova2016,
+author = {Polikarpova, Nadia and Kuraj, Ivan and Solar-Lezama, Armando},
+title = {Program Synthesis from Polymorphic Refinement Types},
+year = {2016},
+isbn = {9781450342612},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/2908080.2908093},
+doi = {10.1145/2908080.2908093},
+abstract = {We present a method for synthesizing recursive functions that provably satisfy a given specification in the form of a polymorphic refinement type. We observe that such specifications are particularly suitable for program synthesis for two reasons. First, they offer a unique combination of expressive power and decidability, which enables automatic verification—and hence synthesis—of nontrivial programs. Second, a type-based specification for a program can often be effectively decomposed into independent specifications for its components, causing the synthesizer to consider fewer component combinations and leading to a combinatorial reduction in the size of the search space. At the core of our synthesis procedure is a newalgorithm for refinement type checking, which supports specification decomposition. We have evaluated our prototype implementation on a large set of synthesis problems and found that it exceeds the state of the art in terms of both scalability and usability. The tool was able to synthesize more complex programs than those reported in prior work (several sorting algorithms and operations on balanced search trees), as well as most of the benchmarks tackled by existing synthesizers, often starting from a more concise and intuitive user input.},
+booktitle = {Proceedings of the 37th ACM SIGPLAN Conference on Programming Language Design and Implementation},
+pages = {522–538},
+numpages = {17},
+keywords = {Refinement Types, Program Synthesis, Functional Programming, Predicate Abstraction},
+location = {Santa Barbara, CA, USA},
+series = {PLDI '16}
+}
+
+@inproceedings{Flanagan2006,
+  title={Hybrid type checking},
+  author={Cormac Flanagan},
+  booktitle={ACM-SIGACT Symposium on Principles of Programming Languages},
+  year={2006}
+}
+
+@article{Brady2021,
+  author    = {Edwin C. Brady},
+  title     = {Idris 2: Quantitative Type Theory in Practice},
+  journal   = {CoRR},
+  volume    = {abs/2104.00480},
+  year      = {2021},
+  url       = {https://arxiv.org/abs/2104.00480},
+  eprinttype = {arXiv},
+  eprint    = {2104.00480},
+  timestamp = {Mon, 12 Apr 2021 16:14:56 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-2104-00480.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inbook{Norell2009,
+author="Norell, Ulf",
+editor="Koopman, Pieter
+and Plasmeijer, Rinus
+and Swierstra, Doaitse",
+title="Dependently Typed Programming in Agda",
+bookTitle="Advanced Functional Programming: 6th International School, AFP 2008, Heijen, The Netherlands, May 2008, Revised Lectures",
+year="2009",
+publisher="Springer Berlin Heidelberg",
+address="Berlin, Heidelberg",
+pages="230--266",
+abstract="In Hindley-Milner style languages, such as Haskell and ML, there is a clear separation between types and values. In a dependently typed language the line is more blurry - types can contain (depend on) arbitrary values and appear as arguments and results of ordinary functions.",
+isbn="978-3-642-04652-0",
+url="https://doi.org/10.1007/978-3-642-04652-0_5"
+}
