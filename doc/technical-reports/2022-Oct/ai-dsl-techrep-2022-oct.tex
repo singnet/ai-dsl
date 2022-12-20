@@ -264,11 +264,10 @@ refinement types can be very expressive and composition-based
 synthesis already exist for them thus they should be carefully
 considered.
 
+TODO: Resource as types.
 It is also worthwhile to mention that work~\cite{} which provided a
 type-theoretic interpretation of example-directed So more wothwhile mention
 IO as types.
-
-Resource as types.
 
 The last one is not program synthesis per say but rather program
 specification synthesis using Liquid Types, short for \emph{Logically
@@ -285,30 +284,59 @@ To the best of our knowledge there is no method for component-based
 synthesis using dependent types.  Which is precisely what we need for
 the AI-DSL.
 
-\subsection{Comparing Formal Languages}
+\subsection{Languages for the AI-DSL}
 
-The reader may have noticed in these publications the use of other
-language frameworks beside Idris, such as Lean, Coq and F*.  It is
-still not completely clear what are the pros and cons of each
-framework and is something we intend to investigate further.  However
-already some observations can be made.  Lean and Coq are more oriented
-towards proving mathematical theorems, while Idris is more oriented
-towards writing and verifying programs.
+The AI-DSL will likely be made of at least two languages
+\begin{enumerate}
+\item a back-end language targeting the power user for doing the heavy
+  lifting for program, proof, and possibly specification synthesis and
+  checking;
+\item a front-end language for the regular user.
+\end{enumerate}
+So far we have explored using Idris as back-end language, but there
+are other choices.  The reader may have noticed above languages such
+as Lean, Coq and F*.  We still have to fully examine the pros and cons
+of each language.  However already some observations can be made.
+Lean and Coq are more oriented towards proving mathematical theorems,
+while Idris is more oriented towards writing and verifying programs.
 
-The advantage of Idris, as far as we have experienced, is that proofs
-and programs are based on the same language, and in fact share a lot
+The advantage of Idris, as we have experienced first hand, is that
+proofs and programs are based on the same language, and share much
 vocabulary.  For instance the function \texttt{map}, from the
 \texttt{Functor} interface, may be used inside proofs or programs
 alike.  Beside being very elegant, it brings the notion of reusability
-to a new level.  It should be noted that Juvix~\cite{Goes2020},
-although dedicated to smart contract programming, is very closed
-conceptually to Idris.  It is a fairly new language and we may want to
-keep a close eye on its development.
+to a whole new level.  AGDA~\cite{Norell2009} also shares that
+quality, though seems to be more oriented towards mathematics and less
+towards programming compared to Idris.  Finally, as we have seen,
+Juvix~\cite{Goes2020}, although dedicated to smart contract
+programming, is very closed conceptually to Idris as it is also based
+on QTT~\cite{Atkey2018}.  It is a fairly new language and we will want
+to keep a close eye on it, because ultimately the AI-DSL will have to
+interface with smart contracts and Juvix already allows that.
 
-Lean and Coq have other advantages, such as having large libraries of
-mathematical theories that can be reused when proving properties of
-programs.  There is no doubt that Idris mathematical library will grow
-but as of today it is lagging behind.
+Lean and Coq, due to being more oriented towards mathematics, have
+also their advantages, such as having large libraries of mathematical
+theories that can be reused when proving properties of programs.
+There is no doubt that the Idris mathematical library will grow
+consequently over time, but as of today it is lagging behind.
+
+All these languages above are Dependently Typed Languages.  Another
+class of expressive languages are based on Refinement Types.  Even
+though Dependent Types are generally considered superior to Refinement
+Types, as far as we have seen, tools for synthesizing programs and
+specifications using Refinement Types are currently more mature than
+tools using Dependent Types.  Thus, although Dependently Typed
+Languages seem to be better in the long run, languages based on
+Refinement Types like Liquid Haskell~\cite{}, may provide more
+benefits in the immediate term.  More exploration, that we intend to
+carry out during the next phase, is needed.
+
+Finally, all these languages are functional, but there are other
+classes of languages that could potentially be used as well.  Process
+calculi, like the $\pi$-calculus and the $\rho$-calculus are some
+examples.  TODO: soupe of parallel processes.  TODO: Rholang.  TODO:
+compositional languages, Forth, etc.  Half-way between xxx and
+functional.  TODO.
 
 \chapter{Implementation and Verification of AI Algorithms}
 
