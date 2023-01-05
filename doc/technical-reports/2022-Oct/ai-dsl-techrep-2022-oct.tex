@@ -125,30 +125,6 @@ Coq~\cite{Bertot2004}, the authors show how to automatically prove the
 extend to which a given model, such as a perception, generalizes on
 unknown data.
 
-TODO: mention various relevant Idris projects.
-
-% - [ ] Mention the following Idris2 packages
-%   - [ ] https://github.com/stefan-hoeck/idris2-graph
-%   - [ ] https://github.com/idris-bayes/log-domain
-%   - [ ] https://github.com/idris-bayes/prob-fx
-%   - [ ] https://github.com/madman-bob/idris2-jupyter
-%   - [ ] https://github.com/joelberkeley/spidr
-%   - [ ] https://github.com/stefan-hoeck/idris2-prim
-%   - [ ] https://github.com/madman-bob/idris2-python
-% - [ ] Newton, Preconditioning, step size cycling scheduling, etc
-% - [ ] ConCert https://arxiv.org/pdf/1907.10674.pdf
-% - [ ] A Coq-based synthesis of Scala programs which are
-%   correct-by-construction
-%   https://cedric.cnam.fr/fichiers/art_4027.pdf
-%   https://github.com/JBakouny/Scallina
-% - [ ] https://stackoverflow.com/questions/23436823/converting-coq-to-idris
-% - [ ] See paper Learning to Prove Theorems via Interacting with
-%   Proof Assistants
-% - [ ] http://ace.cs.ohio.edu/~gstewart/mlcert.html
-% - [ ] The AI-DSL is a language of composition, not application!!!
-% - [ ] Look into AGDA https://wiki.portal.chalmers.se/agda/pmwiki.php
-% - [ ] https://epistasislab.github.io/tpot/
-
 \subsection{Smart Contract Formal Verification}
 
 Over the past years the subject of formal verification of smart
@@ -173,32 +149,43 @@ verification of smart contracts written in $\lambda_{smart}$, a
 fragment of the \textsc{Acorn} smart contract language, using
 Coq~\cite{Bertot2004}.
 
+Another important aspect is the verification of smart contract
+compilers, as opposed to individual smart contracts.  For instance
+in~\cite{Krijnen2022} the authors describe an approach based on
+\emph{Translation Certification} for Plutus smart contracts by
+providing certificates guarantying that the various stages of
+transformations from Plutus Intermediate Representation (PIR) to
+Plutus Core (PLC), such as dead-code elimination, inlining and more,
+do not break some high level properties.  Although this approach is
+not as thorough as complete compilation certification, it has the
+advantage of being more adaptable to compiler evolution.  The part
+providing the \emph{Translation Certificates} is implemented in Coq.
+
 Then they are blockchains that have been created to support formal
-verification more or less from the beginning.  Tezos~\cite{Tezos2014},
-using Michelson, a stack-based low level smart contract language, now
-comes with a formal verification tool called
-Mi-Cho-Coq~\cite{Bernardo2019} developed in Coq.  Higher level
-languages targeting Michelson also exist such as
-Albert~\cite{Bernardo2020}, an Intermediate Level Language, and
-Juvix~\cite{Goes2020} a Dependently Typed Language (DTL) based on
-Quantitative Type Theory (QTT)~\cite{Atkey2018} that not only allows
-to reason about smart contracts at a high level, but also produces
-optimized Michelson code by taking advantage of the quantitative
-aspect of QTT.  \textsc{Zilliqa}~\cite{Zilliqa2017} comes with
+verification from the beginning.  Tezos~\cite{Tezos2014}, using
+Michelson, a low level stack-based smart contract language, comes with
+a formal verification tool called Mi-Cho-Coq~\cite{Bernardo2019}
+developed in Coq.  Higher level languages targeting Michelson also
+exist such as Albert~\cite{Bernardo2020}, an Intermediate Level
+Language, and Juvix~\cite{Goes2020} a Dependently Typed Language (DTL)
+based on Quantitative Type Theory (QTT)~\cite{Atkey2018} that not only
+allows to reason about smart contracts at a high level, but also
+produces optimized Michelson code by taking advantage of the
+quantitative aspect of QTT.  Likewise,
+\textsc{Zilliqa}~\cite{Zilliqa2017} comes with
 \textsc{Scilla}~\cite{Ilya2018}, an intermediate-level language
 enabling formal verification with Coq.  The Zen
-protocol~\cite{Zen2017} also supports formal verification via
-F*~\cite{Swamy2013}.  Notably, the type of verification described in
-its white paper also includes computational resources, to formally
-guaranty that a contract will be allocated enough gaz before it is
-run.
+protocol~\cite{Zen2017} is another example and supports formal
+verification via F*~\cite{Swamy2013}.  Notably, the type of
+verification described in its white paper also includes computational
+resources, to formally guaranty that a contract will be allocated
+enough gaz before running.
 
-These are the main publications we have found so far, although a few
-more can be found in that study~\cite{Pace2020}, as well as other
-articles from that same book of proceedings.  It is a rapidly growing
-field and there is no doubt that formal verification will
-progressively become an indissociable part of the blockchain
-technology.
+These are the main publications we have found so far, a few more can
+be found in that study~\cite{Pace2020}, as well as other articles from
+that same book of proceedings.  It is a rapidly growing field and
+there is no doubt that formal verification will progressively become
+an indissociable part of the blockchain technology.
 
 \subsection{Program and Proof Synthesis}
 
@@ -206,43 +193,44 @@ One of the most relevant work on program and proof synthesis for
 dependent types seems to be the Idris hand book~\cite{Brady2017} as
 well as the more recent paper describing QTT as the theoretical
 foundation of Idris2~\cite{Brady2021}.  An AGDA tutorial is also
-frequently cited~\cite{Norell2009} that we have yet to review.
+frequently cited~\cite{Norell2009} that we have yet to go through.
 
 Beside that, we have found a collection of relevant works aim to
-address the problem of \emph{Composition-Based Synthesis}~\cite{TODO},
-also called \emph{Modular Synthesis}~\cite{TODO}.  Meaning, how to
-synthesize functions by composing available functions from a large
-library, such as typically provided by programming language
-ecosystems, like C++ STL, Python Standard Library and so on.
-In~\cite{Guo2022}, a system capable of composing RESTful APIs
-functions to fulfill a given specification is described.  Since
-RESTful types are limited, their system begins by enhancing type
-signatures with \emph{Semantic Types}, exploiting the RESTful type
-descriptions to heuristically replace non-semantic types like
-\texttt{String} by semantic types like \texttt{User} or \texttt{Id}.
-Then performs component-based synthesis using \emph{Type Transition
-  Nets} (TTN)~\cite{Feng2017}, a special kind of Petri Nets.  Since
-Semantic Types are still rather limited, at least compared to
-Dependent Types, they also use input-output examples to further narrow
-down the search.  TTN-based synthesis works well on \emph{Concrete
-  Data Types}, like \texttt{List Int}, but not so well on
-\emph{Abstract Data Types}, like \texttt{List a} where \texttt{a} is a
-variable.  To address that a variation of TTN has also been proposed
-called \emph{Abstract Transition Network} (ATN)~\cite{Guo2020}.  Such
-structure is used by \textsc{Hoogle+}~\cite{Michael2020}, a search
-engine similar to \textsc{Hoogle}~\cite{Mitchell2004}, that is, it
-searches the entire Haskell Standard Library, but returns function
-compositions satisfying a type signature, instead of standalone
-functions.  Overall, even though that work is still limited to
-Non-Dependent Type, it is nonetheless quite relevant and contains
-parts that could potentially be reused for Dependent Types, such as
-ATN-based synthesis.
+address the problem of \emph{Component-Based
+  Synthesis}~\cite{Feng2017}, also called \emph{Modular
+  Synthesis}~\cite{Heineman2016}.  Meaning, how to synthesize
+functions by composing available functions from a large library, such
+as typically provided by programming language ecosystems, like C++
+STL, Python Standard Library and so on.  In~\cite{Guo2022}, a system
+capable of composing RESTful APIs functions to fulfill a given
+specification is described.  Since RESTful types are limited, the
+system described by the authors begins by enhancing type signatures
+with \emph{Semantic Types}, exploiting the RESTful type descriptions
+to heuristically replace non-semantic types like \texttt{String} by
+semantic types like \texttt{User} or \texttt{Id}.  Then performs
+component-based synthesis using \emph{Type Transition Nets}
+(TTN)~\cite{Feng2017}, a special kind of Petri Nets.  Since Semantic
+Types are still rather limited, at least compared to Dependent Types,
+they also use input-output examples to further narrow down the search.
+TTN-based synthesis works well on \emph{Concrete Data Types}, like
+\texttt{List Int}, but not so well on \emph{Abstract Data Types}, like
+\texttt{List a} where \texttt{a} is a variable.  To address that a
+variation of TTN is introduced in~\cite{Guo2020} called \emph{Abstract
+  Transition Network} (ATN).  Such structure is used by
+\textsc{Hoogle+}~\cite{Michael2020}, a search engine similar to
+\textsc{Hoogle}~\cite{Mitchell2004}, that is, it searches the entire
+Haskell Standard Library, but returns small function compositions
+satisfying a type signature, instead of standalone functions.
+Overall, even though that work is still limited to Non-Dependent Type,
+it is nonetheless quite relevant and contains parts that could
+potentially be reused for Dependent Types, such as ATN-based
+synthesis.
 
-Work towards addressing composition-based synthesis using more
+Work towards addressing component-based synthesis using more
 expressive types, approaching full blown dependent types, also exists.
 The most relevant work seems to be
 \textsc{Synquid}~\cite{Polikarpova2016}, a system that can perform
-composition-based synthesis on functions formally specified with
+component-based synthesis on functions formally specified with
 \emph{Refinement Types}~\cite{Flanagan2006}.  Refinement types are
 like regular types decorated with predicates.  Below is an example of
 Refinement Type expressing the type of strictly positive integers
@@ -260,36 +248,49 @@ programs on the exact same footing.  It means that any synthesis
 method developed for programs de facto works on proofs and vice versa.
 Beside giving full visibility of proofs, this also gives more freedom
 of action when synthesis requires assistance.  That is said,
-refinement types can be very expressive and composition-based
-synthesis already exist for them thus they should be carefully
-considered.
+refinement types can be very expressive and component-based synthesis
+already exist for that class thus they should be carefully considered.
 
-TODO: Resource as types.
-It is also worthwhile to mention that work~\cite{} which provided a
-type-theoretic interpretation of example-directed So more wothwhile mention
-IO as types.
+Another aspect relates to formalizing computational costs and such,
+which can influence program synthesis by discarding candidates that do
+not operate within those constraints.  The system
+\textsc{Resyn}~\cite{Knoth2019} is an example of that where a more
+efficient algorithm to calculate the common elements between sets is
+discovered by incorporating computational costs is the formal
+description.
 
-The last one is not program synthesis per say but rather program
-specification synthesis using Liquid Types, short for \emph{Logically
-  Qualified Data Types}~\cite{Rondon2008}.  Liquid Types are a
-decidable fragment of Refinement Types.  Their system was able to
-automatically infer the correct specifications of all functions of an
-Array OCAML library.  A bug that had remained hidden so far was
-revealed and corrected in the process.  This work could potentially be
-used to infer the specifications of existing AI services that can then
-be manually corrected, which is easier than having to write a
-specification from scratch.
+It is also worthwhile mentioning work aiming at providing a
+type-theoretic interpretation of example-directed~\cite{Frankle2016}.
+This provides some foundation of how formal specifications can be
+composed of abstract mathematical properties and concrete examples.
+There is no doubt such composition will be very useful for the AI-DSL.
+Of course in addition we will need to go one step further by
+introducing statistical properties as opposed to just crisp
+mathematical properties, as theoretically explored
+in~\cite{Warrell2016} for Dependent Types.
 
-To the best of our knowledge there is no method for component-based
-synthesis using dependent types.  Which is precisely what we need for
-the AI-DSL.
+Finally, let us mention that work which is not about program synthesis
+per say but rather program specification synthesis using Liquid Types,
+short for \emph{Logically Qualified Data Types}~\cite{Rondon2008}.
+Liquid Types are a decidable fragment of Refinement Types.  Their
+system was able to automatically infer the correct specifications of
+all functions of an Array OCAML library.  A bug that had remained
+hidden so far was revealed and corrected in the process.  This work
+could potentially be useful to infer the specifications of existing AI
+services that can then be manually corrected, which is easier than
+having to write a specification from scratch.
+
+Most of the work cited above uses Liquid Haskell or variations
+thereof.  To the best of our knowledge there is no method for
+component-based synthesis using dependent types.  Which is precisely
+what we need for the AI-DSL.
 
 \subsection{Languages for the AI-DSL}
 
 The AI-DSL will likely be made of at least two languages
 \begin{enumerate}
-\item a back-end language targeting the power user for doing the heavy
-  lifting for program, proof, and possibly specification synthesis and
+\item a back-end language targeting the power user, doing the heavy
+  lifting of program, proof, and possibly specification synthesis and
   checking;
 \item a front-end language for the regular user.
 \end{enumerate}
@@ -309,10 +310,10 @@ to a whole new level.  AGDA~\cite{Norell2009} also shares that
 quality, though seems to be more oriented towards mathematics and less
 towards programming compared to Idris.  Finally, as we have seen,
 Juvix~\cite{Goes2020}, although dedicated to smart contract
-programming, is very closed conceptually to Idris as it is also based
-on QTT~\cite{Atkey2018}.  It is a fairly new language and we will want
-to keep a close eye on it, because ultimately the AI-DSL will have to
-interface with smart contracts and Juvix already allows that.
+programming, is foundationally close to Idris as it is also based on
+QTT~\cite{Atkey2018}.  It is a fairly new language and we will want to
+keep a close eye on it, because ultimately the AI-DSL will have to
+interface with smart contracts and Juvix already does that.
 
 Lean and Coq, due to being more oriented towards mathematics, have
 also their advantages, such as having large libraries of mathematical
@@ -322,21 +323,46 @@ consequently over time, but as of today it is lagging behind.
 
 All these languages above are Dependently Typed Languages.  Another
 class of expressive languages are based on Refinement Types.  Even
-though Dependent Types are generally considered superior to Refinement
-Types, as far as we have seen, tools for synthesizing programs and
+though Dependent Types are generally superior to Refinement Types, as
+far as we have seen, tools for synthesizing programs and
 specifications using Refinement Types are currently more mature than
 tools using Dependent Types.  Thus, although Dependently Typed
-Languages seem to be better in the long run, languages based on
-Refinement Types like Liquid Haskell~\cite{}, may provide more
-benefits in the immediate term.  More exploration, that we intend to
-carry out during the next phase, is needed.
+Languages may be be better in the long run, languages based on
+Refinement Types like Liquid Haskell~\cite{Vazou2014}, may provide
+more benefits in the immediate term.  Another, perhaps shallow but
+potentially meaningful reason to use Haskell, is that
+Plutus~\cite{Plutus2022}, Cardano's smart contract library, uses
+Haskell as well.  More exploration on the matter is expected to take
+place during the next phases to measure the pros and cons of these
+various languages, including our own home brewed language,
+MeTTa~\cite{Warrell2022}, being built for Hyperon, the next generation
+of the OpenCog Framework.
 
-Finally, all these languages are functional, but there are other
-classes of languages that could potentially be used as well.  Process
-calculi, like the $\pi$-calculus and the $\rho$-calculus are some
-examples.  TODO: soupe of parallel processes.  TODO: Rholang.  TODO:
-compositional languages, Forth, etc.  Half-way between xxx and
-functional.  TODO.
+Finally, you may notice that these languages are functional, but there
+are other classes of languages that could potentially be used as well.
+Process calculi, such as the $\pi$-calculus and the
+$\rho$-calculus~\cite{Meredith2005} are some examples.  These calculi
+make especially sense in highly distributed environments like those of
+the blockchain technology.  In particular, it should be noted that the
+$\rho$-calculus is used as foundation of Rholang~\cite{Rholang2021}, a
+smart contract language for the RChain blockchain~\cite{RChain2021}
+heavily focused on concurrency and scaling.  Process calculi also have
+strong type theory foundations with Behavioral
+Types~\cite{Caires2004}, as well as a novel approach to Type Theory
+called Native Types~\cite{Williams2021}, that can auto-generate an
+expressive type systems given any term calculus.  Finally, since it is
+clear that component-based synthesis is compositional by nature,
+exploring languages built on composition as their primitive operators
+is also worth exploring.  We have only scratch the surface but to be
+cited for instance is the Kihi language~\cite{Timothy2018} that is
+half-way between a \emph{Concatenative Language} like Forth and a
+traditional functional programming language like Haskell.
+
+So there is a lot to explore.  Fortunately we do not need to meet the
+end of what seems to be a never ending exploratory rabbit hole to
+start prototyping an AI-DSL, which we intend to do, starting with a
+DTL-based prototype, as soon as the next phase begin, while still
+exploring in parallel the various avenues put forth in that section.
 
 \chapter{Implementation and Verification of AI Algorithms}
 
