@@ -918,10 +918,10 @@ to our AI algorithms.  More broadly there are many more properties of
 interest, pertaining not only to the algorithms themselves but as they
 interact with the real world.  This brings the need for an ontology as
 explained in the previous report~\cite{AIDSLReport2021}.  Other
-properties driven by real world use could include for instance the
-undesirability of introducing backdoors during
-training~\cite{Menisov2022}, etc.  The breadth and utility of what can
-be formalized is simply enormous.
+properties driven by real world use could include for instance
+avoiding introducing backdoors during training~\cite{Menisov2022}.
+There are many more examples, the breadth and utility of what can be
+formalized is simply enormous.
 
 \subsection{Axioms and Uncertainty}
 They are a few of problems regarding the assumptions about the
@@ -949,7 +949,7 @@ nondeterministic but also have their performances typically measured
 in terms of their fitness to the real world, which is intrinsically
 and profoundly uncertain.  Fortunately, to address that, logic
 frameworks such as Probabilistic Logic Networks~\cite{Goertzel09PLN}
-can be used.\\
+can be used.
 
 \subsection{More, More and More Algorithms}
 In the long run we want to provide formal specifications to \emph{all}
@@ -969,11 +969,17 @@ community.
 
 \subsection{Program Synthesis}
 
-Program synthesis is a crucial component TODO
-
-\subsection{AI-DSL Syntax and Users}
-
-TODO
+For the long term is seems somewhat unavoidable we will need to build
+our own program synthesizers.  That would probably give us the
+greatest amount of control which is especially important for
+addressing the inherent combinatorial explosion problems associated
+with program synthesis.  Fortunately, that is exactly the sort of
+things that we, the broader SingularityNET research and development
+team, are working on via the development of OpenCog Hyperon and MeTTa.
+For the short term however, we want to rely on existing solutions,
+such as Idris Proof Search, which might entail investing some of our
+efforts to improve it, or discovering unconventional ways to use it to
+work around its limitations.
 
 \subsection{Work Planned for the Next Phase}
 
@@ -1010,8 +1016,8 @@ involved in creating such prototype.
   translating English singing into Chinese singing and layering the
   result back onto the instruments.
 \end{enumerate}
-Once all this work has been accomplished, improvements could be made
-on the following fronts, as time permits:
+Once all this work has been accomplished, if time permits,
+improvements could be made on the following fronts.
 \begin{enumerate}
 \item Refine the protobuf-based specifications with Dependent Types.
   This may as well entail using an ontology, like SUMO, to replace
