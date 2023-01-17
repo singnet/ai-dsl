@@ -21,7 +21,9 @@
 
 \begin{document}
 
-\title{AI-DSL Technical Report\\(May to Septembre 2022) \[\texttt{DRAFT}\]}
+\title{AI-DSL Technical Report\\(May to Septembre 2022)
+  % \[\texttt{DRAFT}\]
+}
 \author{Nil Geisweiller, Samuel Roberti, Matthew Ikl\'e, Deborah Duong}
 \maketitle
 
@@ -403,11 +405,53 @@ of replacement.
 \chapter{Program Synthesis}
 \label{chap:program_synthesis}
 
+Program synthesis is at the core of a number of functionalities of the
+AI-DSL, such as AI services composition and fuzzy matching.  During
+that phase we have explored a number of ways to achieve program
+synthesis that we are going to detail now.
+
 \section{Language Framework}
+
+We started by experimenting with building our own language framework
+in order to represent any language, including its type system, given a
+description of its syntax and its operational semantics.  The
+advantage of such approach is that program synthesis algorithms can be
+developed in a manner that is somewhat language agnostic.
+Additionally, since that language framework is implemented in Idris
+and programs are represented as data, Idris can actually be used for
+program synthesis by relying on a built-in functionality call Proof
+Search.
+
+The code for that experiment can be found in
+folder~\href{https://github.com/singnet/ai-dsl/blob/master/experimental/program-synthesis/language-framework}{language-framework}
+of the~\href{https://github.com/singnet/ai-dsl}{ai-dsl} repository.
+We did not have enough time to really experiment with language
+agnostic program synthesis as we initially planned, however we were
+able to leverage Idris built-in program synthesis as explained in
+Section~\ref{subsec:AST}.
 
 \section{Idris Elaboration}
 
+Idris supports reflective programming via
+the~\href{https://www.idris-lang.org/docs/idris2/current/base_docs/docs/Language.Reflection.html}{Language.Reflection}
+module.  That is, one can represent Idris programs as data and thus
+implement program synthesis of Idris programs in Idris.  Idris Proof
+Search, further described in Section~\ref{sec:idris-proof-search},
+relies on that.  However, due to a number of current limitations of
+Idris Proof Search, we estimated that we should take a deep dive into
+that module, as well as a complementary library by Stefan H\"ock
+called~\href{https://github.com/stefan-hoeck/idris2-elab-util}{idris2-elab-util}.
+
+Only partial success was achieved with that method by synthesizing
+nullary programs given its output type.  However, it already showed
+promises and we may want to revisit this experiment later on.  The
+code can be found in
+folder~\href{https://github.com/singnet/ai-dsl/blob/master/experimental/program-synthesis/idris-synthesis}{idris-synthesis}
+of the~\href{https://github.com/singnet/ai-dsl}{ai-dsl} repository.
+
 \section{Idris Proof Search}
+\label{sec:idris-proof-search}
+
 Since recently, Idris2 has introduced a functionality called Proof
 Search.  Contrary to what its name suggests it can be used for program
 synthesis, not just proof search -- which should be no surprise to
@@ -428,6 +472,7 @@ used for program synthesis in spite of its current limitations.
 
 \subsection{Program Synthesis with Abstract Syntax Trees}
 \label{subsec:AST}
+
 The idea is to represent programs as Abstract Syntax Trees.  Each
 operator can be represented as a constructor of that data structure of
 that Abstract Syntax Tree, which Idris can access to generate trees
@@ -466,6 +511,7 @@ The second suggestion corresponds to implementation of linear
 regression we are looking for.
 
 \subsection{Program Synthesis with Variables}
+
 Let us now explore using environment variables to represent constants
 and functions instead of constructors.  The meta-function \texttt{syn}
 described below:
@@ -565,10 +611,10 @@ limits. In order for the agent culture to contain open ended
 intelligence, it can not learn everything by trial and error: rather,
 the emergent type ontology will need to somehow be made explicit and
 carry with it explicit instructions on requirements. This becoming
-explicit is the fourth way in which signs encourage open ended
-emergence. For this we can leverage the AI-DSL strategy for agent
-typing.  Hyperon’s pattern miner, as well as more general forms of
-reasoning such as that offered by PLN~\cite{Goertzel09PLN}, will
+explicit is one of the ways in which signs in the GCN encourage open
+ended emergence. For this we can leverage the AI-DSL strategy for
+agent typing.  Hyperon’s pattern miner, as well as more general forms
+of reasoning such as that offered by PLN~\cite{Goertzel09PLN}, will
 assist in finding what it is about the agents displaying a role sign
 which enables its teams to make a profit.  PLN inference will express
 this in AI-DSL, which Hyperon will use to compose the answer from user
