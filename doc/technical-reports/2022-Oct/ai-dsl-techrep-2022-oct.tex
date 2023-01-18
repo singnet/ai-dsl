@@ -149,7 +149,9 @@ The Descent algorithm takes the following inputs:
 \item a maximum number of steps allocated to the search.
 \end{enumerate}
 It outputs the final candidate as well as the remaining unallocated
-steps.
+steps.  Essentially the Descent algorithm descends as long as the next
+candidate is better than the previous one or the maximum number of
+steps allocated to the search as been reached.
 
 \subsection{Gradient Descent}
 The Gradient Descent algorithm takes the following inputs:
@@ -163,6 +165,13 @@ The Gradient Descent algorithm takes the following inputs:
 It converts the gradient function and the learning rate into a step
 function, calls the Descent algorithm and returns the final candidate
 as well as the remaining unallocated steps.
+
+It should be noted that this definition of Gradient Descent does not
+cover Stochastic Gradient Descent.  That is because it does not allow
+the algorithm to sometimes ascend.  On the other hand Stochastic
+Gradient Descent may not always descend while still guarantying
+gradient descent to the limit.  More on the matter is discussed in
+Section~\ref{sec:related_work}.
 
 \subsection{Linear Regression}
 The Linear Regression algorithm takes the following inputs:
