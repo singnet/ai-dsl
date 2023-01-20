@@ -24,7 +24,7 @@
 \title{AI-DSL Technical Report\\(May to Septembre 2022)
   % \[\texttt{DRAFT}\]
 }
-\author{Nil Geisweiller, Samuel Roberti, Matthew Ikl\'e, Deborah Duong}
+\author{Nil Geisweiller, Matthew Ikl\'e, Deborah Duong, Samuel Roberti}
 \maketitle
 
 \begin{abstract}
@@ -149,7 +149,9 @@ The Descent algorithm takes the following inputs:
 \item a maximum number of steps allocated to the search.
 \end{enumerate}
 It outputs the final candidate as well as the remaining unallocated
-steps.
+steps.  Essentially the Descent algorithm descends as long as the next
+candidate is better than the previous one or the maximum number of
+steps allocated to the search as been reached.
 
 \subsection{Gradient Descent}
 The Gradient Descent algorithm takes the following inputs:
@@ -163,6 +165,13 @@ The Gradient Descent algorithm takes the following inputs:
 It converts the gradient function and the learning rate into a step
 function, calls the Descent algorithm and returns the final candidate
 as well as the remaining unallocated steps.
+
+It should be noted that this definition of Gradient Descent does not
+cover Stochastic Gradient Descent.  That is because it does not allow
+the algorithm to sometimes ascend.  On the other hand Stochastic
+Gradient Descent may not always descend while still guarantying
+gradient descent to the limit.  More on the matter is discussed in
+Section~\ref{sec:related_work}.
 
 \subsection{Linear Regression}
 The Linear Regression algorithm takes the following inputs:
@@ -828,8 +837,8 @@ efficient algorithm to calculate the common elements between sets is
 discovered by incorporating computational costs is the formal
 description.
 
-It is also worthwhile mentioning that work~\cite{Frankle2016}, aiming
-at providing a type-theoretic interpretation of example-directed.
+It is also worthwhile mentioning some work aiming at providing a
+type-theoretic interpretation of example-directed~\cite{Frankle2016}.
 This provides some foundation for how formal specifications can be
 composed of abstract mathematical properties mixed with concrete
 examples.  There is no doubt such mixture will be very useful for the
@@ -838,8 +847,65 @@ introducing statistical properties as opposed to crisp mathematical
 properties, as theoretically explored in~\cite{Warrell2016} for
 Dependent Types.
 
-Finally, let us mention that work which is not about program synthesis
-per say but rather program specification synthesis using Liquid Types,
+Program Synthesis can also be guided by large language models, as in
+Jigsaw~\cite{Jain2022}, which uses a \emph{Pre-Trained Large Language
+  Model} (PTLM) such as GPT-3~\cite{Brown2020} or
+Codex~\cite{Chen2021} to synthesize functions based on an inform
+specification provided in natural language, such as \texttt{``Delete
+  every third row of the given table''}.  Since PTLMs have not been
+built to operate on programming languages, it requires some amount of
+pre and post processing to make it work.  The pre-processing consists
+in selecting a context to inform the PTLM of the task at hand to
+solve.  The context is a pairs of questions and answers, $(Q_i, A_i)$,
+such that $Q_i$ is an informal specification and $A_i$ is a program.
+Then a new informal specification $Q$ is provided to the PTLM which
+should output the corresponding program $A$.  Most of the time the
+output program is neither syntactically nor semantically correct.
+Thus a series of post-processing transformations needs to take place
+to repair it.  Syntactic corrections can be guided by the programming
+language grammar while semantic corrections can be guided by a set of
+examples $A(x_j)=y_j$, as well as the signatures of the functions
+involved in the synthesis to correct the types and the number of
+arguments.  This technique has been applied to the Pandas Python
+library, thus on a non-dependently type system, with some descent
+level of success.
+
+Another project involving learning for guiding program synthesis is
+\textsc{Probe}~\cite{Barke2020}, an Inductive Program Synthesizer,
+thus based solely on examples, using efficient bottom-up synthesis by
+pruning the search space using
+\begin{enumerate}
+\item \emph{Observational Equivalence}.  Observational equivalence is
+  a partial form of semantic equivalence based solely on examples.
+\item \emph{Size-Based} instead of \emph{Depth-Based} enumeration.
+  They justify that with the observation that ``\emph{useful programs
+    tend to be skinny rather than bushy}''~\cite{}.
+\item Production guided by a Probabilistic Context-Free Grammar (PCFG)
+  built based on partial solutions.
+\end{enumerate}
+The latter is where learning takes place.  The rational is that
+programs that are correct on a subset of examples, that is compute the
+correct outputs for a subset of inputs, are likely to be used, wholly
+or partly, by programs that are correct on the complete set of
+examples.  As soon as such partially correct programs are discovered,
+the PCFG is updated to give these programs, as well programs using
+similar production rules, higher probabilities.  They successful
+outperformed a number of existing systems on a limited
+representational language.  Probably the main drawback is the use of a
+context-free, as opposed to context-sensitive, grammar to represent
+the distribution of good programs.  The advantage being that
+overfitting is less likely to be introduced is such model.  Their
+system is implemented in Scala.  One may also cite~\cite{Ozkural2011}
+as another attempt to use a PCFG, this time to learn the distribution
+of good programs from a sequence of problems and subsequently guide
+program synthesis for future problems.  Attempts to use more powerful
+models also exist such as MOSES~\cite{Looks2006},
+WILLIAM~\cite{Franz2022}, as well the yet unpublished work on
+Inference Control Meta-Learning~\cite{Geisweiller2017,
+  Geisweiller2018} conducted at the SingularityNET Foundation.
+
+Finally, let us mention some work which is not about program synthesis
+per se but rather program specification synthesis using Liquid Types,
 short for \emph{Logically Qualified Data Types}~\cite{Rondon2008}.
 Liquid Types are a decidable fragment of Refinement Types.  Their
 system is able to automatically infer the correct specifications of
@@ -849,8 +915,9 @@ This work could potentially be useful to infer the specifications of
 existing AI services that can then be manually corrected, which is
 easier than having to write a specification from scratch.
 
-Most of the work cited above uses Haskell or extensions thereof.  To
-the best of our knowledge there is no method for component-based
+It can be noted that a lot of the work cited above uses Haskell or
+extensions thereof.  However, to the best of our knowledge there is,
+as of the time of this writing, no method for component-based
 synthesis using dependent types.  Which is precisely what we need for
 the AI-DSL.
 
@@ -1018,14 +1085,14 @@ community.
 For the long term is seems somewhat unavoidable we will need to build
 our own program synthesizers.  That would probably give us the
 greatest amount of control which is especially important for
-addressing the inherent combinatorial explosion problems associated
-with program synthesis.  Fortunately, that is exactly the sort of
-things that we, the broader SingularityNET research and development
-team, are working on via the development of OpenCog Hyperon and MeTTa.
-For the short term however, we want to rely on existing solutions,
-such as Idris Proof Search, which might entail investing some of our
-efforts to improve it, or discovering unconventional ways to use it to
-work around its limitations.
+addressing the inherent combinatorial explosion associated with
+program synthesis.  Fortunately, that is exactly the things that we,
+the broader SingularityNET research and development team, are working
+on via the development of OpenCog Hyperon and MeTTa.  For the short
+term however, we want to rely on existing solutions, such as Idris
+Proof Search, which might entail investing some of our efforts to
+improve it, or discovering unconventional ways to use it to work
+around its limitations.
 
 \subsection{Work Planned for the Next Phase}
 
@@ -1080,6 +1147,14 @@ improvements could be made on the following fronts.
 \item Make progress towards replacing the Idris back-end by, or
   complementing with, Hyperon/MeTTa.
 \end{enumerate}
+
+\section{Acknowledgments}
+
+Thanks to Alexey Potapov, Eyob Yirdaw, Hedra Yusuf, Michael Duncun,
+Jonathan Warrell, Douglas Miles, Abdulrahman Sermie and Ben Goertzel
+for their feedback, suggestions and discussions during that phase.
+Thanks to the SingularityNET Foundation and Cardano Project Catalyst
+for funding that work.
 
 % \appendix
 % \chapter{Glossary}
