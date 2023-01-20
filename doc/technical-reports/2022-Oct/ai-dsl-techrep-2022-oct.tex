@@ -837,8 +837,8 @@ efficient algorithm to calculate the common elements between sets is
 discovered by incorporating computational costs is the formal
 description.
 
-It is also worthwhile mentioning that work~\cite{Frankle2016}, aiming
-at providing a type-theoretic interpretation of example-directed.
+It is also worthwhile mentioning some work aiming at providing a
+type-theoretic interpretation of example-directed~\cite{Frankle2016}.
 This provides some foundation for how formal specifications can be
 composed of abstract mathematical properties mixed with concrete
 examples.  There is no doubt such mixture will be very useful for the
@@ -847,26 +847,28 @@ introducing statistical properties as opposed to crisp mathematical
 properties, as theoretically explored in~\cite{Warrell2016} for
 Dependent Types.
 
-NEXT: Jigsaw~\cite{Jain2022}, use a \emph{Pre-Trained Large Language
+Program Synthesis can also be guided by large language models, as in
+Jigsaw~\cite{Jain2022}, which uses a \emph{Pre-Trained Large Language
   Model} (PTLM) such as GPT-3~\cite{Brown2020} or
-Codex~\cite{Chen2021} to synthesize functions based on their comments
-in natural language, such as \texttt{``Delete every third row of the
-  given table''}.  Since PTLMs have not been built to operate on
-programming languages, it requires some amount of pre and post
-processing to make it work.  The pre-processing consists in selecting
-a context to guide the PTLM.  The context is a pairs of questions and
-answers, $(Q_i, A_i)$, such that $Q_i$ is a comment and $A_i$ is a
-program.  Then a comment $Q$ is provided to the PTLM which should
-output the corresponding program $A$.  Most of the time the program
-output by the PTML is neither syntactically nor semantically correct.
+Codex~\cite{Chen2021} to synthesize functions based on an inform
+specification provided in natural language, such as \texttt{``Delete
+  every third row of the given table''}.  Since PTLMs have not been
+built to operate on programming languages, it requires some amount of
+pre and post processing to make it work.  The pre-processing consists
+in selecting a context to inform the PTLM of the task at hand to
+solve.  The context is a pairs of questions and answers, $(Q_i, A_i)$,
+such that $Q_i$ is an informal specification and $A_i$ is a program.
+Then a new informal specification $Q$ is provided to the PTLM which
+should output the corresponding program $A$.  Most of the time the
+output program is neither syntactically nor semantically correct.
 Thus a series of post-processing transformations needs to take place
-to repair that program.  Syntactic corrections are guided by the
-programming language grammar while semantic corrections are guided by
-a set of examples $A(x_j)=y_j$, as well as the signatures of the
-functions involved in the synthesis to correct the types and the
-number of arguments.  This technique has been applied to the Pandas
-Python library, thus on a non-dependently type system, with some
-descent level of success.
+to repair it.  Syntactic corrections can be guided by the programming
+language grammar while semantic corrections can be guided by a set of
+examples $A(x_j)=y_j$, as well as the signatures of the functions
+involved in the synthesis to correct the types and the number of
+arguments.  This technique has been applied to the Pandas Python
+library, thus on a non-dependently type system, with some descent
+level of success.
 
 Another project involving learning for guiding program synthesis is
 \textsc{Probe}~\cite{Barke2020}, an Inductive Program Synthesizer,
@@ -913,10 +915,11 @@ This work could potentially be useful to infer the specifications of
 existing AI services that can then be manually corrected, which is
 easier than having to write a specification from scratch.
 
-It is to be noted that a lot of the work cited above uses Haskell or
-extensions thereof.  To the best of our knowledge there is no method
-for component-based synthesis using dependent types.  Which is
-precisely what we need for the AI-DSL.
+It can be noted that a lot of the work cited above uses Haskell or
+extensions thereof.  However, to the best of our knowledge there is,
+as of the time of this writing, no method for component-based
+synthesis using dependent types.  Which is precisely what we need for
+the AI-DSL.
 
 \subsection{Languages for the AI-DSL}
 \label{subsec:languages_aidsl}
