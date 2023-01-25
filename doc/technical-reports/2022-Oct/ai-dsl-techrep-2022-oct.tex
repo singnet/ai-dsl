@@ -904,16 +904,23 @@ WILLIAM~\cite{Franz2022}, as well the yet unpublished work on
 Inference Control Meta-Learning~\cite{Geisweiller2017,
   Geisweiller2018} conducted at the SingularityNET Foundation.
 
-Finally, let us mention some work which is not about program synthesis
-per se but rather program specification synthesis using Liquid Types,
-short for \emph{Logically Qualified Data Types}~\cite{Rondon2008}.
-Liquid Types are a decidable fragment of Refinement Types.  Their
-system is able to automatically infer the correct specifications of
-all functions of an Array OCAML library.  A bug that had remained
+As a complement to program synthesis, an increasingly active field of
+research pertains to specification synthesis, both formal and
+informal.  For formal specification synthesis we may mention this work
+using Liquid Types, short for \emph{Logically Qualified Data
+  Types}~\cite{Rondon2008}.  Liquid Types are a decidable fragment of
+Refinement Types.  Their system is able to automatically infer the
+correct specifications of all functions of an Array OCAML library.  In
+the course of their work, a bug from that library that had remained
 hidden for a long time was revealed and corrected in the process.
-This work could potentially be useful to infer the specifications of
-existing AI services that can then be manually corrected, which is
-easier than having to write a specification from scratch.
+This research could potentially be useful to infer the specifications
+of existing AI services that can then be manually corrected, which is
+easier than having to write a specification from scratch.  For
+informal specification synthesis, large language models have been used
+as well.  In~\cite{Khan2023} the authors use Codex to infer function
+descriptions in English for a variety of popular programming
+languages, and manage to get competitive performances with one-shot
+learning.
 
 It can be noted that a lot of the work cited above uses Haskell or
 extensions thereof.  However, to the best of our knowledge there is,
