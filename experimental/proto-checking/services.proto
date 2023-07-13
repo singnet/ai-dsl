@@ -31,3 +31,8 @@ service SimpleServices {
   rpc bar_rpc(BarIn) returns (BarOut);
   rpc baz_rpc(BazIn) returns (BazOut);
 }
+
+service CompositeServices {
+  rpc bazbarfoo_rpc(FooIn) returns (BazOut); // Well-formed
+  rpc bazfoobar_rpc(BarIn) returns (BazOut); // Ill-formed
+}
