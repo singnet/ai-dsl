@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package mypackage;
+
+message FooIn {
+  bool foo_bool = 1;
+}
+
+message FooOut {
+  int32 foo_int = 1;
+}
+
+message BarIn {
+  int32 bar_int = 1;
+}
+
+message BarOut {
+  string bar_str = 1;
+}
+
+message BazIn {
+  string baz_str = 1;
+}
+
+message BazOut {
+  bool baz_bool = 1;
+}
+
+service SimpleServices {
+  rpc foo_rpc(FooIn) returns (FooOut);
+  rpc bar_rpc(BarIn) returns (BarOut);
+  rpc baz_rpc(BazIn) returns (BazOut);
+}
