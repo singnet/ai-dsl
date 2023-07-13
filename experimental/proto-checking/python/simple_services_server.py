@@ -14,7 +14,7 @@ class SimpleServicesServicer(simple_services_pb2_grpc.SimpleServicesServicer):
 
     def baz_rpc(self, request, context):
         print("baz_rpc(self={}, request={}, context={})".format(self, request, context))
-        return simple_services_pb2.BazOut(baz_bool=(request.baz_int == 42))
+        return simple_services_pb2.BazOut(baz_bool=(request.baz_str == "42"))
 
     # Experiment with static type checking of combinations.
     #

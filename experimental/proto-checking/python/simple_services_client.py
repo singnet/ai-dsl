@@ -6,14 +6,20 @@ def run_client():
     channel = grpc.insecure_channel('localhost:50051')  # Set the server address and port
     stub = simple_services_pb2_grpc.SimpleServicesStub(channel)
 
-    # Create a request message
-    request = simple_services_pb2.FooIn(foo_bool=True)  # Set the boolean value as needed
+    # Test foo
+    foo_request = simple_services_pb2.FooIn(foo_bool=True)
+    foo_response = stub.foo_rpc(foo_request)
+    print("Foo response: {}".format(foo_response.foo_int))
 
-    # Call the remote method
-    response = stub.foo_rpc(request)
+    # Test bar
+    bar_request = simple_services_pb2.BarIn(bar_int=42)
+    bar_response = stub.bar_rpc(bar_request)
+    print("Bar response: \"{}\"".format(bar_response.bar_str))
 
-    # Process the response
-    print("Received response:", response.foo_int)
+    # Test baz
+    baz_request = simple_services_pb2.BazIn(baz_str="42")
+    baz_response = stub.baz_rpc(baz_request)
+    print("Baz response:", baz_response.baz_bool)
 
 if __name__ == '__main__':
     run_client()
