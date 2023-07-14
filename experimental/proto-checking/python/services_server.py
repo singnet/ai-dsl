@@ -17,28 +17,6 @@ class SimpleServicesServicer(services_pb2_grpc.SimpleServicesServicer):
         return services_pb2.BazOut(baz_bool=(request.baz_str == "42"))
 
 
-# Experiment with static type checking of combinations.
-#
-# Combinations such as
-#
-# baz(bar(foo(x)))
-#
-# should type check while combinations such as
-#
-# bar(foo(baz(x)))
-#
-# should not.
-#
-# A static type checker such as mypy, pysonar, pyflakes, pytype, pyre,
-# pyright or pychecker could then be used.
-class CompositeServicesServicer(services_pb2_grpc.CompositeServicesServicer):
-    def bazbarfoo_rpc(self, request, context):
-        print("bazbarfoo_rpc(self={}, request={}, context={})".format(self, request, context))
-        # NEXT
-        foo_out = self.foo_rpc(request, context);
-        print("foo_out = {}".format(foo_out))
-
-
 def run_server():
     server = grpc.server(futures.ThreadPoolExecutor())
     services_pb2_grpc.add_SimpleServicesServicer_to_server(SimpleServicesServicer(), server)
