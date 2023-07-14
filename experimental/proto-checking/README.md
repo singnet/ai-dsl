@@ -16,3 +16,13 @@
 ```
 ./clean.sh
 ```
+
+## Type Check Combinations
+
+### Python
+
+Go under the `python` folder and run the following
+
+```
+mypy services_client.py
+```
