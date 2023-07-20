@@ -1,3 +1,2 @@
-trash cpp/*
-trash js/*
 trash python/*pb2*.py
+trash python/*pb2*.pyi
