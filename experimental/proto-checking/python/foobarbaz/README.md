@@ -37,6 +37,12 @@ main.py:9: error: Argument 1 to "foo" has incompatible type "str"; expected "boo
 
 indicating that the type annotations are properly taken into account.
 
-Deleting foobarbaz.pyi and recalling mypy on `main.py` does not output
-any error, indicating that mypy indeed uses the type annotations.
+Deleting foobarbaz.pyi and recalling mypy on `main.py` outputs
+
+```
+Success: no issues found in 1 source file
+```
+
+indicating that mypy indeed uses type annotations from the stub file
+when present.
 

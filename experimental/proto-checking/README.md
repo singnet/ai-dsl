@@ -2,7 +2,8 @@
 
 ## Simple mypy experiment
 
-A simple mypy experiment can be found under the foobarbaz folder.
+A simple mypy experiment can be found under the `python/foobarbaz`
+folder.
 
 ## Prerequisites
 
