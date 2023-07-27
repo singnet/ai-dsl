@@ -1,5 +1,9 @@
 # Protocol Buffers Type Checking Experiment
 
+## Simple mypy experiment
+
+A simple mypy experiment can be found under the foobarbaz folder.
+
 ## Prerequisites
 
 - python (tested with Python 3.9.2)
@@ -37,7 +41,7 @@ pip install mypy
 Then run
 
 ```
-mypy type_checking_test.py
+mypy --strict --show-error-context --pretty --no-incremental type_checking_test.py
 ```
 
 Only invalid compositions using functions annotated with types are
