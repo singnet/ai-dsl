@@ -38,23 +38,19 @@ Install with
 pip install mypy
 ```
 
-
 Then run
-
-```
-mypy --strict --show-error-context --pretty --no-incremental type_checking_test.py
-```
-
-Only invalid compositions using functions annotated with types are
-detected.
-
-Then
 
 ```
 mypy services_client.py
 ```
 
 Nothing is detected.
+
+TODO: try with flags
+
+```
+--strict --show-error-context --pretty --no-incremental
+```
 
 #### pysonar
 

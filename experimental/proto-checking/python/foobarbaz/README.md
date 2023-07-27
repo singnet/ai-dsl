@@ -1,4 +1,4 @@
-# Simply mypy experiment
+# Simple mypy experiment
 
 This is a simple mypy experiment involving stubs (files with the pyi
 extension), to understand how to use mypy with these.
