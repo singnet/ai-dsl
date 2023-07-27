@@ -1,10 +1,5 @@
 # Protocol Buffers Type Checking Experiment
 
-## Simple mypy experiment
-
-A simple mypy experiment can be found under the `python/foobarbaz`
-folder.
-
 ## Prerequisites
 
 - python (tested with Python 3.9.2)
@@ -41,22 +36,40 @@ pip install mypy
 Then run
 
 ```
-mypy services_client.py
+mypy --check-untyped-defs services_client_invalid_composition.py
 ```
 
-Nothing is detected.
-
-TODO: try with flags
+which should output
 
 ```
---strict --show-error-context --pretty --no-incremental
+services_client_invalid_composition.py:22: error: Argument "foo_bool" to "FooIn" has incompatible type "str"; expected "bool"  [arg-type]
+services_client_invalid_composition.py:27: error: Argument "baz_str" to "BazIn" has incompatible type "int"; expected "Optional[str]"  [arg-type]
 ```
 
-#### pysonar
+meaning that mypy has managed to detect that the composition was
+invalid.
+
+Note that there is an even simpler mypy experiment under the
+`foobarbaz` folder.
+
+#### Conclusion
+
+By compiling protobuf into Python annotated code, which recent
+versions of grpcio-tools seems to be able to do, and annotating
+compositions, then mypy is able to type check compositions.
+
+In addition to mypy we have attempted other Python checkers.  Our
+findings is documented below.  The take away seems to be that none
+offer anything better than mypy, and mypy seems to be the most
+popular, thus the default choice.
+
+#### Other Python Checkers
+
+##### pysonar
 
 Seems too complicated to install.
 
-#### pyflakes
+##### pyflakes
 
 Install with
 
@@ -72,7 +85,7 @@ pyflakes type_checking_test.py
 
 Nothing is detected.
 
-#### pytype
+##### pytype
 
 Install with
 
@@ -89,7 +102,7 @@ pytype type_checking_test.py
 Only invalid compositions using functions annotated with types are
 detected.
 
-#### pyre
+##### pyre
 
 Install with
 
@@ -112,7 +125,7 @@ pyre
 It spures a lot of errors, including a lot of false positives (maybe
 the initialization went wrong).
 
-#### pyright
+##### pyright
 
 Install with
 
@@ -129,24 +142,6 @@ pyright type_checking_test.py
 Only invalid compositions using functions annotated with types are
 detected.
 
-#### pychecker
+##### pychecker
 
 Unmaintained.
-
-#### Conclusion
-
-It seems that we can only type check type-annotated code.  By default
-the Python code generated via protoc is not annotated, which is why it
-does not work.  It seems however there are a few projects trying to
-remedy that, such as
-
-* https://github.com/nipunn1313/mypy-protobuf
-* https://github.com/danielgtaylor/python-betterproto
-* https://pypi.org/project/grpc-protoc-annotations/
-
-It looks like protoc 3.20.0 supports
-[https://peps.python.org/pep-0484/#stub-files](stub-files), see the
-following
-[https://github.com/protocolbuffers/protobuf/issues/2638#issuecomment-1106725624](issue).
-However upgrading protoc (or rather grpcio-tools) and using the
-`--pyi_out=` flag did not fix type checking.
