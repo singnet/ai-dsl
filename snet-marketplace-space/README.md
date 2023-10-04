@@ -13,12 +13,13 @@ SingularityNET Marketplace.  That knowledge may include
 
 ## Docker
 
-A Dockerfile under this folder, beside that README.md, can be used to
-build a docker image with the SNET CLI tool pre-installed, and a
-script to generate a MeTTa file reflecting the current state of the
-SNET Marketplace.
+Probably the easiest way to run that script is via a docker container.
+A Dockerfile under this folder can be used to build a docker image
+containing
+1. the SNET CLI tool pre-installed, pre-configured for the user,
+2. the script to generate SNET Marketplace knowledge in MeTTa format.
 
-To build locally the docker image run
+To locally build the docker image run
 
 ```bash
 docker build -t snet-marketplace-space \
@@ -33,12 +34,12 @@ key of your Ethereum wallet.  No fund, ETH, AGIX or otherwise, is
 required to be in that wallet in order to crawl the SNET Marketplace
 and generate a MeTTa dump of the marketplace.  It is adviced to use a
 dedicated wallet specially setup for that purpose rather than your
-personal wallet.  The name of your identity can be anything you
-choose.
+personal wallet.  The name of your identity can be anything of your
+choosing.
 
 After a few minutes you should have a docker image, called
-`snet-marketplace-space`, containing `snet` and preconfigured for your
-identity and wallet.
+`snet-marketplace-space`, containing `snet` and preconfigured with
+your identity and wallet.
 
 You may then enter a container of that image with
 
