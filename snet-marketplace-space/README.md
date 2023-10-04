@@ -11,12 +11,20 @@ SingularityNET Marketplace.  That knowledge may include
    input of another);
 3. TBD.
 
+## MeTTa File Dump
+
+A generated file from that script should be present in that repository
+as well.  Such a file may not be up to date, but can serve as an
+example.
+
+To regenerate that file see below.
+
 ## Docker
 
 Probably the easiest way to run that script is via a docker container.
 A Dockerfile under this folder can be used to build a docker image
 containing
-1. the SNET CLI tool pre-installed, pre-configured for the user,
+1. the SNET CLI tool pre-installed, pre-configured for the user;
 2. the script to generate SNET Marketplace knowledge in MeTTa format.
 
 To locally build the docker image run
@@ -41,31 +49,31 @@ After a few minutes you should have a docker image, called
 `snet-marketplace-space`, containing `snet` and preconfigured with
 your identity and wallet.
 
-You may then enter a container of that image with
+You may then run `gen-snet-marketplace-space.sh` within a container of
+that image
 
 ```bash
-docker run -it snet-marketplace-space bash -i
+docker run --name snet-marketplace-space-container snet-marketplace-space ./gen-snet-marketplace-space.sh
 ```
 
-Once inside the contain you may run the following script
+Beware it may take a few minutes.  The script should eventually
+end with the message
+
+```
+Generated snet_marketplace_<DATETIME>.metta
+```
+
+which you can subsequently copy to the host
 
 ```bash
-./gen-snet-marketplace-space.sh
+docker cp snet-marketplace-space-container:/home/user/snet_marketplace_<DATETIME>.metta .
 ```
 
-This should result in the creation of a file called
+After which the container can be discarded
 
+```bash
+docker rm snet-marketplace-space-container
 ```
-snet_marketplace_<DATETIME>.metta
-```
-
-that contains a dump of the state of the SingularityNET Marketplace at
-the date and time of generation.
-
-## MeTTa File Dump
-
-Alternatively a file generated from that script is present as well.
-Such a file may not be up to date, but can serve as an example.
 
 ## SNET Marketplace Knowledge Representation
 
