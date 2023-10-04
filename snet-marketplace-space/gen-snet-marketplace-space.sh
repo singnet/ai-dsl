@@ -64,3 +64,4 @@ for org in $(snet organization list | tail --lines=+2); do
     echo ";; Organization: ${org}" >> ${METTA_FILENAME}
     organization_to_metta "${org}" >> ${METTA_FILENAME}
 done
+echo "Generated ${METTA_FILENAME}"
