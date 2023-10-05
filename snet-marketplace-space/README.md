@@ -75,9 +75,72 @@ After which the container can be discarded
 docker rm snet-marketplace-space-container
 ```
 
+## Run Script without Docker
+
+### Prerequisites
+
+- jq
+
 ## SNET Marketplace Knowledge Representation
 
-NEXT
+### Organization
+
+```
+(: OrganizationID Type)
+```
+
+For instance, to express that `snet` is an organization ID
+
+```
+(: snet OrganizationID)
+```
+
+### Service
+
+```
+(: ServiceOf (-> OrganizationID Type))
+```
+
+For instance, to express `cntk-image-recon` is a service of `snet`
+
+```
+(: cntk-image-recon (ServiceOf snet))
+```
+
+Attributes are expressed as function mapping.  Examples of attributes
+of service are
+
+```
+version
+display_name
+service_type
+...
+```
+
+For instance the following expresses that the version of service
+`cntk-image-recon` is 1
+
+```
+(= (version cntk-image-recon) 1)
+```
+
+Attributes can be accompanied by their type declarations, such as
+
+```
+(: version (-> (ServiceOf $org_id) Number))
+```
+
+Another example with `display_name` of `cntk-image-recon` would be
+
+```
+(= (display_name cntk-image-recon) "AI Sight")
+```
+
+with the accompanied declaration
+
+```
+(: display_name (-> (ServiceOf $org_id) String))
+```
 
 ## Troubleshooting
 
