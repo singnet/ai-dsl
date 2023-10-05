@@ -10,6 +10,7 @@ RUN apt install -y neofetch
 RUN apt install -y emacs
 RUN apt install -y python3 python3-pip git
 RUN apt install -y nodejs npm
+RUN apt install -y jq
 
 # Declare arg variables
 ARG IDENTITY_NAME
