@@ -12,19 +12,143 @@ METTA_FILENAME="snet_marketplace_${DATETIME}.metta"
 # Functions #
 #############
 
-# Output the type declarations of the various attributes involved in
-# MeTTa format.
-types_definitions_to_metta() {
-    echo "(: OrganizationID Type)"
-    echo "(: ServiceOf (-> OrganizationID Type))"
-    echo "(: version (-> (ServiceOf \$a) Number))"
-    echo "(: display_name (-> (ServiceOf \$a) String))"
-    echo "(: service_type (-> (ServiceOf \$a) String))"
-    echo "(: model_ipfs_hash (-> (ServiceOf \$x) String))"
-    echo "(: mpe_address (-> (ServiceOf \$x) String))"
-    echo "(: service_description.url (-> (ServiceOf \$x) String))"
-    echo "(: service_description.description (-> (ServiceOf \$x) String))"
-    echo "(: service_description.short_description (-> (ServiceOf \$x) String))"
+# Output type, constructor and access function definitions in MeTTa
+# format.
+type_definitions_to_metta() {
+cat <<EOF
+;; Define List type and constructor
+(: List (-> \$a Type))
+(: Nil (List \$a))
+(: Cons (-> \$a (List \$a) (List \$a)))
+
+;; Define OrganizationID type
+(: OrganizationID Type)
+
+;; NEXT: define Organization type, with access function from
+;; OrganizationID to Organization.
+
+;; Define ServiceID type.  A service ID must be associated to an
+;; organization ID.
+(: ServiceID (-> OrganizationID Type))
+
+;; Define accessibility function from service ID to service data
+;; structure (see Service defined further below).
+(: service (-> (ServiceID $org) Service))
+
+;; Define Pricing type
+(: Pricing Type)
+
+;; Define Pricing constructor, called as follows
+;; (MkPricing <price_model> <price_in_cogs> <default>)
+(: MkPricing (-> String Number Bool Pricing))
+
+;; Define Pricing access functions, price_model, price_in_cogs and default
+(: Pricing.price_model (-> Pricing String))
+(= (price_model (MkPricing \$price_model \$price_in_cogs \$default)) \$price_mode)
+(: Pricing.price_in_cogs (-> Pricing Number))
+(= (price_in_cog (MkPricing \$price_model \$price_in_cogs \$default)) \$price_in_cogs)
+(: Pricing.default (-> Pricing Bool))
+(= (Pricing.default (MkPricing \$price_model \$price_in_cogs \$default)) \$default)
+
+;; Define Group type
+(: Group Type)
+
+;; Define Group constructor, called as follows
+;; (MkGroup <group_name> <pricing> <endpoints> <group_id> <free_calls> <free_call_signer_address> <daemon_addresses>)
+(: MkGroup (-> String Pricing (List String) String Number String (List String) Group))
+
+;; Define Group access functions
+(: Group.group_name (-> Group String))
+(= (Group.group_name (Group \$group_name \$pricing \$endpoints \$group_id \$free_calls \$free_call_signer_address \$daemon_addresses)) \$group_name)
+(: Group.pricing (-> Group Pricing))
+(= (Group.pricing (Group \$group_name \$pricing \$endpoints \$group_id \$free_calls \$free_call_signer_address \$daemon_addresses)) \$group_name)
+(: Group.endpoints (-> Group (List String)))
+(= (Group.endpoints (Group \$group_name \$pricing \$endpoints \$group_id \$free_calls \$free_call_signer_address \$daemon_addresses)) \$endpoints)
+(: Group.group_id (-> Group String))
+(= (Group.group_id (Group \$group_name \$pricing \$endpoints \$group_id \$free_calls \$free_call_signer_address \$daemon_addresses)) \$group_id)
+(: Group.free_calls (-> Group Number))
+(= (Group.free_calls (Group \$group_name \$pricing \$endpoints \$group_id \$free_calls \$free_call_signer_address \$daemon_addresses)) \$free_calls)
+(: Group.free_call_signer_address (-> Group String))
+(= (Group.free_call_signer_address (Group \$group_name \$pricing \$endpoints \$group_id \$free_calls \$free_call_signer_address \$daemon_addresses)) \$free_call_signer_address)
+(: Group.daemon_addresses (-> Group (List String)))
+(= (Group.daemon_addresses (Group \$group_name \$pricing \$endpoints \$group_id \$free_calls \$free_call_signer_address \$daemon_addresses)) \$daemon_addresses)
+
+;; Define ServiceDescription type
+(: ServiceDescription Type)
+
+;; Define ServiceDescription constructor, called as follows
+;; (MkServiceDescription <url> <description> <short_description>)
+(: MkServiceDescription (-> String String String ServiceDescription))
+
+;; Define ServiceDescription access functions
+(: ServiceDescription.url (-> ServiceDescription String))
+(= (ServiceDescription.url (MkServiceDescription \$url \$description \$short_description)) \$url)
+(: ServiceDescription.description (-> ServiceDescription String))
+(= (ServiceDescription.description (MkServiceDescription \$url \$description \$short_description)) \$description)
+(: ServiceDescription.short_description (-> ServiceDescription String))
+(= (ServiceDescription.short_description (MkServiceDescription \$url \$description \$short_description)) \$short_description)
+
+;; Define Contributor type
+(: Contributor Type)
+
+;; Define Contributor constructor, called as follows
+;; (MkContributor <name> <email_id>)
+(: MkContributor (-> String String))
+
+;; Define Contributor access functions
+(: Contributor.name (-> Contributor String))
+(= (Contributor.name (MkContributor \$name \$email_id)) \$name)
+(: Contributor.email_id (-> Contributor String))
+(= (Contributor.email_id (MkContributor \$name \$email_id)) \$email_id)
+
+;; Define Media type
+(: Medium Type)
+
+;; Define Medium constructor, called as follows
+;; (MkMedium <order> <url> <file_type> <alt_text>)
+(: MkMedium (-> Number String String String Medium))
+
+;; Define Medium access functions
+(: Medium.order (-> Medium Number))
+(= (Medium.order (Medium \$order \$url \$file_type \$alt_text)) \$order)
+(: Medium.url (-> Medium String))
+(= (Medium.url (Medium \$order \$url \$file_type \$alt_text)) \$url)
+(: Medium.file_type (-> Medium String))
+(= (Medium.file_type (Medium \$order \$url \$file_type \$alt_text)) \$file_type)
+(: Medium.alt_text (-> Medium String))
+(= (Medium.alt_text (Medium \$order \$url \$file_type \$alt_text)) \$alt_text)
+
+;; Define Service type
+(: Service Type)
+
+;; Define Service constructor, called as follows
+;; (MkService <version> <display_name> <encoding> <service_type> <model_ipfs_hash> <mpe_address> <groups> <service_description> <contributors> <media> <tags>)
+(: MkService (-> Number String String String String String (List Group) ServiceDescription (List Contributor) (List Medium) (List String)))
+
+;; Define Service access functions
+(: Service.version (-> Service Number))
+(= (Service.version (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$version)
+(: Service.display_name (-> Service String))
+(= (Service.version (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$display_name)
+(: Service.encoding (-> Service String))
+(= (Service.encoding (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$encoding)
+(: Service.service_type (-> Service String))
+(= (Service.service_type (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$service_type)
+(: Service.model_ipfs_hash (-> Service String))
+(= (Service.model_ipfs_hash (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$model_ipfs_hash)
+(: Service.mpe_address (-> Service String))
+(= (Service.mpe_address (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$mpe_address)
+(: Service.groups (-> Service (List Group)))
+(= (Service.groups (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$groups)
+(: Service.service_description (-> Service ServiceDescription))
+(= (Service.service_description (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$service_description)
+(: Service.contributors (-> Service (List Contributor)))
+(= (Service.contributors (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$contributors)
+(: Service.media (-> Service (List Medium)))
+(= (Service.media (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$media)
+(: Service.tags (-> Service (List String)))
+(= (Service.tags (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$tags)
+EOF
 }
 
 # Takes the organization id as first argument and outputs knowledge
@@ -48,7 +172,7 @@ service_to_metta() {
     # Declare service
     echo
     echo ";; Service declaration of ${org}.${service}"
-    echo "(: ${org}.${service} (ServiceOf ${org}))"
+    echo "(: ${org}.${service} (ServiceID ${org}))"
 
     # Output service attributes
     echo
@@ -67,6 +191,8 @@ service_attributes_to_metta() {
     local metadata_file=$(mktemp)
     snet service print-metadata ${org} ${service} > ${metadata_file}
 
+    # NEXT: replace by new structured representation
+
     # Output attributes of service found in the json metadata file
     echo "(= (version ${org}.${service}) $(jq '.version' ${metadata_file}))"
     echo "(= (display_name ${org}.${service}) $(jq '.display_name' ${metadata_file}))"
@@ -76,6 +202,17 @@ service_attributes_to_metta() {
     echo "(= (service_description.url ${org}.${service}) $(jq '.service_description.url' ${metadata_file}))"
     echo "(= (service_description.description ${org}.${service}) $(jq '.service_description.description' ${metadata_file}))"
     echo "(= (service_description.short_description ${org}.${service}) $(jq '.service_description.short_description' ${metadata_file}))"
+
+    # NEXT: see https://www.baeldung.com/linux/jq-command-json to deal with array
+
+    # NEXT: dump the content of description.url as well.  See
+    #
+    # chromium --headless --disable-gpu --dump-dom https://singnet.github.io/dnn-model-services/users_guide/cntk-image-recon.html | html2text
+    #
+    # Possibly http://edbrowse.org/
+    #
+    # If nothing else works, see https://www.brow.sh/docs/introduction/
+
 }
 
 ########
@@ -107,7 +244,7 @@ cat <<EOF >> ${METTA_FILENAME}
 ;;;;;;;;;;;;;;;;;;;;;;
 
 EOF
-types_definitions_to_metta >> ${METTA_FILENAME}
+type_definitions_to_metta >> ${METTA_FILENAME}
 
 # Write organizations
 cat <<EOF >> ${METTA_FILENAME}
