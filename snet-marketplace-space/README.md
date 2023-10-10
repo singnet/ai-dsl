@@ -13,11 +13,28 @@ SingularityNET Marketplace.  That knowledge may include
 
 ## MeTTa File Dump
 
-A generated file from that script should be present in that repository
-as well.  Such a file may not be up to date, but can serve as an
-example.
+A MeTTa file generated from that script is present under the `metta`
+subfolder.  Such a file may not be up to date, but can serve as an
+example.  Look for
 
-To regenerate that file see below.
+```
+metta/snet_marketplace_YYYY-MM-DDThh:mm:ss+00:00.metta
+```
+
+where Y stands for year, M for month, D for day, h for hour, m for
+minute and s for second.
+
+## JSON Files Dumps
+
+JSON files representing service metadata are obtained while running
+the script and present as well in the subfolder `json`.  Look for
+
+```
+json/ORGID-SERVICEID-metadata.json
+```
+
+where `ORGID` and `SERVICEID` represent the organization and service
+respective identifiers.
 
 ## Docker
 
@@ -69,7 +86,18 @@ which you can subsequently copy to the host
 docker cp snet-marketplace-space-container:/home/user/snet_marketplace_<DATETIME>.metta .
 ```
 
-After which the container can be discarded
+In addition the json metadata files are listed as well and can be
+copied to the host with the following command line
+
+```bash
+for f in JSON_FILES; do docker cp snet-marketplace-space-container:/home/user/${f} json; done
+```
+
+where JSON_FILES is a space seperated list of json files (beware that
+due to BASH command line length limit you might not be able to copy
+all files at onces).
+
+After all that the container can be discarded
 
 ```bash
 docker rm snet-marketplace-space-container
@@ -79,68 +107,16 @@ docker rm snet-marketplace-space-container
 
 ### Prerequisites
 
-- jq
+- jq, https://jqlang.github.io/jq/, for JSON parsing
+- chromium, https://www.chromium.org, or google-chrome,
+  https://www.google.com/chrome/index.html, for reading URL content.
+- html2text, https://github.com/grobian/html2text, for converting html
+  to text.
 
 ## SNET Marketplace Knowledge Representation
 
-### Organization
-
-```
-(: OrganizationID Type)
-```
-
-For instance, to express that `snet` is an organization ID
-
-```
-(: snet OrganizationID)
-```
-
-### Service
-
-```
-(: ServiceOf (-> OrganizationID Type))
-```
-
-For instance, to express `cntk-image-recon` is a service of `snet`
-
-```
-(: cntk-image-recon (ServiceOf snet))
-```
-
-Attributes are expressed as function mapping.  Examples of attributes
-of service are
-
-```
-version
-display_name
-service_type
-...
-```
-
-For instance the following expresses that the version of service
-`cntk-image-recon` is 1
-
-```
-(= (version cntk-image-recon) 1)
-```
-
-Attributes can be accompanied by their type declarations, such as
-
-```
-(: version (-> (ServiceOf $org_id) Number))
-```
-
-Another example with `display_name` of `cntk-image-recon` would be
-
-```
-(= (display_name cntk-image-recon) "AI Sight")
-```
-
-with the accompanied declaration
-
-```
-(: display_name (-> (ServiceOf $org_id) String))
-```
+For now the knowledge representation is described in the MeTTa file
+under the `metta` subfolder.  Look for the string `Type Definitions`.
 
 ## Troubleshooting
 
