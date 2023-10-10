@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "display_name": "Coreference Resolution",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmQu1WRBEA9jooFHhhuTMGeH4eswWPzBkLTMRig1y1UqKv",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 2000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://tz-services-1.snet.sh:8033"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x8e4e5dc2094BF7057c16a07e9292D0db35054d51"
+            ]
+        }
+    ],
+    "media": [
+        {
+            "url": "QmYnRWAuTatkHMM4ti1S8ogMFZsoFGZer32jWZMNWsu5m7/hero_coreferneceA.png",
+            "order": 1,
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "service_description": {
+        "url": "https://singnet.github.io/nlp-services-misc/users_guide/coreference-resolution-service.html",
+        "description": "<div>Identify and tie together all expressions within a piece of text that point toward a specific entity within the text,for example, \"I voted for Elon Musk because he was most aligned with my values\", the expression \"my\" belongs to the entity \"I\" and the expression \"he\" belongs to \"Elon Musk\". The service is able to point expressions to the relevant entities within a text sample.</div>",
+        "short_description": "Identify and tie together all expressions within a piece of text that point toward a specific entity within the text."
+    },
+    "contributors": [
+        {
+            "name": "eskendermart",
+            "email_id": "eskendertamrat@singularitynet.io"
+        }
+    ],
+    "tags": [
+        "nlp",
+        "allennlp",
+        "coreference-resolution",
+        "english"
+    ]
+}

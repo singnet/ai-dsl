@@ -1,0 +1,53 @@
+{
+    "version": 1,
+    "display_name": "Text Summaries",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmeZZmFFZHgnw9DXdnn6XtB7DEzoDqQ43sZvhBniBnLies",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 2000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://services-1.snet.sh:7007"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x8201E5805D8480F10e480E975D5ACE94E8Ac2fc9"
+            ]
+        }
+    ],
+    "media": [
+        {
+            "url": "QmR4FgHBRBZTESpxxvH6YJKYZg47ppjwAd7B8ipbD22LA2/hero_news_summary_2.png",
+            "order": 1,
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/singnet/nlp-services",
+        "description": "<div>Input an article and receive a brief textual summary of the article. Currently only trained on news articles.</div>",
+        "short_description": "Input an article and receive a brief textual summary of the article. Currently only trained on news articles."
+    },
+    "contributors": [
+        {
+            "name": "Artur Gontigo",
+            "email_id": "artur@singularitynet.io"
+        }
+    ],
+    "tags": [
+        "nlp",
+        "summarization"
+    ]
+}

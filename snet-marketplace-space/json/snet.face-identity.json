@@ -1,0 +1,54 @@
+{
+    "version": 1,
+    "display_name": "Face Recognition",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmT7LUX1mrSABWYsYS34xCGb784uQKnotstKBCwEMYr5L2",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 2000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://services-1.snet.sh:7004"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x0B2Ce3662Ed05a8Fec87D2FD1F4EAdB95D5e05c7"
+            ]
+        }
+    ],
+    "media": [
+        {
+            "url": "QmcDS51LzKc3KkCN27uwbJWyqod4z9Lbt2wp9yBs6od77C/hero_face_identity.jpeg",
+            "order": 1,
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/singnet/face-services",
+        "description": "<div>Maps a face to a 128 dimension vector. Faces of the same person should end up near to one another in this embedded space.</div>",
+        "short_description": "Face-identity generates 128 measurements for a face within the provided image, which can be used for facial recognition training or identification."
+    },
+    "contributors": [
+        {
+            "name": "Artur Gontigo",
+            "email_id": "artur@singularitynet.io"
+        }
+    ],
+    "tags": [
+        "face-analysis",
+        "identity",
+        "dimensional-embedding"
+    ]
+}

@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "display_name": "Binary Classification",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmQDMrDm3WUXFao9oVMpcQxVN1N1z4WTCNrijbR3PRpFke",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 100000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://demo.nunet.io:9040"
+            ],
+            "group_id": "MHJY19Qv0JaqZ9IIdazopKqziW2MjP1GUHPm9lfPRRk=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x8e4e5dc2094BF7057c16a07e9292D0db35054d51"
+            ]
+        }
+    ],
+    "service_description": {
+        "url": "https://gitlab.com/nunet/fake-news-detection/binary-classification",
+        "description": "<div>The binary classification model uses a 30k fake news article dataset from the Kaggle competition [Fake and real news dataset Classifying the news]. Uses a BERT model with a single linear classification layer pre-trained with [Classifying the news] Kaggle competition fake and real news dataset. The model outputs 1 if an article is classified as fake news and 0 if not-fake.</div>",
+        "short_description": "Binary classification of content for fake news detection."
+    },
+    "contributors": [
+        {
+            "name": "Israel Abebe",
+            "email_id": "israel@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmdrNJhbr6UiktRPLncz3cpfkK8oQsvMNAdwbZhvZ19gdW/nunet-services.jpg",
+            "file_type": "image",
+            "alt_text": "hero image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "tags": [
+        "fake news",
+        "news",
+        "warning",
+        "fake"
+    ]
+}

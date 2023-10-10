@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "display_name": "Philosophic Text Generation",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmWRjvxokYAnBiXGb8Nk44WQEGBZPM67jFQNbtukjAfVTD",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x550c963539eC8B9fC394f3cF7147954cc4edBC0b"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://services.naint.com:14513"
+            ],
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/philosophic-text-generation",
+        "short_description": "The service receives a textual seed in English and uses it as input to the neural generative model trained on the books of philosophers.",
+        "description": "<div>The service receives a textual seed in English and uses it as input to the neural generative model trained on the books of philosophers.</div>"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/8f545c8f6ddd419580a1cfd948a317b2/assets/20230327132108_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "philosophy",
+        "english",
+        "generation",
+        "text"
+    ]
+}

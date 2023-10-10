@@ -1,0 +1,56 @@
+{
+    "version": 1,
+    "display_name": "Multilingual Speech Recognition",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmfV7JQbWpsUTKawxB7ur1J7cm9F16F78epU9dhLk8GMHP",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xFb3D1E33edDb55CA1E35921941408b6d221298d6"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://services.naint.com:14509"
+            ],
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/multilingual-speech-recognition",
+        "short_description": "This is a translator that will automatically translate your voice or any other speech audio track into the desired language.",
+        "description": "<div>Welcome to Multilingual Speech Recognition! This is a translator that will automatically translate your voice or any other speech audio track into the desired language. You can enter any phrase, sentence or dialogue for quick translation as any audio file. You do not need to specify the language spoken by the speakers. Our service will do it for you automatically! At the output, you will receive a translation into the desired language in the form of text. This service supports about 4 languages. This service supports languages: De, Fr, En, Zh.</div>"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/7eec3a934aae4316a5d86caf2fd8bcad/assets/20230327142106_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "asr",
+        "multilingual",
+        "speech",
+        "recognition",
+        "speech2text"
+    ]
+}

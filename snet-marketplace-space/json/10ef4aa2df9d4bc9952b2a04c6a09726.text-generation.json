@@ -1,0 +1,54 @@
+{
+    "version": 1,
+    "display_name": "Text generation",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmZ6Zy5BS6LtUdnno98UpYpF7t4JNXgEo5iNDcFGD4hNeX",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x14D779966b456C603b973556372FCcbb9Edf9941"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://llama-host.com:2340"
+            ],
+            "group_id": "W/lvAc4MlcSrykcXOq2rbKfcLLPndL69+RJBij92dx0=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/facebookresearch/llama",
+        "short_description": "Service generates text with help of generative language model basing on prompt input",
+        "description": "Service is designed to generate text with help of generative LLM(Large Language Model) using user prompt as initial input. Service is primarily intended for prompt in English, but also accepts prompts in other languages with Latin or Cyrillic alphabets."
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/10ef4aa2df9d4bc9952b2a04c6a09726/services/b70465dd0679447eb22c68bbc54f2fae/assets/20230517152733_asset.jpeg",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Dmitriy Shtokalo",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "generation",
+        "text",
+        "nlp"
+    ]
+}

@@ -1,0 +1,27 @@
+{
+    "version": 1,
+    "display_name": "sentiment_reader",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "Qmf3wRXSncLL4syz5Ybzp59auPX8zr7f9PNH32ZcNatzQq",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "endpoints": [
+                "http://54.174.104.189:8090"
+            ],
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 10,
+                    "default": true
+                }
+            ],
+            "group_id": "n/rk3+gpFxmdeG60Akj7mxIaALYTn0VWd9AROhcMJ0Q="
+        }
+    ],
+    "assets": {},
+    "media": [],
+    "tags": []
+}

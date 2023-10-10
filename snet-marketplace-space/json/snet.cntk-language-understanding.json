@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "display_name": "Text Understanding",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmW7sDo5rjmS4ARBXqAsvN9u4n6ugtQTZoTHshSYHFEjSQ",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 200000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://bh.singularitynet.io:7016"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x1a603deCd624770105816b9e77aE7d13b554e8C4"
+            ]
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmTmsHgvf4hn4xuA66A6BHnss8Whe7EVZnDYW4PLKGvQ75/hero_cntk_language_understanding.jpg",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "service_description": {
+        "url": "https://singnet.github.io/nlp-services/users_guide/cntk-language-understanding.html",
+        "description": "<div>Slot tagging is a component in language understanding systems, where the service receives as input multiple files of a dataset. Slot tagging\u2019s goal is to take a sequence of words and turn them into a sequence of tagged slots.The training and test dataset must be in CTF format (link), and the query and slot files are used to predict on new sentences. he service must receive as inputs the vocabulary size, number of slots labels, and number of intent labels. With these parameters, the service will be able to train a recurrent LSTM network model to perform slot tagging or intent classification. As a last parameter, the service receives a file with sentences (one per line). This file will be the input of the trained model.<br></br>Finally the service returns 2 URLs, one of a file containing the input sentences and model output (slot tagging or intent classification). The second URL is the file of trained model.</div>",
+        "short_description": "Slot tagging (labeling user query with semantic meaning) and intent classification using CNTK language understanding."
+    },
+    "contributors": [
+        {
+            "name": "Artur Gontigo",
+            "email_id": "artur@singularitynet.io"
+        }
+    ],
+    "tags": [
+        "cntk",
+        "slot",
+        "intent",
+        "classification"
+    ]
+}

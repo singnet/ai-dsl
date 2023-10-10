@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "display_name": "Gene Annotation",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmYsP5w3cMQezJXGRnt6JoTpiiUtnw2i8p62CXHAh4kw8R",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 2000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://mozi.ai:8001"
+            ],
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xD17bb50dF7FAC7b9b2279D10136B463BFd8F27a6"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno="
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "hero_image": "QmVcE6fEDP764ibadXTjZHk251Lmt5xAxdc4P9mPA4kksk/hero_gene-annotation-2b.png",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "service_description": {
+        "url": "https://mozi-ai.github.io/annotation-service/",
+        "description": "Accepts list of human [HGNC](https://www.genenames.org/tools/search/#!/genes) gene symbols, finds annotations from example databases and displays the results as a browser-based interactive graph visualization."
+    },
+    "contributors": [
+        {
+            "name": "Abdulrahman Semrie",
+            "email_id": "xabush@singularitynet.io"
+        }
+    ],
+    "tags": [
+        "bioinformatics",
+        "human-gene-annotation",
+        "gene-ontology",
+        "reactome",
+        "atomese"
+    ]
+}

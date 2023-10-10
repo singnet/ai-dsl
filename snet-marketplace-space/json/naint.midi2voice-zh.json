@@ -1,0 +1,57 @@
+{
+    "version": 1,
+    "display_name": "Chinese Female Singing",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmX1pu1MmaDWkBLCDuDxA8ujDA8rNHkh59hcVqNJKdmXqR",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xf0Cb0f302bCF3Fe5758C9e4184DD1f39c3519a2f"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://services.naint.com:14502"
+            ],
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/Chinese-Female-Singing",
+        "short_description": "The service synthesizes a singing voice in Chinese based on the given text and notes.",
+        "description": "<div>The service synthesizes a singing voice in Chinese based on the given text and notes. The service receives a midi file with notes to sing, the text to be sung and the minimum time in seconds to take into account pauses (the latter is optional). The service converts the input midi file, extracting information about notes, pauses between them and the duration of each note and pause, and then synthesizes the singing voice using machine learning methods.\n\nFor convenience and to avoid errors, it is recommended to generate a song by phrases. Note that the notes in the midi must be consistent and belong to the same instrument. It means that the Midi file only has the notes to sing. You can only enter Chinese characters to generate Chinese singing. Use AP or SP tokens for pauses where you want to hear a pause while singing. Do not forget that the number of notes and pauses in the midi file should be equal to the number of all input characters including SP and AP tokens.\n\nExample of correct input: SP\u795d\u4f60\u751f\u65e5\u5feb\u4e50SP\u795d\u4f60\u751f\u65e5\u5feb"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/5434cd2d9d014de9a7f98835087e3ea9/assets/20230327125944_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "singing",
+        "voice",
+        "female",
+        "chinese",
+        "midi",
+        "text2speech"
+    ]
+}

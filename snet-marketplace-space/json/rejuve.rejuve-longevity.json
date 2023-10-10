@@ -1,0 +1,56 @@
+{
+    "version": 1,
+    "display_name": "Rejuve Longevity",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmXyDF9LSPJrbJNhEaKs9m7BCJju2CuwE85DXUmUTXW4jR",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x765C9E1BCa00002e294c9aa9dC3F96C2a022025C"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 1
+                }
+            ],
+            "endpoints": [
+                "https://daemon.rejuve.click:8099"
+            ],
+            "group_id": "BBS4UqwS0gIWz6yFwYTqXQIeUAgrgYu4RqvvjWIg420=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/Rejuve/covid-bayesnet/blob/master/README.md",
+        "short_description": "Bayesian Network and Anomaly Detection Service",
+        "description": "This Bayesian Net GRPC service creates a pomegranate Bayesian neural network in python, with functions to simplify the expression of manually entered rules, augment with adtk anomaly detection, and explain the result. A detailed example of its use in healthcare, specifically Covid-19, is given in the covid_bayesnet.ipynb jupyter notebook."
+    },
+    "media": [
+        {
+            "url": "QmYTM1n77mmwL8cXpMPCHZcWuzW7kqvEwFmNxSrWy39TgZ/rejuve.png",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image",
+            "order": 1
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Deborah Duong",
+            "email_id": "deborah@singularitynet.io"
+        }
+    ],
+    "tags": [
+        "rejuve",
+        "longevity",
+        "covid",
+        "bayesian",
+        "neural-network"
+    ]
+}

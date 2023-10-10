@@ -1,0 +1,67 @@
+{
+    "version": 1,
+    "display_name": "Edge Detection",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "Qmbag6g4DdcbDYgevsvJaxukPjfiGrVSGRBXhAW1bUQSNy",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 200000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://tz-services-1.snet.sh:8031"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xCd7B9068B04826f3Ec5BA9168B926f72c778D8d6"
+            ]
+        }
+    ],
+    "service_description": {
+        "url": "https://singnet.github.io/holistic-edge-detection-service/users_guide/holistic-edge-detection-service.html",
+        "description": "<div>The holistically-nested edge detection (HED) algorithm automatically learns rich hierarchical representations that are important in order to approach the human ability to resolve the challenging ambiguity in edge and object boundary detection.</div>",
+        "short_description": "Use this service to identify edges and object boundaries of objects within the provided image."
+    },
+    "contributors": [
+        {
+            "name": "Israle",
+            "email_id": "israel@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmXBnaMojYi8mtmz2zedSd7mf9aKUXKoLuhxntGQyTVrQf/gallery_item_1_-_holistic1.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 2,
+            "url": "Qmc7xjPq7Gt6T2vmeNmYbrkQu7YF3twPu1HWzRYE9iL5rX/gallery_item_2_-_holistic2.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 3,
+            "url": "QmcFQ7ed4tnFVDJGLJUQaf7ZqXE6oqfFePmqmPDkxcDzzE/hero_holistic-edge-detection-service-2.png",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "tags": [
+        "segmentation",
+        "image",
+        "dnn",
+        "cv"
+    ]
+}

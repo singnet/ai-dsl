@@ -1,0 +1,53 @@
+{
+    "version": 1,
+    "display_name": "AI Opinion",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmPLgevqV4e9C9Wc8HzRizi1JAPALggJHTtyGRZeB6mFDX",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 2000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://bh.singularitynet.io:7031"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xb7aa04F5683dC8C5eE03f6713eD541151b4Fd07B"
+            ]
+        }
+    ],
+    "media": [
+        {
+            "url": "QmePj3h1PaD98JKpp1SHPFSNMqeYFpmzhwaejsprqrVYfV/hero_sentiment_analysis.jpg",
+            "order": 1,
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/singnet/nlp-services/tree/master/sentiment-analysis",
+        "description": "<div>The service processes input sentences and returns the analyzed sentence with weights measuring positive (pos), neutral (neu), negative (neg), and combined (compound) sentiment values for each sentence. This allows a user to actively monitor text online to identify and extract subjective information from text, allowing for a greater understanding of sentiment as it relates to brands, products, or services.<br></br>The user must provide the following inputs: value: text sentence.</div>",
+        "short_description": "Extract subjective information from textual inputs, allowing you to understand the social sentiment of your brand, product or service while monitoring online conversations."
+    },
+    "contributors": [
+        {
+            "name": "Glauter",
+            "email_id": "glauter@singularitynet.io"
+        }
+    ],
+    "tags": [
+        "sentiment",
+        "analysis"
+    ]
+}

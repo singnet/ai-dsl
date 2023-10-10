@@ -1,0 +1,31 @@
+{
+    "version": 1,
+    "display_name": "PI LLM SERVICE",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmbrR2fCGCSfY76MhfxTqKxatZnMn4QkUYaeBVw8osM8LF",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "endpoints": [
+                "http://161.35.220.166:7000"
+            ],
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 1,
+                    "default": true
+                }
+            ],
+            "group_id": "cTN8VFXtSSvHaG13LI2FedrNCKr2SgEm0tzuhMj0PAs="
+        }
+    ],
+    "assets": {},
+    "media": [],
+    "tags": [],
+    "service_description": {
+        "description": "An LLM for coding python",
+        "url": "https://pythonllmcoding.io"
+    }
+}

@@ -1,0 +1,54 @@
+{
+    "version": 1,
+    "display_name": "Time Series Forecasting",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmTaJHRHbKQ7LSEa2uzm58C5gdvzbmdm4nbfQTBx3BrRb8",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 1200000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://bh.singularitynet.io:7017"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xcE0D0DDaBf1A35A2aE2bF93bE21f9BA379d5AFa0"
+            ]
+        }
+    ],
+    "media": [
+        {
+            "url": "QmcXenhEvH76KrAC1Vo9K95j35hDgDyYDSSXxMWQgJhw4n/hero_cntk_lstm_forecast.jpg",
+            "order": 1,
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "service_description": {
+        "url": "https://singnet.github.io/time-series-analysis/users_guide/generic/cntk-lstm-forecast.html",
+        "description": "<div>Use this service to predict future values from a provided set of time-series data.</div>",
+        "short_description": "Use this service to predict future values from a provided set of time-series data."
+    },
+    "contributors": [
+        {
+            "name": "Artur Gontigo",
+            "email_id": "artur@singularitynet.io"
+        }
+    ],
+    "tags": [
+        "cntk",
+        "lstm",
+        "forecast"
+    ]
+}

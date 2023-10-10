@@ -1,0 +1,56 @@
+{
+    "version": 1,
+    "display_name": "Abstractive Summarisation",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmcPeCLjUH9CE363ERu7noLuKRS7zsgTQUfpovKqYcDv8r",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xdF6b10e86FDcD8977c19558fbaaBd3beF290d88f"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://services.naint.com:14495"
+            ],
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/neural-abstractive-summarization",
+        "short_description": "The service receives text in English as input and returns a brief summary of this text.",
+        "description": "<div>The service receives text in English as input and returns a brief summary of this text.</div>\n"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/e5367b38eb644871b49b4f200c665627/assets/20230327152034_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "nlp",
+        "english",
+        "text",
+        "summarisation",
+        "text2text"
+    ]
+}

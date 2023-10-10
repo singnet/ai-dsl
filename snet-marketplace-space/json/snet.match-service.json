@@ -1,0 +1,58 @@
+{
+    "version": 1,
+    "display_name": "Image Matching Service",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmQ5KEkqrTT3cmPtkJ8y7LNHAqKoxUGsNjA4XtwCXufYvR",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 2000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://services-1.snet.sh:7006"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x6c0162Bd1B67964cf040c1221C93bA4D7BdB768b"
+            ]
+        }
+    ],
+    "media": [
+        {
+            "url": "QmeUU956ZqJ6YpaVH7T5VKQ3r85HeC5EtWVykCEmxgJ9sG/hero_match-service.jpg",
+            "order": 1,
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/singnet/semantic-vision",
+        "description": "<div>This is an image matching service. Image retrieval is a task, in which the user is getting images closest to the given one. The user has to specify a detector name, a descriptor name and parameters, specify a number of images to retrieve, a number of clusters (for training), and send a database and a query image.</div>",
+        "short_description": "This is an image matching service. Image retrieval is a task, in which the user is getting images closest to the given one."
+    },
+    "contributors": [
+        {
+            "name": "Innokenty",
+            "email_id": "innokenty@singularitynet.io"
+        }
+    ],
+    "tags": [
+        "image",
+        "matching",
+        "visual",
+        "features",
+        "keypoint",
+        "detector",
+        "transformations"
+    ]
+}

@@ -1,0 +1,27 @@
+{
+    "version": 1,
+    "display_name": "background_eraser",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmS1tzM7LupWrJHD5LSDsjcv8aH7BWrYvBsfGganUuGaD2",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "endpoints": [
+                "http://54.174.104.189:8089"
+            ],
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 10,
+                    "default": true
+                }
+            ],
+            "group_id": "n/rk3+gpFxmdeG60Akj7mxIaALYTn0VWd9AROhcMJ0Q="
+        }
+    ],
+    "assets": {},
+    "media": [],
+    "tags": []
+}

@@ -1,0 +1,27 @@
+{
+    "version": 1,
+    "display_name": "generate_random_text",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmeaEzgJmGm9nLnqzSegrGb9b1kuC58jvAxKtm2xamUQaD",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "endpoints": [
+                "http://localhost:7070"
+            ],
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 10,
+                    "default": true
+                }
+            ],
+            "group_id": "n/rk3+gpFxmdeG60Akj7mxIaALYTn0VWd9AROhcMJ0Q="
+        }
+    ],
+    "assets": {},
+    "media": [],
+    "tags": []
+}

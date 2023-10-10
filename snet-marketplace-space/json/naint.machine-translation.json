@@ -1,0 +1,57 @@
+{
+    "version": 1,
+    "display_name": "Machine Translation",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmcQBTx9qZcTVijZFZSdiesdwtwFoywvkEbtYSkF9bmxwi",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xC44e18aa1D9E298d6A932372ECe67c466602DF5F"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://services.naint.com:14496"
+            ],
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/neural-machine-translation",
+        "short_description": "The service receives text in one language and returns a translation of the submitted text in another language. Translation is possible for 204 languages. ",
+        "description": "<div>The service receives text in one language and returns a translation of the submitted text in another language. Translation is possible for 204 languages.\nYou can pass text or the URL of a text file. The input text or text file in the URL must contain up to 4500-5000 characters.</div>"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/7d814e27ea63484ba98bf4c2baf1c6ad/assets/20230327154333_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "nlp",
+        "nmt",
+        "translation",
+        "multilanguage",
+        "text",
+        "text2text"
+    ]
+}

@@ -1,0 +1,56 @@
+{
+    "version": 1,
+    "display_name": "UCLNLP Service",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmQzc55GJJtnBwYxTPstxcht3weP7QTukuHTC3TDXy4G7b",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 100000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://demo.nunet.io:9020"
+            ],
+            "group_id": "MHJY19Qv0JaqZ9IIdazopKqziW2MjP1GUHPm9lfPRRk=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x8e4e5dc2094BF7057c16a07e9292D0db35054d51"
+            ]
+        }
+    ],
+    "service_description": {
+        "url": "https://gitlab.com/nunet/fake-news-detection/uclnlp",
+        "description": "<div>Based on pre-trained model, estimates the nature of relationship between the title of an article and the body text of an article. The estimation is returned in the form of probabilities attached to four pre-defined types of relation: unrelated, discussing, agreeing, disagreeing. Sum of all probabilities add up to one. The displayed relation has the highest probability attached by the algorithm</div>",
+        "short_description": "This service uses the relationship between the title and the body to suggest if the news is fake."
+    },
+    "contributors": [
+        {
+            "name": "Amante driba",
+            "email_id": "amante.driba@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmdrNJhbr6UiktRPLncz3cpfkK8oQsvMNAdwbZhvZ19gdW/nunet-services.jpg",
+            "file_type": "image",
+            "alt_text": "hero image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "tags": [
+        "fake news",
+        "news",
+        "warning",
+        "fake",
+        "stance detection"
+    ]
+}

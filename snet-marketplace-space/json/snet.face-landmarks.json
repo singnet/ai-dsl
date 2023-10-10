@@ -1,0 +1,65 @@
+{
+    "version": 1,
+    "display_name": "Find Facial Landmarks",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmVN28eFWNafF3hgoCFyv5teqmYtR46qEtpGzFFLGAtbiD",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 2000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://services-1.snet.sh:7005"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xf63f792CFE85663603D591C133c75662D5EF30E9"
+            ]
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/singnet/face-services",
+        "description": "<div>Face-landmarks identifies any landmarks (keypoints) on faces within an image.<br></br>This service requires an input image and input bounding boxes (perhaps discovered through the face-detect service.) Identified landmarks correspond to the same locations on all faces.</div>",
+        "short_description": "Face-landmarks identifies any landmarks (keypoints) on faces within an image."
+    },
+    "contributors": [
+        {
+            "name": "Artur Gontigo",
+            "email_id": "artur@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmSZPLrGSL9C3Ty3BoPUStSBAmrhoyVySQ3p8zGye9zW8C/gallery_item_1_-_ben-face-landmarks.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 2,
+            "url": "QmeEQnWCSKf7pHjUCxiVN4VxFrs7tX2HMfBCm6NDvYpLrM/gallery_item_2_-_sophia-happy4.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 3,
+            "url": "QmQQQsjW2aVgAbXDENFzku26h5gMEZD8eXeiarYG3bcDPp/hero_face_landmarks.jpeg",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "tags": [
+        "face-analysis",
+        "pose-detection"
+    ]
+}

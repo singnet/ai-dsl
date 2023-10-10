@@ -1,0 +1,84 @@
+{
+    "version": 1,
+    "display_name": "Style Transfer",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmdZgCk4Tj4UkVoGrQt4YoxTGbakdnstVzs6qufV8E2vFb",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 2000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://bh.singularitynet.io:7032"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x308Bf7B99b70Fe6644180f9e69c728ef99A8745C"
+            ]
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/singnet/style-transfer-service/blob/master/README.md",
+        "description": "<div>Provide two images and use this service to transfer the artistic-style of one image to the second image provided.<br></br>This service uses convolutional neural networks and is part of SingularityNET's third party services, originally implemented by xunhuang1995.</div>",
+        "short_description": "Provide two images and use this service to transfer the artistic-style of one image to the second image provided."
+    },
+    "contributors": [
+        {
+            "name": "Ramon",
+            "email_id": "ramon@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "https://youtu.be/d7pdhx-CtTA",
+            "file_type": "video",
+            "alt_text": "hover_on_the_video_url"
+        },
+        {
+            "order": 2,
+            "url": "QmR5D5PbpFoC7nQuqiwtrp39VJWrUAYnLAbfvykHxYAazD/gallery_item_2_-_family_sketch.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 3,
+            "url": "QmPYFHjvjn3WGuW4qVYkz8Du5f7dDHbibkE5gkJAapCGWB/gallery_item_3_-_matisse_example.png",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 4,
+            "url": "Qmb99a7cp7jUHdqtTScJw1PG85oEEXFp9c5EzDiRWmCcsL/gallery_item_4_-_city_example.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 5,
+            "url": "QmZWrPaZcYdp4hWK6UpXbuxxCKFBPMT9fc91uSjP1byAG2/gallery_item_5_-_car_example.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 6,
+            "url": "QmbYrX8TYC5JJncLua1rRcDQL2nZb5VMxk4f3xibzMgv26/hero_style_transfer.png",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "tags": [
+        "image",
+        "artistic",
+        "styleTransfer"
+    ]
+}

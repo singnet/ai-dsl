@@ -1,0 +1,66 @@
+{
+    "version": 1,
+    "display_name": "Coupled Variational Encoder",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmPPWyEB9SjqQHZTUFCcFbSAGLWvooor9s4qXHw4KwqSkH",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 0,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x29BB95a93481e330eE2b6555d3289607Bfe125d6"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 80000000000
+                }
+            ],
+            "endpoints": [
+                "https://ai.photrek.io:8089"
+            ],
+            "group_id": "PfRb5gXgmd/EKqeCd9P2/9aCTkAsa57Us3wUmUbWH3U=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/Photrek/Risk-Aware-Assessment",
+        "short_description": "Our service provides a demonstration of the application of non-linear statistical coupling to Variational AutoEncoders.",
+        "description": "Photrek\u2019s Coupled Variational AutoEncoder (CVAE) provides a demonstration of the application of non-linear statistical coupling to Variational AutoEncoders."
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/b9e58b6cffb240b48fd9017556d06a59/services/16678d155a2446c9a95922491af09fc3/assets/20230412161219_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Kenric Nelson",
+            "email_id": ""
+        },
+        {
+            "name": "William Thistelton",
+            "email_id": ""
+        },
+        {
+            "name": "Blake Anderton",
+            "email_id": ""
+        },
+        {
+            "name": "Hong Xiang Yue",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "machinelearning",
+        "generative",
+        "coupling"
+    ]
+}

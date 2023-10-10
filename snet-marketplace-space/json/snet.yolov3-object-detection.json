@@ -1,0 +1,96 @@
+{
+    "version": 1,
+    "display_name": "Detect Objects",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmUe1D5HVnnkipTphfx3qyyLTnykaPTFzMLwis73GQs6sP",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 2000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://bh.singularitynet.io:7034"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x7a3168e71fA9535c4454A85250c0CbDd65609D6E"
+            ]
+        }
+    ],
+    "service_description": {
+        "url": "https://singnet.github.io/dnn-model-services/users_guide/yolov3-object-detection.html",
+        "short_description": "Conduct real-time object detection on images.",
+        "description": "<div>Conduct real-time object detection on images, the service receives an image and uses it as an input for a pre-trained YOLOv3 model, and the model can then detect objects (80 classes) from the COCO Dataset. COCO is a large image dataset designed for object detection, segmentation, person keypoints detection, stuff segmentation, and caption generation.<br></br>The service makes predictions using computer vision and machine learning techniques, and outputs an image with a bounding box for each object that it has predicted (and its confidence).<br></br>The user must provide the following inputs in order to start the service and get a response:<br></br>Inputs:<br></br>model: DNN Model (yolov3\").</div>"
+    },
+    "contributors": [
+        {
+            "name": "Artur Gontigo",
+            "email_id": "artur@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmPhV92kCuCfR97YRfVARLyztx4K3YCUjX8QbicpjH42Zf/galleryitem1-detectobjexample1.png",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 2,
+            "url": "https://youtu.be/8Rgdzr_kOpo",
+            "file_type": "video",
+            "alt_text": "hover_on_the_video_url"
+        },
+        {
+            "order": 3,
+            "url": "QmVHXzP6yjm3cxFwpUCmWX7veg1JGq1twPsDENMsatLvCC/galleryitem3-detectobjexample2.png",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 4,
+            "url": "QmT3Vaj4nPrbdEDi7e9RBtyUeRgWZA1NQmg8JsLG7EoFKD/gallery_item_4_-__yolo_computer_vision1.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 5,
+            "url": "QmP278K7Y8bi1RNZz1YFGc6qaCSWzDc7q4Ja3esUD1Qdp8/galleryitem5-computervisionai2.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 6,
+            "url": "QmcG2ZzHKmwdypi1AgQvo3scCV1zYicjFtkzMib2DqSfy6/galleryitem6-computervision3.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 7,
+            "url": "QmZYxnQCp7D9DGXt29AYZJuSKmhfijG77AtXcPeo8d1wgD/galleryitem7-yolov3_object_detection.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 8,
+            "url": "Qmca1HMHvHsCgc78YtojX8xt5F9Sz7mSewe3EXYiMW1yAu/hero_yolov3_object_detection.jpg",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "tags": [
+        "yolov3",
+        "object",
+        "detection"
+    ]
+}

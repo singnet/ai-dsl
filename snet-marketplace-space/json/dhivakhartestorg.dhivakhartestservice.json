@@ -1,0 +1,60 @@
+{
+    "version": 1,
+    "display_name": "dhivakhartestservice",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmS9yCFGwJbjKL86agFMHzo1Mo8PiVMUGjBDeZchpuFaYq",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 2,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xCc3cD60FF9936B7C9272a649b24f290ADa562469"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 1
+                }
+            ],
+            "endpoints": [
+                "https://example-service-a.singularitynet.io:8002"
+            ],
+            "group_id": "jLvJ3toYwbmjzPD3vRP9jBKt6cCHmOJ8LsMpv4hT0Bo=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://google.com",
+        "short_description": "service short description",
+        "description": "service long description"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.amazonaws.com/e0839ea7da4641918799bcf48b75819e/services/d1549a7e04694e3eae790c987a255d4e/assets/20210527082255_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "dhivakhar",
+            "email_id": ""
+        },
+        {
+            "name": "",
+            "email_id": "dhivakhartest@grr.la"
+        }
+    ],
+    "tags": [
+        "tag1",
+        "tag2",
+        "tag3",
+        "tag4",
+        "tag5"
+    ]
+}

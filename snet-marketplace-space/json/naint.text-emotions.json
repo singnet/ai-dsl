@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "display_name": "Textual Emotion Recognition",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmdEdBynzWmGJmFUM29Hcpyq2fZCFd4qMQR25d2xmatrRh",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x000ea8a1Bd92bDD52ce1ED99FAD8C83B0168b8B0"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://services.naint.com:14498"
+            ],
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/textual-emotion-recognition",
+        "short_description": "The service receives a text string and uses it as input to the pre-trained model. The model returns the predicted emotion of the given text.",
+        "description": "<div>The service receives a text string and uses it as input to the pre-trained model. The model returns the predicted emotion of the given text.\n\nList of emotions predicted by the model:\n\"0\": \"admiration\",\n\"1\": \"amusement\",\n\"2\": \"anger\",\n\"3\": \"annoyance\",\n\"4\": \"approval\",\n\"5\": \"caring\",\n\"6\": \"confusion\",\n\"7\": \"curiosity\",\n\"8\": \"desire\",\n\"9\": \"disappointment\",\n\"10\": \"disapproval\",\n\"11\": \"disgust\",\n\"12\": \"embarrassment\",\n\"13\": \"excitement\",\n\"14\": \"fear\",\n\"15\": \"gratitude\",\n\"16\": \"grief\",\n\"17\": \"joy\",\n\"18\": \"love\",\n\"19\": \"nervousness\",\n\"20\": \"optimism\",\n\"21\": \"pride\",\n\"22\": \"realization\",\n\"23\": \"relief\",\n\"24\": \"remorse\",\n\"25\": \"sadness\",\n\"26\": \"surprise\",\n\"27\": \"neutral\"\n</div>"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/424ad703de7f472fb42c479bd48a313f/assets/20230327132501_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "emotions",
+        "english",
+        "text",
+        "recognition"
+    ]
+}

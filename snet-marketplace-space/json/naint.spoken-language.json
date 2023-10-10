@@ -1,0 +1,57 @@
+{
+    "version": 1,
+    "display_name": "Spoken Language Recognition",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmNzqPLu2Gecngo8K69xdMRMEj5X49RhPoXUYckR9jFb5F",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x54319C0EB4f0F03543C09a30A15e421c9B58E74B"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://services.naint.com:14528"
+            ],
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/spoken-language-recognition",
+        "short_description": "This is a service that automatically recognizes the language of your voice or any other audio track.",
+        "description": "<div>Welcome to the Spoken Language Recognition Program! This is a service that automatically recognizes the language of your voice or any other audio track. You can enter a spoken phrase, sentence, or dialogue for quick speech language recognition as any audio file. At the output, you will get the recognized language as text. This service supports about 4 languages: De, Fr, En, Zh.</div>"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/09c3d9f72ada4de786a9ae0e37fb086d/assets/20230327142818_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "speech",
+        "voice",
+        "multilingual",
+        "recognition",
+        "language",
+        "speechlabel"
+    ]
+}

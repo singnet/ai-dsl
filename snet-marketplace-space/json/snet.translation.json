@@ -1,0 +1,59 @@
+{
+    "version": 1,
+    "display_name": "German English Translation",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmUsR2wvvWuV684hG1kxT24gMjZXDPcQ6jVakn2RcJsEea",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 3000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://services-1.snet.sh:7010"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xD50Ac880A9F1Dc723ca4FdB5f5257082a1460A31"
+            ]
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/singnet/nlp-services",
+        "description": "<div>Translate a sentence or word from English to German, or vice versa. We use OpenNMT-py and Google's Transformer network.</div>",
+        "short_description": "Translate a sentence or word from English to German, or vice versa. OpenNMT-py and Google\u2019s Transformer network are used to carry out the translation."
+    },
+    "contributors": [
+        {
+            "name": "Artur Gontigo",
+            "email_id": "artur@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmSVwTr68RFUTfx1V6pkyefTWA48pbttwgJkwSAmDDhz9r/gallery_item_1_-_translate_example.png",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 2,
+            "url": "QmXYh4854V6M1LKUrqgSsGQE9FYnAqw5yDHdNtmsAjFQhx/hero_translation.png",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "tags": [
+        "nlp",
+        "translation"
+    ]
+}

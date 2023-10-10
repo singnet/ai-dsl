@@ -1,0 +1,67 @@
+{
+    "version": 1,
+    "display_name": "Time Series Anomaly",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmNbkxu9kwfC5paNbVAVJEvK5cRYYHTUVSJHYTJzctRDem",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 2000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://bh.singularitynet.io:7033"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x6cbB34B31abF037C048CB48Dd64b2088185Da97c"
+            ]
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/singnet/time-series-anomaly-discovery/blob/master/docs/usersguide.md",
+        "description": "<div>The deployed method performs a transformation on the received time series samples, reducing its size, and grouping similar regions into grammar rules clusters. Those clusters are used to build a grammar rules density curve that is used to detect anomalies in the original time series.<br></br>The user needs to specify a URL containing a valid time series CSV file. The service provides a simple user interface to receive this URL.</div>",
+        "short_description": "Use this service to find, within a time-series, sub-intervals that have anomalous behavior."
+    },
+    "contributors": [
+        {
+            "name": "Alysson",
+            "email_id": "alysson@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "https://youtu.be/Se_ww4MVlYs",
+            "file_type": "video",
+            "alt_text": "hover_on_the_video_url"
+        },
+        {
+            "order": 3,
+            "url": "QmdPPzAUvkZpgD9XVBXQUWVWQ4TpRUCZia3HbVWS4ZesMw/hero_time_series_anomaly-discovery.png",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        },
+        {
+            "order": 2,
+            "url": "QmWeXf3wvxFT5PrsMgFdXDgdqh6AsUa2Mccj6273GMroYc/gallery_item_2_-_time_series_anomaly_detection.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        }
+    ],
+    "tags": [
+        "anomaly",
+        "discovery",
+        "compression",
+        "time-series"
+    ]
+}

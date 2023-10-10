@@ -1,0 +1,76 @@
+{
+    "version": 1,
+    "display_name": "Emotion Recognition",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmcdTYvTxEJrv18Ui1vo1wNDisw8BMoFRMQyM13rz1ok5B",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 2000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://services-1.snet.sh:7001"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x132c6e996A94eFf74F54405AE2Bf3178CD68E82E"
+            ]
+        }
+    ],
+    "service_description": {
+        "url": "https://singnet.github.io/emotion-recognition-service/users_guide/emotion-recognition-service.html",
+        "description": "<div>Want to identify a person's emotional state in a given image? Use this service to do just that, using facial recognition.</div>",
+        "short_description": "Want to identify a person's emotional state in a given image? Use this service to do just that, using facial recognition."
+    },
+    "contributors": [
+        {
+            "name": "Tesfa",
+            "email_id": "tesfa@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "https://youtu.be/CzuPhUo74wY",
+            "file_type": "video",
+            "alt_text": "hover_on_the_video_url"
+        },
+        {
+            "order": 2,
+            "url": "QmPWTRdCxfWDn8HMLXVL5L78WW8fnAdsHLj8Lfqp55kG2c/gallery_item_2_-_emotion_ben.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 3,
+            "url": "QmeFFcCMu4rvmnMWdTa7rtcBB9qidcSm87yknkicFqSsy6/gallery_item_3_-_emotion_sophia1.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 4,
+            "url": "QmapokwgsrBDkEgxLehbQZTTxNRmPsp1zRQbv4jX1Fo7mb/gallery_item_4_-_emotion_sophia_2.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 5,
+            "url": "QmZK4V6xM2nTpke9SWcbV77PqNJw6FbKQgezoq9qU7TTho/hero_emotion-recognition-service.jpeg",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "tags": [
+        "face-analysis"
+    ]
+}

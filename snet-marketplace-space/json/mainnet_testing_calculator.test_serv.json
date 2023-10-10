@@ -1,0 +1,34 @@
+{
+    "version": 1,
+    "display_name": "test_serv",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmTpH8dW1EHx4wyutcABgytEZ7ish7DUeDJ126omQoQDmR",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [],
+    "service_description": {
+        "url": "https://google.com",
+        "short_description": "SD",
+        "description": "LD"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/63d55d3a9fe441b5b344db1e1d55f32c/services/5bcac388e7214fea83c41258b0ad8da7/assets/20210713164047_asset.jpeg",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "dhivakhar",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "tag",
+        "tag1",
+        "tag2"
+    ]
+}

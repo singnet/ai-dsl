@@ -1,0 +1,56 @@
+{
+    "version": 1,
+    "display_name": "Music Lyrics Generation",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmZ9dJ5ehT3EgqXpfvq32DrP8z4ctYqcULHkZR4ydAhNzv",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x54FC0359C1E4a0020251B2918c8D0417d8Eb306c"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://services.naint.com:14501"
+            ],
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/Music-Lyrics-Generation",
+        "short_description": "The service receives a textual seed in English and uses it as input to the neural GPT-2 model and outputs the generated lyrics",
+        "description": "<div>The service receives a textual seed in English and uses it as input to the neural GPT-2 model trained to solve diverse text generation task using large-scale lyrics based dataset and outputs the generated lyrics for a given seed. The basic commonsense model generates diverse lyrics adapting to the style and content of the given text seed.</div>"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/089d7b67eaf94c6f9c8e9ae814648e55/assets/20230327155139_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "lyrics",
+        "music",
+        "english",
+        "generation",
+        "text"
+    ]
+}
