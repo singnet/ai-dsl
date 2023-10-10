@@ -1,16 +1,18 @@
 FROM ubuntu:20.04
 
 # Install prerequisites
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update
 RUN apt install -y sudo
 RUN apt install -y wget
-RUN apt install -y tree
 RUN apt install -y psmisc
-RUN apt install -y neofetch
-RUN apt install -y emacs
 RUN apt install -y python3 python3-pip git
 RUN apt install -y nodejs npm
 RUN apt install -y jq
+RUN apt install -y html2text
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN apt install -y ./google-chrome-stable_current_amd64.deb
+RUN rm google-chrome-stable_current_amd64.deb
 
 # Declare arg variables
 ARG IDENTITY_NAME
@@ -42,4 +44,3 @@ COPY gen-snet-marketplace-space.sh .
 
 # Create identity
 RUN snet identity create ${IDENTITY_NAME} key --private-key ${PRIVATE_KEY}
-
