@@ -372,7 +372,7 @@ service_to_metta() {
     local service="$2"
 
     # Save json metadata of that service in temporary file
-    local metadata_file=${org}-${service}-metadata.json
+    local metadata_file=${org}.${service}.json
     snet service print-metadata ${org} ${service} > ${metadata_file}
 
     # Output service data

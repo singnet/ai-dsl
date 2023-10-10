@@ -30,10 +30,10 @@ JSON files representing service metadata are obtained while running
 the script and present as well in the subfolder `json`.  Look for
 
 ```
-json/ORGID-SERVICEID-metadata.json
+json/ORG.SERVICE.json
 ```
 
-where `ORGID` and `SERVICEID` represent the organization and service
+where `ORG` and `SERVICE` represent the organization and service
 respective identifiers.
 
 ## Docker
