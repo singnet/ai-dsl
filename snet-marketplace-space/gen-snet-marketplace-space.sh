@@ -38,116 +38,318 @@ cat <<EOF
 ;; Define Pricing type
 (: Pricing Type)
 
-;; Define Pricing constructor, called as follows
-;; (MkPricing <price_model> <price_in_cogs> <default>)
-(: MkPricing (-> String Number Bool Pricing))
+;; Define Pricing constructor
+(: MkPricing (-> String      ; price_model
+                 Number      ; price_in_cogs
+                 Bool        ; default
+                 Pricing))
 
 ;; Define Pricing access functions, price_model, price_in_cogs and default
 (: Pricing.price_model (-> Pricing String))
-(= (price_model (MkPricing \$price_model \$price_in_cogs \$default)) \$price_mode)
+(= (price_model (MkPricing \$price_model
+                           \$price_in_cogs
+                           \$default)) \$price_mode)
 (: Pricing.price_in_cogs (-> Pricing Number))
-(= (price_in_cog (MkPricing \$price_model \$price_in_cogs \$default)) \$price_in_cogs)
+(= (price_in_cog (MkPricing \$price_model
+                            \$price_in_cogs
+                            \$default)) \$price_in_cogs)
 (: Pricing.default (-> Pricing Bool))
-(= (Pricing.default (MkPricing \$price_model \$price_in_cogs \$default)) \$default)
+(= (Pricing.default (MkPricing \$price_model
+                               \$price_in_cogs
+                               \$default)) \$default)
 
 ;; Define Group type
 (: Group Type)
 
-;; Define Group constructor, called as follows
-;; (MkGroup <group_name> <pricing> <endpoints> <group_id> <free_calls> <free_call_signer_address> <daemon_addresses>)
-(: MkGroup (-> String Pricing (List String) String Number String (List String) Group))
+;; Define Group constructor
+(: MkGroup (-> String        ; group_name
+               Pricing       ; pricing
+               (List String) ; endpoints
+               String        ; group_id
+               Number        ; free_calls
+               String        ; free_call_signer_address
+               (List String) ; daemon_addresses
+               Group))
 
 ;; Define Group access functions
 (: Group.group_name (-> Group String))
-(= (Group.group_name (Group \$group_name \$pricing \$endpoints \$group_id \$free_calls \$free_call_signer_address \$daemon_addresses)) \$group_name)
+(= (Group.group_name (Group \$group_name
+                            \$pricing
+                            \$endpoints
+                            \$group_id
+                            \$free_calls
+                            \$free_call_signer_address
+                            \$daemon_addresses)) \$group_name)
 (: Group.pricing (-> Group Pricing))
-(= (Group.pricing (Group \$group_name \$pricing \$endpoints \$group_id \$free_calls \$free_call_signer_address \$daemon_addresses)) \$group_name)
+(= (Group.pricing (Group \$group_name
+                         \$pricing
+                         \$endpoints
+                         \$group_id
+                         \$free_calls
+                         \$free_call_signer_address
+                         \$daemon_addresses)) \$pricing)
 (: Group.endpoints (-> Group (List String)))
-(= (Group.endpoints (Group \$group_name \$pricing \$endpoints \$group_id \$free_calls \$free_call_signer_address \$daemon_addresses)) \$endpoints)
+(= (Group.endpoints (Group \$group_name
+                           \$pricing
+                           \$endpoints
+                           \$group_id
+                           \$free_calls
+                           \$free_call_signer_address
+                           \$daemon_addresses)) \$endpoints)
 (: Group.group_id (-> Group String))
-(= (Group.group_id (Group \$group_name \$pricing \$endpoints \$group_id \$free_calls \$free_call_signer_address \$daemon_addresses)) \$group_id)
+(= (Group.group_id (Group \$group_name
+                           \$pricing
+                           \$endpoints
+                           \$group_id
+                           \$free_calls
+                           \$free_call_signer_address
+                           \$daemon_addresses)) \$group_id)
 (: Group.free_calls (-> Group Number))
-(= (Group.free_calls (Group \$group_name \$pricing \$endpoints \$group_id \$free_calls \$free_call_signer_address \$daemon_addresses)) \$free_calls)
+(= (Group.free_calls (Group \$group_name
+                            \$pricing
+                            \$endpoints
+                            \$group_id
+                            \$free_calls
+                            \$free_call_signer_address
+                            \$daemon_addresses)) \$free_calls)
 (: Group.free_call_signer_address (-> Group String))
-(= (Group.free_call_signer_address (Group \$group_name \$pricing \$endpoints \$group_id \$free_calls \$free_call_signer_address \$daemon_addresses)) \$free_call_signer_address)
+(= (Group.free_call_signer_address (Group \$group_name
+                                          \$pricing
+                                          \$endpoints
+                                          \$group_id
+                                          \$free_calls
+                                          \$free_call_signer_address
+                                          \$daemon_addresses)) \$free_call_signer_address)
 (: Group.daemon_addresses (-> Group (List String)))
-(= (Group.daemon_addresses (Group \$group_name \$pricing \$endpoints \$group_id \$free_calls \$free_call_signer_address \$daemon_addresses)) \$daemon_addresses)
+(= (Group.daemon_addresses (Group \$group_name
+                                  \$pricing
+                                  \$endpoints
+                                  \$group_id
+                                  \$free_calls
+                                  \$free_call_signer_address
+                                  \$daemon_addresses)) \$daemon_addresses)
 
 ;; Define ServiceDescription type
 (: ServiceDescription Type)
 
-;; Define ServiceDescription constructor, called as follows
-;; (MkServiceDescription <url> <description> <short_description>)
-(: MkServiceDescription (-> String String String ServiceDescription))
+;; Define ServiceDescription constructor
+(: MkServiceDescription (-> String               ; url
+                            String               ; description
+                            String               ; short_description
+                            ServiceDescription))
 
 ;; Define ServiceDescription access functions
 (: ServiceDescription.url (-> ServiceDescription String))
-(= (ServiceDescription.url (MkServiceDescription \$url \$description \$short_description)) \$url)
+(= (ServiceDescription.url (MkServiceDescription \$url
+                                                 \$description
+                                                 \$short_description)) \$url)
 (: ServiceDescription.description (-> ServiceDescription String))
-(= (ServiceDescription.description (MkServiceDescription \$url \$description \$short_description)) \$description)
+(= (ServiceDescription.description (MkServiceDescription \$url
+                                                         \$description
+                                                         \$short_description)) \$description)
 (: ServiceDescription.short_description (-> ServiceDescription String))
-(= (ServiceDescription.short_description (MkServiceDescription \$url \$description \$short_description)) \$short_description)
+(= (ServiceDescription.short_description (MkServiceDescription \$url
+                                                               \$description
+                                                               \$short_description)) \$short_description)
 
 ;; Define Contributor type
 (: Contributor Type)
 
-;; Define Contributor constructor, called as follows
-;; (MkContributor <name> <email_id>)
-(: MkContributor (-> String String))
+;; Define Contributor constructor
+(: MkContributor (-> String  ; name
+                     String  ; email_id
+                     Contributor))
 
 ;; Define Contributor access functions
 (: Contributor.name (-> Contributor String))
-(= (Contributor.name (MkContributor \$name \$email_id)) \$name)
+(= (Contributor.name (MkContributor \$name
+                                    \$email_id)) \$name)
 (: Contributor.email_id (-> Contributor String))
-(= (Contributor.email_id (MkContributor \$name \$email_id)) \$email_id)
+(= (Contributor.email_id (MkContributor \$name
+                                        \$email_id)) \$email_id)
 
 ;; Define Media type
 (: Medium Type)
 
-;; Define Medium constructor, called as follows
-;; (MkMedium <order> <url> <file_type> <alt_text>)
-(: MkMedium (-> Number String String String Medium))
+;; Define Medium constructor
+(: MkMedium (-> Number  ; order
+                String  ; url
+                String  ; file_type
+                String  ; alt_text
+                Medium))
 
 ;; Define Medium access functions
 (: Medium.order (-> Medium Number))
-(= (Medium.order (Medium \$order \$url \$file_type \$alt_text)) \$order)
+(= (Medium.order (Medium \$order
+                         \$url
+                         \$file_type
+                         \$alt_text)) \$order)
 (: Medium.url (-> Medium String))
-(= (Medium.url (Medium \$order \$url \$file_type \$alt_text)) \$url)
+(= (Medium.url (Medium \$order
+                       \$url
+                       \$file_type
+                       \$alt_text)) \$url)
 (: Medium.file_type (-> Medium String))
-(= (Medium.file_type (Medium \$order \$url \$file_type \$alt_text)) \$file_type)
+(= (Medium.file_type (Medium \$order
+                             \$url
+                             \$file_type
+                             \$alt_text)) \$file_type)
 (: Medium.alt_text (-> Medium String))
-(= (Medium.alt_text (Medium \$order \$url \$file_type \$alt_text)) \$alt_text)
+(= (Medium.alt_text (Medium \$order
+                            \$url
+                            \$file_type
+                            \$alt_text)) \$alt_text)
 
 ;; Define Service type
 (: Service Type)
 
 ;; Define Service constructor, called as follows
-;; (MkService <version> <display_name> <encoding> <service_type> <model_ipfs_hash> <mpe_address> <groups> <service_description> <contributors> <media> <tags>)
-(: MkService (-> Number String String String String String (List Group) ServiceDescription (List Contributor) (List Medium) (List String)))
+(: MkService (-> Number             ; version
+                 String             ; display_name
+                 String             ; encoding
+                 String             ; service_type
+                 String             ; model_ipfs_hash
+                 String             ; mpe_address
+                 (List Group)       ; groups
+                 ServiceDescription ; service_description
+                 (List Contributor) ; contributors
+                 (List Medium)      ; media
+                 (List String)      ; tags
+                 Service))
 
 ;; Define Service access functions
 (: Service.version (-> Service Number))
-(= (Service.version (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$version)
+(= (Service.version (MkService \$version
+                               \$display_name
+                               \$encoding
+                               \$service_type
+                               \$model_ipfs_hash
+                               \$mpe_address
+                               \$groups
+                               \$service_description
+                               \$contributors
+                               \$media
+                               \$tags)) \$version)
 (: Service.display_name (-> Service String))
-(= (Service.version (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$display_name)
+(= (Service.version (MkService \$version
+                               \$display_name
+                               \$encoding
+                               \$service_type
+                               \$model_ipfs_hash
+                               \$mpe_address
+                               \$groups
+                               \$service_description
+                               \$contributors
+                               \$media
+                               \$tags)) \$display_name)
 (: Service.encoding (-> Service String))
-(= (Service.encoding (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$encoding)
+(= (Service.encoding (MkService \$version
+                                \$display_name
+                                \$encoding
+                                \$service_type
+                                \$model_ipfs_hash
+                                \$mpe_address
+                                \$groups
+                                \$service_description
+                                \$contributors
+                                \$media
+                                \$tags)) \$encoding)
 (: Service.service_type (-> Service String))
-(= (Service.service_type (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$service_type)
+(= (Service.service_type (MkService \$version
+                                    \$display_name
+                                    \$encoding
+                                    \$service_type
+                                    \$model_ipfs_hash
+                                    \$mpe_address
+                                    \$groups
+                                    \$service_description
+                                    \$contributors
+                                    \$media
+                                    \$tags)) \$service_type)
 (: Service.model_ipfs_hash (-> Service String))
-(= (Service.model_ipfs_hash (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$model_ipfs_hash)
+(= (Service.model_ipfs_hash (MkService \$version
+                                       \$display_name
+                                       \$encoding
+                                       \$service_type
+                                       \$model_ipfs_hash
+                                       \$mpe_address
+                                       \$groups
+                                       \$service_description
+                                       \$contributors
+                                       \$media
+                                       \$tags)) \$model_ipfs_hash)
 (: Service.mpe_address (-> Service String))
-(= (Service.mpe_address (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$mpe_address)
+(= (Service.mpe_address (MkService \$version
+                                   \$display_name
+                                   \$encoding
+                                   \$service_type
+                                   \$model_ipfs_hash
+                                   \$mpe_address
+                                   \$groups
+                                   \$service_description
+                                   \$contributors
+                                   \$media
+                                   \$tags)) \$mpe_address)
 (: Service.groups (-> Service (List Group)))
-(= (Service.groups (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$groups)
+(= (Service.groups (MkService \$version
+                              \$display_name
+                              \$encoding
+                              \$service_type
+                              \$model_ipfs_hash
+                              \$mpe_address
+                              \$groups
+                              \$service_description
+                              \$contributors
+                              \$media
+                              \$tags)) \$groups)
 (: Service.service_description (-> Service ServiceDescription))
-(= (Service.service_description (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$service_description)
+(= (Service.service_description (MkService \$version
+                                           \$display_name
+                                           \$encoding
+                                           \$service_type
+                                           \$model_ipfs_hash
+                                           \$mpe_address
+                                           \$groups
+                                           \$service_description
+                                           \$contributors
+                                           \$media
+                                           \$tags)) \$service_description)
 (: Service.contributors (-> Service (List Contributor)))
-(= (Service.contributors (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$contributors)
+(= (Service.contributors (MkService \$version
+                                    \$display_name
+                                    \$encoding
+                                    \$service_type
+                                    \$model_ipfs_hash
+                                    \$mpe_address
+                                    \$groups
+                                    \$service_description
+                                    \$contributors
+                                    \$media
+                                    \$tags)) \$contributors)
 (: Service.media (-> Service (List Medium)))
-(= (Service.media (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$media)
+(= (Service.media (MkService \$version
+                             \$display_name
+                             \$encoding
+                             \$service_type
+                             \$model_ipfs_hash
+                             \$mpe_address
+                             \$groups
+                             \$service_description
+                             \$contributors
+                             \$media
+                             \$tags)) \$media)
 (: Service.tags (-> Service (List String)))
-(= (Service.tags (MkService \$version \$display_name \$encoding \$service_type \$model_ipfs_hash \$mpe_address \$groups \$service_description \$contributors \$media \$tags)) \$tags)
+(= (Service.tags (MkService \$version
+                            \$display_name
+                            \$encoding
+                            \$service_type
+                            \$model_ipfs_hash
+                            \$mpe_address
+                            \$groups
+                            \$service_description
+                            \$contributors
+                            \$media
+                            \$tags)) \$tags)
 EOF
 }
 
@@ -177,13 +379,13 @@ service_to_metta() {
     # Output service attributes
     echo
     echo ";; Service attributes of ${org}.${service}"
-    service_attributes_to_metta ${org} ${service}
+    service_data_to_metta ${org} ${service}
 }
 
 # Takes the organization id as first argument and service as second
 # argument and outputs knowledge about that service attributes in
 # MeTTa format.
-service_attributes_to_metta() {
+service_data_to_metta() {
     local org="$1"
     local service="$2"
 
@@ -191,17 +393,39 @@ service_attributes_to_metta() {
     local metadata_file=$(mktemp)
     snet service print-metadata ${org} ${service} > ${metadata_file}
 
-    # NEXT: replace by new structured representation
-
-    # Output attributes of service found in the json metadata file
-    echo "(= (version ${org}.${service}) $(jq '.version' ${metadata_file}))"
-    echo "(= (display_name ${org}.${service}) $(jq '.display_name' ${metadata_file}))"
-    echo "(= (service_type ${org}.${service}) $(jq '.service_type' ${metadata_file}))"
-    echo "(= (model_ipfs_hash ${org}.${service}) $(jq '.model_ipfs_hash' ${metadata_file}))"
-    echo "(= (mpe_address ${org}.${service}) $(jq '.mpe_address' ${metadata_file}))"
-    echo "(= (service_description.url ${org}.${service}) $(jq '.service_description.url' ${metadata_file}))"
-    echo "(= (service_description.description ${org}.${service}) $(jq '.service_description.description' ${metadata_file}))"
-    echo "(= (service_description.short_description ${org}.${service}) $(jq '.service_description.short_description' ${metadata_file}))"
+    cat <<EOF
+(= (service ${org}.${service})
+   ; Service
+   (MkService
+       ; version
+       $(jq '.version' ${metadata_file})
+       ; display_name
+       $(jq '.display_name' ${metadata_file})
+       ; encoding
+       $(jq '.encoding' ${metadata_file})
+       ; service_type
+       $(jq '.service_type' ${metadata_file})
+       ; model_ipfs_hash
+       $(jq '.model_ipfs_hash' ${metadata_file})
+       ; mpe_address
+       $(jq '.mpe_address' ${metadata_file})
+       ; groups
+       Nil ; NEXT
+       ; service_description
+       (MkServiceDescription
+           ; url
+           $(jq '.service_description.url' ${metadata_file})
+           ; description
+           $(jq '.service_description.description' ${metadata_file}))
+       ; contributors
+       Nil ; NEXT
+       ; media
+       Nil ; NEXT
+       ; tags
+       Nil ; NEXT
+   )
+)
+EOF
 
     # NEXT: see https://www.baeldung.com/linux/jq-command-json to deal with array
 
@@ -249,9 +473,9 @@ type_definitions_to_metta >> ${METTA_FILENAME}
 # Write organizations
 cat <<EOF >> ${METTA_FILENAME}
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; SingularityNET Organizations ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; SingularityNET MarketPlace Data ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 EOF
 for org in $(snet organization list | tail --lines=+2); do
     echo "Collect information about ${org}"
