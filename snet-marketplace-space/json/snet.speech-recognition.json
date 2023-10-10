@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "display_name": "Speech Recognition",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmeuZDT31EWoh3zEQHHcXMGtD2QeV61anz11vVupKEgT2k",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://node1.naint.tech:14480"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x05c49b88fb18E55B34EeCe8eB52236DAE67D50A1"
+            ]
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmUjaRnM64Rik9Et2dxRn4JUPYmf5v9C3UkaPLzmXru4t1/hero_speech-recognition.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": "hover_on_the_image_text"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/speech-recognition-service",
+        "description": "<div>Provide a WAV file (up to 4Mb in size and no longer than 90 seconds in duration) of English speech and generate text from the provided WAV file. Also known as speech-to-text.</div>",
+        "short_description": "Provide a WAV file (up to 4Mb in size and no longer than 90 seconds in duration) of English speech and generate text from the provided WAV file. Also known as speech-to-text."
+    },
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": "sergeyshalyapin@singularitynet.io"
+        }
+    ],
+    "tags": [
+        "speech2text",
+        "asr",
+        "speech",
+        "recognition"
+    ]
+}

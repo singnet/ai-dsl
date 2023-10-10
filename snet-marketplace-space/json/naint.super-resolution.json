@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "display_name": "Image Super Resolution",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmcoCPQ1gcca96W3WxKaR6FjxH12xoVTQgRLys5keNBBfX",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x2A4441372E48A6c4CAb9aC3F2d2038E339Cead3D"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://services.naint.com:14514"
+            ],
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/super-resolution",
+        "short_description": "The service takes a low-resolution image in binary format, uses it as input for a pre-trained model, and outputs the result as a higher-quality image",
+        "description": "<div>The service takes a low-resolution image in binary format, uses it as input for a pre-trained model, and outputs the result as a higher-quality image magnified by a factor of 4.</div>"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/ada4251493174710a69497f50ee76ab8/assets/20230327141356_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "resolution",
+        "image",
+        "upscale",
+        "image2image"
+    ]
+}

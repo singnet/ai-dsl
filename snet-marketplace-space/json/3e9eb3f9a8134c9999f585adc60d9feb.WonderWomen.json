@@ -1,0 +1,53 @@
+{
+    "version": 1,
+    "display_name": "WonderWomen",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmbbNPksseVZ3CQhPoWFrbshsyPEpFTP4nJ6iy2KzLbaWZ",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 0,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xCc3cD60FF9936B7C9272a649b24f290ADa562469"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 1
+                }
+            ],
+            "endpoints": [
+                "https://example-service-a.singularitynet.io:8003"
+            ],
+            "group_id": "+hAYAHNfYEItSqc66Z3E8I7mNiWOYQul5rIhiptYKzk=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://en.wikipedia.org/wiki/Wonder_Woman",
+        "short_description": "Wonder Woman is a superheroine appearing in American comic books published by DC Comics.[3] The character is a founding member of the Justice League.",
+        "description": "Wonder Woman's Bronze Age origin story relates that she was sculpted from clay by her mother Queen Hippolyta and was given a life as an Amazon, along with superhuman powers as gifts by the Greek gods. In recent years[vague], DC changed her background with the retcon that she is the biological daughter of Zeus and Hippolyta, jointly raised by her mother and her aunts Antiope and Menalippe. The character has changed in depiction over the decades, including briefly losing her powers entirely in the late 1960s; by the 1980s, artist George Perez gave her an athletic look and emphasized her Amazonian heritage.[12][13] She possesses an arsenal of magical items, including the Lasso of Truth, a pair of indestructible bracelets, a tiara which serves as a projectile, and, in older stories, a range of devices based on Amazon technology.\n\nWonder Woman's character was created during World War II; the character in the story was initially depicted fighting Axis forces as well as an assortment of colorful supervillains, altho"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/3e9eb3f9a8134c9999f585adc60d9feb/services/ec042156fe4f4340ba146aebd586b8b4/assets/20210628132036_asset.jpeg",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "GalGadot@grr.la",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "marvel",
+        "movies"
+    ]
+}

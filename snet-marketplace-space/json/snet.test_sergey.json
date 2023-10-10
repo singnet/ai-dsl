@@ -1,0 +1,56 @@
+{
+    "version": 1,
+    "display_name": "test_sergey",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmXbY5p15TAb21DiEUKvarugjUQQoMMzw1jozd7GUTcooq",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 2,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x7126285d87bBB72840D880d20A0dA88eb9eFb3F6"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 1
+                }
+            ],
+            "endpoints": [
+                "https://example-service-a.singularitynet.io:8088/"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://dev.singularitynet.io/docs/ai-developers/",
+        "short_description": "test_sergey",
+        "description": "test_sergey"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/78120af8d96049bea81d74eda502baae/services/89dbcbe3d58e430db5b4a21f5c6ec1b6/assets/20220531102710_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "anand",
+            "email_id": ""
+        },
+        {
+            "name": "suresh",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "test_sergey"
+    ]
+}

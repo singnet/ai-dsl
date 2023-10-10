@@ -1,0 +1,52 @@
+{
+    "version": 1,
+    "display_name": " iAnswer",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmSd62WiM2YyMgGSF4fqsQhhYFRVLUKdnWn9JDsqmQKGWb",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 19000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://vqa.snet.sh:8883"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xFCFE32f16bF1D40e2d11ae6D71244ab1c0E63154"
+            ]
+        }
+    ],
+    "media": [
+        {
+            "url": "QmUobwDUhoD5oPoQxcqXoC9qjDdakqRJgwnRYM3PqukTyX/hero_vqa-2.png",
+            "order": 1,
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/singnet/semantic-vision/tree/master/services/vqa-service",
+        "description": "<div>Have a question? Ask your question in the form of image, or text and receive an answer.</div>",
+        "short_description": "Have a question? Ask your question in the form of image, or text and receive an answer."
+    },
+    "contributors": [
+        {
+            "name": "Anatoly Belikov",
+            "email_id": "abelikov@singularitynet.io"
+        }
+    ],
+    "tags": [
+        "vqa"
+    ]
+}

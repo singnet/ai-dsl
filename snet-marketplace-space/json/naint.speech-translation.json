@@ -1,0 +1,58 @@
+{
+    "version": 1,
+    "display_name": "Multilingual Speech Translation",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "Qma6wZMwmmXZF5w2RLMqgLDm9AwV1aXM9JwWAFzg9qid1q",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x2d276A85D840Aa2287c3C43b34099FaE455BeeA6"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://services.naint.com:14525"
+            ],
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/multilingual-speech-translation",
+        "short_description": "This is a translator that will automatically translate your voice or any other audio track with a speech into English",
+        "description": "<div>Welcome to Multilingual Speech Translation! This is a translator that will automatically translate your voice or any other audio track with a speech into English. You can input any phrase, sentence or dialogue for quick translation in the form of any audio file. You do not need to specify the language that the speaker(s) speak. Our service will do it for you automatically! At the output, you will receive a translation into English in the form of text. This service supports about 150 languages, so you don't have to worry that the language in the audio track will not be recognized.</div>"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/1a9d798f282e4785970bf6330e72325b/assets/20230327142436_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "multilingual",
+        "speech",
+        "recognition",
+        "speech2text",
+        "any2english",
+        "nmt",
+        "translation"
+    ]
+}

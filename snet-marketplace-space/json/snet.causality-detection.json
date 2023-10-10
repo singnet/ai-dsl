@@ -1,0 +1,56 @@
+{
+    "version": 1,
+    "display_name": "Causality Detection",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmZ15v5m2JpN8VfB39Nz16qmwoZRCDwHLfkK7JtK9QnioP",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 2000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://services-1.snet.sh:7012"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x8e4e5dc2094BF7057c16a07e9292D0db35054d51"
+            ]
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/singnet/causality-detection#readme",
+        "description": "<div>Inspect causality between multiple time series using multivariate Granger causality algorithm</div>",
+        "short_description": "Inspect causality between multiple time series using multivariate Granger causality algorithm."
+    },
+    "contributors": [
+        {
+            "name": "Nejc Znidar",
+            "email_id": "nejc@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmYjwenbbUYpJ1JiLXefMC6WP52hJkGky6FDSv5rKpVZRh/casuality.png",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "tags": [
+        "causality",
+        "time series",
+        "multivariate",
+        "granger",
+        "causality"
+    ]
+}

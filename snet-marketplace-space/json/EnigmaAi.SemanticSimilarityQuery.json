@@ -1,0 +1,53 @@
+{
+    "version": 1,
+    "display_name": "SimilarityAI",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmUJN3pZH8pzNmnZgbbDdQ7HVrX5BC1HB1KjAvit4KSYVm",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 10,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x50F87A0F7DF502241626854CC74c598A281E9BF6"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 5000000
+                }
+            ],
+            "endpoints": [
+                "https://grpc.enigma-ai.com"
+            ],
+            "group_id": "viIKwJKoss3R2WqRY9zTyY7L/V0hVnhOGcu1YDklpjc=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "enigma-ai.com",
+        "short_description": "Semantic Similarity query",
+        "description": "The main goal of this service is to allow users to query a specific sentence from a group of sentences and then return the group with the highest similarity using semantic similarity search, this semantic similarity search is tailored for the data of each user by training the model on his/her domain-specific data.\n\nYou can create and use this service in two steps, first Train the model on your data, here you supply a link to a CSV file (the link should contain .csv extension) that contains two columns \"question\" and \"id\", the question column contains the questions that you want to query from, and the id column contains the group to which this question belongs, you should also specify a name for the endpoint to which the model will be deployed (only characters and digits all in small letter format), you then wait about 60 mins until the model is deployed after the endpoint is deployed you can send a request using the endpoint name with the sentence that you want to get the most similar group to, this will retu"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/ad9957457cd74cf786016910f3e806ef/services/a9873190646142d7a420e1c98216ea9b/assets/20230817103845_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Enigma AI",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "nlp",
+        "llm"
+    ]
+}

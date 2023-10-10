@@ -1,0 +1,78 @@
+{
+    "version": 1,
+    "display_name": "Image Segmentation",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmahsCTdY9nKH8teUPxN6cGq5S3Pz8Sg2WwnLyqYuoZ7WM",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 200,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://services-1.snet.sh:7008"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xf20BE8CBE81EE3f85d67f950fEfAFa32B2f41A1C"
+            ]
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/singnet/semantic-segmentation",
+        "description": "<div>Image segmentation is the process of partitioning a digital image into multiple segments. The goal of segmentation is to simplify and/or change the representation of an image into something that is more meaningful and easier to analyze.<br></br>Use this service to associate each pixel of a provided image with a class label such as identifying cars, bicycles and people. Useful for applications such as autonomous driving, manufacturing robotics, medical imaging and video surveillance. <br></br>Simply upload an image you want to analyse and hit Invoke, the image will then be processed and the results displayed. </div>",
+        "short_description": "Use this service to analyse each element of an image and provide them with a class label. Useful for applications such as autonomous driving, medical imaging, and much more."
+    },
+    "contributors": [
+        {
+            "name": "Artur Gontigo",
+            "email_id": "artur@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmWD1iYaiHJARgCidViy3B61T56Uicpk1U12QCoS2x7vPx/gallery_item_1_-_computer_vision_ai_image_segmentation_cellphone.png",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 2,
+            "url": "https://youtube/wkl1Yo5LdfQ",
+            "file_type": "video",
+            "alt_text": "hover_on_the_video_url"
+        },
+        {
+            "order": 3,
+            "url": "QmNZzjzRVbtExmUE8ZMJkfn3piaH6y6Sebnqkm327gceYv/gallery_item_3_-_image_segmentation.png",
+            "file_type": "image",
+            "alt_text": "an other example"
+        },
+        {
+            "order": 4,
+            "url": "QmRayFhcM89a9XrCfc4VwzpwW7QdorfW114Sc747RCp4xG/gallery_item_4_-_image_segmentation_2.png",
+            "file_type": "image",
+            "alt_text": "an other example "
+        },
+        {
+            "order": 5,
+            "url": "QmTMe3kz6fBf9F7efNsY6ScHMduk4V8vHy2bUprZSgYbRc/hero_semantic_segmentation.png",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "tags": [
+        "computer-vision",
+        "segmentation",
+        "semantic-segmentation"
+    ]
+}

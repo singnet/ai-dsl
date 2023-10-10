@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "display_name": "Sample Service",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmdG9TnxwkLuZGR8qtvxGpBCWSjFz3PJJseECLqjDFsynS",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 1,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://example-service-a.singularitynet.io:8089"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 4,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x94d04332C4f5273feF69c4a52D24f42a3aF1F207",
+                "0x765C9E1BCa00002e294c9aa9dC3F96C2a022025C"
+            ]
+        }
+    ],
+    "media": [
+        {
+            "url": "QmT8R46N7mf16aELii2AZxRnvYa4Tgy1WgEAZ2aXK2U76N/hero_example_service.jpg",
+            "order": 1,
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Anand R",
+            "email_id": "anand@singularitynet.io"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/singnet/example-service",
+        "description": "<div>Basic math functions to Test the platform.</div>",
+        "short_description": "Basic math functions to Test the platform."
+    },
+    "tags": [
+        "Test",
+        "test",
+        "calculator"
+    ]
+}

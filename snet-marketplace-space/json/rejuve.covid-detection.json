@@ -1,0 +1,47 @@
+{
+    "version": 1,
+    "display_name": "Potential COVID Detection",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmPfVvyP8BCpPRg74zNF2gMmQv1HhyjMtXVpR11xkVJigt",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x765C9E1BCa00002e294c9aa9dC3F96C2a022025C"
+            ],
+            "group_name": "default_group",
+            "endpoints": [
+                "https://node1.naint.tech:14493"
+            ],
+            "group_id": "BBS4UqwS0gIWz6yFwYTqXQIeUAgrgYu4RqvvjWIg420=",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 1,
+                    "default": true
+                }
+            ]
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmYTM1n77mmwL8cXpMPCHZcWuzW7kqvEwFmNxSrWy39TgZ/rejuve.png",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "service_description": {
+        "url": "https://rejuve.io",
+        "description": "<div>This service detects potential covid.</div>",
+        "short_description": "This service uses recordings of breath, cough and calling out the letter A to detect COVID."
+    },
+    "tags": [
+        "cough",
+        "covid"
+    ]
+}

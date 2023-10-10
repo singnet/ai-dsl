@@ -1,0 +1,56 @@
+{
+    "version": 1,
+    "display_name": "Multi Speaker Separation",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmPaKMPYof9VNywotG1TWKCDLJxAMa9TCT7JfBcKsYwmjE",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x2C45E02D53069b542aF23cF314AdF8e41b2Fd94D"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://services.naint.com:14524"
+            ],
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/separate-speech",
+        "short_description": "This service allows you to share up to two people who can talk at the same time. ",
+        "description": "<div>This service allows you to share up to two people who can talk at the same time. As input, the service receives a wav audio file in which up to two people speak. At the output you will receive two audio files in which up to two people will be stripped\nThe input audio file size is limited to 4Mb, in practice the optimal duration of the processed audio track should be no more than 90 seconds for 320 kbps audio. \n<div>"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/cc92cfcbd32f431e9d66a7bc02d47efa/assets/20230405132224_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "speaker",
+        "multispeaker",
+        "speech",
+        "diarisation",
+        "separation"
+    ]
+}

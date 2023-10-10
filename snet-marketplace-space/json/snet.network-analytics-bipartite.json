@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "display_name": "Bipartite graph analytics",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmWNK2u8CrxbkyEszBnfdhhxESUsCwKcNHGLDtuLxzpdZb",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 22888880,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://tz-services-1.snet.sh:2252"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xAc8697F26A69fA9B5c9f6a17A4A816712E83869e"
+            ]
+        }
+    ],
+    "media": [
+        {
+            "url": "QmcvSztwG2SAXBiyaJCzGfh9TQvAhwKu1MDE4LRuHMuWiE/hero_bipartite.png",
+            "order": 1,
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/singnet/network-analytics-services",
+        "description": "<div>Network analytical service for bipartite graphs, enabling smarter, data-driven operational and business decisions, with methods for bipartite graph construction and projection.</div>",
+        "short_description": "Network analytical service for bipartite graphs, enabling smarter, data-driven operational and business decisions, with methods for bipartite graph construction and projection."
+    },
+    "contributors": [
+        {
+            "name": "Eyob Yirdaw",
+            "email_id": "eyob@singularitynet.io"
+        }
+    ],
+    "tags": [
+        "network",
+        "analytics",
+        "bipartite",
+        "graph"
+    ]
+}

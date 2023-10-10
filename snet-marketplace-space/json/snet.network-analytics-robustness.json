@@ -1,0 +1,54 @@
+{
+    "version": 1,
+    "display_name": "Network Robustness",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmeJ9s7uzkMxMSiSAa3fNeHbyYiAnunDxN91F15ABg3CsM",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 22888880,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://tz-services-1.snet.sh:2253"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x6F48334Ab54Ca3b7a26837fd52b8665996bf5130"
+            ]
+        }
+    ],
+    "media": [
+        {
+            "url": "QmSFwmnWwqohAzCsvNh9iJF3q5CDnKYRArEDKy1imtGPkf/hero_network_robustness.jpg",
+            "order": 1,
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/singnet/network-analytics-services",
+        "description": "<div>Network analytical service computes various network robustness measures, enabling smarter data-driven operational and business decisions.</div>",
+        "short_description": "Network analytical service computing various network robustness measures, enabling smarter, data-driven operational and business decisions."
+    },
+    "contributors": [
+        {
+            "name": "Eyob Yirdaw",
+            "email_id": "eyob@singularitynet.io"
+        }
+    ],
+    "tags": [
+        "network",
+        "analytics",
+        "robustness"
+    ]
+}

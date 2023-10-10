@@ -1,0 +1,60 @@
+{
+    "version": 1,
+    "display_name": "Real Time Voice Cloning",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmXtDTddxDFg5wWHmHhMTtPwBz5UVkRJetBVGMMu6VhNoH",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 2000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://bh.singularitynet.io:7036"
+            ],
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xA90FC3b809CA9Ca5af9D9d226A23F1b73e560Aff"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno="
+        }
+    ],
+    "service_description": {
+        "url": "https://singnet.github.io/dnn-model-services/users_guide/real-time-voice-cloning.html",
+        "description": "<div>This service uses Real-Time-Voice-Cloning to clone a voice from 5 seconds audio to generate arbitrary speech in real-time.<br></br>The service receives an audio sample and a sentence in plain english text. It uses them as inputs for a pre-trained voice cloning models.</div>",
+        "short_description": "This service uses Real-Time-Voice-Cloning to clone a voice from 5 seconds audio to generate arbitrary speech in real-time."
+    },
+    "contributors": [
+        {
+            "name": "Artur Gontijo",
+            "email_id": "artur@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmQF8ZSU3TPpVHj1cLbK1tcMzfD8Km3kiYeF2kFq5DGwKD/hero_real-time-voice-cloning.jpg",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        },
+        {
+            "order": 2,
+            "url": "https://youtu.be/OAlZ7xPPm9Y",
+            "file_type": "video",
+            "alt_text": "hover_on_the_video_url"
+        }
+    ],
+    "tags": [
+        "audio",
+        "voice",
+        "cloning"
+    ]
+}

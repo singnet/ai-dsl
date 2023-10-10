@@ -1,0 +1,56 @@
+{
+    "version": 1,
+    "display_name": "PublisherPortalTestService",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmNQTcg42D8iC2EcTZx6NZrUQP6d4p4J8vrEhnTrC637vg",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 5,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xCc3cD60FF9936B7C9272a649b24f290ADa562469"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 1
+                }
+            ],
+            "endpoints": [
+                "https://example-service-a.singularitynet.io:8003"
+            ],
+            "group_id": "JCxAP6SWx+usH7pyUAiLTDo7YVtz49U9hJE7o784gT4=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://google.com",
+        "short_description": "This is to test the service in mainnet",
+        "description": "This is to test the service in mainnet"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/daa1d4f104ed479385c7f985b955d600/services/6d2f96824b45445bb0533b407baa38d6/assets/20210629163509_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "PublisherPortal",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "tag1",
+        "tag2",
+        "tag3",
+        "tag4",
+        "tag5"
+    ]
+}

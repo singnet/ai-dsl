@@ -1,0 +1,72 @@
+{
+    "version": 1,
+    "display_name": "FB Prophet Forecast",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmUhmNRPfxjJiT22bGBz6BPaRQKbzbF5z4mFCMQcBYXSAA",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 2000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://bh.singularitynet.io:7038"
+            ],
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xf63f792CFE85663603D591C133c75662D5EF30E9"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno="
+        }
+    ],
+    "service_description": {
+        "url": "https://singnet.github.io/time-series-analysis/users_guide/generic/fbprophet-forecast.html",
+        "description": "<div>This service uses Prophet and Statsmodel to forecast and analyze points of a given time series.</div>",
+        "short_description": "This service uses Prophet and Statsmodel to forecast and analyze points of a given time series."
+    },
+    "contributors": [
+        {
+            "name": "Artur Gontijo",
+            "email_id": "artur@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "https://youtu.be/V2oChaaSubg",
+            "file_type": "video",
+            "alt_text": "hover_on_the_video_url"
+        },
+        {
+            "order": 2,
+            "url": "QmbW1nJNkqDwWT3HoAxkVAoB8jUDZomAyT8dvNk9x3vbGZ/gallery_item_2_-_fbprophet_albury.png",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 3,
+            "url": "QmSH2XARcVe2xesMfathVC95W23c3hav5nAb4KNtEL7Wfu/gallery_item_3_-_fbprophet_peyton.png",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 4,
+            "url": "QmbBMCmqaGKQruyywzxWXMhJMp4gsWj9ozG9p97AjPV2hR/hero_fbprophet_forecast.png",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text",
+            "asset_type": "hero_image"
+        }
+    ],
+    "tags": [
+        "prophet",
+        "series",
+        "forecast"
+    ]
+}

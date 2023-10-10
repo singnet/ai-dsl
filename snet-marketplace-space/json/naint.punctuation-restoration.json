@@ -1,0 +1,57 @@
+{
+    "version": 1,
+    "display_name": "Punctuation & Capitalisation Restoration",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmT7QyuR4gBt6cDgWAU5M4CCb9XpkQHL4vVehpvcQ8orQF",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x79749e814f379949aB6bb79699b86926f74c6f13"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://services.naint.com:14506"
+            ],
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/Punctuation-Capitalisation-Restoration",
+        "short_description": "The service receives the text in English and places punctuation marks and capital letters in it.",
+        "description": "<div>The service receives the text in English and places punctuation marks and capital letters in it.</div>"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/a70508ef74664ea88bcd4d689ce8b77b/assets/20230327104415_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "nlp",
+        "punctuation",
+        "capitalization",
+        "english",
+        "text",
+        "text2text"
+    ]
+}

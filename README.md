@@ -59,6 +59,19 @@ given below.
      the backbone of automated service assemblage.
 * [Technical Report of Octover 2022](doc/technical-reports/2022-Oct/ai-dsl-techrep-2022-oct.pdf)
 
+## Folder Structure
+
+- `doc`: contain technical reports and other documentation
+- `experimental`: contain a number of experiments, ranging from
+  representing and proving properties using dependent types,
+  performing program synthesis to type checking protobuf
+  specifications, and more.
+- `ontology`: experiment representing SingularityNET platform
+  knowledge in SUO-KIF format.
+- `snet-marketplace-space`: scripts to build an atomspace of the
+  SingularityNET Marketplace, as well as file dumps in MeTTa and JSON
+  formats.
+
 ## Further Reading
 
 * [Initial Blog Post](https://blog.singularitynet.io/ai-dsl-toward-a-general-purpose-description-language-for-ai-agents-21459f691b9e)

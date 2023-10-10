@@ -1,0 +1,69 @@
+{
+    "version": 1,
+    "display_name": "Topic Analysis",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmaEBP6ReeDnqyZGDekStFGKei3neFTYehuYpurMeYHfSv",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 22888880,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://tz-services-1.snet.sh:2302"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x48C835AB77106c5f18c429b34eaaeEDeD7e2106c"
+            ]
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/singnet/topic-analysis",
+        "description": "<div>Methods to identify recurrent themes or topics include latent semantic analysis (LSA), probabilistic latent semantic analysis (PLSA), latent Dirichlet allocation (LDA) and LDA2vec.</div>",
+        "short_description": "Extrapolate further meaning from a provided text through identifying recurrent themes, or topics."
+    },
+    "contributors": [
+        {
+            "name": "Eyob Yirdaw",
+            "email_id": "eyob@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmNv3UpZX23QaecU3jzA3moCPzAUnd6tzmu1hnko1TvCrp/gallery_item_1-_topic-analysis.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 2,
+            "url": "Qmb4Q3sZRumK52eQDQzxCTU9bNe5z5HGn96VJ2RqwESHyN/gallery_item_2_-_topic-analysis2.jpeg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 3,
+            "url": "QmW5SZZW54N3Y96ycPmrYWjqtemx2UhBg9WXdjBWMbTZkE/hero_topic_analysis.jpg",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "tags": [
+        "topic",
+        "analysis",
+        "modelling",
+        "lsa",
+        "plsa",
+        "lda"
+    ]
+}

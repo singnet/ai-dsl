@@ -1,0 +1,66 @@
+{
+    "version": 1,
+    "display_name": "AlphaZero Chess",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmWJ3tpsvWuY6i3Ap4rKtLishVMdD8XVeJVGTSWVMyM1XC",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 20,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://bh.singularitynet.io:7035"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x21D0fd3FCFbB4F7A1215DD7B0fb140Ce315843a4"
+            ]
+        }
+    ],
+    "service_description": {
+        "url": "https://singnet.github.io/dnn-model-services/users_guide/zeta36-chess-alpha-zero.html",
+        "description": "<div>Play chess with reinforcement learning by DeepMind\u2019s AlphaGo Zero methods.<br></br>The service receives a chess move as input, such as c2c4. This move means that the piece is at column c and row 2 and will move to the position at column c and row 4. Additionally, the model can detect illegal and end game moves.<br></br>The service uses deep neural networks and reinforcement learning techniques to output the best move supplied by the pre-trained model.</div>",
+        "short_description": "Play chess with reinforcement learning by DeepMind\u2019s AlphaGo Zero methods."
+    },
+    "contributors": [
+        {
+            "name": "Artur Gontigo",
+            "email_id": "artur@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmeLNxk8V4XFZ8ZVcBHAT5ua6omcV6iXsiE1fehP9YJmcp/gallery_item_1_-_Alpha_Chess.png",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 2,
+            "url": "QmTnvAVPfXBSHquGPApsgvf4fjnXCccUnubjcHt8BPruuv/gallery_item_2_-_Alpha_Chess.png",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 3,
+            "url": "QmdQAWiKkzEydTNP45rtyKt8fDaGM6EgsJAkMaTvfk2vC2/hero_zeta36_chess_alpha_zero.jpg",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "tags": [
+        "alphazero",
+        "chess",
+        "player"
+    ]
+}

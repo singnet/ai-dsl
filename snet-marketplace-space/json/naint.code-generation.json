@@ -1,0 +1,54 @@
+{
+    "version": 1,
+    "display_name": "Automatic Code Generation",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmRujcJgQKW3YVwXqSHcfVb9QPKCZbtLFMHRhPM2gyfpHj",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xe84374Ace3f2BCe326Cf6A16e0C9E91E4Db6245A"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://services.naint.com:14531"
+            ],
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/automatic-code-generation",
+        "short_description": "The service receives a textual seed in English and thereafter generates code based on this in one of the programming languages.",
+        "description": "<div>The service receives a textual seed in English and thereafter generates code based on this in one of the programming languages. You can use this model for several tasks such as: code summarization, code generation, code translation, code refinement, code defect detection, code clone detection.<div>\n"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/515519216e60460ba88bb0e988129506/assets/20230405094617_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "generation",
+        "code",
+        "programming"
+    ]
+}

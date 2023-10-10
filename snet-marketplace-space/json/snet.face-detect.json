@@ -1,0 +1,71 @@
+{
+    "version": 1,
+    "display_name": "Detect Faces",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "Qmb8MJhW6gAagbVDQd8NCxaKN8agTL1wiUhq375hrvG5Z7",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 2000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://services-1.snet.sh:7003"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xCa439f964E978Eb4cd032b55675C6bf5fD58fEA8"
+            ]
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/singnet/face-services",
+        "description": "<div>One of four Face Services (localization, landmark detection, alignment, and recognition,) face-detect identifies computer generated bounding boxes to detect faces within an image.</div>",
+        "short_description": "Face-detect identifies computer generated bounding boxes to detect faces within an image."
+    },
+    "contributors": [
+        {
+            "name": "Artur Gontigo",
+            "email_id": "artur@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmR7PnTDVc55Z7L9s7pSzYUxj1PHS9GWquJKR7DWdDPCAd/gallery_item_1_-_face_detect_example.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 2,
+            "url": "QmWYekPB3M6UHZ8Q5axr2m1XFkUt5KPqPaj4VDKK9Jut5V/gallery_item_2_-_ben-happy3.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 3,
+            "url": "QmR86PvhjSRVGHjgmZthPSEgLeWfTU3Rdkd2WHAVKa2muY/gallery_item_3_-_sophia-happy3.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 4,
+            "url": "QmbyJFbU3LL33TrGxq7dBuVL7724mVpV64LtpUmJ2m37wJ/hero_face_detect.jpeg",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "tags": [
+        "face-analysis",
+        "object-localization"
+    ]
+}

@@ -1,0 +1,57 @@
+{
+    "version": 1,
+    "display_name": "Neural Text Generation",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmU1e5AtV5nFQdC7MTyyqEJCEbWSpmXEYxwugy9hoJcMit",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xF199852BC50a55258258158eDBC567816fdFbDFc"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://services.naint.com:14490"
+            ],
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/neural-text-generation",
+        "short_description": "The service receives a textual seed in English and uses it as input to the neural generative model trained to solve diverse text generation task",
+        "description": "<div>The service receives a textual seed in English and uses it as input to the neural generative model trained to solve diverse text generation task using large-scale Reddit dump and outputs the generated text for a given seed. The basic commonsense model generates diverse text adapting to the style and content of the given text seed. The service also provides the models representing more than 40 public personalities.<div>"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/789a9f817c0b4eb393913ab602d161e8/assets/20230405101009_asset.jpeg",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "nlp",
+        "english",
+        "text",
+        "twitter",
+        "public-persons",
+        "generation"
+    ]
+}

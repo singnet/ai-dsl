@@ -1,0 +1,54 @@
+{
+    "version": 1,
+    "display_name": "Geolocate Me",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmbcJHDmACJ2BB3LwXiyrfoHNQvh4X4kz91yox9zeTW87t",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x92227e39d42D575649ADEd90edb7ACa2bd1De5aA"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 2000000
+                }
+            ],
+            "endpoints": [
+                "https://snetd.tgo.tech:7000"
+            ],
+            "group_id": "bxGvIdKuMtlFuSxo2yPphnuFra4ZWpVVtb/k0urG3ys=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/tgotech/geo-me-doco",
+        "short_description": "The service performs self-geolocation of an observer using a set of observations from the observer to a predefined set of landmarks.",
+        "description": "The service performs self-geolocation of an observer using a set of observations from the observer to a predefined set of landmarks. The service provides a re-sectioning function commonly used in overland navigation scenarios in the absence of global positioning system (GPS). This service is capable of fusing any combination of angles to or ranges from known landmarks and can handle erroneous measurements. Output of the service is a geolocation estimation latitude and longitude, a circular error of probability (CEP) provided as elliptical parameters (length, width and rotation). The service can provide an optional formatted kml file containing the computing scenario and result (this kml may be plotted on various geospatial interface systems)."
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/6509581150c8446e8a73b3fa71ebdb69/services/05676ad531cd40a889841ff1f3c5608b/assets/20210127060152_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Tim Edge",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "geolocation",
+        "navigation",
+        "sensorfusion"
+    ]
+}

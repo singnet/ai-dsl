@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "display_name": "Speech Emotion Recognition",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmS9vEniv9SVpuk82WVtWmrQNAB9NHq6DB2HwQQw1T6R98",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x7126285d87bBB72840D880d20A0dA88eb9eFb3F6"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://services.naint.com:14492"
+            ],
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/speech-emotion-recognition",
+        "short_description": "Submit a WAV file (up to 4 MB and no longer than 90 seconds) with English speech and get an emotion label from the provided WAV file.",
+        "description": "<div>Submit a WAV file (up to 4 MB and no longer than 90 seconds) with English speech and get an emotion label from the provided WAV file.</div>"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/bb0e862ceeac427bb137a9dfdecd560b/assets/20230327110621_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "emotionrecognition",
+        "emotions",
+        "speech",
+        "recognition"
+    ]
+}

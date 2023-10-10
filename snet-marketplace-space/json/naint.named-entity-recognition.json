@@ -1,0 +1,56 @@
+{
+    "version": 1,
+    "display_name": "Named Entity Recognition",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmQUyQ1p8gVG8RBWx4DuiJNbrYoszKZLbQY8tt22G9UP5k",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x1b05A3C9f819645fdabEEE634A9202831Afd1104"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://services.naint.com:14497"
+            ],
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/named-entity-recognition",
+        "short_description": "Input a piece of text and identify specific named entities within the provided text.",
+        "description": "<div>Input a piece of text and identify specific named entities within the provided text. The neural model can recognize following named entities: entity, event, group, location, object, organization, person, place, time.</div>"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/a6248e779d164a93b8068156e8032ee5/assets/20230327124938_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "ner",
+        "named-entities",
+        "english",
+        "text",
+        "recognition"
+    ]
+}

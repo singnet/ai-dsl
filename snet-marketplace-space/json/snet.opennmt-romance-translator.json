@@ -1,0 +1,54 @@
+{
+    "version": 1,
+    "display_name": "OpenNMT Language Translation",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmTsUbiQo3wKjPbkyfdsZe93UUXDEqA3Fc2L2YNQ1fgrJ2",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 20,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://bh.singularitynet.io:7026"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xCC936d18E11d635ecb176b6cE7f223e16C1b8008"
+            ]
+        }
+    ],
+    "media": [
+        {
+            "url": "QmVGBo4ovSNMopXJ2j15EsRkDU3HEVEaY9B51XUKGAxCfb/hero_opennmt_romance_translator.jpg",
+            "order": 1,
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "service_description": {
+        "url": "https://singnet.github.io/nlp-services/users_guide/opennmt-romance-translator.html",
+        "description": "<div>Input a sentence in French (FR), Italian (IT), Portuguese (PT), Romanian (RO), or Spanish (ES) and translate the sentence into any other of these languages.<br></br>Using the multi-way OpenNMT Model, isolated for every language pair, the service gets the input text\u2019s sentences, breaks them into tokens and then feeds the target model. The model output translated tokens that are put together to become the output of service (translated sentences).</div>",
+        "short_description": "Input a sentence in French (FR), Italian (IT), Portuguese (PT), Romanian (RO), or Spanish (ES), and translate the sentence into any other of these languages."
+    },
+    "contributors": [
+        {
+            "name": "Artur Gontigo",
+            "email_id": "artur@singularitynet.io"
+        }
+    ],
+    "tags": [
+        "opennmt",
+        "Romance",
+        "translator"
+    ]
+}

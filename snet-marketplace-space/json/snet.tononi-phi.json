@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "display_name": "Tononi's Phi Service",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmWpeXwUk4CfJqx1roWXdPx9Rmgw3ieaZXksf8feKTono7",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 2000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://bh2.singularitynet.io:7025"
+            ],
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x8e4e5dc2094BF7057c16a07e9292D0db35054d51"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno="
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/singnet/phi",
+        "description": "<div>Takes as input a time series of values (importance or excitation values for example) and returns a time series of estimated Tononi Phi values.</div>",
+        "short_description": "Takes as input a time series of values (importance or excitation values for example) and returns a time series of estimated Tononi Phi values."
+    },
+    "contributors": [
+        {
+            "name": "Jonatas Leon",
+            "email_id": "jonatas.leon@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmZvQ4Tpb7tnVNbK1WhVqhTVvnzZGZRFdMYAtdnFwA3wYA/image_pi.png",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "tags": [
+        "series",
+        "tononi",
+        "phi",
+        "consciousness"
+    ]
+}

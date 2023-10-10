@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "display_name": "Neural Grammar Correction",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmYsmaCHbwKMBiFRJyB8zrxtYhsc6RJcMgiWxagwzM8e88",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xC3090cA2b51870c1A4560fbFc72421271FA7C357"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://services.naint.com:14529"
+            ],
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/neural-grammar-correction",
+        "short_description": "The service receives the source text, and then gives the grammatically correct text.",
+        "description": "<div>The service receives the source text, and then gives the grammatically correct text, using machine learning methods, which try to correct potentially grammatically incorrect text and semantically does not change the text/information that is grammatically correct.<div>\n"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/cd8b7b8556c24139910a426e7a48195f/assets/20230406084200_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "nlp",
+        "text",
+        "grammar",
+        "correction"
+    ]
+}

@@ -1,0 +1,60 @@
+{
+    "version": 1,
+    "display_name": "Image Retrieval",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmNzuVJ2YeY4Ge7arcf1tbHDrcAYP5cUMbAEuvE4FhXtzy",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 200000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://tz-services-1.snet.sh:8030"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x9544d7777db116851c8490C863f66440e0302FCf"
+            ]
+        }
+    ],
+    "service_description": {
+        "url": "https://singnet.github.io/image-retrieval-service/users_guide/image-retrieval-service.html",
+        "description": "<div>Upload an image and receive six of the closest matches found within the open Google image dataset containing ~9 million images annotated with labels and bounding boxes.</div>",
+        "short_description": "Upload an image and receive six of the closest matches found within the open Google image dataset containing ~9 million images annotated with labels and bounding boxes."
+    },
+    "contributors": [
+        {
+            "name": "Israle",
+            "email_id": "israel@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmVT6RT84xcrkhE26xxJR1ti7eqLEwn8K86ZFRMJwJUsqb/gallery_item_1_-_img_retrieval_example.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 2,
+            "url": "QmTmqsuBpqLhqKVcpGeFYiTKiUgiX41jmDqGBek8hubFyH/hero_image-retrieval-service.jpg",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "tags": [
+        "similarity",
+        "retrieval",
+        "image"
+    ]
+}

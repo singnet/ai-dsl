@@ -1,0 +1,72 @@
+{
+    "version": 1,
+    "display_name": "Caption Videos",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmQAULV47ePWkg7zJKwSHgCyrBeoWy4mWHv1hosPz8d2pU",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 12000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://bh.singularitynet.io:7029"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x25D18f36A935B1Ae0a6DC78B5a7C853c0039643b"
+            ]
+        }
+    ],
+    "service_description": {
+        "url": "https://singnet.github.io/dnn-model-services/users_guide/s2vt-video-captioning.html",
+        "description": "<div>Using the Sequence to Sequence Video to Text architecture based on LSTM recurrent neural networks, generate a textual summary for a provided video. <br></br>The service receives a video and uses it as an input for a VGG16 model that generates features of each frame. These frames are passed as input for a second model (S2VT_VGG16) that outputs a caption for all features.<br></br>The service makes predictions using computer vision and machine learning techniques, and outputs its best guess using a SubRip Subtitle format to describe an action on the specified time interval from a video (the service also indicates its confidence in the predictions).<br></br>The user must provide the following inputs in order to start the service and get a response:<br></br>Inputs:<br></br>url: A YouTube video URL.<br></br>start_time_sec: Start time position, in seconds.<br></br>stop_time_sec: Stop time position, in seconds.<br></br>The time interval (stop-start) must be <= 20 seconds.</div>",
+        "short_description": "Using the Sequence to Sequence Video to Text architecture based on LSTM recurrent neural networks, generate a textual summary for a provided video."
+    },
+    "contributors": [
+        {
+            "name": "Artur Gontigo",
+            "email_id": "artur@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmaTtL3P8W3rgbfziF5cepJVo22Ugbjn3s8sXCzqRwrF42/hero_s2vt_video_captioning.png",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        },
+        {
+            "order": 2,
+            "url": "https://youtu.be/-xNI7e7YgDk",
+            "file_type": "video",
+            "alt_text": "S2VT iccv15 spotlight"
+        },
+        {
+            "order": 3,
+            "url": "https://youtu.be/XTq0huTXj1M",
+            "file_type": "video",
+            "alt_text": "Sequence to Sequence Video to Text (MPII MD examples)"
+        },
+        {
+            "order": 4,
+            "url": "https://youtu.be/pER0mjzSYaM",
+            "file_type": "video",
+            "alt_text": "Sequence to Sequence Video to Text (MVAD examples)"
+        }
+    ],
+    "tags": [
+        "s2vt",
+        "video",
+        "captioning"
+    ]
+}

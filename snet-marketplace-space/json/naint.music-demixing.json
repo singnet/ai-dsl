@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "display_name": "Neural Music Demixing",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "Qmc9mahDJPBByq9wtwTYmqdnuYX5H9NKL8GJMrwGv7efuN",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x98DDa62dE6231C066344a1Dc10b4Fd00019D97cC"
+            ],
+            "pricing": [
+                {
+                    "default": true,
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000
+                }
+            ],
+            "endpoints": [
+                "https://services.naint.com:14503"
+            ],
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "group_name": "default_group"
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/Neural-Music-Demixing",
+        "short_description": "The service receives a high-quality audio file and splits it into 4 sources: drums, bass, vocals and others.",
+        "description": "<div>The service receives a high-quality audio file and splits it into 4 sources: drums, bass, vocals and others. Separation is possible both for all 4 possible sources, and for one specific of the possible ones. So, for example, if you want to demix to all possible sources, then the output will be 4 audio tracks with drums, bass, vocals and everything else. If you want to demix only one of these sources, such as vocals, then you will end up with two audio files. In the first audio track there will be only vocals, in the second everything else except vocals.\n\nThe user must submit an audio file for demixing. The user can only submit audio in wav format! In this case, the frequency and number of channels do not matter. Using machine learning methods, this audio file is separated into sources.  You can input an audio-file to the service up to 4.5 minutes and no more than 40 MB. It is recommended to use the Google Chrome or Edge browser for demixing. It is not recommended to use Firefox.\n</div>"
+    },
+    "media": [
+        {
+            "order": 1,
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/b5b1f7a04e6345639ec46a0e3e9c6123/assets/20230327125624_asset.png",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": ""
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": ""
+        }
+    ],
+    "tags": [
+        "music",
+        "audio",
+        "demixing",
+        "separation"
+    ]
+}

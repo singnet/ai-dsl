@@ -1,0 +1,60 @@
+{
+    "version": 1,
+    "display_name": "Speech Synthesis",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmWyXTQhs2fEH6CjtuwXtvyhMCT1cQsExzSPd2FPHwNKfR",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 8000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://node1.naint.tech:14481"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x602da0E3AFC2a5Dba04C8999F995148632AD228d"
+            ]
+        }
+    ],
+    "service_description": {
+        "url": "https://github.com/iktina/speech-synthesis-service",
+        "description": "<div>Provide a piece of English text (up to 140 characters) and generate an artificial human voice to playback the provided text. Also known as text-to-speech.</div>",
+        "short_description": "Provide a piece of English text (up to 140 characters) and generate an artificial human voice to playback the provided text. Also known as text-to-speech."
+    },
+    "contributors": [
+        {
+            "name": "Sergey Shalyapin",
+            "email_id": "sergeyshalyapin@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmNfcxpFksxDaZ6DMpfwJ13cxneXtaPDqrtRxLQoJQjFip/hero_speech-synthesis.jpg",
+            "file_type": "image",
+            "asset_type": "hero_image",
+            "alt_text": "hero_image"
+        },
+        {
+            "order": 2,
+            "url": "https://youtu.be/t85l26-GsYg",
+            "file_type": "video",
+            "alt_text": "Text To Speech Online AI Tool | SingularityNET Marketplace Speech Synthesis"
+        }
+    ],
+    "tags": [
+        "text2Speech",
+        "speech",
+        "synthesis"
+    ]
+}

@@ -1,0 +1,79 @@
+{
+    "version": 1,
+    "display_name": "Deezer Spleeter",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmVJGRTSsSijmt7a4bAVfs2riwSzjCT34hmnqK97YntD5x",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 100,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://sound-spleeter.singularitynet.io:7068"
+            ],
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0xb7aa04F5683dC8C5eE03f6713eD541151b4Fd07B"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno="
+        }
+    ],
+    "service_description": {
+        "url": "https://singnet.github.io/dnn-model-services/users_guide/sound-spleeter.html",
+        "description": "<div>This service uses the Deezer Spleeter to perform source separation on audio files.<br></br>It receives an audio sample as input for a source separation pre-trained model and then it separates the vocals and the accompaniment from the input audio sample using machine learning techniques.</div>",
+        "short_description": "This service uses Spleeter to perform source separation on audio files."
+    },
+    "contributors": [
+        {
+            "name": "Artur Gontijo",
+            "email_id": "artur@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 2,
+            "url": "https://youtu.be/D5SExB1Rx9Y",
+            "file_type": "video",
+            "alt_text": "hover_on_the_video_url"
+        },
+        {
+            "order": 3,
+            "url": "https://youtu.be/hAl8HaSpd_c",
+            "file_type": "video",
+            "alt_text": "hover_on_the_video_url"
+        },
+        {
+            "order": 4,
+            "url": "QmeYKsYUX4hjcjMEeYSdovkhAGgvPLNjQeAja5UjxMagG7/gallery_item_3_-_song_splitter_app1.jpeg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 4,
+            "url": "QmUDCpGepk9vecuca9GM7oYAAJfnezwddUS2iSrna1qCeE/gallery_item_4_-_song_splitter_app2.jpeg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 1,
+            "url": "QmS1ejcfUsNYsKSnzd81bv8Tu4ntG1wE6y5YTwatToVJwt/hero_sound-spleeter.jpg",
+            "file_type": "image",
+            "alt_text": "hero image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "tags": [
+        "audio",
+        "separation",
+        "deezer",
+        "spleeter"
+    ]
+}

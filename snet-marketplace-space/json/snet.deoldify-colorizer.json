@@ -1,0 +1,102 @@
+{
+    "version": 1,
+    "display_name": "DeOldify Photos",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmdzWZRZUPHJ6hEXeDCR1PDQ8BuCrLhC2TjJCa8e4APL3A",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_group",
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 2000000,
+                    "default": true
+                }
+            ],
+            "endpoints": [
+                "https://bh.singularitynet.io:7037"
+            ],
+            "free_calls": 15,
+            "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
+            "daemon_addresses": [
+                "0x8e4e5dc2094BF7057c16a07e9292D0db35054d51"
+            ],
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno="
+        }
+    ],
+    "service_description": {
+        "url": "https://singnet.github.io/dnn-model-services/users_guide/deoldify-colorizer.html",
+        "description": "<div>A Deep Learning based project for colorizing and restoring old images!</div>",
+        "short_description": "A Deep Learning based project for colorizing and restoring old images!"
+    },
+    "contributors": [
+        {
+            "name": "Artur Gontijo",
+            "email_id": "artur@singularitynet.io"
+        }
+    ],
+    "media": [
+        {
+            "order": 1,
+            "url": "QmYgFCjCRQ4MPKdYDERVbvuFSZxDC7iJ6FfSSMshy2Lw3S/gallery_item_1_-_Norwegian_Bride.jpeg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 2,
+            "url": "https://youtu.be/5vfR3oTJTAM",
+            "file_type": "video",
+            "alt_text": "hover_on_the_video_url"
+        },
+        {
+            "order": 3,
+            "url": "QmXc7sJ4rAeLMpkPw2n4cPeBFfR6uGm5U8Ek1zjir7M9X9/gallery_item_3_-_DeOldify.jpg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 4,
+            "url": "QmSbwr4RH5VMkrkfrHTfzeFxJvpoPoSLAnkFGdDAQFwzvr/gallery_item_4_-_golden_gate_bridge.jpeg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 5,
+            "url": "Qmbd3namCZbAMoCgLhGaFmDJHTXWhTLobggWwqBhm5U9KU/gallery_item_5_-_farm_house.jpeg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 6,
+            "url": "QmTW3atDnS7FvoLXjhdVmge5KBM28EA8zLiEThMjdZooKt/gallery_item_7_-_sweden_Woman_relaxing.jpeg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 7,
+            "url": "Qmb9jiSXRdbmVk83D1wQxHXrDrBpvsxvGXZ74xz3TDaxEh/gallery_item_8_-_Toffs_and_Toughs.jpeg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 8,
+            "url": "QmbSz3gLEc734Uo6iKzVG93wpNbF8oB96AE5q3FTn9sb9D/gallery_item_9_-_DeOldify.jpeg",
+            "file_type": "image",
+            "alt_text": "hover_on_the_image_text"
+        },
+        {
+            "order": 9,
+            "url": "QmeCVMT2hw2abYrrogoJZkPzcBFzak3L416kgQvtJqBhfs/hero_deoldify_colorizer.jpeg",
+            "file_type": "image",
+            "alt_text": "hero_image",
+            "asset_type": "hero_image"
+        }
+    ],
+    "tags": [
+        "image",
+        "color",
+        "old"
+    ]
+}
