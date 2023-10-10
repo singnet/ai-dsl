@@ -33,7 +33,7 @@ cat <<EOF
 
 ;; Define accessibility function from service ID to service data
 ;; structure (see Service defined further below).
-(: service (-> (ServiceID $org) Service))
+(: service (-> (ServiceID \$org) Service))
 
 ;; Define Pricing type
 (: Pricing Type)
@@ -231,17 +231,17 @@ cat <<EOF
                                \$media
                                \$tags)) \$version)
 (: Service.display_name (-> Service String))
-(= (Service.version (MkService \$version
-                               \$display_name
-                               \$encoding
-                               \$service_type
-                               \$model_ipfs_hash
-                               \$mpe_address
-                               \$groups
-                               \$service_description
-                               \$contributors
-                               \$media
-                               \$tags)) \$display_name)
+(= (Service.display_name (MkService \$version
+                                    \$display_name
+                                    \$encoding
+                                    \$service_type
+                                    \$model_ipfs_hash
+                                    \$mpe_address
+                                    \$groups
+                                    \$service_description
+                                    \$contributors
+                                    \$media
+                                    \$tags)) \$display_name)
 (: Service.encoding (-> Service String))
 (= (Service.encoding (MkService \$version
                                 \$display_name
@@ -371,29 +371,17 @@ service_to_metta() {
     local org="$1"
     local service="$2"
 
-    # Declare service
-    echo
-    echo ";; Service declaration of ${org}.${service}"
-    echo "(: ${org}.${service} (ServiceID ${org}))"
-
-    # Output service attributes
-    echo
-    echo ";; Service attributes of ${org}.${service}"
-    service_data_to_metta ${org} ${service}
-}
-
-# Takes the organization id as first argument and service as second
-# argument and outputs knowledge about that service attributes in
-# MeTTa format.
-service_data_to_metta() {
-    local org="$1"
-    local service="$2"
-
     # Save json metadata of that service in temporary file
-    local metadata_file=$(mktemp)
+    local metadata_file=${org}-${service}-metadata.json
     snet service print-metadata ${org} ${service} > ${metadata_file}
 
+    # Output service data
     cat <<EOF
+
+;; Service declaration of ${org}.${service}"
+(: ${org}.${service} (ServiceID ${org}))
+
+;; Service metadata of ${org}.${service}
 (= (service ${org}.${service})
    ; Service
    (MkService
@@ -410,33 +398,81 @@ service_data_to_metta() {
        ; mpe_address
        $(jq '.mpe_address' ${metadata_file})
        ; groups
-       Nil ; NEXT
+       $(groups_to_metta ${metadata_file})
        ; service_description
-       (MkServiceDescription
-           ; url
-           $(jq '.service_description.url' ${metadata_file})
-           ; description
-           $(jq '.service_description.description' ${metadata_file}))
+       $(service_description_to_metta ${metadata_file})
        ; contributors
-       Nil ; NEXT
+       $(contributors_to_metta ${metadata_file})
        ; media
-       Nil ; NEXT
+       $(media_to_metta ${metadata_file})
        ; tags
-       Nil ; NEXT
+       $(tags_to_metta ${metadata_file})
    )
 )
 EOF
+}
 
+# Take a metadata file of the service an output its groups in MeTTa
+# format.
+groups_to_metta() {
+    local metadata_file="$1"
+    local groups_length=$(jq '.groups | length' ${metadata_file})
     # NEXT: see https://www.baeldung.com/linux/jq-command-json to deal with array
+    echo "Nil"
+}
 
-    # NEXT: dump the content of description.url as well.  See
-    #
-    # chromium --headless --disable-gpu --dump-dom https://singnet.github.io/dnn-model-services/users_guide/cntk-image-recon.html | html2text
-    #
-    # Possibly http://edbrowse.org/
-    #
-    # If nothing else works, see https://www.brow.sh/docs/introduction/
+# Take a metadata file of the service and output its service
+# description in MeTTa format.
+service_description_to_metta() {
+    local metadata_file="$1"
+    local url="$(jq '.service_description.url' ${metadata_file})"
 
+    # Detect browser to read content of url.  Only chromium and
+    # google-chrome are supported because they provide headless
+    # javascript rendering (firefox does not support that).
+    if [ -z $(command -v chromium) ]
+    then if [ -z $(command -v google-chrome) ]
+         then echo "chromium or google-chrome is required"
+              exit 1
+         else browser=google-chrome
+         fi
+    else browser=chromium
+    fi
+
+    # Get textual content of the url
+    # local url_content="$($browser --headless --disable-gpu --dump-dom "${url}" | html2text)"
+    local url_content="null"
+
+    # Output ServiceDescription constructor to MeTTa
+    cat <<EOF
+(MkServiceDescription
+           ; url
+           ${url}
+           ; url content
+           \""${url_content}"\"
+           ; description
+           $(jq '.service_description.description' ${metadata_file})
+           ; short_description
+           $(jq '.service_description.short_description' ${metadata_file}))
+EOF
+}
+
+contributors_to_metta() {
+    local metadata_file="$1"
+    # NEXT
+    echo "Nil"
+}
+
+media_to_metta() {
+    local metadata_file="$1"
+    # NEXT
+    echo "Nil"
+}
+
+tags_to_metta() {
+    local metadata_file="$1"
+    # NEXT
+    echo "Nil"
 }
 
 ########
@@ -485,8 +521,11 @@ for org in $(snet organization list | tail --lines=+2); do
 done
 echo "Generated ${METTA_FILENAME}"
 
-# Example of service metadata
+echo "The following metadata JSON files have been generated as well"
+ls *.json
 
+# Example of service metadata
+#
 # {
 #   "version": 1,
 #   "display_name": "AI Sight",
