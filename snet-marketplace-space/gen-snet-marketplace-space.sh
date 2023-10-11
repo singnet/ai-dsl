@@ -520,10 +520,9 @@ for org in $(snet organization list | tail --lines=+2); do
     echo ";; Organization: ${org}" >> ${METTA_FILENAME}
     organization_to_metta "${org}" >> ${METTA_FILENAME}
 done
-echo "Generated ${METTA_FILENAME}"
-
-echo "The following metadata JSON files have been generated as well"
+echo "During the process the following metadata JSON files have been generated"
 ls *.json
+echo "Generated ${METTA_FILENAME}"
 
 # Example of service metadata
 #
