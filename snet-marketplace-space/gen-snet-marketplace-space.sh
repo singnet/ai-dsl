@@ -134,6 +134,7 @@ cat <<EOF
 
 ;; Define ServiceDescription constructor
 (: MkServiceDescription (-> String               ; url
+                            String               ; url_content
                             String               ; description
                             String               ; short_description
                             ServiceDescription))
