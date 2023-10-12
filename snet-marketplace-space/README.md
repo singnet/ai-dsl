@@ -80,14 +80,16 @@ end with the message
 Generated snet_marketplace_<DATETIME>.metta
 ```
 
-which you can subsequently copy to the host
+which you can subsequently copy to the host, under the `metta`
+subfolder, with the following command line
 
 ```bash
-docker cp snet-marketplace-space-container:/home/user/snet_marketplace_<DATETIME>.metta .
+docker cp snet-marketplace-space-container:/home/user/snet_marketplace_<DATETIME>.metta metta
 ```
 
 In addition the json metadata files are listed as well and can be
-copied to the host with the following command line
+copied to the host, under the `json` subfolder, with the following
+command line
 
 ```bash
 for f in JSON_FILES; do docker cp snet-marketplace-space-container:/home/user/${f} json; done
