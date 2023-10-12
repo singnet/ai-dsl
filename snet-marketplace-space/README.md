@@ -30,11 +30,15 @@ JSON files representing service metadata are obtained while running
 the script and present as well in the subfolder `json`.  Look for
 
 ```
+json/ORG.json
 json/ORG.SERVICE.json
 ```
 
 where `ORG` and `SERVICE` represent the organization and service
 respective identifiers.
+
+The JSON files are not timestamped, but they should have been produced
+at the same time as the MeTTa file, which is timestamped.
 
 ## Docker
 
