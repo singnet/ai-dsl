@@ -97,14 +97,41 @@ cat <<EOF
 (: Nil (List \$a))
 (: Cons (-> \$a (List \$a) (List \$a)))
 
+;; Define List functions
+
+;; Return the head of a list
+(: head (-> (List \$a) \$a))
+(= (head (Cons \$head \$tail)) \$head)
+
+;; Return the tail of a list
+(: tail (-> (List \$a) \$a))
+(= (tail (Cons \$head \$tail)) \$tail)
+
+;; Return True iff the given list is empty
+(: empty (-> (List \$a) Bool))
+(= (empty Nil) True)
+(= (empty (Cons \$head \$tail)) False)
+
+;; Return the length of a list
+(: length (-> (List \$a) Number))
+(= (length Nil) 0)
+(= (length (Const \$head \$tail)) (+ 1 (length \$tail)))
+
+;; Return the element of a list at a given index
+(: indexElem (-> (List \$a) Number \$a))
+(= (indexElem (Cons \$head \$tail) $k)
+   (if (< 0 $k) (indexElem \$tail (- \$k 1)) \$head))
+
 ;; Define OrganizationID type
 (: OrganizationID Type)
 
 ;; Define access function from organization ID to organization data
 ;; structure (see Organization defined further below)
-(: organization (-> (OrganizationID \$org) Organization))
+(: organization (-> OrganizationID Organization))
 
 $(record_type_to_metta Organization org_name String org_id String org_type String description Description assets "(List Assets)" contacts "(List Contact)" groups "(List Group)")
+
+$(record_type_to_metta Description url String url_content String description String short_description String)
 
 ;; Define ServiceID type.  A service ID must be associated to an
 ;; organization ID.
@@ -118,7 +145,7 @@ $(record_type_to_metta Pricing price_model String price_in_cogs Number default B
 
 $(record_type_to_metta Group group_name String pricing Pricing endpoints "(List String)" group_id String free_calls Number free_call_signer_address String daemon_addresses "(List String)")
 
-$(record_type_to_metta Description url String url_content String description String short_description String)
+$(record_type_to_metta ServiceDescription url String url_content String description String short_description String)
 
 $(record_type_to_metta Contributor name String email_id String)
 
@@ -213,7 +240,7 @@ service_to_metta() {
        ; groups
        $(groups_to_metta ${metadata_filepath})
        ; service_description
-       $(description_to_metta ${metadata_filepath})
+       $(service_description_to_metta ${metadata_filepath})
        ; contributors
        $(contributors_to_metta ${metadata_filepath})
        ; media
@@ -234,11 +261,9 @@ groups_to_metta() {
     echo "Nil"
 }
 
-# Take a metadata file of an organization or service and output its
-# description in MeTTa format.
-description_to_metta() {
-    local metadata_filepath="$1"
-    local url="$(jq '.service_description.url' ${metadata_filepath})"
+# Given a url as argument, output its textual content.
+url_textual_content() {
+    local url="$1"
 
     # Detect browser to read content of url.  Only chromium and
     # google-chrome are supported because they provide headless
@@ -252,12 +277,18 @@ description_to_metta() {
     else browser=chromium
     fi
 
+    $browser --headless --no-sandbox --disable-gpu --dump-dom ${url:1:-1} 2> /dev/null | html2text
+}
+
+# Take a metadata file of an organization and output its description
+# in MeTTa format.
+description_to_metta() {
+    local metadata_filepath="$1"
+    local url="$(jq '.description.url' ${metadata_filepath})"
+
     # Get textual content of the url
-    #
-    # It is disabled for now because getting chromium or chrome to
-    # work properly in docker is a hassle.
-    #
-    # local url_content="$($browser --headless --no-sandbox --disable-gpu --dump-dom ${url:1:-1} 2> /dev/null | html2text)"
+    # TODO: support docker
+    # local url_content="$(url_textual_content ${url})"
     local url_content=null
 
     # Output Description constructor to MeTTa
@@ -266,7 +297,32 @@ description_to_metta() {
            ; url
            ${url}
            ; url content
-           "${url_content}"
+           ${url_content}
+           ; description
+           $(jq '.description.description' ${metadata_filepath})
+           ; short_description
+           $(jq '.description.short_description' ${metadata_filepath}))
+EOF
+}
+
+# Take a metadata file of a service and output its description in
+# MeTTa format.
+service_description_to_metta() {
+    local metadata_filepath="$1"
+    local url="$(jq '.service_description.url' ${metadata_filepath})"
+
+    # Get textual content of the url
+    # TODO: support docker
+    # local url_content="$(url_textual_content ${url})"
+    local url_content=null
+
+    # Output ServiceDescription constructor to MeTTa
+    cat <<EOF
+(MkServiceDescription
+           ; url
+           ${url}
+           ; url content
+           ${url_content}
            ; description
            $(jq '.service_description.description' ${metadata_filepath})
            ; short_description
@@ -288,13 +344,23 @@ media_to_metta() {
 
 tags_to_metta() {
     local metadata_filepath="$1"
-    # TODO
-    echo "Nil"
+    local tags=Nil
+    local tags_length=$(jq '.tags | length' ${metadata_filepath})
+    for i in $(seq 0 $((tags_length - 1)))
+    do
+        jq_cmd=".tags[${i}]"
+        tags="(Cons $(jq ${jq_cmd} ${metadata_filepath}) ${tags})"
+    done
+    echo "${tags}"
 }
 
 ########
 # Main #
 ########
+
+# # Test tags_to_metta
+# tags_to_metta json/snet.zeta36-chess-alpha-zero.json
+# exit 0
 
 # Set the network to mainnet
 snet network mainnet
