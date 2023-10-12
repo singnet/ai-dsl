@@ -18,12 +18,37 @@
 (: Nil (List $a))
 (: Cons (-> $a (List $a) (List $a)))
 
+;; Define List functions
+
+;; Return the head of a list
+(: head (-> (List $a) $a))
+(= (head (Cons $head $tail)) $head)
+
+;; Return the tail of a list
+(: tail (-> (List $a) $a))
+(= (tail (Cons $head $tail)) $tail)
+
+;; Return True iff the given list is empty
+(: empty (-> (List $a) Bool))
+(= (empty Nil) True)
+(= (empty (Cons $head $tail)) False)
+
+;; Return the length of a list
+(: length (-> (List $a) Number))
+(= (length Nil) 0)
+(= (length (Const $head $tail)) (+ 1 (length $tail)))
+
+;; Return the element of a list at a given index
+(: indexElem (-> (List $a) Number $a))
+(= (indexElem (Cons $head $tail) )
+   (if (< 0 ) (indexElem $tail (- $k 1)) $head))
+
 ;; Define OrganizationID type
 (: OrganizationID Type)
 
 ;; Define access function from organization ID to organization data
 ;; structure (see Organization defined further below)
-(: organization (-> (OrganizationID $org) Organization))
+(: organization (-> OrganizationID Organization))
 
 ;; Define Organization type
 (: Organization Type)
@@ -132,6 +157,60 @@
        )
    )
    $groups)
+
+;; Define Description type
+(: Description Type)
+
+;; Define Description constructor
+(: MkDescription
+   (->
+       String ; url
+       String ; url_content
+       String ; description
+       String ; short_description
+       Description))
+
+;; Define Description access functions
+(: Description.url (-> Description String))
+(= (Description.url
+      (MkDescription
+        $url
+        $url_content
+        $description
+        $short_description
+       )
+   )
+   $url)
+(: Description.url_content (-> Description String))
+(= (Description.url_content
+      (MkDescription
+        $url
+        $url_content
+        $description
+        $short_description
+       )
+   )
+   $url_content)
+(: Description.description (-> Description String))
+(= (Description.description
+      (MkDescription
+        $url
+        $url_content
+        $description
+        $short_description
+       )
+   )
+   $description)
+(: Description.short_description (-> Description String))
+(= (Description.short_description
+      (MkDescription
+        $url
+        $url_content
+        $description
+        $short_description
+       )
+   )
+   $short_description)
 
 ;; Define ServiceID type.  A service ID must be associated to an
 ;; organization ID.
@@ -289,22 +368,22 @@
    )
    $daemon_addresses)
 
-;; Define Description type
-(: Description Type)
+;; Define ServiceDescription type
+(: ServiceDescription Type)
 
-;; Define Description constructor
-(: MkDescription
+;; Define ServiceDescription constructor
+(: MkServiceDescription
    (->
        String ; url
        String ; url_content
        String ; description
        String ; short_description
-       Description))
+       ServiceDescription))
 
-;; Define Description access functions
-(: Description.url (-> Description String))
-(= (Description.url
-      (MkDescription
+;; Define ServiceDescription access functions
+(: ServiceDescription.url (-> ServiceDescription String))
+(= (ServiceDescription.url
+      (MkServiceDescription
         $url
         $url_content
         $description
@@ -312,9 +391,9 @@
        )
    )
    $url)
-(: Description.url_content (-> Description String))
-(= (Description.url_content
-      (MkDescription
+(: ServiceDescription.url_content (-> ServiceDescription String))
+(= (ServiceDescription.url_content
+      (MkServiceDescription
         $url
         $url_content
         $description
@@ -322,9 +401,9 @@
        )
    )
    $url_content)
-(: Description.description (-> Description String))
-(= (Description.description
-      (MkDescription
+(: ServiceDescription.description (-> ServiceDescription String))
+(= (ServiceDescription.description
+      (MkServiceDescription
         $url
         $url_content
         $description
@@ -332,9 +411,9 @@
        )
    )
    $description)
-(: Description.short_description (-> Description String))
-(= (Description.short_description
-      (MkDescription
+(: ServiceDescription.short_description (-> ServiceDescription String))
+(= (ServiceDescription.short_description
+      (MkServiceDescription
         $url
         $url_content
         $description
@@ -640,13 +719,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "https://singularitynet.io"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "We gathered leading minds in machine learning and blockchain to democratize access to AI technology.Now anyone can take advantage of a global network of AI algorithms, services, and agents. The world's first decentralized AI network has arrived"
            ; short_description
-           null)
+           "SingularityNET lets anyone create, share, and monetize AI services at scale.")
        ; assets
        Nil
        ; contacts
@@ -681,11 +760,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/dnn-model-services/users_guide/cntk-image-recon.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>Images of flowers and dogs can be classified using deep neural network models, generated using Microsoft's Cognitive Toolkit. The service receives an image, and then uses it as an input for a pretrained ResNet152 model.<br></br>There are two pre-trained models available, one trained with a flowers dataset from the Oxford Visual Geometry Group, that includes 102 different categories of flowers common to the UK. The second model was trained using the Columbia Dogs Dataset, which possesses 133 different dog breeds.<br></br>The service makes predictions using computer vision and machine learning techniques, and displays a top 5 prediction list (ordered by confidence) based on the specified dataset (flowers or dogs).</div>"
            ; short_description
@@ -695,7 +774,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "recognition" (Cons "image" (Cons "cntk" Nil)))
    )
 )
 
@@ -721,11 +800,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://dev.singularitynet.io/docs/ai-developers/"
            ; url content
-           "null"
+           null
            ; description
            "test_sergey"
            ; short_description
@@ -735,7 +814,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "test_sergey" Nil)
    )
 )
 
@@ -761,11 +840,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/topic-analysis"
            ; url content
-           "null"
+           null
            ; description
            "<div>Methods to identify recurrent themes or topics include latent semantic analysis (LSA), probabilistic latent semantic analysis (PLSA), latent Dirichlet allocation (LDA) and LDA2vec.</div>"
            ; short_description
@@ -775,7 +854,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "lda" (Cons "plsa" (Cons "lsa" (Cons "modelling" (Cons "analysis" (Cons "topic" Nil))))))
    )
 )
 
@@ -801,11 +880,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/phi"
            ; url content
-           "null"
+           null
            ; description
            "<div>Takes as input a time series of values (importance or excitation values for example) and returns a time series of estimated Tononi Phi values.</div>"
            ; short_description
@@ -815,7 +894,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "consciousness" (Cons "phi" (Cons "tononi" (Cons "series" Nil))))
    )
 )
 
@@ -841,11 +920,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/speech-recognition-service"
            ; url content
-           "null"
+           null
            ; description
            "<div>Provide a WAV file (up to 4Mb in size and no longer than 90 seconds in duration) of English speech and generate text from the provided WAV file. Also known as speech-to-text.</div>"
            ; short_description
@@ -855,7 +934,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "recognition" (Cons "speech" (Cons "asr" (Cons "speech2text" Nil))))
    )
 )
 
@@ -881,11 +960,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/speech-synthesis-service"
            ; url content
-           "null"
+           null
            ; description
            "<div>Provide a piece of English text (up to 140 characters) and generate an artificial human voice to playback the provided text. Also known as text-to-speech.</div>"
            ; short_description
@@ -895,7 +974,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "synthesis" (Cons "speech" (Cons "text2Speech" Nil)))
    )
 )
 
@@ -921,11 +1000,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/causality-detection#readme"
            ; url content
-           "null"
+           null
            ; description
            "<div>Inspect causality between multiple time series using multivariate Granger causality algorithm</div>"
            ; short_description
@@ -935,7 +1014,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "causality" (Cons "granger" (Cons "multivariate" (Cons "time series" (Cons "causality" Nil)))))
    )
 )
 
@@ -961,11 +1040,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/nlp-services/users_guide/cntk-language-understanding.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>Slot tagging is a component in language understanding systems, where the service receives as input multiple files of a dataset. Slot tagging’s goal is to take a sequence of words and turn them into a sequence of tagged slots.The training and test dataset must be in CTF format (link), and the query and slot files are used to predict on new sentences. he service must receive as inputs the vocabulary size, number of slots labels, and number of intent labels. With these parameters, the service will be able to train a recurrent LSTM network model to perform slot tagging or intent classification. As a last parameter, the service receives a file with sentences (one per line). This file will be the input of the trained model.<br></br>Finally the service returns 2 URLs, one of a file containing the input sentences and model output (slot tagging or intent classification). The second URL is the file of trained model.</div>"
            ; short_description
@@ -975,7 +1054,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "classification" (Cons "intent" (Cons "slot" (Cons "cntk" Nil))))
    )
 )
 
@@ -1001,11 +1080,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/time-series-analysis/users_guide/finance/cntk-next-day-trend.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>Provide the ticker symbol of an asset, along with training and target dates, and use time-series analysis to gain insight into whether the asset is upward or downward trendi.<br></br>A MultiLayer Perceptron (MLP) is trained on the closing data of the given asset’s time series data for a given period of time. The assumption here is that the training period period is relatively similar (regarding the overall behavior of the target asset) to the time period just before the target date.</div>"
            ; short_description
@@ -1015,7 +1094,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "trend" (Cons "finance" (Cons "cntk" Nil)))
    )
 )
 
@@ -1041,11 +1120,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/face-services"
            ; url content
-           "null"
+           null
            ; description
            "<div>Face-align rotates, scales, and aligns an image to a template landmark layout, perhaps identified through the face-landmarks service.</div>"
            ; short_description
@@ -1055,7 +1134,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "alignment" (Cons "normalization" (Cons "face-analysis" Nil)))
    )
 )
 
@@ -1081,11 +1160,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/face-services"
            ; url content
-           "null"
+           null
            ; description
            "<div>Maps a face to a 128 dimension vector. Faces of the same person should end up near to one another in this embedded space.</div>"
            ; short_description
@@ -1095,7 +1174,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "dimensional-embedding" (Cons "identity" (Cons "face-analysis" Nil)))
    )
 )
 
@@ -1121,11 +1200,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/dnn-model-services/users_guide/sound-spleeter.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>This service uses the Deezer Spleeter to perform source separation on audio files.<br></br>It receives an audio sample as input for a source separation pre-trained model and then it separates the vocals and the accompaniment from the input audio sample using machine learning techniques.</div>"
            ; short_description
@@ -1135,7 +1214,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "spleeter" (Cons "deezer" (Cons "separation" (Cons "audio" Nil))))
    )
 )
 
@@ -1161,11 +1240,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/dnn-model-services/users_guide/zeta36-chess-alpha-zero.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>Play chess with reinforcement learning by DeepMind’s AlphaGo Zero methods.<br></br>The service receives a chess move as input, such as c2c4. This move means that the piece is at column c and row 2 and will move to the position at column c and row 4. Additionally, the model can detect illegal and end game moves.<br></br>The service uses deep neural networks and reinforcement learning techniques to output the best move supplied by the pre-trained model.</div>"
            ; short_description
@@ -1175,7 +1254,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "player" (Cons "chess" (Cons "alphazero" Nil)))
    )
 )
 
@@ -1201,11 +1280,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/time-series-analysis/users_guide/generic/cntk-lstm-forecast.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>Use this service to predict future values from a provided set of time-series data.</div>"
            ; short_description
@@ -1215,7 +1294,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "forecast" (Cons "lstm" (Cons "cntk" Nil)))
    )
 )
 
@@ -1241,11 +1320,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/face-services"
            ; url content
-           "null"
+           null
            ; description
            "<div>One of four Face Services (localization, landmark detection, alignment, and recognition,) face-detect identifies computer generated bounding boxes to detect faces within an image.</div>"
            ; short_description
@@ -1255,7 +1334,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "object-localization" (Cons "face-analysis" Nil))
    )
 )
 
@@ -1281,11 +1360,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/dnn-model-services/users_guide/yolov3-object-detection.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>Conduct real-time object detection on images, the service receives an image and uses it as an input for a pre-trained YOLOv3 model, and the model can then detect objects (80 classes) from the COCO Dataset. COCO is a large image dataset designed for object detection, segmentation, person keypoints detection, stuff segmentation, and caption generation.<br></br>The service makes predictions using computer vision and machine learning techniques, and outputs an image with a bounding box for each object that it has predicted (and its confidence).<br></br>The user must provide the following inputs in order to start the service and get a response:<br></br>Inputs:<br></br>model: DNN Model (yolov3\").</div>"
            ; short_description
@@ -1295,7 +1374,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "detection" (Cons "object" (Cons "yolov3" Nil)))
    )
 )
 
@@ -1321,11 +1400,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/example-service"
            ; url content
-           "null"
+           null
            ; description
            "<div>Basic math functions to Test the platform.</div>"
            ; short_description
@@ -1335,7 +1414,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "calculator" (Cons "test" (Cons "Test" Nil)))
    )
 )
 
@@ -1361,11 +1440,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/dnn-model-services/users_guide/i3d-video-action-recognition.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>Using the Kinetics 400 or 600 dataset, identify either 400 or 600 different types of human actions within a video through state-of-the-art Inflated 3D Convolutional Neural Networks. The user must provide a video URL, and then the service will make predictions of actions within the video using computer vision and machine learning techniques. The service will output a top 5 prediction list (ordered by confidence) based on the specified Kinetics 400 or 600 dataset.</div>"
            ; short_description
@@ -1375,7 +1454,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "recognition" (Cons "action" (Cons "i3d" Nil)))
    )
 )
 
@@ -1401,11 +1480,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/face-services"
            ; url content
-           "null"
+           null
            ; description
            "<div>Face-landmarks identifies any landmarks (keypoints) on faces within an image.<br></br>This service requires an input image and input bounding boxes (perhaps discovered through the face-detect service.) Identified landmarks correspond to the same locations on all faces.</div>"
            ; short_description
@@ -1415,7 +1494,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "pose-detection" (Cons "face-analysis" Nil))
    )
 )
 
@@ -1441,11 +1520,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/emotion-recognition-service/users_guide/emotion-recognition-service.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>Want to identify a person's emotional state in a given image? Use this service to do just that, using facial recognition.</div>"
            ; short_description
@@ -1455,7 +1534,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "face-analysis" Nil)
    )
 )
 
@@ -1481,11 +1560,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/image-retrieval-service/users_guide/image-retrieval-service.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>Upload an image and receive six of the closest matches found within the open Google image dataset containing ~9 million images annotated with labels and bounding boxes.</div>"
            ; short_description
@@ -1495,7 +1574,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "image" (Cons "retrieval" (Cons "similarity" Nil)))
    )
 )
 
@@ -1521,11 +1600,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/nlp-services-misc/users_guide/named-entity-disambiguation-service.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>Provide further clarity regarding entities named within a piece of text. In the sentence \"Paris is the capital of France” we would want to link \"Paris\" to the city, Paris.</div>"
            ; short_description
@@ -1535,7 +1614,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "english" (Cons "ned" (Cons "nlp" Nil)))
    )
 )
 
@@ -1561,11 +1640,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/dnn-model-services/users_guide/s2vt-video-captioning.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>Using the Sequence to Sequence Video to Text architecture based on LSTM recurrent neural networks, generate a textual summary for a provided video. <br></br>The service receives a video and uses it as an input for a VGG16 model that generates features of each frame. These frames are passed as input for a second model (S2VT_VGG16) that outputs a caption for all features.<br></br>The service makes predictions using computer vision and machine learning techniques, and outputs its best guess using a SubRip Subtitle format to describe an action on the specified time interval from a video (the service also indicates its confidence in the predictions).<br></br>The user must provide the following inputs in order to start the service and get a response:<br></br>Inputs:<br></br>url: A YouTube video URL.<br></br>start_time_sec: Start time position, in seconds.<br></br>stop_time_sec: Stop time position, in seconds.<br></br>The time interval (stop-start) must be <= 20 seconds.</div>"
            ; short_description
@@ -1575,7 +1654,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "captioning" (Cons "video" (Cons "s2vt" Nil)))
    )
 )
 
@@ -1601,11 +1680,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/style-transfer-service/blob/master/README.md"
            ; url content
-           "null"
+           null
            ; description
            "<div>Provide two images and use this service to transfer the artistic-style of one image to the second image provided.<br></br>This service uses convolutional neural networks and is part of SingularityNET's third party services, originally implemented by xunhuang1995.</div>"
            ; short_description
@@ -1615,7 +1694,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "styleTransfer" (Cons "artistic" (Cons "image" Nil)))
    )
 )
 
@@ -1641,11 +1720,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/time-series-anomaly-discovery/blob/master/docs/usersguide.md"
            ; url content
-           "null"
+           null
            ; description
            "<div>The deployed method performs a transformation on the received time series samples, reducing its size, and grouping similar regions into grammar rules clusters. Those clusters are used to build a grammar rules density curve that is used to detect anomalies in the original time series.<br></br>The user needs to specify a URL containing a valid time series CSV file. The service provides a simple user interface to receive this URL.</div>"
            ; short_description
@@ -1655,7 +1734,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "time-series" (Cons "compression" (Cons "discovery" (Cons "anomaly" Nil))))
    )
 )
 
@@ -1681,11 +1760,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/nlp-services"
            ; url content
-           "null"
+           null
            ; description
            "<div>Translate a sentence or word from English to German, or vice versa. We use OpenNMT-py and Google's Transformer network.</div>"
            ; short_description
@@ -1695,7 +1774,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "translation" (Cons "nlp" Nil))
    )
 )
 
@@ -1721,11 +1800,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/dnn-model-services/users_guide/real-time-voice-cloning.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>This service uses Real-Time-Voice-Cloning to clone a voice from 5 seconds audio to generate arbitrary speech in real-time.<br></br>The service receives an audio sample and a sentence in plain english text. It uses them as inputs for a pre-trained voice cloning models.</div>"
            ; short_description
@@ -1735,7 +1814,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "cloning" (Cons "voice" (Cons "audio" Nil)))
    )
 )
 
@@ -1761,11 +1840,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/time-series-analysis/users_guide/generic/fbprophet-forecast.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>This service uses Prophet and Statsmodel to forecast and analyze points of a given time series.</div>"
            ; short_description
@@ -1775,7 +1854,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "forecast" (Cons "series" (Cons "prophet" Nil)))
    )
 )
 
@@ -1801,11 +1880,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/holistic-edge-detection-service/users_guide/holistic-edge-detection-service.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>The holistically-nested edge detection (HED) algorithm automatically learns rich hierarchical representations that are important in order to approach the human ability to resolve the challenging ambiguity in edge and object boundary detection.</div>"
            ; short_description
@@ -1815,7 +1894,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "cv" (Cons "dnn" (Cons "image" (Cons "segmentation" Nil))))
    )
 )
 
@@ -1841,11 +1920,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://mozi-ai.github.io/annotation-service/"
            ; url content
-           "null"
+           null
            ; description
            "Accepts list of human [HGNC](https://www.genenames.org/tools/search/#!/genes) gene symbols, finds annotations from example databases and displays the results as a browser-based interactive graph visualization."
            ; short_description
@@ -1855,7 +1934,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "atomese" (Cons "reactome" (Cons "gene-ontology" (Cons "human-gene-annotation" (Cons "bioinformatics" Nil)))))
    )
 )
 
@@ -1881,11 +1960,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://dev.singularitynet.io/docs/ai-developers/"
            ; url content
-           "null"
+           null
            ; description
            "demo_service"
            ; short_description
@@ -1895,7 +1974,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "demo" Nil)
    )
 )
 
@@ -1921,11 +2000,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/semantic-vision/blob/master/services/MinecraftService/README_main_usage.md"
            ; url content
-           "null"
+           null
            ; description
            "<div>Service transforms input image to minecraft-styled image</div>"
            ; short_description
@@ -1935,7 +2014,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "neural-networks" (Cons "style-transfer" Nil))
    )
 )
 
@@ -1961,11 +2040,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/dnn-model-services/users_guide/deoldify-colorizer.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>A Deep Learning based project for colorizing and restoring old images!</div>"
            ; short_description
@@ -1975,7 +2054,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "old" (Cons "color" (Cons "image" Nil)))
    )
 )
 
@@ -2001,11 +2080,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/nlp-services-misc/users_guide/language-detection-service.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>Provide a piece of foregin text and identify what language the text stems from.</div>"
            ; short_description
@@ -2015,7 +2094,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "language" (Cons "english" (Cons "nlp" Nil)))
    )
 )
 
@@ -2041,11 +2120,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/semantic-segmentation"
            ; url content
-           "null"
+           null
            ; description
            "<div>Image segmentation is the process of partitioning a digital image into multiple segments. The goal of segmentation is to simplify and/or change the representation of an image into something that is more meaningful and easier to analyze.<br></br>Use this service to associate each pixel of a provided image with a class label such as identifying cars, bicycles and people. Useful for applications such as autonomous driving, manufacturing robotics, medical imaging and video surveillance. <br></br>Simply upload an image you want to analyse and hit Invoke, the image will then be processed and the results displayed. </div>"
            ; short_description
@@ -2055,7 +2134,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "semantic-segmentation" (Cons "segmentation" (Cons "computer-vision" Nil)))
    )
 )
 
@@ -2081,11 +2160,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/dnn-model-services/blob/master/Services/gRPC/places365-scene-recognition/README.md"
            ; url content
-           "null"
+           null
            ; description
            "<div>Identify if an image was taken indoors or outside, at any of 365 different locations, recognize any of 102 different scene attributes, and/or highlight high-relevance regions.</div>"
            ; short_description
@@ -2095,7 +2174,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "recognition" (Cons "scene" (Cons "image" Nil)))
    )
 )
 
@@ -2121,11 +2200,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/nlp-services-misc/users_guide/coreference-resolution-service.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>Identify and tie together all expressions within a piece of text that point toward a specific entity within the text,for example, \"I voted for Elon Musk because he was most aligned with my values\", the expression \"my\" belongs to the entity \"I\" and the expression \"he\" belongs to \"Elon Musk\". The service is able to point expressions to the relevant entities within a text sample.</div>"
            ; short_description
@@ -2135,7 +2214,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "english" (Cons "coreference-resolution" (Cons "allennlp" (Cons "nlp" Nil))))
    )
 )
 
@@ -2161,11 +2240,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/semantic-vision"
            ; url content
-           "null"
+           null
            ; description
            "<div>This is an image matching service. Image retrieval is a task, in which the user is getting images closest to the given one. The user has to specify a detector name, a descriptor name and parameters, specify a number of images to retrieve, a number of clusters (for training), and send a database and a query image.</div>"
            ; short_description
@@ -2175,7 +2254,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "transformations" (Cons "detector" (Cons "keypoint" (Cons "features" (Cons "visual" (Cons "matching" (Cons "image" Nil)))))))
    )
 )
 
@@ -2201,11 +2280,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/network-analytics-services"
            ; url content
-           "null"
+           null
            ; description
            "<div>Network analytical service for bipartite graphs, enabling smarter, data-driven operational and business decisions, with methods for bipartite graph construction and projection.</div>"
            ; short_description
@@ -2215,7 +2294,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "graph" (Cons "bipartite" (Cons "analytics" (Cons "network" Nil))))
    )
 )
 
@@ -2241,11 +2320,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/network-analytics-services"
            ; url content
-           "null"
+           null
            ; description
            "<div>Network analytical service computes various network robustness measures, enabling smarter data-driven operational and business decisions.</div>"
            ; short_description
@@ -2255,7 +2334,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "robustness" (Cons "analytics" (Cons "network" Nil)))
    )
 )
 
@@ -2281,11 +2360,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/nlp-services"
            ; url content
-           "null"
+           null
            ; description
            "<div>Input an article and receive a brief textual summary of the article. Currently only trained on news articles.</div>"
            ; short_description
@@ -2295,7 +2374,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "summarization" (Cons "nlp" Nil))
    )
 )
 
@@ -2321,11 +2400,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/opencog-services"
            ; url content
-           "null"
+           null
            ; description
            "<div>The pattern miner finds frequent and “surprising” subhypergraph patterns in the OpenCog AtomSpace. Examples of varying complexity levels can be found at https://github.com/singnet/miner/tree/master/examples/miner. You will need to examine the *.scm file in each example to understand how to input the knowledge base and desired pattern using Atomese. This information will need to be saved as a scheme file and then run using the guile interpreter.<br></br>The definitions of “Surprisingness” are detailed at https://wiki.opencog.org/w/Measuring_Surprisingness, and additional examples and much more complete information about the pattern miner is at https://wiki.opencog.org/w/Pattern_miner. </div>"
            ; short_description
@@ -2335,7 +2414,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "pattern-miner" (Cons "opencog" Nil))
    )
 )
 
@@ -2361,11 +2440,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/semantic-vision/tree/master/services/vqa-service"
            ; url content
-           "null"
+           null
            ; description
            "<div>Have a question? Ask your question in the form of image, or text and receive an answer.</div>"
            ; short_description
@@ -2375,7 +2454,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "vqa" Nil)
    )
 )
 
@@ -2401,11 +2480,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://singnet.github.io/nlp-services/users_guide/opennmt-romance-translator.html"
            ; url content
-           "null"
+           null
            ; description
            "<div>Input a sentence in French (FR), Italian (IT), Portuguese (PT), Romanian (RO), or Spanish (ES) and translate the sentence into any other of these languages.<br></br>Using the multi-way OpenNMT Model, isolated for every language pair, the service gets the input text’s sentences, breaks them into tokens and then feeds the target model. The model output translated tokens that are put together to become the output of service (translated sentences).</div>"
            ; short_description
@@ -2415,7 +2494,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "translator" (Cons "Romance" (Cons "opennmt" Nil)))
    )
 )
 
@@ -2441,11 +2520,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/singnet/nlp-services/tree/master/sentiment-analysis"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service processes input sentences and returns the analyzed sentence with weights measuring positive (pos), neutral (neu), negative (neg), and combined (compound) sentiment values for each sentence. This allows a user to actively monitor text online to identify and extract subjective information from text, allowing for a greater understanding of sentiment as it relates to brands, products, or services.<br></br>The user must provide the following inputs: value: text sentence.</div>"
            ; short_description
@@ -2455,7 +2534,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "analysis" (Cons "sentiment" Nil))
    )
 )
 
@@ -2476,13 +2555,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "https://google.com"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "Long description"
            ; short_description
-           null)
+           "short description")
        ; assets
        Nil
        ; contacts
@@ -2517,11 +2596,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://google.com"
            ; url content
-           "null"
+           null
            ; description
            "service long description"
            ; short_description
@@ -2531,7 +2610,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "tag5" (Cons "tag4" (Cons "tag3" (Cons "tag2" (Cons "tag1" Nil)))))
    )
 )
 
@@ -2552,13 +2631,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "www.google.com"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "long"
            ; short_description
-           null)
+           "short")
        ; assets
        Nil
        ; contacts
@@ -2588,13 +2667,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "https://mozi.ai"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "To realize the full potential of our growing body of medical knowledge, we have built a suite of intuitive bioinformatic tools powered by machine learning for scientists to explore the mechanics of disease more efficiently without the need to learn complex bioinformatic tools; facilitating the next generation of therapeutics faster with less resources"
            ; short_description
-           null)
+           "Deciphering the Mechanics of Disease with smarter tools")
        ; assets
        Nil
        ; contacts
@@ -2629,11 +2708,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://mozi-ai.github.io/annotation-service/"
            ; url content
-           "null"
+           null
            ; description
            "Accepts list of human [HGNC](https://www.genenames.org/tools/search/#!/genes) gene symbols, finds annotations from example databases and displays the results as a browser-based interactive graph visualization."
            ; short_description
@@ -2643,7 +2722,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "atomese" (Cons "reactome" (Cons "gene-ontology" (Cons "human-gene-annotation" (Cons "bioinformatics" Nil)))))
    )
 )
 
@@ -2664,13 +2743,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "https://github.com/tgotech"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "Maker of Computational Intelligence"
            ; short_description
-           null)
+           "Maker of Computational Intelligence")
        ; assets
        Nil
        ; contacts
@@ -2705,11 +2784,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/tgotech/geo-me-doco"
            ; url content
-           "null"
+           null
            ; description
            "The service performs self-geolocation of an observer using a set of observations from the observer to a predefined set of landmarks. The service provides a re-sectioning function commonly used in overland navigation scenarios in the absence of global positioning system (GPS). This service is capable of fusing any combination of angles to or ranges from known landmarks and can handle erroneous measurements. Output of the service is a geolocation estimation latitude and longitude, a circular error of probability (CEP) provided as elliptical parameters (length, width and rotation). The service can provide an optional formatted kml file containing the computing scenario and result (this kml may be plotted on various geospatial interface systems)."
            ; short_description
@@ -2719,7 +2798,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "sensorfusion" (Cons "navigation" (Cons "geolocation" Nil)))
    )
 )
 
@@ -2740,13 +2819,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "https://google.com"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "ld"
            ; short_description
-           null)
+           "sd")
        ; assets
        Nil
        ; contacts
@@ -2781,11 +2860,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://google.com"
            ; url content
-           "null"
+           null
            ; description
            "Test service"
            ; short_description
@@ -2795,7 +2874,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "tag3" (Cons "tag2" (Cons "tag1" Nil)))
    )
 )
 
@@ -2816,13 +2895,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "https://rejuve.io/"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "Next-Gen AI Solutions for Longevity , Covid , Bayesian Networks and Anomaly Detection"
            ; short_description
-           null)
+           "Simplify the expression of manually entered rules, augment with adtk anomaly detection, and explain the result. A detailed example of its use in healthcare, specifically Covid-19, is given in the covid_bayesnet.ipynb jupyter notebook.")
        ; assets
        Nil
        ; contacts
@@ -2857,11 +2936,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://rejuve.io"
            ; url content
-           "null"
+           null
            ; description
            "<div>This service detects potential covid.</div>"
            ; short_description
@@ -2871,7 +2950,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "covid" (Cons "cough" Nil))
    )
 )
 
@@ -2897,11 +2976,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/Rejuve/covid-bayesnet/blob/master/README.md"
            ; url content
-           "null"
+           null
            ; description
            "This Bayesian Net GRPC service creates a pomegranate Bayesian neural network in python, with functions to simplify the expression of manually entered rules, augment with adtk anomaly detection, and explain the result. A detailed example of its use in healthcare, specifically Covid-19, is given in the covid_bayesnet.ipynb jupyter notebook."
            ; short_description
@@ -2911,7 +2990,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "neural-network" (Cons "bayesian" (Cons "covid" (Cons "longevity" (Cons "rejuve" Nil)))))
    )
 )
 
@@ -2932,13 +3011,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "https://dummy.dummy"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "Long Description"
            ; short_description
-           null)
+           "Short Description")
        ; assets
        Nil
        ; contacts
@@ -2973,11 +3052,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://en.wikipedia.org/wiki/Wonder_Woman"
            ; url content
-           "null"
+           null
            ; description
            "Wonder Woman's Bronze Age origin story relates that she was sculpted from clay by her mother Queen Hippolyta and was given a life as an Amazon, along with superhuman powers as gifts by the Greek gods. In recent years[vague], DC changed her background with the retcon that she is the biological daughter of Zeus and Hippolyta, jointly raised by her mother and her aunts Antiope and Menalippe. The character has changed in depiction over the decades, including briefly losing her powers entirely in the late 1960s; by the 1980s, artist George Perez gave her an athletic look and emphasized her Amazonian heritage.[12][13] She possesses an arsenal of magical items, including the Lasso of Truth, a pair of indestructible bracelets, a tiara which serves as a projectile, and, in older stories, a range of devices based on Amazon technology.\n\nWonder Woman's character was created during World War II; the character in the story was initially depicted fighting Axis forces as well as an assortment of colorful supervillains, altho"
            ; short_description
@@ -2987,7 +3066,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "movies" (Cons "marvel" Nil))
    )
 )
 
@@ -3008,13 +3087,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "https://google.com"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "This organization is for testing mainnet workflow"
            ; short_description
-           null)
+           "This organization is for testing mainnet workflow")
        ; assets
        Nil
        ; contacts
@@ -3049,11 +3128,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://google.com"
            ; url content
-           "null"
+           null
            ; description
            "This is to test the service in mainnet"
            ; short_description
@@ -3063,7 +3142,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "tag5" (Cons "tag4" (Cons "tag3" (Cons "tag2" (Cons "tag1" Nil)))))
    )
 )
 
@@ -3084,13 +3163,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "https://google.com"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "This is a testing service on production"
            ; short_description
-           null)
+           "This is a testing service on production")
        ; assets
        Nil
        ; contacts
@@ -3125,11 +3204,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://google.com"
            ; url content
-           "null"
+           null
            ; description
            "LD"
            ; short_description
@@ -3139,7 +3218,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "tag2" (Cons "tag1" (Cons "tag" Nil)))
    )
 )
 
@@ -3160,13 +3239,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "https://google.com"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "Long description"
            ; short_description
-           null)
+           "Short description")
        ; assets
        Nil
        ; contacts
@@ -3201,11 +3280,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://google.com"
            ; url content
-           "null"
+           null
            ; description
            "LD"
            ; short_description
@@ -3215,7 +3294,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "tag1" Nil)
    )
 )
 
@@ -3236,13 +3315,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "https://google.com"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "LD"
            ; short_description
-           null)
+           "SD")
        ; assets
        Nil
        ; contacts
@@ -3277,11 +3356,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://google.com"
            ; url content
-           "null"
+           null
            ; description
            "Long des"
            ; short_description
@@ -3291,7 +3370,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "tag1" Nil)
    )
 )
 
@@ -3312,13 +3391,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "https://nunet.io/"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "The building blocks of a global, decentralized computing and data economy are in place today. NuNet cements these building blocks together into a new cooperative market, bringing unprecedented social and economic value accessible to all.\n\n\nNuNet will transform the multi-billion cloud computing industry, by enabling AI agents and software components to search the network for the most fitting hardware resources to run on."
            ; short_description
-           null)
+           "NuNet lets anyone share and monetize their computing resources at scale and\nprovides globally distributed, optimized computing power for decentralized networks.")
        ; assets
        Nil
        ; contacts
@@ -3353,11 +3432,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://gitlab.com/nunet/fake-news-detection/binary-classification"
            ; url content
-           "null"
+           null
            ; description
            "<div>The binary classification model uses a 30k fake news article dataset from the Kaggle competition [Fake and real news dataset Classifying the news]. Uses a BERT model with a single linear classification layer pre-trained with [Classifying the news] Kaggle competition fake and real news dataset. The model outputs 1 if an article is classified as fake news and 0 if not-fake.</div>"
            ; short_description
@@ -3367,7 +3446,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "fake" (Cons "warning" (Cons "news" (Cons "fake news" Nil))))
    )
 )
 
@@ -3393,11 +3472,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://gitlab.com/nunet/fake-news-detection/uclnlp"
            ; url content
-           "null"
+           null
            ; description
            "<div>Based on pre-trained model, estimates the nature of relationship between the title of an article and the body text of an article. The estimation is returned in the form of probabilities attached to four pre-defined types of relation: unrelated, discussing, agreeing, disagreeing. Sum of all probabilities add up to one. The displayed relation has the highest probability attached by the algorithm</div>"
            ; short_description
@@ -3407,7 +3486,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "stance detection" (Cons "fake" (Cons "warning" (Cons "news" (Cons "fake news" Nil)))))
    )
 )
 
@@ -3433,11 +3512,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://gitlab.com/nunet/fake-news-detection/fake_news_score/-/tree/53-publish-the-service-to-nunet-org/"
            ; url content
-           "null"
+           null
            ; description
            "<div>News score is an AI service that orchestrates all other services constituting to fake news warning application. It implements an ensemble function which combines weighted results of other services and outputs the general probability estimation (in %) that an article contains fake news. News score is extendable and can include other services (provided by community or third party developers) into an ensemble if they contribute to higher quality of the application.</div>"
            ; short_description
@@ -3447,7 +3526,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "stance detection" (Cons "fake" (Cons "warning" (Cons "news" (Cons "fake news" Nil)))))
    )
 )
 
@@ -3473,11 +3552,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://gitlab.com/nunet/fake-news-detection/fake_news_score/-/tree/53-publish-the-service-to-nunet-org/"
            ; url content
-           "null"
+           null
            ; description
            "<div>News score is an AI service that orchestrates all other services constituting to fake news warning application. It implements an ensemble function which combines weighted results of other services and outputs the general probability estimation (in %) that an article contains fake news. News score is extendable and can include other services (provided by community or third party developers) into an ensemble if they contribute to higher quality of the application.</div>"
            ; short_description
@@ -3487,7 +3566,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "stance detection" (Cons "fake" (Cons "warning" (Cons "news" (Cons "fake news" Nil)))))
    )
 )
 
@@ -3508,13 +3587,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "https://google.com"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "hello "
            ; short_description
-           null)
+           "hello")
        ; assets
        Nil
        ; contacts
@@ -3544,13 +3623,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "www.zero2ai.io"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "\nWe at Zero2AI help Gig workers meet the surging demand for AI talent using Web3.\nCombining the simplicity and ubiquitous smartphone, the power and abundance of open-source AI,\nand the trust and economic mechanisms of public chains - the Zero2AI network is the future of AI work. Learn, consume, create, publish and own on our network."
            ; short_description
-           null)
+           "Find create and own your AI apps.")
        ; assets
        Nil
        ; contacts
@@ -3585,11 +3664,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            null
            ; url content
-           "null"
+           null
            ; description
            null
            ; short_description
@@ -3625,11 +3704,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            null
            ; url content
-           "null"
+           null
            ; description
            null
            ; short_description
@@ -3665,11 +3744,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            null
            ; url content
-           "null"
+           null
            ; description
            null
            ; short_description
@@ -3705,11 +3784,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            null
            ; url content
-           "null"
+           null
            ; description
            null
            ; short_description
@@ -3745,11 +3824,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            null
            ; url content
-           "null"
+           null
            ; description
            null
            ; short_description
@@ -3785,11 +3864,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            null
            ; url content
-           "null"
+           null
            ; description
            null
            ; short_description
@@ -3825,11 +3904,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            null
            ; url content
-           "null"
+           null
            ; description
            null
            ; short_description
@@ -3865,11 +3944,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            null
            ; url content
-           "null"
+           null
            ; description
            null
            ; short_description
@@ -3905,11 +3984,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            null
            ; url content
-           "null"
+           null
            ; description
            null
            ; short_description
@@ -3945,11 +4024,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            null
            ; url content
-           "null"
+           null
            ; description
            null
            ; short_description
@@ -3980,13 +4059,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "https://photrek.io"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "Photrek provides Risk-Aware Machine Intelligence Services"
            ; short_description
-           null)
+           "Photrek provides Risk-Aware Machine Intelligence Services")
        ; assets
        Nil
        ; contacts
@@ -4021,11 +4100,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/Photrek/Risk-Aware-Assessment"
            ; url content
-           "null"
+           null
            ; description
            " Photrek’s Risk Assessment Service provides a graphical and quantitative assessment of probabilistic forecasts. The user inputs a vector of probabilities forecasted for a set of events that actually occurred; i.e. the outcome of a test. The assessment consists of a histogram of the probabilities forecasted and an overlay of three metrics (Accuracy, Decisiveness, and Robustness).\n\nThe metrics derive from a generalization of information theory but are presented in the probability domain for improved understanding. The Accuracy metric is a translation of the log-likelihood or cross-entropy into the probability domain and is computed by geometric mean. The Robustness metric is sensitive to the worst performance of the algorithm and is measured by the -2/3rds power of the generalized mean. The Decisiveness metric approximates the classification performance of making a decision with the probabilities and is measured by the arithmetic mean. (test)"
            ; short_description
@@ -4035,7 +4114,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "robustness" (Cons "machinelearning" (Cons "metrics" (Cons "statistics" (Cons "probability" Nil)))))
    )
 )
 
@@ -4061,11 +4140,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/Photrek/Risk-Aware-Assessment"
            ; url content
-           "null"
+           null
            ; description
            "Photrek’s Coupled Variational AutoEncoder (CVAE) provides a demonstration of the application of non-linear statistical coupling to Variational AutoEncoders."
            ; short_description
@@ -4075,7 +4154,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "coupling" (Cons "generative" (Cons "machinelearning" Nil)))
    )
 )
 
@@ -4096,13 +4175,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "rrgroup.io"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "Independent research and analytics shop"
            ; short_description
-           null)
+           "Independent research and analytics shop")
        ; assets
        Nil
        ; contacts
@@ -4132,13 +4211,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "https://sigmamales.com/"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "Sigma represents a male archetype that has been in existence eons ago, but it has only recently been trending. Once you go over their characteristics, you'll realize this particular male archetype isn't your average guy.\n\nWhat sets him apart from the rest is his decision to walk the solitary path and color outside the lines. He doesn't subscribe to the normal social dominance hierarchy construct which, by the way, some say is imaginary and arbitrarily made up."
            ; short_description
-           null)
+           "Men empowerment")
        ; assets
        Nil
        ; contacts
@@ -4168,13 +4247,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "www.naint.com"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "Founded in 2009, Native Intelligence is dedicated to academic research and software development, the creation and implementation of artificial intelligence technologies, neurosymbolic architectures, scalable AI applications in various modalities and fields, and disruptive blockchain technologies to create elegant and efficient distributed cognitive ecosystems. that improve human-machine interaction to make the world a better place. Native Intelligence collaborates with other commercial and non-profit organizations to solve problems on a global scale. Together we develop and implement AI, Blockchain and robotic systems. The company employs more than 50 experienced developers and researchers working in different parts of the world. The company has computing power based on its own research laboratory for training and running deep neural networks and artificial intelligence systems with a theoretical peak of more than 5 PFLOPS and an energy power of 0.125 MW."
            ; short_description
-           null)
+           "Native Intelligence is engaged in academic research and software development, the creation and implementation of artificial intelligence technologies.")
        ; assets
        Nil
        ; contacts
@@ -4209,11 +4288,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/question-answering-long-seq-service"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service provides an answer to any question using a huge knowledge base and model trained for the Open-Domain Question Answering task.</div>"
            ; short_description
@@ -4223,7 +4302,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "english" (Cons "text" (Cons "open-domain" (Cons "answer" (Cons "question" (Cons "qa" Nil))))))
    )
 )
 
@@ -4249,11 +4328,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/audio-scene-recognition"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service receives an WAV audio file and outputs the result of top 5 labels in every N(time_frame) seconds in input audio.\nThe input audio file size is limited to 4Mb, in practice the optimal duration of the processed audio track should be no more than 90 seconds for 320 kbps audio. </div>"
            ; short_description
@@ -4263,7 +4342,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "recognition" (Cons "audio" (Cons "scene" Nil)))
    )
 )
 
@@ -4289,11 +4368,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/Punctuation-Capitalisation-Restoration"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service receives the text in English and places punctuation marks and capital letters in it.</div>"
            ; short_description
@@ -4303,7 +4382,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "text2text" (Cons "text" (Cons "english" (Cons "capitalization" (Cons "punctuation" (Cons "nlp" Nil))))))
    )
 )
 
@@ -4329,11 +4408,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/speech-recognition-service"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service performs speech recognition using machine learning techniques. The service receives the audio file in binary format and outputs the text string resulting from audio recognition.</div>"
            ; short_description
@@ -4343,7 +4422,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "speech2text" (Cons "speech" (Cons "english" (Cons "recognition" (Cons "asr" Nil)))))
    )
 )
 
@@ -4369,11 +4448,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/speech-synthesis-service"
            ; url content
-           "null"
+           null
            ; description
            "<div> The service converts English text (up to 1000 characters) into artificial human speech using machine learning methods, which it returns as an audio file in binary format.</div>"
            ; short_description
@@ -4383,7 +4462,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "speech" (Cons "text2speech" (Cons "english" (Cons "synthesis" Nil))))
    )
 )
 
@@ -4409,11 +4488,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/semantic-similarity-binary-service"
            ; url content
-           "null"
+           null
            ; description
            "<div>Provide multiple texts in English (limited to 60 words each) and identify whether the text strings are semantically similar or not. Service gives a binary estimation, a value\n “1” means that there is a high degree of semantic similarity, and “0” represents a low level of semantic similarity.</div>"
            ; short_description
@@ -4423,7 +4502,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "detection" (Cons "paraphrase" (Cons "similarity" (Cons "semantic" Nil))))
    )
 )
 
@@ -4449,11 +4528,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/speech-emotion-recognition"
            ; url content
-           "null"
+           null
            ; description
            "<div>Submit a WAV file (up to 4 MB and no longer than 90 seconds) with English speech and get an emotion label from the provided WAV file.</div>"
            ; short_description
@@ -4463,7 +4542,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "recognition" (Cons "speech" (Cons "emotions" (Cons "emotionrecognition" Nil))))
    )
 )
 
@@ -4489,11 +4568,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/neural-paraphrase-generation"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service receives a text string and uses it as input to the pre-trained model. The model returns 10 paraphrased sentences.</div>"
            ; short_description
@@ -4503,7 +4582,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "text2text" (Cons "generation" (Cons "paraphrase" Nil)))
    )
 )
 
@@ -4529,11 +4608,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/Korean-Speech-Synthesis"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service converts Korean text (up to 1000 characters) into artificial human speech using machine learning methods, which it returns as an audio file in binary format.\n</div>"
            ; short_description
@@ -4543,7 +4622,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "speech" (Cons "text2speech" (Cons "text" (Cons "korean" (Cons "synthesis" Nil)))))
    )
 )
 
@@ -4569,11 +4648,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/named-entity-recognition"
            ; url content
-           "null"
+           null
            ; description
            "<div>Input a piece of text and identify specific named entities within the provided text. The neural model can recognize following named entities: entity, event, group, location, object, organization, person, place, time.</div>"
            ; short_description
@@ -4583,7 +4662,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "recognition" (Cons "text" (Cons "english" (Cons "named-entities" (Cons "ner" Nil)))))
    )
 )
 
@@ -4609,11 +4688,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/Neural-Music-Demixing"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service receives a high-quality audio file and splits it into 4 sources: drums, bass, vocals and others. Separation is possible both for all 4 possible sources, and for one specific of the possible ones. So, for example, if you want to demix to all possible sources, then the output will be 4 audio tracks with drums, bass, vocals and everything else. If you want to demix only one of these sources, such as vocals, then you will end up with two audio files. In the first audio track there will be only vocals, in the second everything else except vocals.\n\nThe user must submit an audio file for demixing. The user can only submit audio in wav format! In this case, the frequency and number of channels do not matter. Using machine learning methods, this audio file is separated into sources.  You can input an audio-file to the service up to 4.5 minutes and no more than 40 MB. It is recommended to use the Google Chrome or Edge browser for demixing. It is not recommended to use Firefox.\n</div>"
            ; short_description
@@ -4623,7 +4702,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "separation" (Cons "demixing" (Cons "audio" (Cons "music" Nil))))
    )
 )
 
@@ -4649,11 +4728,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/Chinese-Female-Singing"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service synthesizes a singing voice in Chinese based on the given text and notes. The service receives a midi file with notes to sing, the text to be sung and the minimum time in seconds to take into account pauses (the latter is optional). The service converts the input midi file, extracting information about notes, pauses between them and the duration of each note and pause, and then synthesizes the singing voice using machine learning methods.\n\nFor convenience and to avoid errors, it is recommended to generate a song by phrases. Note that the notes in the midi must be consistent and belong to the same instrument. It means that the Midi file only has the notes to sing. You can only enter Chinese characters to generate Chinese singing. Use AP or SP tokens for pauses where you want to hear a pause while singing. Do not forget that the number of notes and pauses in the midi file should be equal to the number of all input characters including SP and AP tokens.\n\nExample of correct input: SP祝你生日快乐SP祝你生日快"
            ; short_description
@@ -4663,7 +4742,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "text2speech" (Cons "midi" (Cons "chinese" (Cons "female" (Cons "voice" (Cons "singing" Nil))))))
    )
 )
 
@@ -4689,11 +4768,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/speech-commands-recognition"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service receives an English-speech WAV audio file and outputs the result (one of ten variables) of the speech sample recognition in form of a text. \nThe input audio file size is limited to 4Mb, in practice the optimal duration of the processed audio track should be no more than 1-5 seconds for 320 kbps audio.\n</div>"
            ; short_description
@@ -4703,7 +4782,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "speech2text" (Cons "recognition" (Cons "sheech" (Cons "english" (Cons "commands" Nil)))))
    )
 )
 
@@ -4729,11 +4808,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/printed-text-recognition-service"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service receives an image of a English-language printed text line and uses it as input for a pretrained model and outputs the result of image recognition as a text sequence.</div>"
            ; short_description
@@ -4743,7 +4822,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "text" (Cons "recognition" (Cons "image" (Cons "english" (Cons "printed" Nil)))))
    )
 )
 
@@ -4769,11 +4848,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/handwritten-text-recognition-service"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service receives an image of a English-language handwritten text line and uses it as input for a pretrained model and outputs the result of image recognition as a text sequence.</div>"
            ; short_description
@@ -4783,7 +4862,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "text" (Cons "recognition" (Cons "image" (Cons "english" (Cons "handwritten-text" Nil)))))
    )
 )
 
@@ -4809,11 +4888,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/image-captioning"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service generates a text description for the image using machine learning techniques. The service receives the image in binary format and outputs a text string that is a text description of the scene in the image.</div>"
            ; short_description
@@ -4823,7 +4902,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "image" (Cons "caption" Nil))
    )
 )
 
@@ -4849,11 +4928,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/image-generation"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service generates 3 images that correspond to the text using machine learning methods. The service receives a text string and outputs 3 images in binary format, representing generated images based on the received text.</div>"
            ; short_description
@@ -4863,7 +4942,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "image-generation" (Cons "image" (Cons "text2image" (Cons "generation" (Cons "text" (Cons "english" Nil))))))
    )
 )
 
@@ -4889,11 +4968,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/philosophic-text-generation"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service receives a textual seed in English and uses it as input to the neural generative model trained on the books of philosophers.</div>"
            ; short_description
@@ -4903,7 +4982,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "text" (Cons "generation" (Cons "english" (Cons "philosophy" Nil))))
    )
 )
 
@@ -4929,11 +5008,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/textual-emotion-recognition"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service receives a text string and uses it as input to the pre-trained model. The model returns the predicted emotion of the given text.\n\nList of emotions predicted by the model:\n\"0\": \"admiration\",\n\"1\": \"amusement\",\n\"2\": \"anger\",\n\"3\": \"annoyance\",\n\"4\": \"approval\",\n\"5\": \"caring\",\n\"6\": \"confusion\",\n\"7\": \"curiosity\",\n\"8\": \"desire\",\n\"9\": \"disappointment\",\n\"10\": \"disapproval\",\n\"11\": \"disgust\",\n\"12\": \"embarrassment\",\n\"13\": \"excitement\",\n\"14\": \"fear\",\n\"15\": \"gratitude\",\n\"16\": \"grief\",\n\"17\": \"joy\",\n\"18\": \"love\",\n\"19\": \"nervousness\",\n\"20\": \"optimism\",\n\"21\": \"pride\",\n\"22\": \"realization\",\n\"23\": \"relief\",\n\"24\": \"remorse\",\n\"25\": \"sadness\",\n\"26\": \"surprise\",\n\"27\": \"neutral\"\n</div>"
            ; short_description
@@ -4943,7 +5022,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "recognition" (Cons "text" (Cons "english" (Cons "emotions" Nil))))
    )
 )
 
@@ -4969,11 +5048,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/hate-speech-detection"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service outputs a label that match to the specified text.Available labels:\n·\thate;\n·\tabusing;\n·\tneutral;\n·\tspam.\n</div>"
            ; short_description
@@ -4983,7 +5062,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "classification" (Cons "recognition" (Cons "detection" (Cons "text" (Cons "english" (Cons "twitter" (Cons "speech" (Cons "hate" Nil))))))))
    )
 )
 
@@ -5009,11 +5088,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/super-resolution"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service takes a low-resolution image in binary format, uses it as input for a pre-trained model, and outputs the result as a higher-quality image magnified by a factor of 4.</div>"
            ; short_description
@@ -5023,7 +5102,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "image2image" (Cons "upscale" (Cons "image" (Cons "resolution" Nil))))
    )
 )
 
@@ -5049,11 +5128,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/Music-Lyrics-Generation"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service receives a textual seed in English and uses it as input to the neural GPT-2 model trained to solve diverse text generation task using large-scale lyrics based dataset and outputs the generated lyrics for a given seed. The basic commonsense model generates diverse lyrics adapting to the style and content of the given text seed.</div>"
            ; short_description
@@ -5063,7 +5142,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "text" (Cons "generation" (Cons "english" (Cons "music" (Cons "lyrics" Nil)))))
    )
 )
 
@@ -5089,11 +5168,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/multilingual-speech-recognition"
            ; url content
-           "null"
+           null
            ; description
            "<div>Welcome to Multilingual Speech Recognition! This is a translator that will automatically translate your voice or any other speech audio track into the desired language. You can enter any phrase, sentence or dialogue for quick translation as any audio file. You do not need to specify the language spoken by the speakers. Our service will do it for you automatically! At the output, you will receive a translation into the desired language in the form of text. This service supports about 4 languages. This service supports languages: De, Fr, En, Zh.</div>"
            ; short_description
@@ -5103,7 +5182,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "speech2text" (Cons "recognition" (Cons "speech" (Cons "multilingual" (Cons "asr" Nil)))))
    )
 )
 
@@ -5129,11 +5208,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/multilingual-speech-translation"
            ; url content
-           "null"
+           null
            ; description
            "<div>Welcome to Multilingual Speech Translation! This is a translator that will automatically translate your voice or any other audio track with a speech into English. You can input any phrase, sentence or dialogue for quick translation in the form of any audio file. You do not need to specify the language that the speaker(s) speak. Our service will do it for you automatically! At the output, you will receive a translation into English in the form of text. This service supports about 150 languages, so you don't have to worry that the language in the audio track will not be recognized.</div>"
            ; short_description
@@ -5143,7 +5222,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "translation" (Cons "nmt" (Cons "any2english" (Cons "speech2text" (Cons "recognition" (Cons "speech" (Cons "multilingual" Nil)))))))
    )
 )
 
@@ -5169,11 +5248,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/spoken-language-recognition"
            ; url content
-           "null"
+           null
            ; description
            "<div>Welcome to the Spoken Language Recognition Program! This is a service that automatically recognizes the language of your voice or any other audio track. You can enter a spoken phrase, sentence, or dialogue for quick speech language recognition as any audio file. At the output, you will get the recognized language as text. This service supports about 4 languages: De, Fr, En, Zh.</div>"
            ; short_description
@@ -5183,7 +5262,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "speechlabel" (Cons "language" (Cons "recognition" (Cons "multilingual" (Cons "voice" (Cons "speech" Nil))))))
    )
 )
 
@@ -5209,11 +5288,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/neural-abstractive-summarization"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service receives text in English as input and returns a brief summary of this text.</div>\n"
            ; short_description
@@ -5223,7 +5302,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "text2text" (Cons "summarisation" (Cons "text" (Cons "english" (Cons "nlp" Nil)))))
    )
 )
 
@@ -5249,11 +5328,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/neural-machine-translation"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service receives text in one language and returns a translation of the submitted text in another language. Translation is possible for 204 languages.\nYou can pass text or the URL of a text file. The input text or text file in the URL must contain up to 4500-5000 characters.</div>"
            ; short_description
@@ -5263,7 +5342,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "text2text" (Cons "text" (Cons "multilanguage" (Cons "translation" (Cons "nmt" (Cons "nlp" Nil))))))
    )
 )
 
@@ -5289,11 +5368,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/automatic-code-generation"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service receives a textual seed in English and thereafter generates code based on this in one of the programming languages. You can use this model for several tasks such as: code summarization, code generation, code translation, code refinement, code defect detection, code clone detection.<div>\n"
            ; short_description
@@ -5303,7 +5382,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "programming" (Cons "code" (Cons "generation" Nil)))
    )
 )
 
@@ -5329,11 +5408,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/separate-speech"
            ; url content
-           "null"
+           null
            ; description
            "<div>This service allows you to share up to two people who can talk at the same time. As input, the service receives a wav audio file in which up to two people speak. At the output you will receive two audio files in which up to two people will be stripped\nThe input audio file size is limited to 4Mb, in practice the optimal duration of the processed audio track should be no more than 90 seconds for 320 kbps audio. \n<div>"
            ; short_description
@@ -5343,7 +5422,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "separation" (Cons "diarisation" (Cons "speech" (Cons "multispeaker" (Cons "speaker" Nil)))))
    )
 )
 
@@ -5369,11 +5448,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/neural-text-generation"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service receives a textual seed in English and uses it as input to the neural generative model trained to solve diverse text generation task using large-scale Reddit dump and outputs the generated text for a given seed. The basic commonsense model generates diverse text adapting to the style and content of the given text seed. The service also provides the models representing more than 40 public personalities.<div>"
            ; short_description
@@ -5383,7 +5462,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "generation" (Cons "public-persons" (Cons "twitter" (Cons "text" (Cons "english" (Cons "nlp" Nil))))))
    )
 )
 
@@ -5409,11 +5488,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/neural-grammar-correction"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service receives the source text, and then gives the grammatically correct text, using machine learning methods, which try to correct potentially grammatically incorrect text and semantically does not change the text/information that is grammatically correct.<div>\n"
            ; short_description
@@ -5423,7 +5502,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "correction" (Cons "grammar" (Cons "text" (Cons "nlp" Nil))))
    )
 )
 
@@ -5449,11 +5528,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/poetic-text-generation/blob/main/README.md"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service receives a textual seed in English and uses it as input to the neural model trained to solve diverse text generation task using large-scale poetic text based dataset and outputs the generated poetic text for a given seed. The basic commonsense model generates diverse poetic text adapting to the style and content of the given text seed.<div>\n"
            ; short_description
@@ -5463,7 +5542,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "english" (Cons "poetic" (Cons "generation" (Cons "nlp" Nil))))
    )
 )
 
@@ -5489,11 +5568,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/iktina/russian-speech-recognition"
            ; url content
-           "null"
+           null
            ; description
            "<div>The service performs speech recognition using machine learning techniques. The service receives the audio file in binary format and outputs the text string resulting from audio recognition.</div>"
            ; short_description
@@ -5503,7 +5582,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "speech" (Cons "speech2text" (Cons "russianasr" (Cons "recognition" (Cons "asr" Nil)))))
    )
 )
 
@@ -5524,13 +5603,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "https://notavalidurl.kek"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "Long description"
            ; short_description
-           null)
+           "Short description")
        ; assets
        Nil
        ; contacts
@@ -5565,11 +5644,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://github.com/facebookresearch/llama"
            ; url content
-           "null"
+           null
            ; description
            "Service is designed to generate text with help of generative LLM(Large Language Model) using user prompt as initial input. Service is primarily intended for prompt in English, but also accepts prompts in other languages with Latin or Cyrillic alphabets."
            ; short_description
@@ -5579,7 +5658,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "nlp" (Cons "text" (Cons "generation" Nil)))
    )
 )
 
@@ -5600,13 +5679,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "enigma-ai.com"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "We specialize in creating customized chatbots that can automate customer service, sales, marketing, and more. Our customized chatbots can answer customer inquiries, provide product information, process orders, and automate internal processes, saving time and money by freeing up staff to focus on more important tasks. With our tailored chatbots, we can help businesses improve customer service by providing quick and accurate responses to customer inquiries. Our team of experts will work with you to create a chatbot that is specifically tailored to your business operations, helping to automate many of your processes and save valuable time and resources.\n\nOur platform offers a unique \"one to many\" feature through our customized chatbot builder, enabling you to communicate with customers across multiple channels in a single interface. The intuitive and customizable chatbot allows you to tailor conversations to fit your customers' specific needs. You can quickly respond to inquiries, provide support, and initiate s"
            ; short_description
-           null)
+           "We offer our customers an innovative and user-friendly platform for omnichannel communications.")
        ; assets
        Nil
        ; contacts
@@ -5641,11 +5720,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "enigma-ai.com"
            ; url content
-           "null"
+           null
            ; description
            "The main goal of this service is to allow users to query a specific sentence from a group of sentences and then return the group with the highest similarity using semantic similarity search, this semantic similarity search is tailored for the data of each user by training the model on his/her domain-specific data.\n\nYou can create and use this service in two steps, first Train the model on your data, here you supply a link to a CSV file (the link should contain .csv extension) that contains two columns \"question\" and \"id\", the question column contains the questions that you want to query from, and the id column contains the group to which this question belongs, you should also specify a name for the endpoint to which the model will be deployed (only characters and digits all in small letter format), you then wait about 60 mins until the model is deployed after the endpoint is deployed you can send a request using the endpoint name with the sentence that you want to get the most similar group to, this will retu"
            ; short_description
@@ -5655,7 +5734,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "nlp" Nil)
    )
 )
 
@@ -5681,11 +5760,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "enigma-ai.com"
            ; url content
-           "null"
+           null
            ; description
            "The main goal of this service is to allow users to query a specific sentence from a group of sentences and then return the group with the highest similarity using semantic similarity search, this semantic similarity search is tailored for the data of each user by training the model on his/her domain-specific data.\n\nYou can create and use this service in two steps, first Train the model on your data, here you supply a link to a CSV file (the link should contain .csv extension) that contains two columns \"question\" and \"id\", the question column contains the questions that you want to query from, and the id column contains the group to which this question belongs, you should also specify a name for the endpoint to which the model will be deployed (only characters and digits all in small letter format), you then wait about 60 mins until the model is deployed after the endpoint is deployed you can send a request using the endpoint name with the sentence that you want to get the most similar group to, this will retu"
            ; short_description
@@ -5695,7 +5774,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "llm" (Cons "nlp" Nil))
    )
 )
 
@@ -5721,11 +5800,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "enigma-ai.com"
            ; url content
-           "null"
+           null
            ; description
            "The main goal of this service is to allow users to query a specific sentence from a group of sentences and then return the group with the highest similarity using semantic similarity search, this semantic similarity search is tailored for the data of each user by training the model on his/her domain-specific data.\n\nYou can create and use this service in two steps, first Train the model on your data, here you supply a link to a CSV file (the link should contain .csv extension) that contains two columns \"question\" and \"id\", the question column contains the questions that you want to query from, and the id column contains the group to which this question belongs, you should also specify a name for the endpoint to which the model will be deployed (only characters and digits all in small letter format), you then wait about 60 mins until the model is deployed after the endpoint is deployed you can send a request using the endpoint name with the sentence that you want to get the most similar group to, this will retu"
            ; short_description
@@ -5735,7 +5814,7 @@
        ; media
        Nil
        ; tags
-       Nil
+       (Cons "nlp" Nil)
    )
 )
 
@@ -5758,7 +5837,7 @@
            ; url
            null
            ; url content
-           "null"
+           null
            ; description
            null
            ; short_description
@@ -5797,11 +5876,11 @@
        ; groups
        Nil
        ; service_description
-       (MkDescription
+       (MkServiceDescription
            ; url
            "https://pythonllmcoding.io"
            ; url content
-           "null"
+           null
            ; description
            "An LLM for coding python"
            ; short_description
@@ -5832,13 +5911,13 @@
        ; description
        (MkDescription
            ; url
-           null
+           "https://qwaezrx.github.io/"
            ; url content
-           "null"
-           ; description
            null
+           ; description
+           "Image generation"
            ; short_description
-           null)
+           "AI developer")
        ; assets
        Nil
        ; contacts
