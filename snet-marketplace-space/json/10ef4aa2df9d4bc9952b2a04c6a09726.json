@@ -1,0 +1,43 @@
+{
+    "org_name": "LLaMaHost",
+    "org_id": "10ef4aa2df9d4bc9952b2a04c6a09726",
+    "org_type": "individual",
+    "description": {
+        "description": "Long description",
+        "short_description": "Short description",
+        "url": "https://notavalidurl.kek"
+    },
+    "assets": {
+        "hero_image": "Qmf7VE7oHCsCeQH8SyKCQt779GgG3YpV61exJfHuncBcLM/20230413104257_asset.jpeg"
+    },
+    "contacts": [
+        {
+            "email": "",
+            "phone": "",
+            "contact_type": "general"
+        },
+        {
+            "email": "",
+            "phone": "",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "W/lvAc4MlcSrykcXOq2rbKfcLLPndL69+RJBij92dx0=",
+            "payment": {
+                "payment_address": "0xB9665Efb10216a1F1Aa2148B9Cc979C24927D4C2",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "5s",
+                    "endpoints": [
+                        "https://87.120.210.37:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}

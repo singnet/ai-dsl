@@ -1,0 +1,43 @@
+{
+    "org_name": "PublisherPortalTesting",
+    "org_id": "PublisherPortalTesting",
+    "org_type": "organization",
+    "description": {
+        "description": "This organization is for testing mainnet workflow",
+        "short_description": "This organization is for testing mainnet workflow",
+        "url": "https://google.com"
+    },
+    "assets": {
+        "hero_image": "QmPVAYSXjVnbV9bKpEGeb56HDwKhw21u4gZGv8MkJYrRfn/20210629154626_asset.jpeg"
+    },
+    "contacts": [
+        {
+            "email": "",
+            "phone": "0123456789",
+            "contact_type": "general"
+        },
+        {
+            "email": "publisherportaltesting@grr.la",
+            "phone": "0123456789",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "JCxAP6SWx+usH7pyUAiLTDo7YVtz49U9hJE7o784gT4=",
+            "payment": {
+                "payment_address": "0xCc3cD60FF9936B7C9272a649b24f290ADa562469",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "5s",
+                    "endpoints": [
+                        "https://snet-etcd.singularitynet.io:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,43 @@
+{
+    "org_name": "Native Intelligence",
+    "org_id": "naint",
+    "org_type": "organization",
+    "description": {
+        "description": "Founded in 2009, Native Intelligence is dedicated to academic research and software development, the creation and implementation of artificial intelligence technologies, neurosymbolic architectures, scalable AI applications in various modalities and fields, and disruptive blockchain technologies to create elegant and efficient distributed cognitive ecosystems. that improve human-machine interaction to make the world a better place. Native Intelligence collaborates with other commercial and non-profit organizations to solve problems on a global scale. Together we develop and implement AI, Blockchain and robotic systems. The company employs more than 50 experienced developers and researchers working in different parts of the world. The company has computing power based on its own research laboratory for training and running deep neural networks and artificial intelligence systems with a theoretical peak of more than 5 PFLOPS and an energy power of 0.125 MW.",
+        "short_description": "Native Intelligence is engaged in academic research and software development, the creation and implementation of artificial intelligence technologies.",
+        "url": "www.naint.com"
+    },
+    "assets": {
+        "hero_image": "QmfDQ5sbfpjmYU6qwnKzVwoShWeD5FVeiQT9bMU1dyw5jS/20230324110305_asset.png"
+    },
+    "contacts": [
+        {
+            "email": "",
+            "phone": "",
+            "contact_type": "general"
+        },
+        {
+            "email": "support@naint.com",
+            "phone": "",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
+            "payment": {
+                "payment_address": "0x8C80799C0fd8145D3007e81684AD91621c8c06D1",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "3s",
+                    "endpoints": [
+                        "https://services.naint.com:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}

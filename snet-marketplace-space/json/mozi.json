@@ -1,0 +1,38 @@
+{
+    "org_name": "mozi.ai",
+    "org_id": "mozi",
+    "org_type": "organization",
+    "description": {
+        "short_description": "Deciphering the Mechanics of Disease with smarter tools",
+        "url": "https://mozi.ai",
+        "description": "To realize the full potential of our growing body of medical knowledge, we have built a suite of intuitive bioinformatic tools powered by machine learning for scientists to explore the mechanics of disease more efficiently without the need to learn complex bioinformatic tools; facilitating the next generation of therapeutics faster with less resources"
+    },
+    "assets": {
+        "hero_image": "QmahgCh7r3qyxdikCR6oRf41CdtLWoFqjX2L93gSxtHHb4/hero_Mozi.png"
+    },
+    "contacts": [
+        {
+            "email": "tech-support@singularitynet.io",
+            "phone": "",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "vMChk1qhqxH9vFgcHHha3C62uo7GyEMq16nqkeYnrvw=",
+            "payment": {
+                "payment_address": "0xd1C9246f6A15A86bae293a3E72F28C57Da6e1dCD",
+                "payment_expiration_threshold": 100,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "100s",
+                    "request_timeout": "5s",
+                    "endpoints": [
+                        "https://snet-etcd.singularitynet.io:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}

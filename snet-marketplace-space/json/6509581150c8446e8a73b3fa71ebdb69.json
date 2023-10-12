@@ -1,0 +1,43 @@
+{
+    "org_name": "tgo.tech",
+    "org_id": "6509581150c8446e8a73b3fa71ebdb69",
+    "org_type": "individual",
+    "description": {
+        "description": "Maker of Computational Intelligence",
+        "short_description": "Maker of Computational Intelligence",
+        "url": "https://github.com/tgotech"
+    },
+    "assets": {
+        "hero_image": "QmUSGDj3h8fLkGPah2DuTpWVZoYjK2HGcXeSn8Cq2Cv1kn/20210114061043_asset.png"
+    },
+    "contacts": [
+        {
+            "email": "",
+            "phone": "+61401750077",
+            "contact_type": "general"
+        },
+        {
+            "email": "support@tgo.tech",
+            "phone": "",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "bxGvIdKuMtlFuSxo2yPphnuFra4ZWpVVtb/k0urG3ys=",
+            "payment": {
+                "payment_address": "0x92227e39d42D575649ADEd90edb7ACa2bd1De5aA",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "5s",
+                    "endpoints": [
+                        "https://snetd.tgo.tech:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}

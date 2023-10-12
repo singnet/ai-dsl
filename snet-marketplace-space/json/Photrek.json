@@ -1,0 +1,43 @@
+{
+    "org_name": "Photrek",
+    "org_id": "Photrek",
+    "org_type": "organization",
+    "description": {
+        "description": "Photrek provides Risk-Aware Machine Intelligence Services",
+        "short_description": "Photrek provides Risk-Aware Machine Intelligence Services",
+        "url": "https://photrek.io"
+    },
+    "assets": {
+        "hero_image": ""
+    },
+    "contacts": [
+        {
+            "email": "",
+            "phone": "+1-781-645-8564",
+            "contact_type": "general"
+        },
+        {
+            "email": "kenric.nelson@photrek.io",
+            "phone": "+1-781-645-8564",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "PfRb5gXgmd/EKqeCd9P2/9aCTkAsa57Us3wUmUbWH3U=",
+            "payment": {
+                "payment_address": "0xb0b3c46a7dB162CeB03c6605B56540D756C581EB",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "5s",
+                    "endpoints": [
+                        "https://10.128.0.10:2379/"
+                    ]
+                }
+            }
+        }
+    ]
+}

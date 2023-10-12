@@ -1,0 +1,38 @@
+{
+    "org_name": "snet",
+    "org_id": "snet",
+    "org_type": "organization",
+    "description": {
+        "description": "We gathered leading minds in machine learning and blockchain to democratize access to AI technology.Now anyone can take advantage of a global network of AI algorithms, services, and agents. The world's first decentralized AI network has arrived",
+        "short_description": "SingularityNET lets anyone create, share, and monetize AI services at scale.",
+        "url": "https://singularitynet.io"
+    },
+    "assets": {
+        "hero_image": "QmTNjcNuypXQYANxm8EyHY2znGyk8aNnwu2W75LNVu27ci/hero_SNET.png"
+    },
+    "contacts": [
+        {
+            "email": "tech-support@singularitynet.io",
+            "phone": "",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "nZdFbyUlpWfOuTn0WpJCpKtQATrU6gxz6Wn9zAC2mno=",
+            "payment": {
+                "payment_address": "0xd1C9246f6A15A86bae293a3E72F28C57Da6e1dCD",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "5s",
+                    "endpoints": [
+                        "https://snet-etcd.singularitynet.io:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}

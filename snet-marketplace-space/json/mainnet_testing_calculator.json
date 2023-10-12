@@ -1,0 +1,43 @@
+{
+    "org_name": "mainnet_testing_calculator",
+    "org_id": "mainnet_testing_calculator",
+    "org_type": "organization",
+    "description": {
+        "description": "This is a testing service on production",
+        "short_description": "This is a testing service on production",
+        "url": "https://google.com"
+    },
+    "assets": {
+        "hero_image": "QmZ3xMr5DBmZCKsySxSv6rUMNCMeXg59wJCjjFWSUdmadA/20210713114712_asset.jpeg"
+    },
+    "contacts": [
+        {
+            "email": "",
+            "phone": "984257890",
+            "contact_type": "general"
+        },
+        {
+            "email": "lolix91635@godpeed.com",
+            "phone": "34567",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "ATsQ4f4/7m+zjKXTmT1uvi9SS5on1Le9kSuxNpPQmRQ=",
+            "payment": {
+                "payment_address": "0xCc3cD60FF9936B7C9272a649b24f290ADa562469",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "3s",
+                    "endpoints": [
+                        "https://snet-etcd.singularitynet.io:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}

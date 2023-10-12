@@ -1,0 +1,43 @@
+{
+    "org_name": "SuperHero",
+    "org_id": "3e9eb3f9a8134c9999f585adc60d9feb",
+    "org_type": "individual",
+    "description": {
+        "description": "Long Description",
+        "short_description": "Short Description",
+        "url": "https://dummy.dummy"
+    },
+    "assets": {
+        "hero_image": "QmP7c2AiKGDc7nNDoh6rMMvHXbWwQ9J31ozD6tqQphRMrc/20210628125503_asset.jpeg"
+    },
+    "contacts": [
+        {
+            "email": "",
+            "phone": "123456734567",
+            "contact_type": "general"
+        },
+        {
+            "email": "prashant@singularitynet.io",
+            "phone": "123456734567",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "+hAYAHNfYEItSqc66Z3E8I7mNiWOYQul5rIhiptYKzk=",
+            "payment": {
+                "payment_address": "0xc9736d8151ef0353B74d3e637a1DFAfb47EB5880",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "5s",
+                    "endpoints": [
+                        "https://snet-etcd.singularitynet.io:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}
