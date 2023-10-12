@@ -1,0 +1,43 @@
+{
+    "org_name": "Railroad",
+    "org_id": "24bffe3359cb493ea5dd8df222db97f8",
+    "org_type": "individual",
+    "description": {
+        "description": "Independent research and analytics shop",
+        "short_description": "Independent research and analytics shop",
+        "url": "rrgroup.io"
+    },
+    "assets": {
+        "hero_image": "Qmc5DA3y7nKEaYxpaUBqEu9yAKHcEkxbgTatvAVXmEfdEk/20230305104140_asset.jpeg"
+    },
+    "contacts": [
+        {
+            "email": "",
+            "phone": "",
+            "contact_type": "general"
+        },
+        {
+            "email": "zaidelson@gmail.com",
+            "phone": "+972525697017",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "AnXPe6fUht4Qud2yeSr0EGiIPHNGvZF1keHBjx6RJMM=",
+            "payment": {
+                "payment_address": "0x86E0E49Af3406dcBc12D06eC87a321E04d144c31",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "3s",
+                    "endpoints": [
+                        "54.93.140.76"
+                    ]
+                }
+            }
+        }
+    ]
+}

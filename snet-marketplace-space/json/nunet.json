@@ -1,0 +1,38 @@
+{
+    "org_name": "nunet",
+    "org_id": "nunet",
+    "org_type": "organization",
+    "description": {
+        "description": "The building blocks of a global, decentralized computing and data economy are in place today. NuNet cements these building blocks together into a new cooperative market, bringing unprecedented social and economic value accessible to all.\n\n\nNuNet will transform the multi-billion cloud computing industry, by enabling AI agents and software components to search the network for the most fitting hardware resources to run on.",
+        "short_description": "NuNet lets anyone share and monetize their computing resources at scale and\nprovides globally distributed, optimized computing power for decentralized networks.",
+        "url": "https://nunet.io/"
+    },
+    "assets": {
+        "hero_image": "QmPgMZhmnryJGgk2eAabRL49fL27UghzdMcxAns5RMGbtK/Asset-17.png"
+    },
+    "contacts": [
+        {
+            "email": "israel@singularitynet.io",
+            "phone": "",
+            "contact_type": "general"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "MHJY19Qv0JaqZ9IIdazopKqziW2MjP1GUHPm9lfPRRk=",
+            "payment": {
+                "payment_address": "0xd1C9246f6A15A86bae293a3E72F28C57Da6e1dCD",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "5s",
+                    "endpoints": [
+                        "https://snet-etcd.singularitynet.io:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}

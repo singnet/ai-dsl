@@ -1,0 +1,43 @@
+{
+    "org_name": "Mainnet_test_2607",
+    "org_id": "Mainnet_test_2607",
+    "org_type": "organization",
+    "description": {
+        "description": "Long description",
+        "short_description": "Short description",
+        "url": "https://google.com"
+    },
+    "assets": {
+        "hero_image": "QmNfRXU7kLrC3YMJhT5jRMcduq2msPG6axukHa5EAn8pGM/20210726084943_asset.jpeg"
+    },
+    "contacts": [
+        {
+            "email": "",
+            "phone": "9842543470",
+            "contact_type": "general"
+        },
+        {
+            "email": "lexitil750@gizmona.com",
+            "phone": "9842543470",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "gqVUFcrc7IrgNUNYaha40e7SOsXWSSdSF/v6l57Id6U=",
+            "payment": {
+                "payment_address": "0xCc3cD60FF9936B7C9272a649b24f290ADa562469",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "5s",
+                    "endpoints": [
+                        "https://snet-etcd.singularitynet.io:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}

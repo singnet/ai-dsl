@@ -30,11 +30,15 @@ JSON files representing service metadata are obtained while running
 the script and present as well in the subfolder `json`.  Look for
 
 ```
+json/ORG.json
 json/ORG.SERVICE.json
 ```
 
 where `ORG` and `SERVICE` represent the organization and service
 respective identifiers.
+
+The JSON files are not timestamped, but they should have been produced
+at the same time as the MeTTa file, which is timestamped.
 
 ## Docker
 
@@ -80,14 +84,16 @@ end with the message
 Generated snet_marketplace_<DATETIME>.metta
 ```
 
-which you can subsequently copy to the host
+which you can subsequently copy to the host, under the `metta`
+subfolder, with the following command line
 
 ```bash
-docker cp snet-marketplace-space-container:/home/user/snet_marketplace_<DATETIME>.metta .
+docker cp snet-marketplace-space-container:/home/user/snet_marketplace_<DATETIME>.metta metta
 ```
 
 In addition the json metadata files are listed as well and can be
-copied to the host with the following command line
+copied to the host, under the `json` subfolder, with the following
+command line
 
 ```bash
 for f in JSON_FILES; do docker cp snet-marketplace-space-container:/home/user/${f} json; done

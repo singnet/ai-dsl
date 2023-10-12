@@ -1,0 +1,43 @@
+{
+    "org_name": "dhivakhartestorg",
+    "org_id": "dhivakhartestorg",
+    "org_type": "organization",
+    "description": {
+        "description": "Long description",
+        "short_description": "short description",
+        "url": "https://google.com"
+    },
+    "assets": {
+        "hero_image": "QmWU42meLE1wqsajUvdQSdPbip4sqN98fW4wVaQBrXtETx/20210527081340_asset.png"
+    },
+    "contacts": [
+        {
+            "email": "",
+            "phone": "9842543470",
+            "contact_type": "general"
+        },
+        {
+            "email": "dhivakhartest@grr.la",
+            "phone": "9842543470",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "jLvJ3toYwbmjzPD3vRP9jBKt6cCHmOJ8LsMpv4hT0Bo=",
+            "payment": {
+                "payment_address": "0xCc3cD60FF9936B7C9272a649b24f290ADa562469",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "3s",
+                    "endpoints": [
+                        "https://snet-etcd.singularitynet.io:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}

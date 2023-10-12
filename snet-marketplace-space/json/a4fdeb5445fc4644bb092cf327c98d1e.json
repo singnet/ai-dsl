@@ -1,0 +1,43 @@
+{
+    "org_name": "qwaezrx",
+    "org_id": "a4fdeb5445fc4644bb092cf327c98d1e",
+    "org_type": "individual",
+    "description": {
+        "description": "Image generation",
+        "short_description": "AI developer",
+        "url": "https://qwaezrx.github.io/"
+    },
+    "assets": {
+        "hero_image": "QmNPZxVTmbF6Swug4zUK9tZzgnWXZzpgvP3dXH9EydcT1e/20231006113617_asset.jpeg"
+    },
+    "contacts": [
+        {
+            "email": "",
+            "phone": "+821066929253",
+            "contact_type": "general"
+        },
+        {
+            "email": "",
+            "phone": "",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "JdGIsK5KEW1Sn3oM4LXFxcLScUJxAm5it+L1CdwnpLQ=",
+            "payment": {
+                "payment_address": "0x675bA3D764bE2f5c193c86d213D2FaBB2153F48c",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "3s",
+                    "endpoints": [
+                        "https://qwaezrx.github.io"
+                    ]
+                }
+            }
+        }
+    ]
+}

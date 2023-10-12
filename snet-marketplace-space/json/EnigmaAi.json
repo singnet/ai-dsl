@@ -1,0 +1,43 @@
+{
+    "org_name": "Enigma Multi Activities Co.Ltd.",
+    "org_id": "EnigmaAi",
+    "org_type": "organization",
+    "description": {
+        "description": "We specialize in creating customized chatbots that can automate customer service, sales, marketing, and more. Our customized chatbots can answer customer inquiries, provide product information, process orders, and automate internal processes, saving time and money by freeing up staff to focus on more important tasks. With our tailored chatbots, we can help businesses improve customer service by providing quick and accurate responses to customer inquiries. Our team of experts will work with you to create a chatbot that is specifically tailored to your business operations, helping to automate many of your processes and save valuable time and resources.\n\nOur platform offers a unique \"one to many\" feature through our customized chatbot builder, enabling you to communicate with customers across multiple channels in a single interface. The intuitive and customizable chatbot allows you to tailor conversations to fit your customers' specific needs. You can quickly respond to inquiries, provide support, and initiate s",
+        "short_description": "We offer our customers an innovative and user-friendly platform for omnichannel communications.",
+        "url": "enigma-ai.com"
+    },
+    "assets": {
+        "hero_image": "QmTqXvUAPAWTkqfcJEb5HmBG8jzZ7PLJG9sPEiN9oxuyJW/20230731112724_asset.png"
+    },
+    "contacts": [
+        {
+            "email": "",
+            "phone": "+249 96 005 5505",
+            "contact_type": "general"
+        },
+        {
+            "email": "",
+            "phone": "",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "viIKwJKoss3R2WqRY9zTyY7L/V0hVnhOGcu1YDklpjc=",
+            "payment": {
+                "payment_address": "0x2885C4419915890c6c2036BaDC618dF3b3652351",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "30s",
+                    "request_timeout": "30s",
+                    "endpoints": [
+                        "https://172.31.21.37:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}

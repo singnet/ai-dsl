@@ -1,0 +1,41 @@
+{
+    "org_name": "Sigma Corp.",
+    "org_id": "b7ff7184aca84090b5dddcae38e42326",
+    "org_type": "individual",
+    "description": {
+        "description": "Sigma represents a male archetype that has been in existence eons ago, but it has only recently been trending. Once you go over their characteristics, you'll realize this particular male archetype isn't your average guy.\n\nWhat sets him apart from the rest is his decision to walk the solitary path and color outside the lines. He doesn't subscribe to the normal social dominance hierarchy construct which, by the way, some say is imaginary and arbitrarily made up.",
+        "short_description": "Men empowerment",
+        "url": "https://sigmamales.com/"
+    },
+    "assets": {
+        "hero_image": "QmQysLX93EbPTtbAuvwk3HkWbmFxKt7kNBuMsBut2Bsgmz/20230322084431_asset.png"
+    },
+    "contacts": [
+        {
+            "email": "",
+            "phone": "",
+            "contact_type": "general"
+        },
+        {
+            "email": "jerk401@gmail.com",
+            "phone": "",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "BwJN5l42qDnjTbU2TsDM1XA/YabWyt88u+oa8nXOiN8=",
+            "payment": {
+                "payment_address": "0x160e21EDc8A27b603738Eec619038CfB1A94F25C",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "3s",
+                    "endpoints": []
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,43 @@
+{
+    "org_name": "publisher_test_org_1",
+    "org_id": "publisher_test_org_1",
+    "org_type": "organization",
+    "description": {
+        "description": "ld",
+        "short_description": "sd",
+        "url": "https://google.com"
+    },
+    "assets": {
+        "hero_image": "QmaoPwahQ7gw2PN48pPRg3Fuu5tw5eR6k3yWTfNZtG2zMz/20210530073416_asset.png"
+    },
+    "contacts": [
+        {
+            "email": "",
+            "phone": "9842543470",
+            "contact_type": "general"
+        },
+        {
+            "email": "dhivakharjv@gmail.com",
+            "phone": "9842543470",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "Kq+vmoHbhNPX07TZbojbMZtDYhBi5HBTGJNgS2XWbIs=",
+            "payment": {
+                "payment_address": "0xCc3cD60FF9936B7C9272a649b24f290ADa562469",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "3s",
+                    "endpoints": [
+                        "https://snet-etcd.singularitynet.io:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,43 @@
+{
+    "org_name": "Zero2AI",
+    "org_id": "zero2ai",
+    "org_type": "organization",
+    "description": {
+        "description": "\nWe at Zero2AI help Gig workers meet the surging demand for AI talent using Web3.\nCombining the simplicity and ubiquitous smartphone, the power and abundance of open-source AI,\nand the trust and economic mechanisms of public chains - the Zero2AI network is the future of AI work. Learn, consume, create, publish and own on our network.",
+        "short_description": "Find create and own your AI apps.",
+        "url": "www.zero2ai.io"
+    },
+    "assets": {
+        "hero_image": "QmVnzHJGp19kzrj2yPZfrCVsFKnVM6rtxwwUUdNSnBN3if/20220710023945_asset.jpeg"
+    },
+    "contacts": [
+        {
+            "email": "",
+            "phone": "9143749069",
+            "contact_type": "general"
+        },
+        {
+            "email": "",
+            "phone": "",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "n/rk3+gpFxmdeG60Akj7mxIaALYTn0VWd9AROhcMJ0Q=",
+            "payment": {
+                "payment_address": "0xb89832f07e0696e053fd3Ea3b1b0348CB474B6bc",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "5s",
+                    "endpoints": [
+                        "https://etcd1.z2aisnet.com:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}

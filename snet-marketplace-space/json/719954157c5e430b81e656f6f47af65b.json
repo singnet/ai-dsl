@@ -1,0 +1,43 @@
+{
+    "org_name": "22feb2022_1",
+    "org_id": "719954157c5e430b81e656f6f47af65b",
+    "org_type": "individual",
+    "description": {
+        "description": "hello ",
+        "short_description": "hello",
+        "url": "https://google.com"
+    },
+    "assets": {
+        "hero_image": "QmdqNfpr3HbstFqb5F861ycocCxdbGRSGr5q82n1RiAfxu/20220223095707_asset.jpeg"
+    },
+    "contacts": [
+        {
+            "email": "",
+            "phone": "09886153196",
+            "contact_type": "general"
+        },
+        {
+            "email": "anand@singularitynet.io",
+            "phone": "09886153196",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "4uOoMZKASErW23czAFW9k8fAttDpTovdu3egTzO7dic=",
+            "payment": {
+                "payment_address": "0x9c302750c50307D3Ad88eaA9a6506874a15cE4Cb",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "3s",
+                    "endpoints": [
+                        "https://snet-etcd.singularitynet.io:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}

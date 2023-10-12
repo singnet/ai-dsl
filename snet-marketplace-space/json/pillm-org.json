@@ -1,0 +1,26 @@
+{
+    "org_name": "pi llm",
+    "org_id": "pillm-org",
+    "org_type": "individual",
+    "description": {},
+    "assets": {},
+    "contacts": [],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "cTN8VFXtSSvHaG13LI2FedrNCKr2SgEm0tzuhMj0PAs=",
+            "payment": {
+                "payment_address": "0x7f8fe8897f8C46BE0A0aE5db45D07AB08A666fb0",
+                "payment_expiration_threshold": 100,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "100s",
+                    "request_timeout": "5s",
+                    "endpoints": [
+                        "http://127.0.0.1:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}

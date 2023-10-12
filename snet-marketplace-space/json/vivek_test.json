@@ -1,0 +1,43 @@
+{
+    "org_name": "Test",
+    "org_id": "vivek_test",
+    "org_type": "organization",
+    "description": {
+        "description": "long",
+        "short_description": "short",
+        "url": "www.google.com"
+    },
+    "assets": {
+        "hero_image": "QmNdGU7H2wYNHo7N4pEmNFFiowohXmkaH4VHpoD8EDv7wJ/20210527093133_asset.jpeg"
+    },
+    "contacts": [
+        {
+            "email": "",
+            "phone": "96666666666",
+            "contact_type": "general"
+        },
+        {
+            "email": "support@gmail.com",
+            "phone": "0987654",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "JvyOiR37ZcWMkv9NaHXxM5g2C6EeN1ycOh5R08x12OY=",
+            "payment": {
+                "payment_address": "0xCc3cD60FF9936B7C9272a649b24f290ADa562469",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "3s",
+                    "endpoints": [
+                        "https://snet-etcd.singularitynet.io:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}

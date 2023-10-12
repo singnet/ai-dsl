@@ -1,0 +1,37 @@
+{
+    "org_name": "rejuve",
+    "org_id": "rejuve",
+    "org_type": "organization",
+    "description": {
+        "description": "Next-Gen AI Solutions for Longevity , Covid , Bayesian Networks and Anomaly Detection",
+        "short_description": "Simplify the expression of manually entered rules, augment with adtk anomaly detection, and explain the result. A detailed example of its use in healthcare, specifically Covid-19, is given in the covid_bayesnet.ipynb jupyter notebook.",
+        "url": "https://rejuve.io/"
+    },
+    "assets": {
+        "hero_image": "QmYTM1n77mmwL8cXpMPCHZcWuzW7kqvEwFmNxSrWy39TgZ/rejuve.png"
+    },
+    "contacts": [
+        {
+            "email": "support@singularitynet.io",
+            "contact_type": "support"
+        }
+    ],
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "BBS4UqwS0gIWz6yFwYTqXQIeUAgrgYu4RqvvjWIg420=",
+            "payment": {
+                "payment_address": "0x97c563604A2755a1646D855A709277601185b4Cc",
+                "payment_expiration_threshold": 40320,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "5s",
+                    "request_timeout": "3s",
+                    "endpoints": [
+                        "https://snet-etcd.singularitynet.io:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}
