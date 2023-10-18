@@ -24,6 +24,14 @@ metta/snet_marketplace_YYYY-MM-DDThh:mm:ss+00:00.metta
 where Y stands for year, M for month, D for day, h for hour, m for
 minute and s for second.
 
+An example MeTTa file
+
+```
+metta/examples.metta
+```
+
+of how such dump can be used is provided as well.
+
 ## JSON Files Dumps
 
 JSON files representing service metadata are obtained while running
