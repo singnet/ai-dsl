@@ -7,6 +7,11 @@ specifically how consistent it is with some notion of subtyping.
 
 ## Usage
 
+### Prerequisites
+
+- protoc
+- protoscope
+
 ### Encoding/decoding
 
 See `test.sh` for an trivial experiment on encoding and decoding
