@@ -3,7 +3,7 @@ package test;
 
 message Greet {
    string greeting = 1;
-   string username = 2;
+   string name = 2;
    int32 age = 3;
    bool male = 4;
 }

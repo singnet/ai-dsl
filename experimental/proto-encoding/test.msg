@@ -1,4 +1,4 @@
-greeting: "Yo"
-username : "John"
-age : 50
+greeting: "Hello"
+name : "Camille"
+age : 42
 male : true
