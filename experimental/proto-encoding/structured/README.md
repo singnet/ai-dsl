@@ -2,7 +2,7 @@
 
 ## Description
 
-Experiment with more advanced situations of coding and decoding,
+Experiment with more advanced situations of encoding and decoding,
 especially regarding structured types, as well as their interactions
 with primitive types.
 
