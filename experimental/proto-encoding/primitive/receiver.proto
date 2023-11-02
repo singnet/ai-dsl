@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package primitive;
+
+// Same as primitive.proto but the types have been changed.  The field
+// names represent the coercion we are trying to test.
+message Receiver {
+  double float_to_double = 1;
+  float double_to_float = 2;
+  sint32 int32_to_sint32 = 3;
+  int32 sint32_to_int32 = 4;
+  sfixed64 sfixed32_to_sfixed64 = 5;
+  sint64 int64_to_sint64 = 6;
+  int64 sint64_to_int64 = 7;
+  sfixed32 sfixed64_to_sfixed32 = 8;
+  fixed32 uint32_to_fixed32 = 9;
+  uint32 fixed32_to_uint32 = 10;
+  uint32 uint64_to_uint32 = 11;
+  bool fixed64_to_bool = 12;
+  bytes string_to_bytes = 13;
+  string bytes_to_string = 14;
+  int32 bool_to_int32 = 15;
+}
