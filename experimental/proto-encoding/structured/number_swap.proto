@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package structured;
+
+message NumberSwap {
+  int64 value = 2;
+}

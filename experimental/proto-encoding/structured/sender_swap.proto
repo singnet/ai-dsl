@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package structured;
+
+import "number_primality_swap.proto";
+
+message SenderSwap {
+  NumberPrimalitySwap value_primality_swap = 1;
+  string msg = 2;
+}

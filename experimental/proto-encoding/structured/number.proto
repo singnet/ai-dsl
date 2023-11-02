@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package structured;
+
+message Number {
+  int64 value = 1;
+}
