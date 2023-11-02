@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package structured;
+
+message NumberPrimality {
+  int64 value = 1;
+  bool is_prime = 2;
+}

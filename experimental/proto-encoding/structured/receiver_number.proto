@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package structured;
+
+import "number.proto";
+
+message NumberReceiver {
+  Number value = 1;
+  string msg = 2;
+}
