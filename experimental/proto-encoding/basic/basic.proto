@@ -3,8 +3,8 @@ syntax = "proto3";
 package basic;
 
 message Greet {
-   string greeting = 1;
-   string name = 2;
-   int32 age = 3;
-   bool male = 4;
+  string greeting = 1;
+  string name = 2;
+  int32 age = 3;
+  bool male = 4;
 }
