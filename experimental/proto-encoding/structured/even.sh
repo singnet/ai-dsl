@@ -7,7 +7,7 @@
 # Encode even message
 echo "* Encode even number message:"
 cat even.msg
-cat even.msg | protoc --encode=structured.Sender sender.proto > even.msg.encoded
+protoc --encode=structured.Sender sender.proto < even.msg > even.msg.encoded
 
 # Print encoded message
 echo
@@ -24,21 +24,21 @@ protoscope -explicit-length-prefixes -explicit-wire-types even.msg.encoded
 # Decode raw message
 echo
 echo "* Decode even message without using protobuf spec:"
-cat even.msg.encoded | protoc --decode_raw
+protoc --decode_raw < even.msg.encoded
 
 # Decode message with full protobuf spec
 echo
 echo "* Decode even message using the full protobuf spec:"
-cat even.msg.encoded | protoc --decode=structured.Sender sender.proto
+protoc --decode=structured.Sender sender.proto < even.msg.encoded
 
 # Decode message with partial protobuf spec (NumberPrimarily is
 # replaced by Number)
 echo
 echo "* Decode even message using partial protobuf spec (NumberPrimarily ↦ Number):"
-cat even.msg.encoded | protoc --decode=structured.NumberReceiver receiver_number.proto
+protoc --decode=structured.NumberReceiver receiver_number.proto < even.msg.encoded
 
 # Decode message with very partial protobuf spec (NumberPrimarily is
 # replaced by int64)
 echo
 echo "* Decode even message using partial protobuf spec (NumberPrimarily ↦ int64):"
-cat even.msg.encoded | protoc --decode=structured.IntReceiver receiver_int.proto
+protoc --decode=structured.IntReceiver receiver_int.proto < even.msg.encoded
