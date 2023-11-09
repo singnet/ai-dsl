@@ -16,6 +16,9 @@ hexdump primitive.msg.encoded
 echo
 echo "* Encoded message in Protoscope format:"
 protoscope -explicit-length-prefixes -explicit-wire-types primitive.msg.encoded
+echo
+echo "* Encoded message in protobuf-inspector format:"
+protobuf_inspector < primitive.msg.encoded
 
 # Decode raw message
 echo

@@ -21,6 +21,9 @@ hexdump prime_swap.msg.encoded
 echo
 echo "* Encoded prime message in Protoscope format (swapped):"
 protoscope -explicit-length-prefixes -explicit-wire-types prime_swap.msg.encoded
+echo
+echo "* Encoded prime message in protobuf-inspector format (swapped):"
+protobuf_inspector < prime_swap.msg.encoded
 
 # Decode raw message
 echo

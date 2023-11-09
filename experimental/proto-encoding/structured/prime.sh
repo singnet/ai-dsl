@@ -20,6 +20,9 @@ hexdump prime.msg.encoded
 echo
 echo "* Encoded prime message in Protoscope format:"
 protoscope -explicit-length-prefixes -explicit-wire-types prime.msg.encoded
+echo
+echo "* Encoded prime message in protobuf-inspector format:"
+protobuf_inspector < prime.msg.encoded
 
 # Decode raw message
 echo

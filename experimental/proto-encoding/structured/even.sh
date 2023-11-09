@@ -20,6 +20,9 @@ hexdump even.msg.encoded
 echo
 echo "* Encoded even message in Protoscope format:"
 protoscope -explicit-length-prefixes -explicit-wire-types even.msg.encoded
+echo
+echo "* Encoded even message in protobuf-inspector format:"
+protobuf_inspector < even.msg.encoded
 
 # Decode raw message
 echo
