@@ -3,7 +3,7 @@
 # Encode message
 echo "* Encode the following protobuf message using the primitive spec:"
 cat primitive.msg
-cat primitive.msg | protoc --encode=primitive.Primitive primitive.proto > primitive.msg.encoded
+protoc --encode=primitive.Primitive primitive.proto < primitive.msg > primitive.msg.encoded
 
 # Print encoded message
 echo
@@ -16,13 +16,16 @@ hexdump primitive.msg.encoded
 echo
 echo "* Encoded message in Protoscope format:"
 protoscope -explicit-length-prefixes -explicit-wire-types primitive.msg.encoded
+echo
+echo "* Encoded message in protobuf-inspector format:"
+protobuf_inspector < primitive.msg.encoded
 
 # Decode raw message
 echo
 echo "* Decode without using any protobuf spec:"
-cat primitive.msg.encoded | protoc --decode_raw
+protoc --decode_raw < primitive.msg.encoded
 
 # Decode message
 echo
 echo "* Decode using the receiver protobuf spec (different than the primitive spec):"
-cat primitive.msg.encoded | protoc --decode=primitive.Receiver receiver.proto
+protoc --decode=primitive.Receiver receiver.proto < primitive.msg.encoded

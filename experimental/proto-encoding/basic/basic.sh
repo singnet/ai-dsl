@@ -3,7 +3,7 @@
 # Encode message
 echo "* Encode the following protobuf message:"
 cat basic.msg
-cat basic.msg | protoc --encode=basic.Greet basic.proto > basic.msg.encoded
+protoc --encode=basic.Greet basic.proto < basic.msg > basic.msg.encoded
 
 # Print encoded message
 echo
@@ -16,13 +16,16 @@ hexdump basic.msg.encoded
 echo
 echo "* Encoded message in Protoscope format:"
 protoscope -explicit-length-prefixes -explicit-wire-types basic.msg.encoded
+echo
+echo "* Encoded message in protobuf-inspector format:"
+protobuf_inspector < basic.msg.encoded
 
 # Decode raw message
 echo
 echo "* Decode without using protobuf spec:"
-cat basic.msg.encoded | protoc --decode_raw
+protoc --decode_raw < basic.msg.encoded
 
 # Decode message
 echo
 echo "* Decode using protobuf spec:"
-cat basic.msg.encoded | protoc --decode=basic.Greet basic.proto
+protoc --decode=basic.Greet basic.proto < basic.msg.encoded

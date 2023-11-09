@@ -7,8 +7,9 @@ specifically how consistent it is with some notion of subtyping.
 
 ## Prerequisites
 
-- protoc
-- protoscope
+- [protoc](https://github.com/protocolbuffers/protobuf)
+- [protoscope](https://github.com/protocolbuffers/protoscope)
+- [protobuf-inspector](https://github.com/mildsunrise/protobuf-inspector)
 
 ## Usage
 
