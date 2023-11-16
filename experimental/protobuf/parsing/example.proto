@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package example;
+
+message Name {
+  string forename = 1;
+  string surname = 2;
+}
+
+message Greet {
+  string msg = 1;
+  Name name = 2;
+  int32 age = 3;
+  bool male = 4;
+}
