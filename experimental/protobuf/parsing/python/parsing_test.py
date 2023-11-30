@@ -65,12 +65,29 @@ class ProtobufParser:
         desc_rep += "\n"
 
         # Parse messages
-        for msg_name, msg in desc.message_types_by_name.items():
+        desc_rep += ";;;;;;;;;;;;;;;;;;;\n"
+        desc_rep += ";; Message Types ;;\n"
+        desc_rep += ";;;;;;;;;;;;;;;;;;;\n\n"
+        for msg_name, msg in self.descriptor.message_types_by_name.items():
             msg_name_len = len(msg_name)
             desc_rep += ";;;" + msg_name_len * ";" + ";;;\n"
             desc_rep += ";; {} ;;\n".format(msg_name)
             desc_rep += ";;;" + msg_name_len * ";" + ";;;\n\n"
             desc_rep += self.parse_message(msg)
+
+        # Parse enums
+
+        # Parse services
+        desc_rep += ";;;;;;;;;;;;;;\n"
+        desc_rep += ";; Services ;;\n"
+        desc_rep += ";;;;;;;;;;;;;;\n\n"
+        for srv_name, srv in self.descriptor.services_by_name.items():
+            srv_name_len = len(srv_name)
+            desc_rep += ";;;" + srv_name_len * ";" + ";;;\n"
+            desc_rep += ";; {} ;;\n".format(srv_name)
+            desc_rep += ";;;" + srv_name_len * ";" + ";;;\n\n"
+            desc_rep += self.parse_service(srv)
+
         return desc_rep
 
     def parse_field_type(self, field) -> str:
@@ -87,8 +104,7 @@ class ProtobufParser:
 
         Example:
 
-        Assuming a package `example`, then the protobuf enum
-        specification
+        Assuming a package `example`, the protobuf enum specification
 
         ```
         enum Week {
@@ -178,8 +194,7 @@ class ProtobufParser:
 
         Example:
 
-        Assuming a package `example`, then the protobuf message
-        specification
+        Assuming a package `example`, the protobuf message specification
 
         ```
         message Name {
@@ -264,6 +279,44 @@ class ProtobufParser:
             msg_rep += ")) ${})\n\n".format(field.name)
 
         return msg_rep
+
+    def parse_service(self, srv) -> str:
+        """Parse service, output corresponding string in MeTTa format.
+
+        Example:
+
+        Assuming a package `example`, the protobuf service specification
+
+        ```
+        service Greeter {
+          rpc salute (Person) returns (Greet) {}
+          rpc wish (Person) returns (Greet) {}
+        }
+        ```
+
+        outputs the following string in MeTTa format
+
+        ```
+        ;; Define example.Greeter.salute service method
+        (: example.Greeter.salute (-> Person Greet))
+
+        ;; Define example.Greeter.wish service method
+        (: example.Greeter.wish (-> Person Greet))
+        ```
+
+        """
+
+        # Service string representation in MeTTa format
+        srv_rep : str = ""
+
+        # Service methods
+        for mtd_name, mtd in srv.methods_by_name.items():
+            srv_rep += "\n;; Define {} service method\n".format(mtd.full_name)
+            srv_rep += "(: {} (-> {} {}))\n".format(mtd.full_name,
+                                                    mtd.input_type.full_name,
+                                                    mtd.output_type.full_name)
+
+        return srv_rep
 
 
 # Test
