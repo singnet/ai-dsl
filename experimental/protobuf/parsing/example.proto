@@ -2,14 +2,31 @@ syntax = "proto3";
 
 package example;
 
+// Define Name message type
 message Name {
   string forename = 1;
   string surname = 2;
 }
 
+// Define Person message type
+message Person {
+  Name name = 1;
+  int32 age = 2;
+  enum Gender {
+    OTHER = 0;
+    MALE = 1;
+    FEMALE = 2;
+  }
+  Gender gender = 3;
+}
+
+// Define Greet message type
 message Greet {
   string msg = 1;
-  Name name = 2;
-  int32 age = 3;
-  bool male = 4;
+}
+
+// Define Greeter services
+service Greeter {
+  rpc salute (Person) returns (Greet) {}
+  rpc wish (Person) returns (Greet) {}
 }
