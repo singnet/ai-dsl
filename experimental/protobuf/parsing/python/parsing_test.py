@@ -133,8 +133,31 @@ class ProtobufParser:
         enm_rep += ";; Define {} enum values\n".format(enm_class_name)
         for enm_name, enm_value in enm.values_by_name.items():
             enm_rep += "(: {0}.{1} {0})\n".format(enm_class_name, enm_name)
+        enm_rep += "\n"
 
         return enm_rep
+
+    def get_prefix_name(self, full_name : str) -> str:
+        """Given a full name type, return the prefix without its name.
+
+        Example:
+
+        ```
+        self.get_prefix_name("example.Person.Name")
+        ```
+
+        would return
+
+        ```
+        "example.Person"
+        ```
+
+        It assumes that the full name contains at least one dot (which
+        it should if it is part of a package).
+
+        """
+
+        return full_name.rsplit('.', 1)[0]
 
     def parse_message(self, msg) -> str:
 
@@ -197,13 +220,16 @@ class ProtobufParser:
         msg_rep += ";; Define {} type\n".format(class_name)
         msg_rep += "(: {} Type)\n\n".format(class_name)
 
-        # Enum sub-type declarations
-        for enum_name, enum_type in msg.enum_types_by_name.items():
-            msg_rep += self.parse_enum(enum_type)
-            msg_rep += "\n"
+        # Nested message type declarations
+        for nested_msg_name, nested_msg in msg.nested_types_by_name.items():
+            msg_rep += self.parse_message(nested_msg)
+
+        # Nested enum type declarations
+        for nested_enm_name, nested_enm in msg.enum_types_by_name.items():
+            msg_rep += self.parse_enum(nested_enm)
 
         # Type constructor
-        ctor_name : str = "{}.Mk{}".format(self.descriptor.package, msg.name)
+        ctor_name : str = "{}.Mk{}".format(self.get_prefix_name(class_name), msg.name)
         msg_rep += ";; Define {} constuctor\n".format(class_name)
         msg_rep += "(: {}\n   (->\n".format(ctor_name)
         for field_num, field in msg.fields_by_number.items():
