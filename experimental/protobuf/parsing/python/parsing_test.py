@@ -59,7 +59,8 @@ class ProtobufParser:
         desc_rep += ";;\n"
         desc_rep += ";; Protobuf file: {}\n".format(self.descriptor.name)
         desc_rep += ";; Protobuf syntax: {}\n".format(self.descriptor.syntax)
-        desc_rep += ";; Protobuf package: {}\n".format(self.descriptor.package)
+        if self.descriptor.package != "":
+            desc_rep += ";; Protobuf package: {}\n".format(self.descriptor.package)
         desc_rep += ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n"
         desc_rep += "\n"
 
@@ -146,18 +147,30 @@ class ProtobufParser:
         self.get_prefix_name("example.Person.Name")
         ```
 
-        would return
+        returns
 
         ```
-        "example.Person"
+        "example.Person."
         ```
 
-        It assumes that the full name contains at least one dot (which
-        it should if it is part of a package).
+        If not such prefix exists, then it returns the empty string.  For instance
+
+        ```
+        self.get_prefix_name("Person")
+        ```
+
+        returns
+
+        ```
+        ""
+        ```
 
         """
 
-        return full_name.rsplit('.', 1)[0]
+        substrings = full_name.rsplit('.', 1)
+        if len(substrings) > 1:
+            return substrings[0] + '.'
+        return ""
 
     def parse_message(self, msg) -> str:
 
@@ -229,7 +242,7 @@ class ProtobufParser:
             msg_rep += self.parse_enum(nested_enm)
 
         # Type constructor
-        ctor_name : str = "{}.Mk{}".format(self.get_prefix_name(class_name), msg.name)
+        ctor_name : str = "{}Mk{}".format(self.get_prefix_name(class_name), msg.name)
         msg_rep += ";; Define {} constuctor\n".format(class_name)
         msg_rep += "(: {}\n   (->\n".format(ctor_name)
         for field_num, field in msg.fields_by_number.items():
