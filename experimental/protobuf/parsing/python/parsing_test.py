@@ -320,7 +320,6 @@ class ProtobufParser:
 
 
 # Test
-desc = example_pb2.DESCRIPTOR
-parser = ProtobufParser(desc)
+parser = ProtobufParser(example_pb2.DESCRIPTOR)
 parsed_desc = parser.parse_description()
 print("{}".format(parsed_desc))
