@@ -32,4 +32,5 @@ message Greet {
 service Greeter {
   rpc salute (Person) returns (Greet) {}
   rpc wish (Person) returns (Greet) {}
+  rpc superlativize (Greet) returns (Greet) {}
 }
