@@ -2,21 +2,24 @@ syntax = "proto3";
 
 package example;
 
-// Define Name message type
-message Name {
-  string forename = 1;
-  string surname = 2;
-}
-
 // Define Person message type
 message Person {
-  Name name = 1;
-  int32 age = 2;
+  // Define Name message sub-type
+  message Name {
+    string forename = 1;
+    string surname = 2;
+  }
+
+  // Define Gender enum sub-type
   enum Gender {
     OTHER = 0;
     MALE = 1;
     FEMALE = 2;
   }
+
+  // Define fields
+  Name name = 1;
+  int32 age = 2;
   Gender gender = 3;
 }
 
