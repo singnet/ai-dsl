@@ -77,10 +77,67 @@ class ProtobufParser:
 
         if field.type == self.TYPE_MESSAGE:
             return field.message_type.full_name
-        else:
-            return self.type_names[field.type]
+        if field.type == self.TYPE_ENUM:
+            return field.enum_type.full_name
+        return self.type_names[field.type]
+
+    def parse_enum(self, enm) -> str:
+        """Parse enum type, output corresponding string MeTTa format.
+
+        Example:
+
+        Assuming a package `example`, then the protobuf enum
+        specification
+
+        ```
+        enum Week {
+          SUN = 0;
+          MON = 1;
+          TUE = 2;
+          WED = 3;
+          THU = 4;
+          FRI = 5;
+          SAT = 6;
+        }
+        ```
+
+        outputs the following string in MeTTa format
+
+        ```
+        ;; Define example.Week type
+        (: example.Week Type)
+
+        ;; Define example.Week enum values
+        (: example.Week.SUN example.Week)
+        (: example.Week.MON example.Week)
+        (: example.Week.TUE example.Week)
+        (: example.Week.WED example.Week)
+        (: example.Week.THU example.Week)
+        (: example.Week.FRI example.Week)
+        (: example.Week.SAT example.Week)
+        ```
+
+        For now enum numbers are discarded from the MeTTa format.
+
+        """
+
+        # Enum string representation in MeTTa format
+        enm_rep : str = ""
+
+        # Type declaration
+        enm_class_name : str = enm.full_name
+        enm_rep += ";; Define {} enum type\n".format(enm_class_name)
+        enm_rep += "(: {} Type)\n\n".format(enm_class_name)
+
+        # Enum values
+        enm_rep += ";; Define {} enum values\n".format(enm_class_name)
+        for enm_name, enm_value in enm.values_by_name.items():
+            enm_rep += "(: {0}.{1} {0})\n".format(enm_class_name, enm_name)
+
+        return enm_rep
 
     def parse_message(self, msg) -> str:
+
         """Parse message type, output corresponding string in MeTTa format.
 
         Example:
@@ -90,8 +147,8 @@ class ProtobufParser:
 
         ```
         message Name {
-        string forename = 1;
-        string surname = 2;
+          string forename = 1;
+          string surname = 2;
         }
         ```
 
@@ -139,6 +196,11 @@ class ProtobufParser:
         class_name : str = msg.full_name
         msg_rep += ";; Define {} type\n".format(class_name)
         msg_rep += "(: {} Type)\n\n".format(class_name)
+
+        # Enum sub-type declarations
+        for enum_name, enum_type in msg.enum_types_by_name.items():
+            msg_rep += self.parse_enum(enum_type)
+            msg_rep += "\n"
 
         # Type constructor
         ctor_name : str = "{}.Mk{}".format(self.descriptor.package, msg.name)
