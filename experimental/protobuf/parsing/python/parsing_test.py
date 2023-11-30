@@ -311,10 +311,10 @@ class ProtobufParser:
 
         # Service methods
         for mtd_name, mtd in srv.methods_by_name.items():
-            srv_rep += "\n;; Define {} service method\n".format(mtd.full_name)
-            srv_rep += "(: {} (-> {} {}))\n".format(mtd.full_name,
-                                                    mtd.input_type.full_name,
-                                                    mtd.output_type.full_name)
+            srv_rep += ";; Define {} service method\n".format(mtd.full_name)
+            srv_rep += "(: {} (-> {} {}))\n\n".format(mtd.full_name,
+                                                      mtd.input_type.full_name,
+                                                      mtd.output_type.full_name)
 
         return srv_rep
 
