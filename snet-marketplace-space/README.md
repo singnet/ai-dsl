@@ -121,6 +121,7 @@ docker rm snet-marketplace-space-container
 
 ### Prerequisites
 
+- hyperon, https://github.com/trueagi-io/hyperon-experimental
 - jq, https://jqlang.github.io/jq/, for JSON parsing
 - chromium, https://www.chromium.org, or google-chrome,
   https://www.google.com/chrome/index.html, for reading URL content.
