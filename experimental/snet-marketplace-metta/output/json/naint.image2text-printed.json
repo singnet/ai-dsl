@@ -2,7 +2,7 @@
     "version": 1,
     "display_name": "Printed Text Recognition",
     "encoding": "proto",
-    "service_type": "grpc",
+    "service_type": "http",
     "model_ipfs_hash": "QmYPWAEJzj4SCXkyoGfbT13Bji57r6CNKCyoPaZTzMc1Qx",
     "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
     "groups": [

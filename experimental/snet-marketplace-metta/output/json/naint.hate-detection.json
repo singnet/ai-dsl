@@ -1,16 +1,16 @@
 {
     "version": 1,
-    "display_name": "Abstractive Summarisation",
+    "display_name": "Hate Speech Detection",
     "encoding": "proto",
-    "service_type": "grpc",
-    "model_ipfs_hash": "QmcPeCLjUH9CE363ERu7noLuKRS7zsgTQUfpovKqYcDv8r",
+    "service_type": "http",
+    "model_ipfs_hash": "QmZm1iburF3w99KwQDVqWKbLb3BV8bSpF8LrRvhxQtaNeM",
     "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
     "groups": [
         {
             "free_calls": 15,
             "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
             "daemon_addresses": [
-                "0xdF6b10e86FDcD8977c19558fbaaBd3beF290d88f"
+                "0x41d0A03287934e342f94bEEae72Cd1Ee14138dC7"
             ],
             "pricing": [
                 {
@@ -20,21 +20,21 @@
                 }
             ],
             "endpoints": [
-                "https://services.naint.com:14495"
+                "https://services.naint.com:14519"
             ],
             "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
             "group_name": "default_group"
         }
     ],
     "service_description": {
-        "url": "https://github.com/iktina/neural-abstractive-summarization",
-        "short_description": "The service receives text in English as input and returns a brief summary of this text.",
-        "description": "<div>The service receives text in English as input and returns a brief summary of this text.</div>\n"
+        "url": "https://github.com/iktina/hate-speech-detection",
+        "short_description": "The service outputs a label that match to the specified text.",
+        "description": "<div>The service outputs a label that match to the specified text.Available labels:\n\u00b7\thate;\n\u00b7\tabusing;\n\u00b7\tneutral;\n\u00b7\tspam.\n</div>"
     },
     "media": [
         {
             "order": 1,
-            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/e5367b38eb644871b49b4f200c665627/assets/20230327152034_asset.png",
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/29a771c095cf4b7bbe16f13b0f60f8c9/assets/20230327132949_asset.png",
             "file_type": "image",
             "asset_type": "hero_image",
             "alt_text": ""
@@ -47,10 +47,13 @@
         }
     ],
     "tags": [
-        "nlp",
+        "hate",
+        "speech",
+        "twitter",
         "english",
         "text",
-        "summarisation",
-        "text2text"
+        "detection",
+        "recognition",
+        "classification"
     ]
 }

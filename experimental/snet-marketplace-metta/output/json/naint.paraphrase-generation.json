@@ -1,16 +1,16 @@
 {
     "version": 1,
-    "display_name": "Hate Speech Detection",
+    "display_name": " Multiple Paraphrase Generation",
     "encoding": "proto",
-    "service_type": "grpc",
-    "model_ipfs_hash": "QmZm1iburF3w99KwQDVqWKbLb3BV8bSpF8LrRvhxQtaNeM",
+    "service_type": "http",
+    "model_ipfs_hash": "QmXbY5p15TAb21DiEUKvarugjUQQoMMzw1jozd7GUTcooq",
     "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
     "groups": [
         {
             "free_calls": 15,
             "free_call_signer_address": "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf",
             "daemon_addresses": [
-                "0x41d0A03287934e342f94bEEae72Cd1Ee14138dC7"
+                "0xf99Ede9d9503A8Fc8e6932F129648aD174d199EE"
             ],
             "pricing": [
                 {
@@ -20,21 +20,21 @@
                 }
             ],
             "endpoints": [
-                "https://services.naint.com:14519"
+                "https://services.naint.com:14491"
             ],
             "group_id": "ZC63QytbzJt75kHGkZ8PEWXXDl2GDFRVwUT1CI2lbwY=",
             "group_name": "default_group"
         }
     ],
     "service_description": {
-        "url": "https://github.com/iktina/hate-speech-detection",
-        "short_description": "The service outputs a label that match to the specified text.",
-        "description": "<div>The service outputs a label that match to the specified text.Available labels:\n\u00b7\thate;\n\u00b7\tabusing;\n\u00b7\tneutral;\n\u00b7\tspam.\n</div>"
+        "url": "https://github.com/iktina/neural-paraphrase-generation",
+        "short_description": "The service receives a text string and uses it as input to the pre-trained model. The model returns 10 paraphrased sentences.\n",
+        "description": "<div>The service receives a text string and uses it as input to the pre-trained model. The model returns 10 paraphrased sentences.</div>"
     },
     "media": [
         {
             "order": 1,
-            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/29a771c095cf4b7bbe16f13b0f60f8c9/assets/20230327132949_asset.png",
+            "url": "https://marketplace-registry-assets.s3.us-east-1.amazonaws.com/4d24a44364df483a90a5c86de1d0dd87/services/35e8909327874d38a9ac4493d89cd77d/assets/20230327124353_asset.png",
             "file_type": "image",
             "asset_type": "hero_image",
             "alt_text": ""
@@ -47,13 +47,8 @@
         }
     ],
     "tags": [
-        "hate",
-        "speech",
-        "twitter",
-        "english",
-        "text",
-        "detection",
-        "recognition",
-        "classification"
+        "paraphrase",
+        "generation",
+        "text2text"
     ]
 }
