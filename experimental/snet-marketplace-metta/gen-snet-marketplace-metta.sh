@@ -407,4 +407,4 @@ for org in $(snet organization list | tail --lines=+2); do
 done
 
 # Output concluding messages
-log "MeTTa file `${METTA_FILENAME}` has been generated and placed under `output/metta`, alongside intermediary JSON metadata files placed under `output/json`."
+log "MeTTa file \`${METTA_FILENAME}\` has been generated and placed under \`output/metta\`, alongside intermediary JSON metadata files placed under \`output/json\`."

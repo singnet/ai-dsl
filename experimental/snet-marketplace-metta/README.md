@@ -101,7 +101,7 @@ files placed under `output/json`.
 Finally you may copy the `output` folder to the host by typing
 
 ```bash
-docker cp snet-marketplace-space-container:/home/user/output .
+docker cp snet-marketplace-metta-container:/home/user/output .
 ```
 
 After all that is done, the container can be discarded
