@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package translate;
+
+message Text {
+    string sentence = 1;
+    bool type = 2;
+}
+
+message Image {
+    bytes image1 = 1;
+    bytes image2 = 2;
+    bytes image3 = 3;
+}
+
+service image_generation {
+    rpc Gen(Text) returns (Image) {}
+}

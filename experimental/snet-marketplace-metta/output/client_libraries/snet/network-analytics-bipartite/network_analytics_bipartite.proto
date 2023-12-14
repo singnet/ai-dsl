@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+
+
+///// Graph
+
+message Edge{
+
+    repeated string edge = 1;
+}
+
+
+message Graph{
+
+    repeated string nodes = 1;
+    repeated Edge edges = 2;
+    repeated double weights = 3;
+
+}
+
+///// End Graph
+
+
+///// Bipartite graph
+
+
+message BipartiteNodes {
+
+    repeated string bipartite_0 = 1;
+    repeated string bipartite_1 = 2;
+}
+
+
+message BipartiteGraph {
+
+    repeated string bipartite_0 = 1;
+    repeated string bipartite_1 = 2;
+    repeated Edge edges = 3;
+    repeated double weights = 4;
+
+}
+
+
+message BipartiteGraphRequest {
+
+    BipartiteNodes nodes = 1;
+    repeated Edge edges = 2;
+}
+
+message BipartiteGraphResponse{
+
+    bool status = 1;
+    string message = 2;
+    BipartiteGraph output = 3;
+
+}
+
+///// End Bipartite graph
+
+message ProjecetedGraphRequest{
+
+    BipartiteGraph graph = 1;
+    repeated string nodes = 2;
+    string weight = 3;
+
+}
+
+
+message ProjecetedGraphResponse{
+
+    bool status = 1;
+    string message = 2;
+    Graph output = 3;
+
+}
+
+
+///// End Bipartite graph
+
+
+
+
+///// Network Analytics Bipartite Services
+
+service NetworkAnalyticsBipartite {
+
+
+    rpc BipartiteGraph (BipartiteGraphRequest) returns (BipartiteGraphResponse) {};
+
+    rpc ProjectedGraph (ProjecetedGraphRequest) returns (ProjecetedGraphResponse) {};  
+
+}
+
+///// End Network Analytics Services

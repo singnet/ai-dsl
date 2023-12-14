@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package SR_GAN;
+
+message Q {
+    bytes image = 1;
+    bool type = 2;
+}
+
+message A {
+    bytes output_img = 1;
+}
+
+service  SR_GAN {
+    rpc SR(Q) returns (A) {}
+}

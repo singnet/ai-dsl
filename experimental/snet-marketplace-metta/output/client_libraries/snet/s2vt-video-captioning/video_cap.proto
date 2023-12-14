@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+message Input {
+    string url = 1;
+    string start_time_sec = 2;
+    string stop_time_sec = 3;
+}
+
+message Output {
+    string value = 1;
+}
+
+service VideoCaptioning {
+    rpc video_cap(Input) returns (Output) {}
+}

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package hsd;
+
+message Input {
+    string value = 1;
+}
+
+message Output {
+    string result = 1;
+}
+
+service HSD {
+    rpc detection(Input) returns (Output) {}
+}
+

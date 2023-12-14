@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package qa_long;
+
+message Question {
+    string question = 1;
+}
+
+message Answer {
+    string answer = 1;
+}
+
+service QA {
+    rpc qa(Question) returns (Answer) {}
+}

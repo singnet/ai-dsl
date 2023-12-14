@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+service EmotionRecognition {
+	rpc classify(RecognizeRequest) returns (RecognizeResponse);
+}
+
+message BoundingBox {
+	int32 x = 1;
+	int32 y = 2;
+	int32 w = 3;
+	int32 h = 4;
+}
+
+message Face {
+   string emotion = 1;
+   BoundingBox bounding_box = 2;
+}
+
+message RecognizeRequest {
+	string image_type = 1; 
+	string image = 2; 
+}
+
+message RecognizeResponse {
+    repeated Face faces = 1;
+}

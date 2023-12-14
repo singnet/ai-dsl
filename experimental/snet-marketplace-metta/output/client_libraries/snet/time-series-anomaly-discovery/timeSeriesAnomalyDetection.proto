@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package timeSeriesAnomalyDetection;
+
+message InputParameters {
+	string timeseries = 1;
+    string alphabet = 2;
+    string slidingwindowsize = 3;
+    string paasize = 4;
+    string debugflag = 5;
+}
+
+message OutputString {
+    string timeseries = 1;
+    string density = 2;
+    string normalized = 3;
+    string inverted = 4;
+}
+
+service EfficientRuleDensityBasedAnomalyDetection {
+    rpc detectAnomalies(InputParameters) returns (OutputString) {}
+}

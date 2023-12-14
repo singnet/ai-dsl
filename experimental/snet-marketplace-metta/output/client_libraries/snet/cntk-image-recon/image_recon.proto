@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+message Input {
+    string model = 1;
+    string img_path = 2;
+}
+
+message Output {
+    string delta_time = 1;
+    string top_5 = 2;
+}
+
+service Recognizer {
+    rpc flowers (Input) returns (Output) {}
+    rpc dogs (Input) returns (Output) {}
+}

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+message Input {
+    string source = 1;
+    string contract = 2;
+    string start = 3;
+    string end = 4;
+    string target_date = 5;
+}
+
+message Output {
+    string response = 1;
+}
+
+service NextDayTrend {
+    rpc trend(Input) returns (Output) {}
+}

@@ -1,0 +1,24 @@
+syntax = 'proto3';
+
+import "face_common.proto";
+
+message FaceLandmarkHeader {
+    string landmark_model = 1;
+    FaceDetections faces = 2;
+}
+
+message FaceLandmarkRequest {
+    FaceLandmarkHeader header = 1;
+    ImageRGB image_chunk = 2;
+}
+
+message FaceLandmarkResponse {
+    repeated FaceLandmarks landmarked_faces = 1;
+}
+
+message Empty {}
+
+service FaceLandmark {
+    rpc GetLandmarks (FaceLandmarkRequest) returns (FaceLandmarkResponse) {};
+    rpc GetLandmarkModels (Empty) returns (FaceLandmarkModels) {};
+}

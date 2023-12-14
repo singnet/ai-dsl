@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pcr;
+
+message Query {
+    string data = 1;
+}
+
+message Text {
+    string text = 1;
+}
+
+service PCR {
+    rpc t2t(Query) returns (Text) {}
+}

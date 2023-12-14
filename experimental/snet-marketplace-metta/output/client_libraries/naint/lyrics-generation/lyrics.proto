@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package  lyrics;
+
+message Query {
+    string request = 1;
+}
+
+message Answer {
+    string answer = 1;
+}
+
+service Lyrics {
+    rpc generate(Query) returns (Answer) {}
+}

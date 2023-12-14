@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package MinecraftizingService;
+
+message minecraftRequest {
+  string network_name = 1;
+  string dataset = 2;
+  bytes input_image = 3;
+}
+
+message minecraftResponse {
+  string output = 1;
+  string status = 2;
+  string d_type = 3;
+  int32 height = 4;
+  int32 width = 5;
+  int32 n_channels = 6;
+}
+
+
+service MinecraftizingService {
+  rpc getMinecraftiziedImage(minecraftRequest) returns (minecraftResponse) {}
+}

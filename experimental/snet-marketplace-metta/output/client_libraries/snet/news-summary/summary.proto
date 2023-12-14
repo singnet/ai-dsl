@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+message Request {
+  string article_content = 1;
+}
+
+message Result {
+  string article_summary = 1;
+}
+
+service TextSummary {
+    rpc summary(Request) returns (Result) {}
+}

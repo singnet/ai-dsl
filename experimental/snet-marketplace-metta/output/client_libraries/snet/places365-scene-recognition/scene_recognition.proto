@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+message SceneRecognitionRequest {
+    string input_image = 1;
+    string predict = 2;
+}
+
+message SceneRecognitionResult {
+    string data = 1;
+}
+
+service SceneRecognition {
+    rpc recognize_scene (SceneRecognitionRequest) returns (SceneRecognitionResult);
+}

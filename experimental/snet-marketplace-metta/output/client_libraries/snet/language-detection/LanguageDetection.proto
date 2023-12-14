@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+message Input {
+    string input = 1;
+}
+
+message Output {
+    repeated Language language = 1;
+}
+
+message Language {
+    string sentence = 1;
+    repeated Prediction prediction = 2;
+}
+
+message Prediction {
+    string language = 2;
+    float confidence = 3;
+}
+
+service LanguageDetect {
+    rpc infer (Input) returns (Output) {
+    }
+}

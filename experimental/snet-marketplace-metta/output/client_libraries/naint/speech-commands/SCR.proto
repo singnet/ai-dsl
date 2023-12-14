@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package scr;
+
+message Audio {
+    bytes data = 1;
+}
+
+message Output_Audio {
+    string results = 1;
+}
+
+service SCR {
+    rpc sc2t(Audio) returns (Output_Audio) {}
+}

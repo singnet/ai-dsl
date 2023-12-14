@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package singingZH;
+
+message Query {
+    string text = 1;
+    bytes midi_file = 2;
+    float normalize = 3;
+}
+
+message Answer {
+  bytes output_audio = 1;
+}
+
+service singingZH {
+    rpc singingZH(Query) returns (Answer) {}
+}

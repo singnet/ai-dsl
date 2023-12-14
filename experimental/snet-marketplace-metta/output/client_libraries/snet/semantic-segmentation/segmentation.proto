@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+message Image {
+  string mimetype = 1;
+  bytes content = 2;
+}
+
+message Request {
+    Image img = 1;
+    bool visualise = 2;
+}
+
+message RegionOfInterest {
+    uint32 x = 1;
+    uint32 y = 2;
+    uint32 w = 3;
+    uint32 h = 4;
+}
+
+message Result {
+    repeated Image segmentation_img = 1;
+    repeated RegionOfInterest rois = 2;
+    repeated float scores = 3;
+    repeated uint32 class_ids = 4;
+    repeated string class_names = 5;
+    Image debug_img = 7;
+}
+
+message MetaRequest {}
+
+message MetaResult {
+    string known_classes = 1;
+}
+
+service SemanticSegmentation {
+    rpc segment(Request) returns (Result) {}
+    rpc meta(MetaRequest) returns (MetaResult) {}
+}

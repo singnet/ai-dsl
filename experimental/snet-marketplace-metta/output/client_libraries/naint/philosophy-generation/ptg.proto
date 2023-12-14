@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package  philosophic_text_generation;
+
+message Query {
+    string request = 1;
+}
+
+message Answer {
+    string answer = 1;
+}
+
+service PTG {
+    rpc generate(Query) returns (Answer) {}
+}

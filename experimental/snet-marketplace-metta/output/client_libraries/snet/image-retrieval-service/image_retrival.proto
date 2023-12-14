@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+message ImageFileIn {
+	string image = 1;
+	string similarity = 4;
+}
+
+message ImageFileOut {
+	string imageOut1 = 4;
+	string imageOut2 = 5;
+	string imageOut3 = 6;
+	string imageOut4 = 7;
+	string imageOut5 = 8;
+}
+
+service SimilarImage {
+	rpc FindSimilar(ImageFileIn) returns (ImageFileOut) {}
+}

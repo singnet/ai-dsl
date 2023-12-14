@@ -1,0 +1,23 @@
+syntax = 'proto3';
+
+import "face_common.proto";
+
+message FaceAlignmentHeader {
+    repeated BoundingBox   source_bboxes = 1;
+    // DLib can't currently allow arbitrary alignments
+    //repeated FaceLandmarks source = 2;
+    //FaceLandmarks target = 3;
+}
+
+message FaceAlignmentRequest {
+    FaceAlignmentHeader header = 1;
+    ImageRGB image_chunk = 2;
+}
+
+message FaceAlignmentResponse {
+    repeated ImageRGB image_chunk = 1;
+}
+
+service FaceAlignment {
+    rpc AlignFace (FaceAlignmentRequest) returns (FaceAlignmentResponse) {};
+}

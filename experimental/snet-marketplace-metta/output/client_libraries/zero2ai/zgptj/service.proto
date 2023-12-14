@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package zgptj;
+
+message Input {
+    string Prompt = 1;
+	int32 Length___the_length_for_generation_text = 2;
+	int32 Temperature___control_randomness_for_sampling__The_larger_the_temperature__the_more_uniform_the_new_probability_distribution__the_greater_the_randomness__and_the_easier_it_is_to_generate_some_unexpected_words = 3;
+}
+
+message Output {
+    string Generation = 1;
+}
+
+service text_generation {
+    rpc text_generation(Input) returns (Output) {}
+}

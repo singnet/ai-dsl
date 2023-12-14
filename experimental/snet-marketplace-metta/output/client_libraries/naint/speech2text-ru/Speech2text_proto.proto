@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ru_asr;
+
+message Audio {
+    bytes data = 1;
+}
+
+message Text {
+    string text = 1;
+}
+
+service ru_asr {
+    rpc s2t(Audio) returns (Text) {}
+}

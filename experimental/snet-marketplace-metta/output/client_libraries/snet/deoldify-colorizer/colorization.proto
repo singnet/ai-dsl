@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+message Input {
+    string img_input = 1;
+    int32 render_factor = 2;
+}
+
+message Output {
+    string img_colorized = 1;
+}
+
+service Colorization {
+    rpc colorize(Input) returns (Output) {}
+}

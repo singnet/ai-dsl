@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+message Input {
+    int32 window_len = 1;
+    int32 word_len = 2;
+    int32 alphabet_size = 3;
+
+    string source_type = 4;
+    string source = 5;
+
+    string contract = 6;
+    string start_date = 7;
+    string end_date = 8;
+}
+
+message Output {
+    string last_sax_word = 1;
+    string forecast_sax_letter = 2;
+    float position_in_sax_interval = 3;
+}
+
+service Forecast {
+    rpc forecast(Input) returns (Output) {}
+}

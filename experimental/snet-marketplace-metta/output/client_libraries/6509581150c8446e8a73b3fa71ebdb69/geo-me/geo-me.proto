@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+option java_generic_services = true;
+option java_multiple_files = true;
+option java_package="tech.tgo.snet.server";
+
+message GeoRequest {
+    repeated Observation observation = 1;
+    Target target = 2;
+    bool provide_kml_out = 3;
+}
+
+message Target {
+    string id = 1;
+    string name = 2;
+    double true_lat = 3;
+    double true_lon = 4;
+}
+
+message Observation {
+    int64 id = 1;
+    string assetId = 2;
+    double lat = 3;
+    double lon = 4;
+    double x = 5;
+    double y = 6;
+    double meas = 7;
+    string type = 8;
+}
+
+message GeolocationResult {
+    double residual = 1;
+    double residual_rk = 2;
+    double lat = 3;
+    double lon = 4;
+    double elp_long = 5;
+    double elp_short = 6;
+    double elp_rot = 7;
+    string kml_output = 8;
+    string status = 9;
+    string statusMessage = 10;
+}
+
+service ServiceDefinition {
+    rpc geoFixMe(GeoRequest) returns (GeolocationResult) {}
+}

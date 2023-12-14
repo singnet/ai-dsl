@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+message InputFNS {
+    string headline = 1;
+    string body = 2;
+    string call_id = 3;
+}
+
+message Score {
+    string stance = 1;
+    double agree = 2;
+    double disagree = 3; 
+    double discuss = 4;
+    double unrelated = 5;
+}
+
+message Resp {
+    string response =1;
+}
+
+service FakeNewsScore {
+    rpc fn_score_calc(InputFNS) returns (Resp) {}
+}
+
+
+//TODO: warning -- upstream code change (SNET)

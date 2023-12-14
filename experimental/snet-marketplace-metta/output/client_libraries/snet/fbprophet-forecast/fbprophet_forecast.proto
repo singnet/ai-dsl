@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package series_decomposition;
+
+message Input {
+    string url = 1;
+    repeated string ds = 2;
+    repeated float y = 3;
+    int32 period = 4;
+    int32 points = 5;
+}
+
+message Output {
+    repeated float observed = 1;
+    repeated float trend = 2;
+    repeated float seasonal = 3;
+    repeated float forecast = 4;
+    repeated string forecast_ds = 5;
+    repeated float forecast_lower = 6;
+    repeated float forecast_upper = 7;
+}
+
+service Forecast {
+    rpc forecast(Input) returns (Output) {}
+}

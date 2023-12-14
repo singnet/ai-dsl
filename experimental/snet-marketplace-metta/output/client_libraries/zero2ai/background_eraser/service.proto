@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package background_eraser;
+
+message Input {
+    bytes image = 1;
+}
+
+message Output {
+    bytes output = 1;
+}
+
+service segment {
+    rpc segment(Input) returns (Output) {}
+}

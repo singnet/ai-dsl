@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package textual_emotion_recognition;
+
+message Input {
+    string text = 1;
+}
+
+message Output {
+    string result = 1;
+}
+
+service TER {
+    rpc recognize(Input) returns (Output) {}
+}

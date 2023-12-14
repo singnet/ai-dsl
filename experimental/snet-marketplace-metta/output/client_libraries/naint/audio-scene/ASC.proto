@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package ASC;
+
+message Audio {
+    bytes data = 1;
+    string time_frame = 2;
+}
+
+message Output_results {
+    string res = 1;
+}
+
+service ASC {
+    rpc audio2scene(Audio) returns (Output_results) {}
+}

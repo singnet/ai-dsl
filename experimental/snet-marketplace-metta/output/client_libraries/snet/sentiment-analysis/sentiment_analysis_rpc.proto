@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+message InputMessage {
+    string value = 1;
+}
+
+message OutputMessage {
+    string value = 1;
+}
+
+service SentimentAnalysis {
+    rpc Analyze(InputMessage) returns (OutputMessage) {}
+}

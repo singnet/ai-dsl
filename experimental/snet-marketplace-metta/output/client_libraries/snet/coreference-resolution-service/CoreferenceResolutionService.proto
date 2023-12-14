@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+message InputSentence {
+    string sentence = 1;
+}
+
+message ReferenceResolution {
+    repeated References references = 1;
+    Words words = 2;
+}
+
+message References {
+    Indexes key = 1;
+    repeated Indexes mappings = 2;
+}
+
+message Indexes {
+    int32 firstIndex = 1;
+    int32 secondIndex = 2;
+}
+
+message Words {
+    repeated string word = 1;
+}
+
+service ResolveReference {
+    rpc resolution (InputSentence) returns (ReferenceResolution) {
+    }
+}

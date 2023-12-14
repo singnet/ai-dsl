@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+message ImageFile {
+	string image = 1;
+	string image_type = 2;
+}
+
+service Edgedetect {
+	rpc DetectEdge(ImageFile) returns (ImageFile) {}
+}

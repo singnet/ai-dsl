@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+message Input {
+    string audio_url = 1;
+    bytes audio = 2;
+}
+
+message Output {
+    bytes vocals = 1;
+    bytes accomp = 2;
+}
+
+service SoundSpleeter {
+    rpc spleeter(Input) returns (Output) {}
+}

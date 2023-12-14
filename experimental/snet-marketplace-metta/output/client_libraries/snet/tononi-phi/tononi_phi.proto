@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package tononi_phi;
+
+message Input {
+    string input_url = 1;
+    int32 window_length = 2;
+    int32 timeout = 3;
+    int32 bins = 4;
+    int32 nodes = 5;
+    int32 columns_to_skip = 6;
+    int32 window_start = 7;
+    int32 max_nodes = 8;
+}
+
+message Output {
+    float std = 1;
+    float mean = 2;
+    repeated float values = 3;
+
+}
+
+service ServiceDefinition {
+    rpc tononi_phi(Input) returns (Output) {}
+}

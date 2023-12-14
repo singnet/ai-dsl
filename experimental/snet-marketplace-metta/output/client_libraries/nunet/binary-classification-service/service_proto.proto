@@ -1,0 +1,38 @@
+
+syntax = "proto3";
+
+
+import "google/protobuf/empty.proto";
+
+
+message reqMessage {
+    string proto_defnition=1;
+    string service_stub=2;
+    string service_input=3;
+    string function_name=4;
+    string service_input_params=5;
+
+}
+message protoParams {}
+
+message respMetadata {
+    string service_definition= 1; 
+}
+
+message metaParams {
+    string service_name=1;
+}
+
+message priceParamsService {}
+
+message priceRespService {
+    float cost_per_process=1;
+    string pubk=2;
+}
+
+service ProtoDefnition {
+    rpc req_msg(protoParams) returns (reqMessage) {}
+    rpc req_metadata(metaParams) returns (respMetadata) {}
+    rpc req_service_price(priceParamsService) returns (priceRespService) {}
+
+}
