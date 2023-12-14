@@ -93,10 +93,15 @@ Beware it may take a few minutes.  The script should eventually
 end with the message
 
 ```
-MeTTa file `snet_marketplace_<DATETIME>.metta` has been generated and
-placed under `output/metta`, alongside intermediary JSON metadata
-files placed under `output/json`.
+MeTTa file `snet_marketplace_<DATETIME>.metta` has been generated
+under `output/metta` alongside intermediary JSON and Python files,
+respectively under `output/json` and `output/client_libraries`.
 ```
+
+The `json` and `client_libraries` directories are themselves
+subdivided into `<ORG>/<SERVICE>` subdirectories respectively
+containing metadata JSON files, Python client libraries alongside
+protobuf specifications.
 
 Finally you may copy the `output` folder to the host by typing
 
