@@ -39,8 +39,8 @@ RUN ./scripts/blockchain install
 RUN pip3 install -e .
 WORKDIR ${HOME}
 
-# Copy script for generating the snet marketplace atomspace
-COPY gen-snet-marketplace-space.sh .
+# Copy script for generating the snet marketplace atomspace in MeTTa format
+COPY gen-snet-marketplace-metta.sh .
 
 # Create identity
 RUN snet identity create ${IDENTITY_NAME} key --private-key ${PRIVATE_KEY}
