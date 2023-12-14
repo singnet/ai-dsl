@@ -161,16 +161,21 @@ EOF
 }
 
 # Takes the organization id as first argument and outputs knowledge
-# about that organization in MeTTa format.
+# about that organization in MeTTa format, saving the intermediary
+# JSON files along the way.
 organization_to_metta() {
     local org="$1"
 
-    # Save json metadata of that organization in a file
-    local metadata_filepath=${JSON_PATH}/${org}.json
-    snet organization print-metadata ${org} ${org} > ${metadata_filepath}
-
     # Log
     log "Collect information about ${org}"
+
+    # Create organization directory
+    local org_path="${JSON_PATH}/${org}"
+    mkdir "${org_path}"
+
+    # Save json metadata of that organization in a file
+    local metadata_filepath="${org_path}/${org}.json"
+    snet organization print-metadata ${org} ${org} > "${metadata_filepath}"
 
     # Output organization data
     cat <<EOF
@@ -213,12 +218,16 @@ service_to_metta() {
     local org="$1"
     local service="$2"
 
-    # Save json metadata of that service in a file
-    local metadata_filepath="${JSON_PATH}/${org}.${service}.json"
-    snet service print-metadata ${org} ${service} > ${metadata_filepath}
-
     # Log
     log "Collect information about ${org}.${service}"
+
+    # Create service JSON directory
+    local service_path="${JSON_PATH}/${org}/${service}"
+    mkdir "${service_path}"
+
+    # Save json metadata of that service in a file
+    local metadata_filepath="${service_path}/${org}.${service}.json"
+    snet service print-metadata ${org} ${service} > "${metadata_filepath}"
 
     # Output service data
     cat <<EOF
@@ -255,6 +264,14 @@ service_to_metta() {
    )
 )
 EOF
+
+    # Gather service API information
+    cd ${OUTPUT_DIRNAME}
+    snet sdk generate-client-library python ${org} ${service} &> /dev/null
+    local proto_path="client_libraries/${org}/${service}"
+    snet service get-api-registry ${org} ${service} "${proto_path}"
+    cd ..
+    # NEXT: call protobuf-metta
 }
 
 # Take a metadata file of the service an output its groups in MeTTa
@@ -407,4 +424,4 @@ for org in $(snet organization list | tail --lines=+2); do
 done
 
 # Output concluding messages
-log "MeTTa file \`${METTA_FILENAME}\` has been generated and placed under \`output/metta\`, alongside intermediary JSON metadata files placed under \`output/json\`."
+log "MeTTa file \`${METTA_FILENAME}\` has been generated under \`output/metta\` alongside intermediary JSON and Python files, respectively under \`output/json\` and \`output/client_libraries\`."
