@@ -143,6 +143,21 @@ You may need to start the container before you can enter, if so type
 ```bash
 docker start snet-marketplace-metta-container
 ```
+#### Remove container
+
+Upon attempting to remove the container, you may get an error like
+
+```
+docker: Error response from daemon: Conflict. The container name "/snet-marketplace-metta-container" is already in use by container "aa4f2bcd0661956903640579e09f053df14aa6fe4a63cdba8ef9acebd04176ef". You have to remove (or rename) that container to be able to reuse that name.
+```
+
+If so, stop the container
+
+```bash
+docker stop snet-marketplace-metta-container
+```
+
+and try again.
 
 #### Purge everything
 
