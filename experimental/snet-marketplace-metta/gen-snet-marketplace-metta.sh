@@ -6,7 +6,11 @@
 # Constants #
 #############
 
-# NEXT: organize json files by organization folder and service subfolder
+# NEXT: add options to only process a subset of organizations and services
+
+# NEXT: organize json files by organization folder and service
+# subfolder.  Question: Should we have a single organization/service
+# folder tree with both JSON and protobuf + client apis?
 
 # Define output MeTTa filename
 OUTPUT_DIRNAME="output"
@@ -270,8 +274,28 @@ EOF
     snet sdk generate-client-library python ${org} ${service} &> /dev/null
     local proto_path="client_libraries/${org}/${service}"
     snet service get-api-registry ${org} ${service} "${proto_path}"
+    local proto_filename=$(basename $(ls ${proto_path}/*.proto))
+
+    # Parse protobuf to MeTTa
+    local pb2_name=${proto_filename/.proto/_pb2}
+    local parser_path="${proto_path}/python"
+    cat <<EOF > "${parser_path}/parser.py"
+import ${pb2_name}
+from protobuf_metta import parser
+
+proto_parser = parser.ProtobufParser(${pb2_name}.DESCRIPTOR)
+metta_desc = proto_parser.description_to_metta()
+print(metta_desc)
+EOF
+    cd "${parser_path}"
+    echo
+    # NEXT: add option to disable comment boxes
+    # NEXT: make sure types are unique (see Result for instance which
+    # is redefined multiple times)
+    python3 parser.py
+    cd - &> /dev/null
+
     cd ..
-    # NEXT: call protobuf-metta
 }
 
 # Take a metadata file of the service an output its groups in MeTTa
