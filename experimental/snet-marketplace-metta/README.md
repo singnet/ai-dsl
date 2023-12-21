@@ -52,7 +52,7 @@ respective identifiers.
 The JSON files are not timestamped, but they should have been produced
 at the same time as the MeTTa file, which is timestamped.
 
-## Docker
+## Run Script with Docker
 
 Probably the easiest way to run that script is via a docker container.
 A Dockerfile under this folder can be used to build a docker image
@@ -134,6 +134,25 @@ under the `output/metta` subfolder.  Look for `Type Definitions`.
 ## Troubleshooting
 
 ### Docker
+
+#### Permission denied
+
+As you try to build the docker image you may get the error
+
+```
+permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock
+```
+
+Probably the simplest way to fix that is to add your user to the
+docker group.  To do that, enter
+
+```
+sudo usermod -aG docker $USER
+```
+
+then logout and login again.
+
+For more ways see [here](https://linuxhandbook.com/docker-permission-denied/).
 
 #### Enter the docker container for debugging
 
