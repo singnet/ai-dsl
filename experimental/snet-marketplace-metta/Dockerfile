@@ -37,6 +37,15 @@ RUN git clone https://github.com/singnet/snet-cli.git
 WORKDIR snet-cli/packages/snet_cli
 RUN ./scripts/blockchain install
 RUN pip3 install -e .
+
+# Install protobuf-metta
+WORKDIR ${HOME}
+RUN git clone https://github.com/trueagi-io/protobuf-metta.git
+WORKDIR protobuf-metta
+RUN pip3 install grpcio-tools
+RUN pip3 install wheel
+RUN python3 setup.py bdist_wheel
+RUN pip install dist/protobuf_metta-0.1.0-py3-none-any.whl
 WORKDIR ${HOME}
 
 # Copy script for generating the snet marketplace atomspace in MeTTa format
