@@ -274,27 +274,27 @@ EOF
     snet sdk generate-client-library python ${org} ${service} &> /dev/null
     local proto_path="client_libraries/${org}/${service}"
     snet service get-api-registry ${org} ${service} "${proto_path}"
-    local proto_filename=$(basename $(ls ${proto_path}/*.proto))
+    for proto_filepath in $(ls ${proto_path}/*.proto); do
+	local proto_filename=$(basename ${proto_filepath})
 
-    # Parse protobuf to MeTTa
-    local pb2_name=${proto_filename/.proto/_pb2}
-    local parser_path="${proto_path}/python"
-    cat <<EOF > "${parser_path}/parser.py"
-import ${pb2_name}
+	# Parse protobuf to MeTTa
+	local pb2_name=${proto_filename/.proto/_pb2}
+	local snk_pb2_name=${pb2_name//-/_}
+	local parser_path="${proto_path}/python"
+	cat <<EOF > "${parser_path}/parse_${snk_pb2_name}.py"
+import ${snk_pb2_name}
 from protobuf_metta import parser
 
-proto_parser = parser.ProtobufParser(${pb2_name}.DESCRIPTOR)
+proto_parser = parser.ProtobufParser(${snk_pb2_name}.DESCRIPTOR, prefix="${org}.${service}")
 metta_desc = proto_parser.description_to_metta()
 print(metta_desc)
 EOF
-    cd "${parser_path}"
-    echo
-    # NEXT: add option to disable comment boxes
-    # NEXT: make sure types are unique (see Result for instance which
-    # is redefined multiple times)
-    python3 parser.py
-    cd - &> /dev/null
-
+	cd "${parser_path}"
+	echo
+	# NEXT: add option to disable comment boxes
+	python3 "parse_${snk_pb2_name}.py"
+	cd - &> /dev/null
+    done
     cd ..
 }
 
