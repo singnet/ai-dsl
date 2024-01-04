@@ -1,16 +1,51 @@
 #!/bin/bash
 
+# Crawl the SingularityNET market place and generate a MeTTa file
+# containing information about organizations and their services,
+# including protobuf specifications.
+#
+# In addition to the MeTTa file, intermediary files collected or
+# generated during the crawling process are kept as well.
+#
+# The MeTTa file is placed under the folder
+#
+# output/metta
+#
+# Intermediary JSON files are placed under the folders
+#
+# output/json/<ORG>/<SERVICE>
+#
+# Protobuf and python clients are placed under
+#
+# output/client_libraries/<ORG>/<SERVICE>
+#
+# Usage:
+#
+# gen-snet-marketplace-metta.sh [<ORG1>[.<SERVICE1>] ... <ORGn>[.<SERVICEn>]]
+#
+# By default the script crawls the entire market place.  If provided
+# with arguments then it only crawls the corresponding organization
+# and services.
+#
+# For instance
+#
+# gen-snet-marketplace-metta.sh snet
+#
+# crawls all services of snet, while
+#
+# gen-snet-marketplace-metta.sh snet nunet.binary-classification-service
+#
+# crawls all services of snet plus the binary-classification-service
+# service of nunet.
+
 # set -x
 
 #############
 # Constants #
 #############
 
-# NEXT: add options to only process a subset of organizations and services
-
-# NEXT: organize json files by organization folder and service
-# subfolder.  Question: Should we have a single organization/service
-# folder tree with both JSON and protobuf + client apis?
+# TODO: should we have a single organization/service folder tree with
+#       both JSON and protobuf + client apis?
 
 # Define output MeTTa filename
 OUTPUT_DIRNAME="output"
@@ -312,7 +347,7 @@ print(metta_desc)
 EOF
 	cd "${parser_path}"
 	echo
-	# NEXT: add option to disable comment boxes
+	# TODO: add option to disable comment boxes
 	python3 "parse_${snk_pb2_name}.py"
 	cd - &> /dev/null
     done
