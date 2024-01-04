@@ -115,6 +115,35 @@ After all that is done, the container can be discarded
 docker rm snet-marketplace-metta-container
 ```
 
+### Only crawl a subset of services
+
+The `gen-snet-marketplace-metta.sh` script accept arguments to
+restrict crawling only a subset of organizations or services.  The
+usage is as follows
+
+```bash
+gen-snet-marketplace-metta.sh [<ORG1>[.<SERVICE1>] ... <ORGn>[.<SERVICEn>]]
+```
+
+If only organization is provided then all its services are crawled.
+If both service and organization is provided then only the provided
+service is crawled.
+
+For instance
+
+```bash
+./gen-snet-marketplace-metta.sh snet
+```
+
+crawls all services of the snet organization, while
+
+```bash
+gen-snet-marketplace-metta.sh snet nunet.binary-classification-service
+```
+
+crawls all services of snet plus the binary-classification-service
+service of nunet.
+
 ## Run Script without Docker
 
 ### Prerequisites
