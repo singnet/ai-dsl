@@ -2,7 +2,7 @@
     "version": 1,
     "display_name": "Abstractive Summarisation",
     "encoding": "proto",
-    "service_type": "http",
+    "service_type": "grpc",
     "model_ipfs_hash": "QmcPeCLjUH9CE363ERu7noLuKRS7zsgTQUfpovKqYcDv8r",
     "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
     "groups": [

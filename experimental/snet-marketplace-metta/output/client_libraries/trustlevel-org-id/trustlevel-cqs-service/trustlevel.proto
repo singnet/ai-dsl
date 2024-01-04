@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package trustlevel;
+
+message Input {
+    string input_string = 1;
+}
+
+message Output {
+    double trust_level = 1;
+}
+
+service ServiceDefinition {
+    rpc determineTrustLevel(Input) returns (Output) {}
+}
+

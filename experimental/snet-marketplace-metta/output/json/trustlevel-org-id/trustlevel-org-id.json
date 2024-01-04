@@ -1,0 +1,30 @@
+{
+    "org_name": "trustlevel-org",
+    "org_id": "trustlevel-org-id",
+    "org_type": "organization",
+    "description": {
+        "description": "Verify online information",
+        "short_description": "Verify online information",
+        "url": "https://www.trustlevel.io/"
+    },
+    "assets": {},
+    "contacts": [],
+    "groups": [
+        {
+            "group_name": "default_groups",
+            "group_id": "UEa+rWu430w2Cv8mg1SwUfdnZEgBvyZvuY4YsYoNcQE=",
+            "payment": {
+                "payment_address": "0x1099cdc225cB70C97E694f1A881526ee23995124",
+                "payment_expiration_threshold": 100,
+                "payment_channel_storage_type": "etcd",
+                "payment_channel_storage_client": {
+                    "connection_timeout": "100s",
+                    "request_timeout": "5s",
+                    "endpoints": [
+                        "http://127.0.0.1:2379"
+                    ]
+                }
+            }
+        }
+    ]
+}
