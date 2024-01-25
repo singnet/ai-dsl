@@ -370,8 +370,8 @@ url_textual_content() {
     # Detect browser to read content of url.  Only chromium and
     # google-chrome are supported because they provide headless
     # javascript rendering (firefox does not support that).
-    if [ -z $(command -v chromium) ]
-    then if [ -z $(command -v google-chrome) ]
+    if [ -z "$(command -v chromium)" ]
+    then if [ -z "$(command -v google-chrome)" ]
          then log "chromium or google-chrome is required"
               exit 1
          else browser=google-chrome
