@@ -68,7 +68,7 @@ log() {
 # outputs all organizations appearing in that list.
 parse_organizations() {
     for s in "$@"; do
-	cut -d'.' -f1 <<< ${s}
+        cut -d'.' -f1 <<< ${s}
     done | sort | uniq
 }
 
@@ -79,9 +79,9 @@ parse_services() {
     local org=$1
     shift
     for s in "$@"; do
-	if [[ $s =~ ^${org}\..* ]]; then
-	    cut -d'.' -f2 <<< ${s}
-	fi
+        if [[ $s =~ ^${org}\..* ]]; then
+            cut -d'.' -f2 <<< ${s}
+        fi
     done | sort | uniq
 }
 
@@ -331,13 +331,13 @@ EOF
     local proto_path="client_libraries/${org}/${service}"
     snet service get-api-registry ${org} ${service} "${proto_path}"
     for proto_filepath in $(ls ${proto_path}/*.proto); do
-	local proto_filename=$(basename ${proto_filepath})
+        local proto_filename=$(basename ${proto_filepath})
 
-	# Parse protobuf to MeTTa
-	local pb2_name=${proto_filename/.proto/_pb2}
-	local snk_pb2_name=${pb2_name//-/_}
-	local parser_path="${proto_path}/python"
-	cat <<EOF > "${parser_path}/parse_${snk_pb2_name}.py"
+        # Parse protobuf to MeTTa
+        local pb2_name=${proto_filename/.proto/_pb2}
+        local snk_pb2_name=${pb2_name//-/_}
+        local parser_path="${proto_path}/python"
+        cat <<EOF > "${parser_path}/parse_${snk_pb2_name}.py"
 import ${snk_pb2_name}
 from protobuf_metta import parser
 
@@ -345,11 +345,11 @@ proto_parser = parser.ProtobufParser(${snk_pb2_name}.DESCRIPTOR, prefix="${org}.
 metta_desc = proto_parser.description_to_metta()
 print(metta_desc)
 EOF
-	cd "${parser_path}"
-	echo
-	# TODO: add option to disable comment boxes
-	python3 "parse_${snk_pb2_name}.py"
-	cd - &> /dev/null
+        cd "${parser_path}"
+        echo
+        # TODO: add option to disable comment boxes
+        python3 "parse_${snk_pb2_name}.py"
+        cd - &> /dev/null
     done
     cd ..
 }
@@ -473,18 +473,18 @@ declare -A ORGS_SERVICES
 if [[ $# -eq 0 ]]; then
     ORGS+=($(snet organization list | tail --lines=+2))
     for org in ${ORGS[@]}; do
-	ORGS_SERVICES[$org]=$(snet organization list-services ${org} | tail --lines=+3 | cut -f2 -d" ")
+        ORGS_SERVICES[$org]=$(snet organization list-services ${org} | tail --lines=+3 | cut -f2 -d" ")
     done
 else
     ORGS=($(parse_organizations $@))
     for org in ${ORGS[@]}; do
-	services=$(parse_services ${org} $@)
-	# If no corresponding service could be parsed, then add them all
-	if [ -z ${services} ]; then
-	    ORGS_SERVICES[$org]=$(snet organization list-services ${org} | tail --lines=+3 | cut -f2 -d" ")
-	else
-	    ORGS_SERVICES[$org]=${services}
-	fi
+        services=$(parse_services ${org} $@)
+        # If no corresponding service could be parsed, then add them all
+        if [ -z "${services}" ]; then
+            ORGS_SERVICES[$org]="$(snet organization list-services ${org} | tail --lines=+3 | cut -f2 -d" ")"
+        else
+            ORGS_SERVICES[$org]="${services}"
+        fi
     done
 fi
 
