@@ -292,7 +292,7 @@ service_to_metta() {
     # Output service data
     cat <<EOF
 
-;; ServiceID definition of ${org}.${service}"
+;; ServiceID definition of ${org}.${service}
 (: ${org}.${service} (ServiceID ${org}))
 
 ;; Service metadata of ${org}.${service}
