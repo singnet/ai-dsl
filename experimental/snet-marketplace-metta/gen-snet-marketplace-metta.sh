@@ -235,7 +235,7 @@ organization_to_metta() {
 
     # Save json metadata of that organization in a file
     local metadata_filepath="${org_path}/${org}.json"
-    snet organization print-metadata ${org} ${org} > "${metadata_filepath}"
+    snet organization print-metadata ${org} > "${metadata_filepath}"
 
     # Output organization data
     cat <<EOF
