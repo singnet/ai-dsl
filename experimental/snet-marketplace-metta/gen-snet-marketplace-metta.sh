@@ -341,7 +341,7 @@ EOF
 import ${snk_pb2_name}
 from protobuf_metta import parser
 
-proto_parser = parser.ProtobufParser(${snk_pb2_name}.DESCRIPTOR, prefix="${org}.${service}")
+proto_parser = parser.ProtobufParser(${snk_pb2_name}.DESCRIPTOR, prefix="${org}.${service}", curried=True)
 metta_desc = proto_parser.description_to_metta()
 print(metta_desc)
 EOF
