@@ -86,7 +86,7 @@ You may then run `gen-snet-marketplace-metta.sh` within a container of
 that image
 
 ```bash
-docker run --name snet-marketplace-metta-container snet-marketplace-metta ./gen-snet-marketplace-metta.sh
+docker run --name snet-marketplace-metta-container snet-marketplace-metta ./launch.sh
 ```
 
 Beware it may take a few minutes.  The script should eventually
@@ -196,6 +196,14 @@ You may need to start the container before you can enter, if so type
 ```bash
 docker start snet-marketplace-metta-container
 ```
+
+Alternatively you may directly create a container from the image and
+enter as follows:
+
+```bash
+docker run -it snet-marketplace-metta bash
+```
+
 #### Remove container
 
 Upon attempting to remove the container, you may get an error like
