@@ -82,8 +82,9 @@ After a few minutes you should have a docker image, called
 `snet-marketplace-metta`, containing `snet` and preconfigured with
 your identity and wallet.
 
-You may then run `gen-snet-marketplace-metta.sh` within a container of
-that image
+You may then run the script within a container of that image via
+`launch.sh` (which sets up the correct python environment and launches
+`gen-snet-marketplace-metta.sh`) as follows
 
 ```bash
 docker run --name snet-marketplace-metta-container snet-marketplace-metta ./launch.sh
@@ -143,6 +144,9 @@ gen-snet-marketplace-metta.sh snet nunet.binary-classification-service
 
 crawls all services of snet plus the binary-classification-service
 service of nunet.
+
+From within a docker container, the script `launch.sh` supports the
+same arguments as `gen-snet-marketplace-metta.sh`.
 
 ## Run Script without Docker
 
