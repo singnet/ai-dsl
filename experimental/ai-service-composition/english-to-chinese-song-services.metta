@@ -317,3 +317,19 @@
 
 ;; Method
 (: mixer.mix (-> mixer.MultiAudio mixer.Audio))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Other type definitions ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Empty string
+(: "" String)
+
+;; English language string
+(: "English" String)
+
+;; Chinese language string
+(: "Chinese" String)
+
+;; Constant float 1.0
+(: 1.0 Float)
