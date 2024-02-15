@@ -126,3 +126,29 @@
 ;; be English singing, and return an audio stream as Bytes, supposed
 ;; to be Chinese singing.
 !(bc &kb (: $prf (-> Bytes Bytes)) (fromNumber 4))
+
+;; Verify that a program expressing turning English song to Chinese is
+;; well typed.
+!(bc &kb (: NEXT (-> Bytes Bytes)) (fromNumber 8))
+
+;; NEXT: translate the following to combinatory logic (or something
+;; else).
+;;
+;; NEXT: think of how to deal with parallelization (ToMidi and
+;; (ToChinese . ToText) can happen in parallel).
+(= (english-song-to-chinese-song $input)
+   (let* (($spleeter-output ((snet.sound-spleeter.MkInput "") $input))
+          ($english-vocals (snet.sound-spleeter.Output.vocals $spleeter-output))
+          ($chinese-lyrics (naint.machine-translation.Output.translation
+                            (naint.machine-translation.translate
+                             (((naint.machine-translation.MkInput "English") "Chinese")
+                              (snet.speech-recognition.Text.text
+                               (snet.speech-recognition.s2t
+                                (snet.speech-recognition.MkAudio $english-vocals)))))))
+          ($midi-notes (tomidi.MIDI.data (tomidi.MkAudio $english-vocals)))
+          ($chinese-vocals (naint.midi2voice-zh.Answer.output_audio
+                            (naint.midi2voice-zh.singingZH
+                             (((naint.midi2voice-zh.MkQuery $chinese-lyrics) $midi-notes) 1.0)))))
+     (mixer.Audio.data
+      (mixer.mix
+       ((mixer.MkMultiAudio (snet.sound-spleeter.Output.accomp $spleeter-output)) $chinese-vocals)))))
