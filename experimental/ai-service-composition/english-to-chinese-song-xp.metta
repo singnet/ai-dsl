@@ -137,7 +137,7 @@
 ;; NEXT: think of how to deal with parallelization (ToMidi and
 ;; (ToChinese . ToText) can happen in parallel).
 (= (english-song-to-chinese-song $input)
-   (let* (($spleeter-output ((snet.sound-spleeter.MkInput "") $input))
+   (let* (($spleeter-output (snet.sound-spleeter.spleeter ((snet.sound-spleeter.MkInput "") $input)))
           ($english-vocals (snet.sound-spleeter.Output.vocals $spleeter-output))
           ($chinese-lyrics (naint.machine-translation.Output.translation
                             (naint.machine-translation.translate
@@ -152,3 +152,43 @@
      (mixer.Audio.data
       (mixer.mix
        ((mixer.MkMultiAudio (snet.sound-spleeter.Output.accomp $spleeter-output)) $chinese-vocals)))))
+
+(= (english-song-to-chinese-song $input)
+   (let $spleeter-output (snet.sound-spleeter.spleeter ((snet.sound-spleeter.MkInput "") $input))
+     (let $english-vocals (snet.sound-spleeter.Output.vocals $spleeter-output)
+       (let $chinese-lyrics (naint.machine-translation.Output.translation
+                             (naint.machine-translation.translate
+                              (((naint.machine-translation.MkInput "English") "Chinese")
+                               (snet.speech-recognition.Text.text
+                                (snet.speech-recognition.s2t
+                                 (snet.speech-recognition.MkAudio $english-vocals))))))
+         (let $midi-notes (tomidi.MIDI.data (tomidi.MkAudio $english-vocals))
+           (let $chinese-vocals (naint.midi2voice-zh.Answer.output_audio
+                                 (naint.midi2voice-zh.singingZH
+                                  (((naint.midi2voice-zh.MkQuery $chinese-lyrics) $midi-notes) 1.0)))
+             (mixer.Audio.data
+              (mixer.mix
+               ((mixer.MkMultiAudio (snet.sound-spleeter.Output.accomp $spleeter-output)) $chinese-vocals)))))))))
+
+(= (english-song-to-chinese-song $input)
+   (((λ $spleeter-output)
+     (((λ $english-vocals)
+       (((λ $chinese-lyrics)
+         (((λ $midi-notes)
+           (((λ $chinese-vocals)
+             (mixer.Audio.data
+              (mixer.mix ((mixer.MkMultiAudio (snet.sound-spleeter.Output.accomp $spleeter-output))
+                          $chinese-vocals))))
+            (naint.midi2voice-zh.Answer.output_audio
+             (naint.midi2voice-zh.singingZH
+              (((naint.midi2voice-zh.MkQuery $chinese-lyrics)
+                $midi-notes)
+               1.0)))))
+          (tomidi.MIDI.data (tomidi.MkAudio $english-vocals))))
+        (naint.machine-translation.Output.translation
+         (naint.machine-translation.translate (((naint.machine-translation.MkInput "English") "Chinese")
+                                               (snet.speech-recognition.Text.text
+                                                (snet.speech-recognition.s2t
+                                                 (snet.speech-recognition.MkAudio $english-vocals))))))))
+      (snet.sound-spleeter.Output.vocals $spleeter-output)))
+    (snet.sound-spleeter.spleeter ((snet.sound-spleeter.MkInput "") $input))))
