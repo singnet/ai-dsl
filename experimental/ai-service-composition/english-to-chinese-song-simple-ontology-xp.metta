@@ -85,35 +85,26 @@
 ;; 3.4. Cov for contravariant.
 
 ;; Subtyping is relexive
-(: STRefl (<: $T $T))
+!(add-atom &kb (: STRefl (<: $T $T)))
 
 ;; Subtyping is transitive
-(: STTrans (->
-            ;; Premises
-            (<: $S $T)
-            (<: $T $U)
-            ;; Conclusion
-            (<: $S $U)))
+!(add-atom &kb (: STTrans (-> (<: $S $T)
+                              (-> (<: $T $U)
+                                  (<: $S $U)))))
 
 ;; Subtyping of function types is contravariant over inputs and
 ;; covariant over outputs.
-(: STConv (->
-           ;; Premises
-           (<: $T1 $S1)
-           (<: $S2 $T2)
-           ;; Conclusion
-           (<: (-> $S1 $S2) (-> $T1 $T2))))
+!(add-atom &kb (: STConv (-> (<: $T1 $S1)
+                             (-> (<: $S2 $T2)
+                                 (<: (-> $S1 $S2) (-> $T1 $T2))))))
 
 ;; Relationship between subtyping and type assume explicit coercion.
 ;; That is if a term `t` is of type `S` a subtype of `T`, then
 ;; `(coerce proof_S<:T t)` is of type `T`, where `proof_S<:T` is a
 ;; proof that `S` is a subtype of `T`.
-(: coerce (->
-           ;; Premises
-           (<: $S $T)
-           $S
-           ;; Conclusion
-           $T))
+!(add-atom &kb (: coerce (-> (<: $S $T)
+                             (-> $S
+                                 $T))))
 
 ;;;;;;;;;;;;;;
 ;; Ontology ;;
@@ -134,7 +125,7 @@
 !(add-atom &kb (: US (<: UniformResourceLocator String)))      ; SUMO
 
 ;; MIDI
-!(add-atom &kb (: MB (<: MIDI Bytes)))
+!(add-atom &kb (: MB (<: MusicalInstrumentDigitalInterface Bytes)))
 
 ;; Audio
 !(add-atom &kb (: AB (<: Audio Bytes)))
@@ -198,7 +189,7 @@
 ;; Define midi2voice-zh.singingZH service method
 !(add-atom &kb (: midi2voice-zh.singingZH
                   (-> Text
-                      (-> MIDI
+                      (-> MusicalInstrumentDigitalInterface
                           Audio))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -271,7 +262,7 @@
 ;;;;;;;;;;;;
 
 ;; Method
-!(add-atom &kb (: tomidi.a2m (-> Audio MIDI)))
+!(add-atom &kb (: tomidi.a2m (-> Audio MusicalInstrumentDigitalInterface)))
 
 ;;;;;;;;;;;
 ;; Mixer ;;
@@ -652,7 +643,9 @@
                   (: (sound-spleeter.Output.accomp
                       (: (S' Z') sound-spleeter.Output)) Audio))
                  (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) Text))
-                     (: (tomidi.a2m (: (S' (S' Z')) Audio)) MIDI)) Audio)))
+                     (: (tomidi.a2m (: (S' (S' Z')) Audio))
+                        MusicalInstrumentDigitalInterface))
+                    Audio)))
               (: (((machine-translation.translate
                     (: "English" NaturalLanguage))
                    (: "Chinese" NaturalLanguage))
