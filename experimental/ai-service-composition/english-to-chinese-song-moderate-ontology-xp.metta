@@ -514,9 +514,9 @@
 ;;           ($chinese-lyrics (((machine-translation.translate "English") "Chinese")
 ;;                             (upload (speech-recognition.s2t $english-vocals)))))
 ;;      ((mixer.mix
-;;        (((coerce $prf1) Audio) (sound-spleeter.Output.accomp $spleeter-output)))
+;;        ((coerce $prf1) (sound-spleeter.Output.accomp $spleeter-output)))
 ;;       ((midi2voice-zh.singingZH $chinese-lyrics)
-;;        (tomidi.a2m (((coerce $prf2) Audio) $english-vocals))))))
+;;        (tomidi.a2m ((coerce $prf2) $english-vocals))))))
 
 ;; The following MeTTa program represents the AI service composition
 ;; for the English to Chinese song translation, but uses let instead
@@ -528,9 +528,9 @@
 ;;        (let $chinese-lyrics (((machine-translation.translate "English") "Chinese")
 ;;                              (upload (speech-recognition.s2t $english-vocals)))
 ;;          ((mixer.mix
-;;            (((coerce $prf1) Audio) (sound-spleeter.Output.accomp $spleeter-output)))
+;;            ((coerce $prf1) (sound-spleeter.Output.accomp $spleeter-output)))
 ;;           ((midi2voice-zh.singingZH $chinese-lyrics)
-;;            (tomidi.a2m (((coerce $prf2) Audio) $english-vocals))))))))
+;;            (tomidi.a2m ((coerce $prf2) $english-vocals))))))))
 
 ;; The following lambda term has been obtained by converting MeTTa to
 ;; lambda-calculus as follow
@@ -541,9 +541,9 @@
 ;;             (LET $chinese-lyrics (((machine-translation.translate "English") "Chinese")
 ;;                                   (upload (speech-recognition.s2t $english-vocals)))
 ;;                  ((mixer.mix
-;;                    (((coerce $prf1) Audio) (sound-spleeter.Output.accomp $spleeter-output)))
+;;                    ((coerce $prf1) (sound-spleeter.Output.accomp $spleeter-output)))
 ;;                   ((midi2voice-zh.singingZH $chinese-lyrics)
-;;                    (tomidi.a2m (((coerce $prf2) Audio) $english-vocals))))))))
+;;                    (tomidi.a2m ((coerce $prf2) $english-vocals))))))))
 ;;
 ;; and wrapping $input into a lambda abstraction using Z' as its
 ;; corresponding De Bruijn index, which gives us
@@ -553,9 +553,9 @@
 ;;      ((λ (S' (S' Z'))
 ;;         ((λ (S' (S' (S' Z')))
 ;;            ((mixer.mix
-;;              (((coerce $prf1) Audio) (sound-spleeter.Output.accomp (S' Z'))))
+;;              ((coerce $prf1) (sound-spleeter.Output.accomp (S' Z'))))
 ;;             ((midi2voice-zh.singingZH (S' (S' (S' Z'))))
-;;              (tomidi.a2m (((coerce $prf2) Audio) (S' (S' Z')))))))
+;;              (tomidi.a2m ((coerce $prf2) (S' (S' Z')))))))
 ;;          (((machine-translation.translate "English") "Chinese")
 ;;           (upload (speech-recognition.s2t (S' (S' Z')))))))
 ;;       (sound-spleeter.Output.vocals (S' Z')))) (sound-spleeter.spleeter Z')))
@@ -569,9 +569,9 @@
 ;;        ((λ (S' (S' Z'))
 ;;           ((λ (S' (S' (S' Z')))
 ;;              ((mixer.mix
-;;                (((coerce $prf1) Audio) (sound-spleeter.Output.accomp (S' Z'))))
+;;                ((coerce $prf1) (sound-spleeter.Output.accomp (S' Z'))))
 ;;               ((midi2voice-zh.singingZH (S' (S' (S' Z'))))
-;;                (tomidi.a2m (((coerce $prf2) Audio) (S' (S' Z')))))))
+;;                (tomidi.a2m ((coerce $prf2) (S' (S' Z')))))))
 ;;            (((machine-translation.translate "English") "Chinese")
 ;;             (upload (speech-recognition.s2t (S' (S' Z')))))))
 ;;         (sound-spleeter.Output.vocals (S' Z')))) (sound-spleeter.spleeter Z'))))
@@ -583,13 +583,12 @@
 ;;      ((λ (S' (S' Z'))
 ;;         ((λ (S' (S' (S' Z')))
 ;;            ((mixer.mix
-;;              (: (((coerce (: $prf1 $t1344236)) (: Audio $t1336090))
+;;              (: ((coerce (: $prf1 $t1344236))
 ;;                  (: (sound-spleeter.Output.accomp (: (S' Z') $t1368977))
 ;;                     $t1324258))
 ;;                 $t1306474))
 ;;             (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
-;;                 (: (tomidi.a2m (: (((coerce (: $prf2 $t1499053))
-;;                                     (: Audio $t1490907))
+;;                 (: (tomidi.a2m (: ((coerce (: $prf2 $t1499053))
 ;;                                    (: (S' (S' Z'))
 ;;                                       $t1478911))
 ;;                                   $t1460881))
