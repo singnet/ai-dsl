@@ -387,7 +387,7 @@
 ;; the premise.  Having annotated proof is however a good thing, to
 ;; display a proof tree and to have an indepth view into the proof.
 ;; In order to remove (resp. add) type annotation one can use
-;; remove-type (resp. add-type).
+;; remove-type-annotation (resp. add-type-annotation).
 (: bc (-> $a                            ; Knowledge base space
           $b                            ; Environment
           DeBruijn                      ; De Bruijn Index
@@ -414,7 +414,7 @@
            (bc $kb $env $idx $k (: $prfarg $prms))))
      (: ($prfabs (: $prfarg $prms)) $thrm)))
 ;; Proof abstraction
-(= (bc $kb $env $idx (S $k) (: (λ $idx $prfbdy) (-> (: $prfarg $prms) $thrm))) ; NEXT
+(= (bc $kb $env $idx (S $k) (: (λ $idx $prfbdy) (-> (: $prfarg $prms) $thrm)))
    (let (: $prfbdy $thrm)
      (bc $kb (Cons (: $idx $prms) $env) (S' $idx) $k (: $prfbdy $thrm))
      (: (λ $idx $prfbdy) (-> (: $prfarg $prms) $thrm))))
@@ -427,13 +427,13 @@
 ;;
 ;; For instance
 ;;
-;; (remove-type (: ((ModusPonens (: ab (→ A B))) (: a A)) B))
+;; (remove-type-annotation (: ((ModusPonens (: ab (→ A B))) (: a A)) B))
 ;;
 ;; outputs
 ;;
 ;; ((ModusPonens ab) a)
-(: remove-type (-> $a $a))
-(= (remove-type $term)
+(: remove-type-annotation (-> $a $a))
+(= (remove-type-annotation $term)
    (case (get-metatype $term)
      ((Symbol $term)
       (Grounded $term)
@@ -443,11 +443,13 @@
                     ;; for now the bc is not supposed to generate
                     ;; n-ary expression where n is greater 3.
                     ((() ())
-                     (($x) ((remove-type $x)))
-                     (($x $y) ((remove-type $x) (remove-type $y)))
+                     (($x) ((remove-type-annotation $x)))
+                     (($x $y) ((remove-type-annotation $x) (remove-type-annotation $y)))
                      (($x $y $z) (if (== $x :)
-                                     (remove-type $y)
-                                     ((remove-type $x) (remove-type $y) (remove-type $z))))
+                                     (remove-type-annotation $y)
+                                     ((remove-type-annotation $x)
+                                      (remove-type-annotation $y)
+                                      (remove-type-annotation $z))))
                      ($_ $_)))))))
 
 ;; Add type missing annotation to be compatible with bc query format.
@@ -457,7 +459,7 @@
 ;;
 ;; For instance
 ;;
-;; (add-type ((ModusPonens ab) a))
+;; (add-type-annotation ((ModusPonens ab) a))
 ;;
 ;; only outputs
 ;;
@@ -467,12 +469,12 @@
 ;;
 ;; (: ((ModusPonens (: ab $t#1)) (: a $t#2)) $t#3)
 ;;
-;; That is because add-type can only detect application, that is a
+;; That is because add-type-annotation can only detect application, that is a
 ;; term of the form (<ABS> <ARG>) to add the type annotation to <ARG>.
 ;;
 ;; NEXT: must keep track of the existing type to remain consistant.
-(: add-type (-> $a $a))
-(= (add-type $term)
+(: add-type-annotation (-> $a $a))
+(= (add-type-annotation $term)
    (case (get-metatype $term)
      ((Symbol $term)
       (Grounded $term)
@@ -484,13 +486,13 @@
                                   ;; Treat De Bruijn index atomically
                                   $term
                                   ;; Add type annotation to argument of application
-                                  (let $νx (add-type $x) ($νx (: (add-type $y) $t)))))
+                                  (let $νx (add-type-annotation $x) ($νx (: (add-type-annotation $y) $t)))))
                      (($x $y $z) (if (== $x :)
                                      ;; Already a type annotation, recurse only on $y
-                                     (: (add-type $y) $z)
+                                     (: (add-type-annotation $y) $z)
                                      (if (== $x λ)
                                          ;; Recurse only on body of lambda abstraction
-                                         (λ $y (add-type $z))
+                                         (λ $y (add-type-annotation $z))
                                          $term)))
                      ($_ $_)))))))
 
@@ -588,9 +590,9 @@
 ;;       (sound-spleeter.Output.vocals (S' Z')))) (sound-spleeter.spleeter Z')))
 
 ;; The we add type annotations, as it required by the backward
-;; chainer, by calling add-type as follows
+;; chainer, by calling add-type-annotation as follows
 ;;
-;; !(add-type
+;; !(add-type-annotation
 ;;   (λ Z'
 ;;     ((λ (S' Z')
 ;;        ((λ (S' (S' Z'))
@@ -806,21 +808,16 @@
 ;;       (: "你好世界!" (TextIn "Chinese")))
 ;;      Audio))
 
-;; NEXT
-
 ;; ;; Type check part of the English to Chinese singing AI service
 ;; ;; composition
-;; ;; !(assertEqual
-;;   !(bc &kb
+;; !(assertEqual
+;;   (bc &kb
 ;;       (Cons (: (S' Z') $t1368977)
 ;;             (Cons (: (S' (S' Z')) $t1478911)
-;;                   (Cons (: "你好世界!" (TextIn "Chinese"))
-;;                         (Cons (: foo (-> (: $x (TextIn "Chinese")) Audio))
-;;                               Nil))))
+;;                   Nil))
 ;;       (S' (S' (S' Z')))
-;;       (fromNumber 10)
-;;       (: ;;(
-;;           (λ (S' (S' (S' Z')))
+;;       (fromNumber 8)
+;;       (: ((λ (S' (S' (S' Z')))
 ;;             ((mixer.mix
 ;;               (: ((coerce (: IA (<: Instrumental Audio)))
 ;;                   (: (sound-spleeter.Output.accomp (: (S' Z') $t1368977))
@@ -836,49 +833,51 @@
 ;;                         $t1405639))
 ;;                     $t1278338))
 ;;                 $t13579)))
-;;           ;; foo
-;;           ;; (: "你好世界!" (TextIn "Chinese")))
-;;           ;; (: (((machine-translation.translate
-;;           ;;       (: "English" $t1632159))
-;;           ;;      (: "Chinese" $t1623369))
-;;           ;;     (: (upload (: (speech-recognition.s2t
-;;           ;;                    (: ((coerce (: VA (<: Vocals Audio)))
-;;           ;;                        (: (S' (S' Z')) $t1478911))
-;;           ;;                       $t1234567))
-;;           ;;                   $t1658822))
-;;           ;;        $t1608997))
-;;           ;;    $t1174780))
+;;           (: (((machine-translation.translate
+;;                 (: "English" $t1632159))
+;;                (: "Chinese" $t1623369))
+;;               (: (upload (: (speech-recognition.s2t
+;;                              (: ((coerce (: VA (<: Vocals Audio)))
+;;                                  (: (S' (S' Z')) $t1478911))
+;;                                 $t1234567))
+;;                             $t1658822))
+;;                  $t1608997))
+;;              $t1174780))
 ;;          $thrm))
-;;   ;; (: ((λ (S' (S' (S' Z')))
-;;   ;;       ((mixer.mix
-;;   ;;         (: ((coerce (: IA (<: Instrumental Audio)))
-;;   ;;             (: (sound-spleeter.Output.accomp (: (S' Z') sound-spleeter.Output))
-;;   ;;                Instrumental))
-;;   ;;            Audio))
-;;   ;;        (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) Text))
-;;   ;;            (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
-;;   ;;                               (: (S' (S' Z')) Vocals))
-;;   ;;                              Audio))
-;;   ;;               MusicalInstrumentDigitalInterface))
-;;   ;;           Audio)))
-;;   ;;     (: (((machine-translation.translate
-;;   ;;           (: "English" NaturalLanguage))
-;;   ;;          (: "Chinese" NaturalLanguage))
-;;   ;;         (: (upload (: (speech-recognition.s2t
-;;   ;;                        (: ((coerce (: VA (<: Vocals Audio)))
-;;   ;;                            (: (S' (S' Z')) Vocals))
-;;   ;;                           Audio))
-;;   ;;                       Text))
-;;   ;;            UniformResourceLocator))
-;;   ;;        Text))
-;;   ;;    Audio))
+;;   (: ((λ (S' (S' (S' Z')))
+;;         ((mixer.mix
+;;           (: ((coerce (: IA (<: Instrumental Audio)))
+;;               (: (sound-spleeter.Output.accomp (: (S' Z') sound-spleeter.Output))
+;;                  Instrumental))
+;;              Audio))
+;;          (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn "Chinese") Vocals)))
+;;                          (: VA (<: Vocals Audio)))
+;;                         (<: (VocalsIn "Chinese") Audio)))
+;;              (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
+;;                  (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
+;;                                     (: (S' (S' Z')) Vocals))
+;;                                    Audio))
+;;                     MusicalInstrumentDigitalInterface))
+;;                 (VocalsIn "Chinese")))
+;;             Audio)))
+;;       (: (((machine-translation.translate
+;;             (: "English" NaturalLanguage))
+;;            (: "Chinese" NaturalLanguage))
+;;           (: (upload (: (speech-recognition.s2t
+;;                          (: ((coerce (: VA (<: Vocals Audio)))
+;;                              (: (S' (S' Z')) Vocals))
+;;                             Audio))
+;;                         (TextIn "English")))
+;;              (UniformResourceLocatorOfType (TextIn "English"))))
+;;          (TextIn "Chinese")))
+;;      Audio))
 
 ;; ;; Type check part of the English to Chinese singing AI service composition
 ;; !(assertEqual
 ;;   (bc &kb
 ;;       (Cons (: (S' Z') $t1368977) Nil)
 ;;       (S' (S' Z'))
-;;       (fromNumber 9)
+;;       (fromNumber 10)
 ;;       (: ((λ (S' (S' Z'))
 ;;             ((λ (S' (S' (S' Z')))
 ;;                ((mixer.mix
@@ -886,12 +885,16 @@
 ;;                      (: (sound-spleeter.Output.accomp (: (S' Z') $t1368977))
 ;;                         $t1324258))
 ;;                     $t1306474))
-;;                 (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
-;;                     (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
-;;                                        (: (S' (S' Z')) $t1478911))
-;;                                       $t1460881))
-;;                        $t1405639))
-;;                    $t1278338)))
+;;                 (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn "Chinese") Vocals)))
+;;                                 (: VA (<: Vocals Audio)))
+;;                                (<: (VocalsIn $t) Audio)))
+;;                     (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
+;;                         (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
+;;                                            (: (S' (S' Z')) $t1478911))
+;;                                           $t1460881))
+;;                            $t1405639))
+;;                        $t1278338))
+;;                    $t13579)))
 ;;              (: (((machine-translation.translate
 ;;                    (: "English" $t1632159))
 ;;                   (: "Chinese" $t1623369))
@@ -911,106 +914,269 @@
 ;;            ((mixer.mix
 ;;              (: ((coerce (: IA (<: Instrumental Audio)))
 ;;                  (: (sound-spleeter.Output.accomp
-;;                      (: (S' Z') sound-spleeter.Output))
-;;                     Instrumental))
-;;                 Audio))
-;;             (: ((midi2voice-zh.singingZH
-;;                  (: (S' (S' (S' Z'))) Text))
-;;                 (: (tomidi.a2m
-;;                     (: ((coerce (: VA (<: Vocals Audio)))
-;;                         (: (S' (S' Z')) Vocals)) Audio))
-;;                    MusicalInstrumentDigitalInterface))
-;;                Audio)))
+;;                      (: (S' Z') sound-spleeter.Output)) Instrumental)) Audio))
+;;             (: ((coerce (: ((STTrans
+;;                              (: VIV (<: (VocalsIn "Chinese") Vocals)))
+;;                             (: VA (<: Vocals Audio)))
+;;                            (<: (VocalsIn "Chinese") Audio)))
+;;                 (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
+;;                     (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
+;;                                        (: (S' (S' Z')) Vocals)) Audio))
+;;                        MusicalInstrumentDigitalInterface))
+;;                    (VocalsIn "Chinese"))) Audio)))
 ;;          (: (((machine-translation.translate
 ;;                (: "English" NaturalLanguage))
 ;;               (: "Chinese" NaturalLanguage))
-;;              (: (upload
-;;                  (: (speech-recognition.s2t
-;;                      (: ((coerce (: VA (<: Vocals Audio)))
-;;                          (: (S' (S' Z')) Vocals))
-;;                         Audio))
-;;                     Text))
-;;                 UniformResourceLocator))
-;;             Text)))
+;;              (: (upload (: (speech-recognition.s2t
+;;                             (: ((coerce (: VA (<: Vocals Audio)))
+;;                                 (: (S' (S' Z')) Vocals)) Audio))
+;;                            (TextIn "English")))
+;;                 (UniformResourceLocatorOfType (TextIn "English"))))
+;;             (TextIn "Chinese"))))
 ;;       (: (sound-spleeter.Output.vocals
-;;           (: (S' Z') sound-spleeter.Output)) Vocals))
+;;           (: (S' Z') sound-spleeter.Output))
+;;          Vocals))
 ;;      Audio))
 
 ;; ;; ;; Type check the totality of the English to Chinese singing AI service composition
 ;; ;; ;; Disabled because it takes an hour
-;; ;; !(assertEqual
-;; ;;   (bc &kb Nil Z' (fromNumber 12)
-;; ;;       (: (λ Z'
-;; ;;            ((λ (S' Z')
-;; ;;               ((λ (S' (S' Z'))
-;; ;;                  ((λ (S' (S' (S' Z')))
-;; ;;                     ((mixer.mix
-;; ;;                       (: ((coerce (: IA (<: Instrumental Audio)))
-;; ;;                           (: (sound-spleeter.Output.accomp (: (S' Z') $t1368977))
-;; ;;                              $t1324258))
-;; ;;                          $t1306474))
-;; ;;                      (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
-;; ;;                          (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
-;; ;;                                             (: (S' (S' Z')) $t1478911))
-;; ;;                                            $t1460881))
-;; ;;                             $t1405639))
-;; ;;                         $t1278338)))
-;; ;;                   (: (((machine-translation.translate
-;; ;;                         (: "English" $t1632159))
-;; ;;                        (: "Chinese" $t1623369))
-;; ;;                       (: (upload (: (speech-recognition.s2t
-;; ;;                                      (: ((coerce (: VA (<: Vocals Audio)))
-;; ;;                                          (: (S' (S' Z')) $t1478911))
-;; ;;                                         $t1234567))
-;; ;;                                     $t1658822))
-;; ;;                          $t1608997))
-;; ;;                      $t1174780)))
-;; ;;                (: (sound-spleeter.Output.vocals
-;; ;;                    (: (S' Z') $t1368977))
-;; ;;                   $t980175)))
-;; ;;             (: (sound-spleeter.spleeter (: Z' $t3200004)) $t527299)))
-;; ;;          (-> Audio Audio)))
-;; ;;   (: (λ Z'
-;; ;;        ((λ (S' Z')
-;; ;;           ((λ (S' (S' Z'))
-;; ;;              ((λ (S' (S' (S' Z')))
-;; ;;                 ((mixer.mix
-;; ;;                   (: ((coerce (: IA (<: Instrumental Audio)))
-;; ;;                       (: (sound-spleeter.Output.accomp
-;; ;;                           (: (S' Z') sound-spleeter.Output))
-;; ;;                          Instrumental))
-;; ;;                      Audio))
-;; ;;                  (: ((midi2voice-zh.singingZH
-;; ;;                       (: (S' (S' (S' Z'))) Text))
-;; ;;                      (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
-;; ;;                                         (: (S' (S' Z')) Vocals))
-;; ;;                                        Audio))
-;; ;;                         MusicalInstrumentDigitalInterface))
-;; ;;                     Audio)))
-;; ;;               (: (((machine-translation.translate
-;; ;;                     (: "English" NaturalLanguage))
-;; ;;                    (: "Chinese" NaturalLanguage))
-;; ;;                   (: (upload (: (speech-recognition.s2t
-;; ;;                                  (: ((coerce (: VA (<: Vocals Audio)))
-;; ;;                                      (: (S' (S' Z')) Vocals))
-;; ;;                                     Audio))
-;; ;;                                 Text))
-;; ;;                      UniformResourceLocator))
-;; ;;                  Text)))
-;; ;;            (: (sound-spleeter.Output.vocals
-;; ;;                (: (S' Z') sound-spleeter.Output))
-;; ;;               Vocals)))
-;; ;;         (: (sound-spleeter.spleeter (: Z' Audio)) sound-spleeter.Output)))
-;; ;;      (-> Audio Audio)))
+;; !(assertEqual
+;;   (bc &kb Nil (S' Z') (fromNumber 11)
+;;       (: (λ (S' Z')
+;;            ((λ (S' (S' Z'))
+;;               ((λ (S' (S' (S' Z')))
+;;                  ((mixer.mix
+;;                    (: ((coerce (: IA (<: Instrumental Audio)))
+;;                        (: (sound-spleeter.Output.accomp (: (S' Z') $t1368977))
+;;                           $t1324258))
+;;                       $t1306474))
+;;                   (: ((coerce (: ((STTrans
+;;                                    (: VIV (<: (VocalsIn "Chinese") Vocals)))
+;;                                   (: VA (<: Vocals Audio)))
+;;                                  (<: (VocalsIn $t) Audio)))
+;;                       (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
+;;                           (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
+;;                                              (: (S' (S' Z')) $t1478911))
+;;                                             $t1460881))
+;;                              $t1405639))
+;;                          $t1278338))
+;;                      $t13579)))
+;;                (: (((machine-translation.translate
+;;                      (: "English" $t1632159))
+;;                     (: "Chinese" $t1623369))
+;;                    (: (upload (: (speech-recognition.s2t
+;;                                   (: ((coerce (: VA (<: Vocals Audio)))
+;;                                       (: (S' (S' Z')) $t1478911))
+;;                                      $t1234567))
+;;                                  $t1658822))
+;;                          $t1608997))
+;;                   $t1174780)))
+;;             (: (sound-spleeter.Output.vocals
+;;                 (: (S' Z') $t1368977))
+;;                $t980175)))
+;;          $thrm))
+;;   (: (λ (S' Z')
+;;        ((λ (S' (S' Z'))
+;;           ((λ (S' (S' (S' Z')))
+;;              ((mixer.mix
+;;                (: ((coerce (: IA (<: Instrumental Audio)))
+;;                    (: (sound-spleeter.Output.accomp (: (S' Z') sound-spleeter.Output))
+;;                       Instrumental))
+;;                   Audio))
+;;               (: ((coerce (: ((STTrans
+;;                                (: VIV (<: (VocalsIn "Chinese") Vocals)))
+;;                               (: VA (<: Vocals Audio)))
+;;                              (<: (VocalsIn "Chinese") Audio)))
+;;                   (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
+;;                       (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
+;;                                          (: (S' (S' Z')) Vocals)) Audio))
+;;                          MusicalInstrumentDigitalInterface))
+;;                      (VocalsIn "Chinese"))) Audio)))
+;;            (: (((machine-translation.translate
+;;                  (: "English" NaturalLanguage))
+;;                 (: "Chinese" NaturalLanguage))
+;;                (: (upload (: (speech-recognition.s2t
+;;                               (: ((coerce (: VA (<: Vocals Audio)))
+;;                                   (: (S' (S' Z')) Vocals)) Audio))
+;;                              (TextIn "English")))
+;;                   (UniformResourceLocatorOfType (TextIn "English"))))
+;;               (TextIn "Chinese"))))
+;;         (: (sound-spleeter.Output.vocals (: (S' Z') sound-spleeter.Output)) Vocals)))
+;;      (-> (: $prfarg#1431547 sound-spleeter.Output) Audio)))
 
-;; (-> (SongIn "English") (ConstrainedType (SongIn "Chinese") P))
+;; ;; Type check the totality of the English to Chinese singing AI service composition
+;; ;; Disabled because it takes an hour
+;; !(assertEqual
+;;   (bc &kb (Cons (: Z' $t3200004) Nil) (S' Z') (fromNumber 12)
+;;       (: ((λ (S' Z')
+;;             ((λ (S' (S' Z'))
+;;                ((λ (S' (S' (S' Z')))
+;;                   ((mixer.mix
+;;                     (: ((coerce (: IA (<: Instrumental Audio)))
+;;                         (: (sound-spleeter.Output.accomp (: (S' Z') $t1368977))
+;;                            $t1324258))
+;;                        $t1306474))
+;;                    (: ((coerce (: ((STTrans
+;;                                     (: VIV (<: (VocalsIn "Chinese") Vocals)))
+;;                                    (: VA (<: Vocals Audio)))
+;;                                   (<: (VocalsIn $t) Audio)))
+;;                        (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
+;;                            (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
+;;                                               (: (S' (S' Z')) $t1478911))
+;;                                              $t1460881))
+;;                               $t1405639))
+;;                           $t1278338))
+;;                       $t13579)))
+;;                 (: (((machine-translation.translate
+;;                       (: "English" $t1632159))
+;;                      (: "Chinese" $t1623369))
+;;                     (: (upload (: (speech-recognition.s2t
+;;                                    (: ((coerce (: VA (<: Vocals Audio)))
+;;                                        (: (S' (S' Z')) $t1478911))
+;;                                       $t1234567))
+;;                                   $t1658822))
+;;                        $t1608997))
+;;                    $t1174780)))
+;;              (: (sound-spleeter.Output.vocals
+;;                  (: (S' Z') $t1368977))
+;;                 $t980175)))
+;;           (: (sound-spleeter.spleeter (: Z' $t3200004)) $t527299))
+;;          $thrm))
+;;   (: ((λ (S' Z')
+;;         ((λ (S' (S' Z'))
+;;            ((λ (S' (S' (S' Z')))
+;;               ((mixer.mix
+;;                 (: ((coerce (: IA (<: Instrumental Audio)))
+;;                     (: (sound-spleeter.Output.accomp (: (S' Z') sound-spleeter.Output))
+;;                        Instrumental))
+;;                    Audio))
+;;                (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn "Chinese") Vocals)))
+;;                                (: VA (<: Vocals Audio))) (<: (VocalsIn "Chinese") Audio)))
+;;                    (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
+;;                        (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
+;;                                           (: (S' (S' Z')) Vocals)) Audio))
+;;                           MusicalInstrumentDigitalInterface))
+;;                       (VocalsIn "Chinese")))
+;;                   Audio)))
+;;             (: (((machine-translation.translate
+;;                   (: "English" NaturalLanguage))
+;;                  (: "Chinese" NaturalLanguage))
+;;                 (: (upload (: (speech-recognition.s2t
+;;                                (: ((coerce (: VA (<: Vocals Audio)))
+;;                                    (: (S' (S' Z')) Vocals)) Audio))
+;;                               (TextIn "English")))
+;;                    (UniformResourceLocatorOfType (TextIn "English"))))
+;;                (TextIn "Chinese"))))
+;;          (: (sound-spleeter.Output.vocals
+;;              (: (S' Z') sound-spleeter.Output)) Vocals)))
+;;       (: (sound-spleeter.spleeter (: Z' Audio)) sound-spleeter.Output))
+;;      Audio))
 
-;; (<: (SongIn "English") Audio)
-;; (<: (ConstrainedType (SongIn "Chinese") P) Audio)
+;; ;; Type check the totality of the English to Chinese singing AI service composition
+;; ;; Disabled because it takes an hour
+;; !(assertEqual
+;;   (bc &kb Nil Z' (fromNumber 13)
+;;       (: (λ Z'
+;;            ((λ (S' Z')
+;;               ((λ (S' (S' Z'))
+;;                  ((λ (S' (S' (S' Z')))
+;;                     ((mixer.mix
+;;                       (: ((coerce (: IA (<: Instrumental Audio)))
+;;                           (: (sound-spleeter.Output.accomp (: (S' Z') $t1368977))
+;;                              $t1324258))
+;;                          $t1306474))
+;;                      (: ((coerce (: ((STTrans
+;;                                       (: VIV (<: (VocalsIn "Chinese") Vocals)))
+;;                                      (: VA (<: Vocals Audio)))
+;;                                     (<: (VocalsIn $t) Audio)))
+;;                          (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
+;;                              (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
+;;                                                 (: (S' (S' Z')) $t1478911))
+;;                                                $t1460881))
+;;                                 $t1405639))
+;;                             $t1278338))
+;;                         $t13579)))
+;;                   (: (((machine-translation.translate
+;;                         (: "English" $t1632159))
+;;                        (: "Chinese" $t1623369))
+;;                       (: (upload (: (speech-recognition.s2t
+;;                                      (: ((coerce (: VA (<: Vocals Audio)))
+;;                                          (: (S' (S' Z')) $t1478911))
+;;                                         $t1234567))
+;;                                     $t1658822))
+;;                          $t1608997))
+;;                      $t1174780)))
+;;                (: (sound-spleeter.Output.vocals
+;;                    (: (S' Z') $t1368977))
+;;                   $t980175)))
+;;             (: (sound-spleeter.spleeter (: Z' $t3200004)) $t527299)))
+;;          $thrm))
+;;   (: (λ Z'
+;;        ((λ (S' Z')
+;;           ((λ (S' (S' Z'))
+;;              ((λ (S' (S' (S' Z')))
+;;                 ((mixer.mix
+;;                   (: ((coerce (: IA (<: Instrumental Audio)))
+;;                       (: (sound-spleeter.Output.accomp
+;;                           (: (S' Z') sound-spleeter.Output))
+;;                          Instrumental))
+;;                      Audio))
+;;                  (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn "Chinese") Vocals)))
+;;                                  (: VA (<: Vocals Audio)))
+;;                                 (<: (VocalsIn "Chinese") Audio)))
+;;                      (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
+;;                          (: (tomidi.a2m
+;;                              (: ((coerce (: VA (<: Vocals Audio))) (: (S' (S' Z')) Vocals)) Audio))
+;;                             MusicalInstrumentDigitalInterface))
+;;                         (VocalsIn "Chinese")))
+;;                     Audio)))
+;;               (: (((machine-translation.translate
+;;                     (: "English" NaturalLanguage))
+;;                    (: "Chinese" NaturalLanguage))
+;;                   (: (upload (: (speech-recognition.s2t
+;;                                  (: ((coerce (: VA (<: Vocals Audio)))
+;;                                      (: (S' (S' Z')) Vocals)) Audio))
+;;                                 (TextIn "English")))
+;;                      (UniformResourceLocatorOfType (TextIn "English"))))
+;;                  (TextIn "Chinese"))))
+;;            (: (sound-spleeter.Output.vocals (: (S' Z') sound-spleeter.Output)) Vocals)))
+;;         (: (sound-spleeter.spleeter (: Z' Audio)) sound-spleeter.Output)))
+;;      (-> (: $prfarg#13364988 Audio) Audio)))
 
-;; (: mixer (-> Audio Audio Audio))
+;; NEXT: understand what went wrong with remove-type-annotation (see output below)
+;;
+;; (λ Z' ((λ (S' Z') ((λ (S' (S' Z')) ((λ (S' (S' (S' Z'))) (Error ((remove-type-annotation (midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))) (remove-type-annotation (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio))) (: (S' (S' Z')) Vocals)) Audio)) MusicalInstrumentDigitalInterface))) IncorrectNumberOfArguments)) ((Error (remove-type-annotation "Chinese") BadType) (upload (speech-recognition.s2t ((coerce VA) (S' (S' Z')))))))) (sound-spleeter.Output.vocals (S' Z')))) (sound-spleeter.spleeter Z')))
 
-;; (<: 
+!(remove-type-annotation
+  (: (λ Z'
+       ((λ (S' Z')
+          ((λ (S' (S' Z'))
+             ((λ (S' (S' (S' Z')))
+                ((mixer.mix
+                  (: ((coerce (: IA (<: Instrumental Audio)))
+                      (: (sound-spleeter.Output.accomp
+                          (: (S' Z') sound-spleeter.Output))
+                         Instrumental))
+                     Audio))
+                 (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn "Chinese") Vocals)))
+                                 (: VA (<: Vocals Audio)))
+                                (<: (VocalsIn "Chinese") Audio)))
+                     (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
+                         (: (tomidi.a2m
+                             (: ((coerce (: VA (<: Vocals Audio))) (: (S' (S' Z')) Vocals)) Audio))
+                            MusicalInstrumentDigitalInterface))
+                        (VocalsIn "Chinese")))
+                    Audio)))
+              (: (((machine-translation.translate
+                    (: "English" NaturalLanguage))
+                   (: "Chinese" NaturalLanguage))
+                  (: (upload (: (speech-recognition.s2t
+                                 (: ((coerce (: VA (<: Vocals Audio)))
+                                     (: (S' (S' Z')) Vocals)) Audio))
+                                (TextIn "English")))
+                     (UniformResourceLocatorOfType (TextIn "English"))))
+                 (TextIn "Chinese"))))
+           (: (sound-spleeter.Output.vocals (: (S' Z') sound-spleeter.Output)) Vocals)))
+        (: (sound-spleeter.spleeter (: Z' Audio)) sound-spleeter.Output)))
+     (-> (: $prfarg13364988 Audio) Audio)))
 
-;;  (: Mixer $inst $vocals)  ->  (SongIn "Chinese")
- 
