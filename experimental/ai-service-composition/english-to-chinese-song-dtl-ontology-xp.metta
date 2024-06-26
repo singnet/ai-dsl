@@ -432,7 +432,9 @@
 ;; outputs
 ;;
 ;; ((ModusPonens ab) a)
-(: remove-type-annotation (-> $a $a))
+
+;; TODO: disable type signature to not interfer with build-in type checking
+;; (: remove-type-annotation (-> $a $a))
 (= (remove-type-annotation $term)
    (case (get-metatype $term)
      ((Symbol $term)
@@ -1143,40 +1145,53 @@
 ;;         (: (sound-spleeter.spleeter (: Z' Audio)) sound-spleeter.Output)))
 ;;      (-> (: $prfarg#13364988 Audio) Audio)))
 
-;; NEXT: understand what went wrong with remove-type-annotation (see output below)
-;;
-;; (λ Z' ((λ (S' Z') ((λ (S' (S' Z')) ((λ (S' (S' (S' Z'))) (Error ((remove-type-annotation (midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))) (remove-type-annotation (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio))) (: (S' (S' Z')) Vocals)) Audio)) MusicalInstrumentDigitalInterface))) IncorrectNumberOfArguments)) ((Error (remove-type-annotation "Chinese") BadType) (upload (speech-recognition.s2t ((coerce VA) (S' (S' Z')))))))) (sound-spleeter.Output.vocals (S' Z')))) (sound-spleeter.spleeter Z')))
-
-!(remove-type-annotation
-  (: (λ Z'
-       ((λ (S' Z')
-          ((λ (S' (S' Z'))
-             ((λ (S' (S' (S' Z')))
-                ((mixer.mix
-                  (: ((coerce (: IA (<: Instrumental Audio)))
-                      (: (sound-spleeter.Output.accomp
-                          (: (S' Z') sound-spleeter.Output))
-                         Instrumental))
-                     Audio))
-                 (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn "Chinese") Vocals)))
-                                 (: VA (<: Vocals Audio)))
-                                (<: (VocalsIn "Chinese") Audio)))
-                     (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
-                         (: (tomidi.a2m
-                             (: ((coerce (: VA (<: Vocals Audio))) (: (S' (S' Z')) Vocals)) Audio))
-                            MusicalInstrumentDigitalInterface))
-                        (VocalsIn "Chinese")))
-                    Audio)))
-              (: (((machine-translation.translate
-                    (: "English" NaturalLanguage))
-                   (: "Chinese" NaturalLanguage))
-                  (: (upload (: (speech-recognition.s2t
-                                 (: ((coerce (: VA (<: Vocals Audio)))
-                                     (: (S' (S' Z')) Vocals)) Audio))
-                                (TextIn "English")))
-                     (UniformResourceLocatorOfType (TextIn "English"))))
-                 (TextIn "Chinese"))))
-           (: (sound-spleeter.Output.vocals (: (S' Z') sound-spleeter.Output)) Vocals)))
-        (: (sound-spleeter.spleeter (: Z' Audio)) sound-spleeter.Output)))
-     (-> (: $prfarg13364988 Audio) Audio)))
-
+;; Test remove-type-annotation of the full English song to Chinese
+;; song AI service composition
+!(assertEqual
+  (remove-type-annotation
+   (: (λ Z'
+        ((λ (S' Z')
+           ((λ (S' (S' Z'))
+              ((λ (S' (S' (S' Z')))
+                 ((mixer.mix
+                   (: ((coerce (: IA (<: Instrumental Audio)))
+                       (: (sound-spleeter.Output.accomp
+                           (: (S' Z') sound-spleeter.Output))
+                          Instrumental))
+                      Audio))
+                  (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn "Chinese") Vocals)))
+                                  (: VA (<: Vocals Audio)))
+                                 (<: (VocalsIn "Chinese") Audio)))
+                      (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
+                          (: (tomidi.a2m
+                              (: ((coerce (: VA (<: Vocals Audio))) (: (S' (S' Z')) Vocals)) Audio))
+                             MusicalInstrumentDigitalInterface))
+                         (VocalsIn "Chinese")))
+                     Audio)))
+               (: (((machine-translation.translate
+                     (: "English" NaturalLanguage))
+                    (: "Chinese" NaturalLanguage))
+                   (: (upload (: (speech-recognition.s2t
+                                  (: ((coerce (: VA (<: Vocals Audio)))
+                                      (: (S' (S' Z')) Vocals)) Audio))
+                                 (TextIn "English")))
+                      (UniformResourceLocatorOfType (TextIn "English"))))
+                  (TextIn "Chinese"))))
+            (: (sound-spleeter.Output.vocals (: (S' Z') sound-spleeter.Output)) Vocals)))
+         (: (sound-spleeter.spleeter (: Z' Audio)) sound-spleeter.Output)))
+      (-> (: $prfarg13364988 Audio) Audio)))
+  (λ Z'
+    ((λ (S' Z')
+       ((λ (S' (S' Z'))
+          ((λ (S' (S' (S' Z')))
+             ((mixer.mix
+               ((coerce IA)
+                (sound-spleeter.Output.accomp (S' Z'))))
+              ((coerce ((STTrans VIV) VA))
+               ((midi2voice-zh.singingZH (S' (S' (S' Z'))))
+                (tomidi.a2m ((coerce VA) (S' (S' Z'))))))))
+           (((machine-translation.translate "English") "Chinese")
+            (upload (speech-recognition.s2t
+                     ((coerce VA) (S' (S' Z'))))))))
+        (sound-spleeter.Output.vocals (S' Z'))))
+     (sound-spleeter.spleeter Z'))))
