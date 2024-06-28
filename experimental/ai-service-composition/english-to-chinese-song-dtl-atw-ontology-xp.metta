@@ -308,6 +308,11 @@
                                 (-> (: $voc (VocalsIn $l))
                                     (SongIn $l)))))
 
+;; Acrobatic attempt to specify a property about mixing without
+;; overloading the type signature of the mixer
+;;
+;; (: $mixer Mixer) -> ($mixer (c1 $x) (c2 $y)) and (: $x (VocalsIn $l)) (: $y Instrumental) -> $z === mix ...) -> (: $z (SongIn $l))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Other type definitions ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
