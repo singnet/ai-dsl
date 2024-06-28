@@ -1061,6 +1061,8 @@
 ;;        (: (sound-spleeter.spleeter (: Z' Audio)) sound-spleeter.Output))
 ;;       (SongIn "Chinese"))))
 
+;; NEXT: works with non minimal metta but not minimal metta, find out why.
+
 ;; Type check the totality of the English to Chinese singing AI service composition
 !(assertEqual
   (bc &kb Nil Z' (fromNumber 12)
