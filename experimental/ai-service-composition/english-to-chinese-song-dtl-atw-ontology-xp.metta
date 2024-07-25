@@ -212,12 +212,6 @@
 ;; Output ;;
 ;;;;;;;;;;;;
 
-;; NEXT: find a way to express that if the input is an English song,
-;; then the Vocals is in English
-
-;; Define sound-spleeter.Output type
-!(add-atom &kb (: sound-spleeter.Output Type))
-
 ;; Define sound-spleeter.Output constuctor
 !(add-atom &kb (: sound-spleeter.MkOutput
                   (-> (: $voc Vocals)
@@ -244,6 +238,18 @@
                       (-> (: $voc (VocalsIn $l))
                           (-> (: $inst Instrumental)
                               (sound-spleeter.DTLOutput $l))))))
+
+;; Define sound-spleeter.DTLOutput access functions
+
+;; Define sound-spleeter.DTLOutput.vocals
+!(add-atom &kb (: sound-spleeter.DTLOutput.vocals
+                  (-> (: $out (sound-spleeter.DTLOutput $l))
+                      (VocalsIn $l))))
+
+;; Define sound-spleeter.OutputDTL.accomp
+!(add-atom &kb (: sound-spleeter.DTLOutput.accomp
+                  (-> (: $out (sound-spleeter.DTLOutput $l))
+                      Instrumental)))
 
 ;;;;;;;;;;;;;;
 ;; Services ;;
@@ -660,421 +666,417 @@
 ;;    (: (sound-spleeter.spleeter (: Z' $t3200004)) $t527299)))
 
 ;; Type check part of the English to Chinese singing AI service composition
-;; TODO: need to use alpha-equivalence to re-enable assertEqual
-;; ;; !(assertEqual
-;;   !(bc &kb
-;;       (Cons (: (S' Z') $t1368977)
-;;             (Cons (: (S' (S' Z')) $t1478911) Nil))
-;;       (S' (S' (S' Z')))
-;;       (fromNumber 1)
-;;       (: (coerce (: VA (<: Vocals Audio))) $thrm))
-;;   ;; (: (coerce (: VA (<: Vocals Audio))) (-> (: $voc Vocals) Audio)))
-
-;; ;; Type check part of the English to Chinese singing AI service composition
-;; !(assertEqual
-;;   (bc &kb
-;;       (Cons (: (S' Z') $t1368977)
-;;             (Cons (: (S' (S' Z')) $t1478911) Nil))
-;;       (S' (S' (S' Z')))
-;;       (fromNumber 2)
-;;       (: ((coerce (: VA (<: Vocals Audio)))
-;;           (: (S' (S' Z')) $t1478911))
-;;          $thrm))
-;;   (: ((coerce (: VA (<: Vocals Audio))) (: (S' (S' Z')) Vocals)) Audio))
-
-;; ;; Type check part of the English to Chinese singing AI service composition
-;; !(assertEqual
-;;   (bc &kb (Cons (: (S' Z') $t1368977) Nil) Z' (fromNumber 2)
-;;       (: ((coerce (: $prf1 $t1344236))
-;;           (: (sound-spleeter.Output.accomp (: (S' Z') $t1368977))
-;;              $t1324258))
-;;          $t1306474))
-;;   (: ((coerce (: IA (<: Instrumental Audio)))
-;;       (: (sound-spleeter.Output.accomp
-;;           (: (S' Z') sound-spleeter.Output)) Instrumental))
-;;      Audio))
-
-;; ;; Type check part of the English to Chinese singing AI service composition
-;; ;; TODO: need to use alpha-equivalence to re-enable assertEqual
-;; ;; !(assertEqual
-;;   !(bc &kb (Cons (: (S' Z') $t1368977) Nil) Z' (fromNumber 3)
-;;       (: (mixer.mix
-;;           (: ((coerce (: IA (<: Instrumental Audio)))
-;;               (: (sound-spleeter.Output.accomp (: (S' Z') $t1368977))
-;;                  $t1324258))
-;;              $t1306474))
-;;          $thrm))
-;;   ;; (: (mixer.mix
-;;   ;;     (: ((coerce (: IA (<: Instrumental Audio)))
-;;   ;;         (: (sound-spleeter.Output.accomp (: (S' Z') sound-spleeter.Output))
-;;   ;;            Instrumental))
-;;   ;;        Audio))
-;;   ;;    (-> (: $audio Audio) Audio)))
-
-;; ;; Type check part of the English to Chinese singing AI service
-;; ;; composition.  Same as above but use the version of mixer.mix that
-;; ;; takes Instrumental directly as argument
-;; ;;
-;; ;; TODO: need to use alpha-equivalence to re-enable assertEqual
-;; ;; !(assertEqual
-;;   !(bc &kb (Cons (: (S' Z') $t1368977) Nil) Z' (fromNumber 2)
-;;       (: (mixer.mix
-;;           (: (sound-spleeter.Output.accomp (: (S' Z') $t1368977)) $t1324258))
-;;          $thrm))
-;;   ;; (: (mixer.mix
-;;   ;;     (: (sound-spleeter.Output.accomp (: (S' Z') sound-spleeter.Output)) Instrumental))
-;;   ;;    (-> (: $voc85186 (VocalsIn $l85187)) (SongIn $l85187))))
-
-;; ;; Type check part of the English to Chinese singing AI service
-;; ;; composition
-;; !(assertEqual
-;;   (bc &kb
-;;       (Cons (: (S' (S' Z')) $t1478911)
-;;             (Cons (: (S' (S' (S' Z'))) $t1426175) Nil))
-;;       Z'
-;;       (fromNumber 4)
-;;       (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
-;;           (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
-;;                              (: (S' (S' Z')) $t1478911))
-;;                             $t1460881))
-;;              $t1405639))
-;;          $t1278338))
-;;   (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
-;;       (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
-;;                          (: (S' (S' Z')) Vocals)) Audio))
-;;          MusicalInstrumentDigitalInterface))
-;;      (VocalsIn "Chinese")))
-
-;; ;; Type check part of the English to Chinese singing AI service
-;; ;; composition
-;; ;; TODO: re-enable when we have alpha-equivalent assert
-;; ;; !(assertEqual
-;;   !(bc &kb
-;;       (Cons (: (S' Z') $t1368977)
-;;             (Cons (: (S' (S' Z')) $t1478911)
-;;                   Nil))
-;;       (S' (S' (S' Z')))
-;;       (fromNumber 6)
-;;       (: (λ (S' (S' (S' Z')))
-;;            ((mixer.mix
-;;              (: (sound-spleeter.Output.accomp (: (S' Z') $t1368977)) $t1324258))
-;;             (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
-;;                 (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
-;;                                    (: (S' (S' Z')) $t1478911))
-;;                                   $t1460881))
-;;                    $t1405639))
-;;                $t1278338)))
-;;          $thrm))
-;;   ;; (: (λ (S' (S' (S' Z')))
-;;   ;;      ((mixer.mix
-;;   ;;        (: (sound-spleeter.Output.accomp (: (S' Z') sound-spleeter.Output)) Instrumental))
-;;   ;;       (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
-;;   ;;           (: (tomidi.a2m
-;;   ;;               (: ((coerce (: VA (<: Vocals Audio))) (: (S' (S' Z')) Vocals)) Audio))
-;;   ;;              MusicalInstrumentDigitalInterface))
-;;   ;;          (VocalsIn "Chinese"))))
-;;   ;;    (-> (: $prfarg107823 (TextIn "Chinese")) (SongIn "Chinese")))
-
-;; ;; Type check part of the English to Chinese singing AI service composition
-;; !(assertEqual
-;;   (bc &kb
-;;       (Cons (: (S' (S' Z')) $t1674614) Nil)
-;;       Z'
-;;       (fromNumber 3)
-;;       (: (((machine-translation.translate
-;;             (: "English" $t1632159))
-;;            (: "Chinese" $t1623369))
-;;           (: (upload (: (speech-recognition.s2t (: (S' (S' Z')) $t1674614))
-;;                         $t1658822))
-;;              $t1608997))
-;;          $t1174780))
-;;   (: (((machine-translation.translate
-;;         (: "English" NaturalLanguage))
-;;        (: "Chinese" NaturalLanguage))
-;;       (: (upload (: (speech-recognition.s2t (: (S' (S' Z')) Audio))
-;;                     (TextIn "English")))
-;;          (UniformResourceLocatorOfType (TextIn "English"))))
-;;      (TextIn "Chinese")))
-
-;; ;; Type check toy function application where all knowledge is in the
-;; ;; environment
-;; !(assertEqual
-;;   (bc &kb
-;;       (Cons (: foo (-> (: $x (TextIn "Chinese")) Audio))
-;;             (Cons (: "你好世界!" (TextIn "Chinese"))
-;;                   Nil))
-;;       Z'
-;;       (fromNumber 1)
-;;       (: (foo (: "你好世界!" (TextIn "Chinese"))) $thrm))
-;;   (: (foo (: "你好世界!" (TextIn "Chinese"))) Audio))
-
-;; ;; Type check toy unanimous function application where all knowledge
-;; ;; is in the environment
-;; !(assertEqual
-;;   (bc &kb
-;;       (Cons (: foo (-> (: $x (TextIn "Chinese")) Audio))
-;;             (Cons (: "你好世界!" (TextIn "Chinese"))
-;;                   Nil))
-;;       Z'
-;;       (fromNumber 3)
-;;       (: ((λ Z' (foo (: Z' (TextIn "Chinese"))))
-;;           (: "你好世界!" (TextIn "Chinese")))
-;;          $thrm))
-;;   (: ((λ Z' (foo (: Z' (TextIn "Chinese"))))
-;;       (: "你好世界!" (TextIn "Chinese")))
-;;      Audio))
-
-;; ;; Type check part of the English to Chinese singing AI service
-;; ;; composition
-;; !(assertEqual
-;;   (bc &kb
-;;       (Cons (: (S' Z') $t1368977)
-;;             (Cons (: (S' (S' Z')) $t1478911)
-;;                   Nil))
-;;       (S' (S' (S' Z')))
-;;       (fromNumber 7)
-;;       (: ((λ (S' (S' (S' Z')))
-;;             ((mixer.mix
-;;               (: (sound-spleeter.Output.accomp (: (S' Z') $t1368977))
-;;                  $t1306474))
-;;              (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
-;;                  (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
-;;                                     (: (S' (S' Z')) $t1478911))
-;;                                    $t1460881))
-;;                     $t1405639))
-;;                 $t1278338)))
-;;           (: (((machine-translation.translate
-;;                 (: "English" $t1632159))
-;;                (: "Chinese" $t1623369))
-;;               (: (upload (: (speech-recognition.s2t
-;;                              (: ((coerce (: VA (<: Vocals Audio)))
-;;                                  (: (S' (S' Z')) $t1478911))
-;;                                 $t1234567))
-;;                             $t1658822))
-;;                  $t1608997))
-;;              $t1174780))
-;;          $thrm))
-;;   (: ((λ (S' (S' (S' Z')))
-;;         ((mixer.mix
-;;           (: (sound-spleeter.Output.accomp (: (S' Z') sound-spleeter.Output))
-;;              Instrumental))
-;;          (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
-;;              (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
-;;                                 (: (S' (S' Z')) Vocals))
-;;                                Audio))
-;;                 MusicalInstrumentDigitalInterface))
-;;             (VocalsIn "Chinese"))))
-;;       (: (((machine-translation.translate
-;;             (: "English" NaturalLanguage))
-;;            (: "Chinese" NaturalLanguage))
-;;           (: (upload (: (speech-recognition.s2t
-;;                          (: ((coerce (: VA (<: Vocals Audio)))
-;;                              (: (S' (S' Z')) Vocals))
-;;                             Audio))
-;;                         (TextIn "English")))
-;;              (UniformResourceLocatorOfType (TextIn "English"))))
-;;          (TextIn "Chinese")))
-;;      (SongIn "Chinese")))
-
-;; ;; Type check part of the English to Chinese singing AI service composition
-;; !(assertEqual
-;;   (bc &kb
-;;       (Cons (: (S' Z') $t1368977) Nil)
-;;       (S' (S' Z'))
-;;       (fromNumber 9)
-;;       (: ((λ (S' (S' Z'))
-;;             ((λ (S' (S' (S' Z')))
-;;                ((mixer.mix
-;;                  (: (sound-spleeter.Output.accomp (: (S' Z') $t1368977))
-;;                     $t1324258))
-;;                 (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
-;;                     (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
-;;                                        (: (S' (S' Z')) $t1478911))
-;;                                       $t1460881))
-;;                        $t1405639))
-;;                    $t1278338)))
-;;              (: (((machine-translation.translate
-;;                    (: "English" $t1632159))
-;;                   (: "Chinese" $t1623369))
-;;                  (: (upload (: (speech-recognition.s2t
-;;                                 (: ((coerce (: VA (<: Vocals Audio)))
-;;                                     (: (S' (S' Z')) $t1478911))
-;;                                    $t1234567))
-;;                                $t1658822))
-;;                     $t1608997))
-;;                 $t1174780)))
-;;           (: (sound-spleeter.Output.vocals
-;;               (: (S' Z') $t1368977))
-;;              $t980175))
-;;          $thrm))
-;;   (: ((λ (S' (S' Z'))
-;;         ((λ (S' (S' (S' Z')))
-;;            ((mixer.mix
-;;              (: (sound-spleeter.Output.accomp (: (S' Z') sound-spleeter.Output)) Instrumental))
-;;             (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
-;;                 (: (tomidi.a2m
-;;                     (: ((coerce (: VA (<: Vocals Audio)))
-;;                         (: (S' (S' Z')) Vocals)) Audio))
-;;                    MusicalInstrumentDigitalInterface))
-;;                (VocalsIn "Chinese"))))
-;;          (: (((machine-translation.translate
-;;                (: "English" NaturalLanguage))
-;;               (: "Chinese" NaturalLanguage))
-;;              (: (upload
-;;                  (: (speech-recognition.s2t
-;;                      (: ((coerce (: VA (<: Vocals Audio)))
-;;                          (: (S' (S' Z')) Vocals)) Audio))
-;;                     (TextIn "English")))
-;;                 (UniformResourceLocatorOfType (TextIn "English"))))
-;;             (TextIn "Chinese"))))
-;;       (: (sound-spleeter.Output.vocals (: (S' Z') sound-spleeter.Output)) Vocals))
-;;      (SongIn "Chinese")))
-
-;; ;; Type check part of the English to Chinese singing AI service composition
-;; ;; Disabled because it takes an hour
-;; !(assertEqual
-;;   (bc &kb Nil (S' Z') (fromNumber 10)
-;;       (: (λ (S' Z')
-;;            ((λ (S' (S' Z'))
-;;               ((λ (S' (S' (S' Z')))
-;;                  ((mixer.mix
-;;                    (: (sound-spleeter.Output.accomp (: (S' Z') $t1368977))
-;;                       $t1324258))
-;;                   (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
-;;                       (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
-;;                                          (: (S' (S' Z')) $t1478911))
-;;                                         $t1460881))
-;;                          $t1405639))
-;;                      $t1278338)))
-;;                (: (((machine-translation.translate
-;;                      (: "English" $t1632159))
-;;                     (: "Chinese" $t1623369))
-;;                    (: (upload (: (speech-recognition.s2t
-;;                                   (: ((coerce (: VA (<: Vocals Audio)))
-;;                                       (: (S' (S' Z')) $t1478911))
-;;                                      $t1234567))
-;;                                  $t1658822))
-;;                       $t1608997))
-;;                   $t1174780)))
-;;             (: (sound-spleeter.Output.vocals
-;;                 (: (S' Z') $t1368977))
-;;                $t980175)))
-;;          $thrm))
-;;   (: (λ (S' Z')
-;;        ((λ (S' (S' Z'))
-;;           ((λ (S' (S' (S' Z')))
-;;              ((mixer.mix
-;;                (: (sound-spleeter.Output.accomp (: (S' Z') sound-spleeter.Output)) Instrumental))
-;;               (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
-;;                   (: (tomidi.a2m
-;;                       (: ((coerce (: VA (<: Vocals Audio))) (: (S' (S' Z')) Vocals))
-;;                          Audio))
-;;                      MusicalInstrumentDigitalInterface))
-;;                  (VocalsIn "Chinese"))))
-;;            (: (((machine-translation.translate
-;;                  (: "English" NaturalLanguage))
-;;                 (: "Chinese" NaturalLanguage))
-;;                (: (upload
-;;                    (: (speech-recognition.s2t
-;;                        (: ((coerce (: VA (<: Vocals Audio))) (: (S' (S' Z')) Vocals)) Audio))
-;;                       (TextIn "English")))
-;;                   (UniformResourceLocatorOfType (TextIn "English"))))
-;;               (TextIn "Chinese"))))
-;;         (: (sound-spleeter.Output.vocals (: (S' Z') sound-spleeter.Output)) Vocals)))
-;;      (-> (: $prfarg551087 sound-spleeter.Output) (SongIn "Chinese"))))
-
-;; ;; Type check part of the English to Chinese singing AI service composition
-;; ;; TODO: disabled be it requires alpha-equivalence
+;; TODO: re-enable once alpha-equivalence is supported
 ;; !(assertEqualToResult
-;;   (bc &kb (Cons (: Z' $t3200004) Nil) (S' Z') (fromNumber 11)
-;;       (: ((λ (S' Z')
-;;             ((λ (S' (S' Z'))
-;;                ((λ (S' (S' (S' Z')))
-;;                   ((mixer.mix
-;;                     (: (sound-spleeter.Output.accomp (: (S' Z') $t1368977))
-;;                        $t1324258))
-;;                    (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
-;;                        (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
-;;                                           (: (S' (S' Z')) $t1478911))
-;;                                          $t1460881))
-;;                           $t1405639))
-;;                       $t1278338)))
-;;                 (: (((machine-translation.translate
-;;                       (: "English" $t1632159))
-;;                      (: "Chinese" $t1623369))
-;;                     (: (upload (: (speech-recognition.s2t
-;;                                    (: ((coerce (: VA (<: Vocals Audio)))
-;;                                        (: (S' (S' Z')) $t1478911))
-;;                                       $t1234567))
-;;                                   $t1658822))
-;;                        $t1608997))
-;;                    $t1174780)))
-;;              (: (sound-spleeter.Output.vocals
-;;                  (: (S' Z') $t1368977))
-;;                 $t980175)))
-;;           (: (sound-spleeter.spleeter (: Z' $t3200004)) $t527299))
-;;          $thrm))
-;;   ((: ((λ (S' Z')
-;;          ((λ (S' (S' Z'))
-;;             ((λ (S' (S' (S' Z')))
-;;                ((mixer.mix
-;;                  (: (sound-spleeter.Output.accomp (: (S' Z') sound-spleeter.Output)) Instrumental))
-;;                 (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
-;;                     (: (tomidi.a2m
-;;                         (: ((coerce (: VA (<: Vocals Audio))) (: (S' (S' Z')) Vocals)) Audio))
-;;                        MusicalInstrumentDigitalInterface))
-;;                    (VocalsIn "Chinese"))))
-;;              (: (((machine-translation.translate
-;;                    (: "English" NaturalLanguage))
-;;                   (: "Chinese" NaturalLanguage))
-;;                  (: (upload
-;;                      (: (speech-recognition.s2t
-;;                          (: ((coerce (: VA (<: Vocals Audio))) (: (S' (S' Z')) Vocals)) Audio))
-;;                         (TextIn "English")))
-;;                     (UniformResourceLocatorOfType (TextIn "English"))))
-;;                 (TextIn "Chinese"))))
-;;           (: (sound-spleeter.Output.vocals (: (S' Z') sound-spleeter.Output)) Vocals)))
-;;        (: (sound-spleeter.spleeter (: Z' (SongIn $l16371472)))
-;;           (sound-spleeter.DTLOutput $l16371472)))
-;;       (SongIn "Chinese"))
-;;    (: ((λ (S' Z')
-;;          ((λ (S' (S' Z'))
-;;             ((λ (S' (S' (S' Z')))
-;;                ((mixer.mix
-;;                  (: (sound-spleeter.Output.accomp (: (S' Z') sound-spleeter.Output)) Instrumental))
-;;                 (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
-;;                     (: (tomidi.a2m
-;;                         (: ((coerce
-;;                              (: VA (<: Vocals Audio))) (: (S' (S' Z')) Vocals)) Audio))
-;;                        MusicalInstrumentDigitalInterface))
-;;                    (VocalsIn "Chinese"))))
-;;              (: (((machine-translation.translate
-;;                    (: "English" NaturalLanguage))
-;;                   (: "Chinese" NaturalLanguage))
-;;                  (: (upload
-;;                      (: (speech-recognition.s2t
-;;                          (: ((coerce (: VA (<: Vocals Audio))) (: (S' (S' Z')) Vocals)) Audio))
-;;                         (TextIn "English")))
-;;                     (UniformResourceLocatorOfType (TextIn "English"))))
-;;                 (TextIn "Chinese"))))
-;;           (: (sound-spleeter.Output.vocals (: (S' Z') sound-spleeter.Output)) Vocals)))
-;;        (: (sound-spleeter.spleeter (: Z' Audio)) sound-spleeter.Output))
-;;       (SongIn "Chinese"))))
+  !(bc &kb Nil Z' (fromNumber 0) (: sound-spleeter.spleeter $thrm))
+  ;; ((: sound-spleeter.spleeter
+  ;;     (-> (: $song (SongIn $l))
+  ;;         (sound-spleeter.DTLOutput $l)))
+  ;;  (: sound-spleeter.spleeter
+  ;;     (-> (: $audio Audio)
+  ;;         sound-spleeter.Output))))
 
-;; NEXT: works with non minimal metta but not minimal metta, find out why.
+;; Type check part of the English to Chinese singing AI service composition
+;; TODO: re-enable once alpha-equivalence is supported
+;; !(assertEqualToResult
+  !(bc &kb
+      (Cons (: Z' $a) Nil)
+      Z'
+      (fromNumber 1)
+      (: (sound-spleeter.spleeter (: Z' $a)) $thrm))
+  ;; ((: (sound-spleeter.spleeter (: Z' Audio)) sound-spleeter.Output)
+  ;;  (: (sound-spleeter.spleeter (: Z' (SongIn $l))) (sound-spleeter.DTLOutput $l))))
+
+;; Find proof that (VocalsIn $l) is a subtype of Audio
+!(assertEqual
+  (bc &kb Nil Z' (fromNumber 2) (: $prf (<: (VocalsIn $l) Audio)))
+  (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio))) (<: (VocalsIn $l) Audio)))
+
+;; Type check part of the English to Chinese singing AI service composition
+;; TODO: need alpha-equivalence to re-enable assertEqual
+;; !(assertEqual
+  !(bc &kb (Cons (: (S' Z') $t1368977) Nil) Z' (fromNumber 2)
+      (: (sound-spleeter.DTLOutput.accomp (: (S' Z') $t1368977))
+         $t1324258))
+  ;; (: (sound-spleeter.DTLOutput.accomp
+  ;;     (: (S' Z') (sound-spleeter.DTLOutput $l)))
+  ;;    Instrumental))
+
+;; Type check part of the English to Chinese singing AI service composition
+;; TODO: need alpha-equivalence to re-enable assertEqual
+;; !(assertEqual
+  !(bc &kb (Cons (: (S' Z') $t1368977) Nil) Z' (fromNumber 3)
+      (: (mixer.mix
+          (: (sound-spleeter.DTLOutput.accomp (: (S' Z') $t1368977))
+             $t1324258))
+         $thrm))
+  ;; (: (mixer.mix
+  ;;     (: (sound-spleeter.DTLOutput.accomp
+  ;;         (: (S' Z') (sound-spleeter.DTLOutput $l#6001)))
+  ;;        Instrumental))
+  ;;    (-> (: $voc#1866 (VocalsIn $l#1867)) (SongIn $l#1867))))
+
+;; Type check part of the English to Chinese singing AI service
+;; composition.  Same as above but use the version of mixer.mix that
+;; takes Instrumental directly as argument
+;;
+;; TODO: need to use alpha-equivalence to re-enable assertEqual
+;; !(assertEqual
+  !(bc &kb (Cons (: (S' Z') $t1368977) Nil) Z' (fromNumber 2)
+      (: (mixer.mix
+          (: (sound-spleeter.DTLOutput.accomp (: (S' Z') $t1368977)) $t1324258))
+         $thrm))
+  ;; (: (mixer.mix
+  ;;     (: (sound-spleeter.DTLOutput.accomp
+  ;;         (: (S' Z') (sound-spleeter.DTLOutput $l6431)))
+  ;;        Instrumental))
+  ;;    (-> (: $voc2542 (VocalsIn $l2543)) (SongIn $l2543))))
+
+;; Type check part of the English to Chinese singing AI service
+;; composition
+!(assertEqual
+  (bc &kb
+      (Cons (: (S' (S' Z')) $t1478911)
+            (Cons (: (S' (S' (S' Z'))) $t1426175) Nil))
+      Z'
+      (fromNumber 6)
+      (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
+          (: (tomidi.a2m (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+                                        (<: (VocalsIn $l) Audio)))
+                             (: (S' (S' Z')) $t1478911))
+                            $t1460881))
+             $t1405639))
+         $t1278338))
+  (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
+      (: (tomidi.a2m (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+                                    (<: (VocalsIn $l) Audio)))
+                         (: (S' (S' Z')) (VocalsIn $l)))
+                        Audio))
+         MusicalInstrumentDigitalInterface))
+     (VocalsIn "Chinese")))
+
+;; Type check part of the English to Chinese singing AI service
+;; composition
+;; TODO: re-enable when we have alpha-equivalent assert
+;; !(assertEqual
+  !(bc &kb
+      (Cons (: (S' Z') $t1368977)
+            (Cons (: (S' (S' Z')) $t1478911)
+                  Nil))
+      (S' (S' (S' Z')))
+      (fromNumber 8)
+      (: (λ (S' (S' (S' Z')))
+           ((mixer.mix
+             (: (sound-spleeter.DTLOutput.accomp (: (S' Z') $t1368977)) $t1324258))
+            (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
+                (: (tomidi.a2m (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+                                              (<: (VocalsIn $l) Audio)))
+                                   (: (S' (S' Z')) $t1478911))
+                                  $t1460881))
+                   $t1405639))
+               $t1278338)))
+         $thrm))
+  ;; (: (λ (S' (S' (S' Z')))
+  ;;      ((mixer.mix
+  ;;        (: (sound-spleeter.DTLOutput.accomp (: (S' Z') (sound-spleeter.DTLOutput $l#41937)))
+  ;;           Instrumental))
+  ;;       (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
+  ;;           (: (tomidi.a2m (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+  ;;                                         (<: (VocalsIn $l) Audio)))
+  ;;                              (: (S' (S' Z')) (VocalsIn $l))) Audio))
+  ;;              MusicalInstrumentDigitalInterface))
+  ;;          (VocalsIn "Chinese"))))
+  ;;    (-> (: $prfarg (TextIn "Chinese")) (SongIn "Chinese"))))
+
+;; Type check part of the English to Chinese singing AI service composition
+!(assertEqual
+  (bc &kb
+      (Cons (: (S' (S' Z')) $t1674614) Nil)
+      Z'
+      (fromNumber 3)
+      (: (((machine-translation.translate
+            (: "English" $t1632159))
+           (: "Chinese" $t1623369))
+          (: (upload (: (speech-recognition.s2t (: (S' (S' Z')) $t1674614))
+                        $t1658822))
+             $t1608997))
+         $t1174780))
+  (: (((machine-translation.translate
+        (: "English" NaturalLanguage))
+       (: "Chinese" NaturalLanguage))
+      (: (upload (: (speech-recognition.s2t (: (S' (S' Z')) Audio))
+                    (TextIn "English")))
+         (UniformResourceLocatorOfType (TextIn "English"))))
+     (TextIn "Chinese")))
+
+;; Type check toy function application where all knowledge is in the
+;; environment
+!(assertEqual
+  (bc &kb
+      (Cons (: foo (-> (: $x (TextIn "Chinese")) Audio))
+            (Cons (: "你好世界!" (TextIn "Chinese"))
+                  Nil))
+      Z'
+      (fromNumber 1)
+      (: (foo (: "你好世界!" (TextIn "Chinese"))) $thrm))
+  (: (foo (: "你好世界!" (TextIn "Chinese"))) Audio))
+
+;; Type check toy unanimous function application where all knowledge
+;; is in the environment
+!(assertEqual
+  (bc &kb
+      (Cons (: foo (-> (: $x (TextIn "Chinese")) Audio))
+            (Cons (: "你好世界!" (TextIn "Chinese"))
+                  Nil))
+      Z'
+      (fromNumber 3)
+      (: ((λ Z' (foo (: Z' (TextIn "Chinese"))))
+          (: "你好世界!" (TextIn "Chinese")))
+         $thrm))
+  (: ((λ Z' (foo (: Z' (TextIn "Chinese"))))
+      (: "你好世界!" (TextIn "Chinese")))
+     Audio))
+
+;; Type check part of the English to Chinese singing AI service
+;; composition
+;; !(assertEqual
+  !(bc &kb
+      (Cons (: (S' Z') $t1368977)
+            (Cons (: (S' (S' Z')) $t1478911)
+                  Nil))
+      (S' (S' (S' Z')))
+      (fromNumber 9)
+      (: ((λ (S' (S' (S' Z')))
+            ((mixer.mix
+              (: (sound-spleeter.DTLOutput.accomp (: (S' Z') $t1368977))
+                 $t1306474))
+             (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
+                 (: (tomidi.a2m (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+                                               (<: (VocalsIn $l) Audio)))
+                                    (: (S' (S' Z')) $t1478911))
+                                   $t1460881))
+                    $t1405639))
+                $t1278338)))
+          (: (((machine-translation.translate
+                (: "English" $t1632159))
+               (: "Chinese" $t1623369))
+              (: (upload (: (speech-recognition.s2t
+                             (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+                                            (<: (VocalsIn $l) Audio)))
+                                 (: (S' (S' Z')) $t1478911))
+                                $t1234567))
+                            $t1658822))
+                 $t1608997))
+             $t1174780))
+         $thrm))
+  ;; (: ((λ (S' (S' (S' Z')))
+  ;;       ((mixer.mix
+  ;;         (: (sound-spleeter.DTLOutput.accomp (: (S' Z') (sound-spleeter.DTLOutput $l)))
+  ;;            Instrumental))
+  ;;        (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
+  ;;            (: (tomidi.a2m (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+  ;;                                          (<: (VocalsIn $l) Audio)))
+  ;;                               (: (S' (S' Z')) (VocalsIn $l))) Audio))
+  ;;               MusicalInstrumentDigitalInterface))
+  ;;           (VocalsIn "Chinese"))))
+  ;;     (: (((machine-translation.translate (: "English" NaturalLanguage))
+  ;;          (: "Chinese" NaturalLanguage))
+  ;;         (: (upload (: (speech-recognition.s2t
+  ;;                        (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+  ;;                                       (<: (VocalsIn $l) Audio)))
+  ;;                            (: (S' (S' Z')) (VocalsIn $l))) Audio))
+  ;;                       (TextIn "English")))
+  ;;            (UniformResourceLocatorOfType (TextIn "English"))))
+  ;;        (TextIn "Chinese")))
+  ;;    (SongIn "Chinese")))
+
+;; Type check part of the English to Chinese singing AI service composition
+!(assertEqual
+  (bc &kb
+      (Cons (: (S' Z') $t1368977) Nil)
+      (S' (S' Z'))
+      (fromNumber 11)
+      (: ((λ (S' (S' Z'))
+            ((λ (S' (S' (S' Z')))
+               ((mixer.mix
+                 (: (sound-spleeter.DTLOutput.accomp (: (S' Z') $t1368977))
+                    $t1324258))
+                (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
+                    (: (tomidi.a2m (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+                                                  (<: (VocalsIn $l) Audio)))
+                                       (: (S' (S' Z')) $t1478911))
+                                      $t1460881))
+                       $t1405639))
+                   $t1278338)))
+             (: (((machine-translation.translate
+                   (: "English" $t1632159))
+                  (: "Chinese" $t1623369))
+                 (: (upload (: (speech-recognition.s2t
+                                (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+                                               (<: (VocalsIn $l) Audio)))
+                                    (: (S' (S' Z')) $t1478911))
+                                   $t1234567))
+                               $t1658822))
+                    $t1608997))
+                $t1174780)))
+          (: (sound-spleeter.DTLOutput.vocals
+              (: (S' Z') $t1368977))
+             $t980175))
+         $thrm))
+  (: ((λ (S' (S' Z'))
+        ((λ (S' (S' (S' Z')))
+           ((mixer.mix
+             (: (sound-spleeter.DTLOutput.accomp (: (S' Z') (sound-spleeter.DTLOutput $l))) Instrumental))
+            (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
+                (: (tomidi.a2m
+                    (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+                                   (<: (VocalsIn $l) Audio)))
+                        (: (S' (S' Z')) (VocalsIn $l))) Audio))
+                   MusicalInstrumentDigitalInterface))
+               (VocalsIn "Chinese"))))
+         (: (((machine-translation.translate (: "English" NaturalLanguage))
+              (: "Chinese" NaturalLanguage))
+             (: (upload
+                 (: (speech-recognition.s2t
+                     (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio))) (<: (VocalsIn $l) Audio)))
+                         (: (S' (S' Z')) (VocalsIn $l))) Audio))
+                    (TextIn "English")))
+                (UniformResourceLocatorOfType (TextIn "English"))))
+            (TextIn "Chinese"))))
+      (: (sound-spleeter.DTLOutput.vocals (: (S' Z') (sound-spleeter.DTLOutput $l))) (VocalsIn $l)))
+     (SongIn "Chinese")))
+
+;; Type check part of the English to Chinese singing AI service composition
+;; !(assertEqual
+  !(bc &kb Nil (S' Z') (fromNumber 12)
+      (: (λ (S' Z')
+           ((λ (S' (S' Z'))
+              ((λ (S' (S' (S' Z')))
+                 ((mixer.mix
+                   (: (sound-spleeter.DTLOutput.accomp (: (S' Z') $t1368977))
+                      $t1324258))
+                  (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
+                      (: (tomidi.a2m (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+                                                    (<: (VocalsIn $l) Audio)))
+                                         (: (S' (S' Z')) $t1478911))
+                                        $t1460881))
+                         $t1405639))
+                     $t1278338)))
+               (: (((machine-translation.translate
+                     (: "English" $t1632159))
+                    (: "Chinese" $t1623369))
+                   (: (upload (: (speech-recognition.s2t
+                                  (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+                                                 (<: (VocalsIn $l) Audio)))
+                                      (: (S' (S' Z')) $t1478911))
+                                   $t1234567))
+                                 $t1658822))
+                      $t1608997))
+                  $t1174780)))
+            (: (sound-spleeter.DTLOutput.vocals
+                (: (S' Z') $t1368977))
+               $t980175)))
+         $thrm))
+  ;; (: (λ (S' Z')
+  ;;      ((λ (S' (S' Z'))
+  ;;         ((λ (S' (S' (S' Z')))
+  ;;            ((mixer.mix
+  ;;              (: (sound-spleeter.DTLOutput.accomp (: (S' Z') (sound-spleeter.DTLOutput $l))) Instrumental))
+  ;;             (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
+  ;;                 (: (tomidi.a2m
+  ;;                     (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+  ;;                                    (<: (VocalsIn $l) Audio)))
+  ;;                         (: (S' (S' Z')) (VocalsIn $l))) Audio))
+  ;;                    MusicalInstrumentDigitalInterface))
+  ;;                (VocalsIn "Chinese"))))
+  ;;          (: (((machine-translation.translate
+  ;;                (: "English" NaturalLanguage))
+  ;;               (: "Chinese" NaturalLanguage))
+  ;;              (: (upload
+  ;;                  (: (speech-recognition.s2t
+  ;;                      (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+  ;;                                     (<: (VocalsIn $l) Audio)))
+  ;;                          (: (S' (S' Z')) (VocalsIn $l))) Audio))
+  ;;                     (TextIn "English")))
+  ;;                 (UniformResourceLocatorOfType (TextIn "English"))))
+  ;;             (TextIn "Chinese"))))
+  ;;       (: (sound-spleeter.DTLOutput.vocals (: (S' Z') (sound-spleeter.DTLOutput $l)))
+  ;;          (VocalsIn $l))))
+  ;;    (-> (: $prfarg#3300734 (sound-spleeter.DTLOutput $l)) (SongIn "Chinese"))))
+
+;; Type check part of the English to Chinese singing AI service composition
+!(assertEqual
+  (bc &kb (Cons (: Z' $t3200004) Nil) (S' Z') (fromNumber 13)
+      (: ((λ (S' Z')
+            ((λ (S' (S' Z'))
+               ((λ (S' (S' (S' Z')))
+                  ((mixer.mix
+                    (: (sound-spleeter.DTLOutput.accomp (: (S' Z') $t1368977))
+                       $t1324258))
+                   (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
+                       (: (tomidi.a2m (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+                                                     (<: (VocalsIn $l) Audio)))
+                                          (: (S' (S' Z')) $t1478911))
+                                         $t1460881))
+                          $t1405639))
+                      $t1278338)))
+                (: (((machine-translation.translate
+                      (: "English" $t1632159))
+                     (: "Chinese" $t1623369))
+                    (: (upload (: (speech-recognition.s2t
+                                   (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+                                                  (<: (VocalsIn $l) Audio)))
+                                       (: (S' (S' Z')) $t1478911))
+                                      $t1234567))
+                                  $t1658822))
+                       $t1608997))
+                   $t1174780)))
+             (: (sound-spleeter.DTLOutput.vocals
+                 (: (S' Z') $t1368977))
+                $t980175)))
+          (: (sound-spleeter.spleeter (: Z' $t3200004)) $t527299))
+         $thrm))
+  (: ((λ (S' Z')
+        ((λ (S' (S' Z'))
+           ((λ (S' (S' (S' Z')))
+              ((mixer.mix
+                (: (sound-spleeter.DTLOutput.accomp (: (S' Z') (sound-spleeter.DTLOutput $l)))
+                   Instrumental))
+               (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
+                   (: (tomidi.a2m
+                       (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+                                      (<: (VocalsIn $l) Audio)))
+                           (: (S' (S' Z')) (VocalsIn $l))) Audio))
+                      MusicalInstrumentDigitalInterface))
+                  (VocalsIn "Chinese"))))
+            (: (((machine-translation.translate
+                  (: "English" NaturalLanguage))
+                 (: "Chinese" NaturalLanguage))
+                (: (upload
+                    (: (speech-recognition.s2t
+                        (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+                                       (<: (VocalsIn $l) Audio)))
+                            (: (S' (S' Z')) (VocalsIn $l))) Audio))
+                       (TextIn "English")))
+                   (UniformResourceLocatorOfType (TextIn "English"))))
+               (TextIn "Chinese"))))
+         (: (sound-spleeter.DTLOutput.vocals (: (S' Z') (sound-spleeter.DTLOutput $l))) (VocalsIn $l))))
+      (: (sound-spleeter.spleeter (: Z' (SongIn $l))) (sound-spleeter.DTLOutput $l)))
+     (SongIn "Chinese")))
 
 ;; Type check the totality of the English to Chinese singing AI service composition
 !(assertEqual
-  (bc &kb Nil Z' (fromNumber 12)
+  (bc &kb Nil Z' (fromNumber 14)
       (: (λ Z'
            ((λ (S' Z')
               ((λ (S' (S' Z'))
                  ((λ (S' (S' (S' Z')))
                     ((mixer.mix
-                      (: (sound-spleeter.Output.accomp (: (S' Z') $t1368977))
+                      (: (sound-spleeter.DTLOutput.accomp (: (S' Z') $t1368977))
                          $t1324258))
                      (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t1426175))
-                         (: (tomidi.a2m (: ((coerce (: VA (<: Vocals Audio)))
+                         (: (tomidi.a2m (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+                                                       (<: (VocalsIn $l) Audio)))
                                             (: (S' (S' Z')) $t1478911))
                                            $t1460881))
                             $t1405639))
@@ -1083,13 +1085,14 @@
                         (: "English" $t1632159))
                        (: "Chinese" $t1623369))
                       (: (upload (: (speech-recognition.s2t
-                                     (: ((coerce (: VA (<: Vocals Audio)))
+                                     (: ((coerce (: ((STTrans (: VIV (<: (VocalsIn $l) Vocals))) (: VA (<: Vocals Audio)))
+                                                    (<: (VocalsIn $l) Audio)))
                                          (: (S' (S' Z')) $t1478911))
                                         $t1234567))
                                     $t1658822))
                          $t1608997))
                      $t1174780)))
-               (: (sound-spleeter.Output.vocals
+               (: (sound-spleeter.DTLOutput.vocals
                    (: (S' Z') $t1368977))
                   $t980175)))
             (: (sound-spleeter.spleeter (: Z' $t3200004)) $t527299)))
@@ -1099,11 +1102,16 @@
           ((λ (S' (S' Z'))
              ((λ (S' (S' (S' Z')))
                 ((mixer.mix
-                  (: (sound-spleeter.Output.accomp (: (S' Z') sound-spleeter.Output)) Instrumental))
-                 (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) (TextIn "Chinese")))
+                  (: (sound-spleeter.DTLOutput.accomp
+                      (: (S' Z') (sound-spleeter.DTLOutput "English")))
+                     Instrumental))
+                 (: ((midi2voice-zh.singingZH
+                      (: (S' (S' (S' Z'))) (TextIn "Chinese")))
                      (: (tomidi.a2m
-                         (: ((coerce (: VA (<: Vocals Audio))) (: (S' (S' Z')) Vocals))
-                            Audio))
+                         (: ((coerce
+                              (: ((STTrans (: VIV (<: (VocalsIn "English") Vocals))) (: VA (<: Vocals Audio)))
+                                 (<: (VocalsIn "English") Audio)))
+                             (: (S' (S' Z')) (VocalsIn "English"))) Audio))
                         MusicalInstrumentDigitalInterface))
                     (VocalsIn "Chinese"))))
               (: (((machine-translation.translate
@@ -1111,12 +1119,16 @@
                    (: "Chinese" NaturalLanguage))
                   (: (upload
                       (: (speech-recognition.s2t
-                          (: ((coerce (: VA (<: Vocals Audio))) (: (S' (S' Z')) Vocals))
-                             Audio))
+                          (: ((coerce
+                               (: ((STTrans (: VIV (<: (VocalsIn "English") Vocals))) (: VA (<: Vocals Audio)))
+                                  (<: (VocalsIn "English") Audio)))
+                              (: (S' (S' Z'))
+                                 (VocalsIn "English"))) Audio))
                          (TextIn "English")))
                      (UniformResourceLocatorOfType (TextIn "English"))))
                  (TextIn "Chinese"))))
-           (: (sound-spleeter.Output.vocals (: (S' Z') sound-spleeter.Output)) Vocals)))
+           (: (sound-spleeter.DTLOutput.vocals (: (S' Z') (sound-spleeter.DTLOutput "English")))
+              (VocalsIn "English"))))
         (: (sound-spleeter.spleeter (: Z' (SongIn "English")))
            (sound-spleeter.DTLOutput "English"))))
      (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
