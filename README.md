@@ -44,7 +44,7 @@ given below.
   3. Explore existing ontologies such as
      [SUMO](http://www.ontologyportal.org/) to provide a rich
      vocabulary to the AI-DSL.
-* [Technical Report of May 2021](doc/technical-reports/2021-May/ai-dsl-techrep-2021-05_may.pdf)
+* [Technical Report of May 2021](doc/technical-reports/2021/ai-dsl-techrep-2021-05_may.pdf)
 
 ### Phase 2
 
@@ -57,7 +57,7 @@ given below.
      our own language framework as well as using existing tools
      provided by Idris.  Program synthesis is important because it is
      the backbone of automated service assemblage.
-* [Technical Report of Octover 2022](doc/technical-reports/2022-Oct/ai-dsl-techrep-2022-oct.pdf)
+* [Technical Report of Octover 2022](doc/technical-reports/2022/ai-dsl-techrep-2022-oct.pdf)
 
 ## Folder Structure
 
