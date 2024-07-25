@@ -39,3 +39,8 @@ Experiments to compose AI services.
   provided as `(-> (: $s (SongIn "English")) (SongIn "Chinese"))`,
   which should considerably narrow the set of AI service composition
   during zynthesis.
+
+- [english-to-chinese-song-dtl-atw-ontology-syn-xp.metta](english-to-chinese-song-qdtl-atw-ontology-syn-xp.metta):
+  Same as
+  [english-to-chinese-song-dtl-ontology-xp.metta](english-to-chinese-song-dtl-atw-ontology-xp.metta)
+  but tries to synthesize the the whole AI service composition.
