@@ -44,3 +44,9 @@ Experiments to compose AI services.
   Same as
   [english-to-chinese-song-dtl-ontology-xp.metta](english-to-chinese-song-dtl-atw-ontology-xp.metta)
   but tries to synthesize the the whole AI service composition.
+
+- [english-to-chinese-song-dtl-atw-ontology-syn-sd-xp.metta](english-to-chinese-song-qdtl-atw-ontology-syn-sd-xp.metta):
+  Same as
+  [english-to-chinese-song-dtl-ontology-syn-xp.metta](english-to-chinese-song-dtl-atw-ontology-syn-xp.metta)
+  but uses a scaled down version because synthesizing the full
+  composition turns out to be too difficult.
