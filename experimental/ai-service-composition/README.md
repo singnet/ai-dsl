@@ -1,7 +1,12 @@
 # AI Service Composition Experiments
 
-Experiments to compose AI services.
+Experiments to compose AI services.  The AI service composition under
+study is the the English to Chinese song converter.  That is the
+composition takes an English song in input, and outputs the same song
+sung in Chinese.  See the graphical representation of the AI service
+composition below.
 
+![English to Chinese song](figs/EnglishToChineseSong.png "English to Chinese song AI service composition")
 
 - [english-to-chinese-song-xp.metta](english-to-chinese-song-xp.metta):
   Experiment to type check an actual AI service combination.  Most
@@ -49,4 +54,6 @@ Experiments to compose AI services.
   Same as
   [english-to-chinese-song-dtl-ontology-syn-xp.metta](english-to-chinese-song-dtl-atw-ontology-syn-xp.metta)
   but uses a scaled down version because synthesizing the full
-  composition turns out to be too difficult.
+  composition turns out to be difficult.  The graphical representation of the scaled down AI service composition can be found below.
+
+  ![Scaled down English to Chinese song](figs/EnglishToChineseSongScaledDown.png "Scaled down English to Chinese song AI service composition")
