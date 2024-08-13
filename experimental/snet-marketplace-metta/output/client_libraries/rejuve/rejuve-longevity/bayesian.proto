@@ -1,0 +1,157 @@
+syntax = "proto3";
+
+package sn_bayes;
+
+service BayesNet{
+    rpc EndNet(Id) returns (Id) {}
+    rpc StartNet(BayesianNetwork) returns (Id) {}
+    rpc AskNet(QueryId) returns (Answer) {}
+    rpc StatelessNet(BayesianNetworkQuery) returns(Answer){}
+}
+
+
+message BayesianNetwork{
+
+    message DiscreteDistribution{
+        string name = 1;
+
+        message Variable{
+            string name = 1;
+            float probability = 2; //probabilities of the variables within a discrete distribution sum to 1.0
+        }
+        repeated Variable variables = 2;
+    }
+    repeated DiscreteDistribution discreteDistributions = 1;
+
+    message ConditionalProbabilityTable{
+        string name = 1;
+
+        message RandomVariable {
+            string name = 1;
+        }
+        repeated RandomVariable randomVariables = 2;
+
+        message ConditionalProbabilityRow {
+
+            message RandomVariableValue{
+                string name = 1;
+            }
+
+            repeated RandomVariableValue randomVariableValues= 1;
+            float probability = 2;  //probabilities of the conditional probability rows within a conditional probability table sum to 1.0
+        }
+        repeated ConditionalProbabilityRow conditionalProbabilityRows = 3;
+
+        message OutVar {
+            string name = 1;
+        }
+
+        repeated OutVar outvars = 4;
+    }
+    repeated ConditionalProbabilityTable conditionalProbabilityTables = 2;
+
+
+    message Anomaly{
+        message Detector {
+            string name = 1;
+        }
+        repeated Detector detectors = 1;
+        bool is_all = 2;
+        string varName = 3;
+        int32 n_steps = 4;
+        int32 step_size = 5;
+        float c = 6;
+        int32 n = 7;
+        float high = 8;
+        float low = 9;
+        float high_percent = 10;
+        float low_percent = 11;
+    }
+
+    repeated Anomaly anomalies = 3;
+
+}
+
+message Id{
+    int32 id = 1;
+    string error_msg = 2;
+}
+
+message Query{
+    message Evidence{
+        int32 var_num = 1;
+        int32 response = 2;
+    }
+    repeated Evidence evidence = 1;
+    message Outvar{
+        int32 var_num = 1;
+    }
+    message Timeval{
+        float val = 1;
+        float interval = 2;
+    }
+
+    message Anomaly{
+        int32 var_num = 1;
+        repeated Timeval timevals = 2;
+    }
+    repeated Outvar outvars = 2;
+    repeated Outvar explainvars =3;
+    repeated Outvar reverse_explainvars = 4;
+    repeated Outvar reverse_evidence = 5;
+    repeated Anomaly timeseries=6;
+}
+
+
+message QueryId{
+    int32 id = 1;
+    Query query = 2;
+}
+
+
+
+
+message Answer{
+
+    message VarAnswer{
+        int32 var_num = 1;
+
+        message VarState{
+            int32 state_num=1;
+            float probability=2;
+        }
+        repeated VarState varStates = 2;
+    }
+
+    message AnomalyAnswer{
+        int32 var_num = 1;
+        message Signal{
+            float val = 1;
+        }
+        repeated Signal signals = 2;
+        message Anomaly{
+            bool is_anomaly = 1;
+        }
+        repeated Anomaly anomalies = 3;
+    }
+
+    repeated VarAnswer varAnswers = 1;
+    repeated VarAnswer explanations = 2;
+    repeated AnomalyAnswer signal_anomalies = 3;
+
+    message FitAnswer{
+        int32 var_num = 1;
+        message FitState{
+            string fitted = 1;
+            float val = 2;
+        }
+        repeated FitState fitStates = 2;
+    }
+    repeated FitAnswer anomalies = 4;
+    string error_msg = 5;
+}
+
+message BayesianNetworkQuery{
+    BayesianNetwork bayesianNetwork = 1;
+    Query query = 2;
+}

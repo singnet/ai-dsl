@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package example_service;
+
+message Numbers {
+    float a = 1;
+    float b = 2;
+}
+
+message Result {
+    float value = 1;
+}
+
+service Calculator {
+    rpc add(Numbers) returns (Result) {}
+    rpc sub(Numbers) returns (Result) {}
+    rpc mul(Numbers) returns (Result) {}
+    rpc div(Numbers) returns (Result) {}
+}

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package text2speech_ko;
+
+message Audio {
+    bytes data = 1;
+}
+
+message Text {
+    string text = 1;
+}
+
+service text2speech_ko {
+    rpc text2speech_ko(Text) returns (Audio) {}
+}
+

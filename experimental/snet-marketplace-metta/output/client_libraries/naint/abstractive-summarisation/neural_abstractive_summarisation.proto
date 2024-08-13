@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package neural_summarisation;
+
+message Query {
+    string text = 1;
+}
+
+message Answer {
+  string summary = 1;
+}
+
+service neural_summarisation {
+    rpc neural_summarisation(Query) returns (Answer) {}
+}

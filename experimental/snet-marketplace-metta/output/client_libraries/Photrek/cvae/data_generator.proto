@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package data_generator;
+
+service ServiceDefinition {
+    rpc GenerateImage(Input) returns (StringResponse) {}
+}
+
+message Input {
+    // Type of data
+    string d = 1;
+    // Class
+    string k = 2;
+}
+
+message StringResponse {
+    string s = 1;
+}

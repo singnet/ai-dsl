@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package paraphrase;
+
+message Query {
+    string sentence = 1;
+}
+
+message Answer {
+  string answer = 1;
+}
+
+service paraphrase {
+    rpc paraphrase(Query) returns (Answer) {}
+}

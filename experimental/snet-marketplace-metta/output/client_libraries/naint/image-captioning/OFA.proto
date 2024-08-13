@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ofa_caption;
+
+message Image {
+    bytes image = 1;
+}
+
+message Text {
+  string caption = 1;
+}
+
+service ofa_caption {
+    rpc Caption(Image) returns (Text) {}
+}

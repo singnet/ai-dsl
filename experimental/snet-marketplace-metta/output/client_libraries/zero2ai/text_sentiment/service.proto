@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package text_sentiment;
+
+message Input {
+    string text_input = 1;
+}
+
+message Output {
+    string output = 1;
+}
+
+service predict {
+    rpc predict(Input) returns (Output) {}
+}

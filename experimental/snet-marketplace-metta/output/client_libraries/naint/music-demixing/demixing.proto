@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package demixing;
+
+// создаем структуру для запроса
+message Query {
+    bytes audio_file = 1;
+    string sounds = 2;
+}
+
+// создаем структуру для ответа
+message Answer {
+  string demixed_audio = 1;
+}
+
+// название сервиса
+service demixing {
+    // сигнатура основного метода, который будет вызываться
+    rpc demixing(Query) returns (Answer) {}
+}

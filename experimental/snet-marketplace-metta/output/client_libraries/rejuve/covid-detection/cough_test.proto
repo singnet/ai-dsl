@@ -1,0 +1,15 @@
+syntax = "proto3";
+package covid;
+message Audio {
+    string cough_url = 1;
+    string breath_url = 2;
+    string vowel_sound_url = 3;
+    string user_id = 4; //review if this is needed
+    string submission_id = 5; //review if this is needed 
+}
+message Text {
+    string text = 1;
+}
+service COVID {
+    rpc s2t(Audio) returns (Text) {}
+}

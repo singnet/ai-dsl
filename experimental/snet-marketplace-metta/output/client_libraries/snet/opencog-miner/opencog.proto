@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package opencog_services;
+
+message Command {
+    repeated string input = 1;
+}
+
+message CommandOutput {
+    string output = 1;
+}
+
+service OpencogServices {
+    rpc Execute(Command) returns (CommandOutput) {}
+    rpc AsynchronousTask(Command) returns (CommandOutput) {}
+}

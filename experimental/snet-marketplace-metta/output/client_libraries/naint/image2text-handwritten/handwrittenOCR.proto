@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package handwrittenOCR;
+
+message Image {
+    bytes img_data = 1;
+}
+
+message Text {
+  string sentence = 1;
+}
+
+service handwrittenOCR {
+    rpc handwrittenOCR(Image) returns (Text) {}
+}

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+message Input {
+    string audio_url = 1;
+    bytes audio = 2;
+    string sentence = 3;
+}
+
+message Output {
+    bytes audio = 1;
+}
+
+service RealTimeVoiceCloning {
+    rpc clone (Input) returns (Output) {}
+}

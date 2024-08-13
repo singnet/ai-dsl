@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package neural_grammar_correction;
+
+message Input {
+    string sentences = 1;
+}
+
+message Output {
+    string results = 1;
+}
+
+service Corrector {
+    rpc correct(Input) returns (Output) {}
+}

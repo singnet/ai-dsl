@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+message InputMessage {
+    string headline = 1;
+    string body = 2;
+    string call_id = 3;
+}
+
+message OutputMessage {
+    string response = 1;
+}
+
+service fake_news_classification {
+    rpc classify(InputMessage) returns (OutputMessage) {}
+}

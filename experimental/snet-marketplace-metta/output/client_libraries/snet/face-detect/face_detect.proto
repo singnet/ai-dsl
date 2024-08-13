@@ -1,0 +1,7 @@
+syntax = 'proto3';
+
+import "face_common.proto";
+
+service FaceDetect {
+  rpc FindFace (ImageRGB) returns (FaceDetections) {}
+}

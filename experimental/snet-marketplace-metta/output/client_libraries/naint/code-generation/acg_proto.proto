@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package  code_generation;
+
+message Query {
+    string request = 1;
+}
+
+message Answer {
+    string answer = 1;
+}
+
+service CodeGen {
+    rpc generate(Query) returns (Answer) {}
+}

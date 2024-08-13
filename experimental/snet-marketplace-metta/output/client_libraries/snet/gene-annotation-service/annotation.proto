@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+message Filter{
+    string filter = 1;
+    string value = 2;
+}
+
+message Annotation{
+    string functionName = 1;
+    repeated Filter filters = 2;
+}
+
+message Gene{
+    string geneName = 1;
+}
+
+message AnnotationRequest{
+    repeated Annotation annotations = 1;
+    repeated Gene genes = 2;
+}
+
+message AnnotationResponse{
+    string result = 1;
+}
+
+service Annotate{
+    rpc Annotate (AnnotationRequest) returns (AnnotationResponse);
+}

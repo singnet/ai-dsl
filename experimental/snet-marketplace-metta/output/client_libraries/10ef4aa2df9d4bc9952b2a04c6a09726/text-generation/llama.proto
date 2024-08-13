@@ -1,0 +1,18 @@
+syntax = "proto3";
+ 
+package llama_generation;
+ 
+message Query {
+    string prompt = 1;
+    int32 generation_length = 2;
+    float top_p = 3;
+    float temperature = 4;
+}
+  
+message Answer {
+    string generation_result = 1;
+}
+ 
+service LLaMa {
+    rpc generate(Query) returns (Answer) {}
+}

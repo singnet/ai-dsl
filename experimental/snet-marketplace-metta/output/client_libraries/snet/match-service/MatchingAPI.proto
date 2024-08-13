@@ -1,0 +1,139 @@
+syntax = "proto3";
+
+package MatchingApi;
+
+message keyPoint {
+  float size = 1;
+  float angle = 2;
+  float x = 3;
+  float y = 4;
+  float response = 5;
+  int32 octave = 6;
+  int32 class_id = 7;
+}
+
+message keypointRequest {
+  bytes image = 1;
+  string detector_name = 2;
+  string parameters = 3;
+}
+
+message keypointResponse {
+  repeated keyPoint keypoints = 1;
+  string status = 2;
+}
+
+message oneDescriptor{
+  repeated float onedescF = 1;
+  repeated int32 onedescU = 2;
+}
+
+message descriptorRequest {
+  bytes image = 1;
+  string descriptor_name = 2;
+  string desc_parameters = 3;
+  string detector_name = 4;
+  string det_parameters = 5;
+}
+
+message descriptorResponse {
+  repeated oneDescriptor features = 1;
+  repeated keyPoint keypoints = 3;
+  string status = 2;
+}
+
+message matchingRequest{
+  repeated oneDescriptor features_first = 1;
+  repeated oneDescriptor features_second = 2;
+}
+
+message matchedPoint
+{
+  int32 queryIdx = 1;
+  int32 trainIdx = 2;
+  int32 imgIdx = 3;
+  float distance = 4;
+}
+
+message matchingResponse{
+  repeated matchedPoint all_matches = 1;
+  string status = 2;
+}
+
+message descriptorByKpsRequest {
+  bytes image = 4;
+  string descriptor_name = 1;
+  string desc_parameters = 2;
+  repeated keyPoint keypoints = 3;
+}
+
+message matchingByImageRequest{
+  bytes image_first = 1;
+  bytes image_second = 2;
+  string descriptor_name = 3;
+  string desc_parameters = 4;
+  string detector_name = 5;
+  string det_parameters = 6;
+}
+
+message matchingByImageResponse{
+  repeated matchedPoint all_matches = 1;
+  string status = 2;
+  repeated keyPoint keypoints_first = 3;
+  repeated keyPoint keypoints_second = 4;
+}
+
+message transformRequest{
+  repeated matchedPoint all_matches = 1;
+  string transform_type = 2;
+  repeated keyPoint keypoints_first = 3;
+  repeated keyPoint keypoints_second = 4;
+  string transform_input_parameters = 5;
+}
+
+message transformResponse{
+  string status = 1;
+  repeated double transform_parameters = 2;
+}
+
+message transformByImageRequest
+{
+  bytes image_first = 1;
+  bytes image_second = 2;
+  string descriptor_name = 3;
+  string desc_parameters = 4;
+  string detector_name = 5;
+  string det_parameters = 6;
+  string transform_type = 7;
+  string transform_input_parameters = 8;
+}
+
+message imageRetrievalRequest
+{
+  bytes input_image = 1;
+  repeated bytes image_base = 2;
+  string descriptor_name = 3;
+  string desc_parameters = 4;
+  string detector_name = 5;
+  string det_parameters = 6;
+  int32 numOfImagesToRetrieve = 7;
+  int32 numOfClusters = 8;
+}
+
+message imageRetrievalResponse
+{
+  repeated bytes images = 1;
+  repeated float distances = 2;
+  string status = 3;
+}
+
+service MatchApi {
+  rpc getKP(keypointRequest) returns (keypointResponse) {}
+  rpc getDescByImage(descriptorRequest) returns (descriptorResponse) {}
+  rpc getDescByKps(descriptorByKpsRequest) returns (descriptorResponse) {}
+  rpc getMatch(matchingRequest) returns (matchingResponse) {}
+  rpc getMatchByImage(matchingByImageRequest) returns (matchingByImageResponse) {}
+  rpc getTransformParameters(transformRequest) returns (transformResponse) {}
+  rpc getTransformParametersByImage(transformByImageRequest) returns (transformResponse) {}
+  rpc getClosestImages(imageRetrievalRequest) returns (imageRetrievalResponse) {}
+}

@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+
+
+///// Graph
+
+message Edge {
+
+    repeated string edge = 1;
+}
+
+message Graph {
+
+    repeated string nodes = 1;
+    repeated Edge edges = 2;
+    repeated double weights = 3;
+
+}
+
+message node_betweenness {
+
+    repeated string node = 1;
+    double node_centrality_value = 2;
+
+}
+
+message edge_betweenness {
+
+    repeated Edge edge = 1;
+    double edge_centrality_value = 2;
+
+}
+
+
+///// End Graph
+
+
+message MinNodesToRemoveRequest {
+
+    Graph graph = 1;
+    string source_node = 2;
+    string target_node = 3;
+
+}
+
+message MinNodesToRemoveResponse {
+
+    bool status = 1;
+    string message = 2;
+    repeated string nodes_output = 3;
+    repeated Edge edges_output = 4;
+}
+
+///// End MinNodesToRemove
+
+message MostImportantNodesEdgesSubsetRequest {
+
+    Graph graph = 1;
+    repeated string source_nodes = 2;
+    repeated string target_nodes = 3;
+    
+    int32 Type=4; 
+    bool normalized = 5;
+    bool directed = 6;
+    bool weight = 7;
+
+}
+
+message MostImportantNodesEdgesSubsetResponse {
+
+    bool status = 1;
+    string message = 2;
+    node_betweenness node_betweenness_centrality = 3;
+    edge_betweenness edge_betweenness_centrality = 4;
+}
+
+
+///// End MostImportantNodesEdgesSubset
+
+///// Network Analytics Robustness Services
+
+service NetworkAnalyticsRobustness {
+
+    rpc MinNodesToRemove (MinNodesToRemoveRequest) returns (MinNodesToRemoveResponse) {};
+
+    rpc MostImportantNodesEdgesSubset (MostImportantNodesEdgesSubsetRequest) returns (MostImportantNodesEdgesSubsetResponse) {};
+
+}
+
+///// End Network Analytics Services

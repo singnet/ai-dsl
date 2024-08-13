@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+message TransferImageStyleRequest {
+    string content = 1;
+    string style = 2;
+    int32 contentSize = 3;
+    int32 styleSize = 4;
+    bool preserveColor = 5;
+    float alpha = 6;
+    bool crop = 7;
+    string saveExt = 8;
+}
+
+message Image {
+    string data = 1;
+}
+
+service StyleTransfer {
+    rpc transfer_image_style (TransferImageStyleRequest) returns (Image);
+}
+
+// add support for masks (and multiple styles)
+// add support for style mixing
+// add support for videos

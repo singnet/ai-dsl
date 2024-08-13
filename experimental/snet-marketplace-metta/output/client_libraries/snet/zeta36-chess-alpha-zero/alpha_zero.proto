@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+message Input {
+    string uid = 1;
+    string move = 2;
+    string cmd = 3;
+}
+
+message Output {
+    string uid = 1;
+    string board = 2;
+    string status = 3;
+}
+
+service AlphaZero {
+    rpc play(Input) returns (Output) {}
+}

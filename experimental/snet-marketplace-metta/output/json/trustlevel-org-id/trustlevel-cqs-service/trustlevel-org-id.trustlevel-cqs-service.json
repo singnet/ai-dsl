@@ -1,0 +1,31 @@
+{
+    "version": 1,
+    "display_name": "trustlevel-cqs-service",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "model_ipfs_hash": "QmZQ4APBbVFxBRZt4DKn3oXD1cjwxFbDC1eNgtadPLqQNB",
+    "mpe_address": "0x5e592F9b1d303183d963635f895f0f0C48284f4e",
+    "groups": [
+        {
+            "group_name": "default_groups",
+            "endpoints": [
+                "http://trust-level.com:7001"
+            ],
+            "pricing": [
+                {
+                    "price_model": "fixed_price",
+                    "price_in_cogs": 1000000,
+                    "default": true
+                }
+            ],
+            "group_id": "UEa+rWu430w2Cv8mg1SwUfdnZEgBvyZvuY4YsYoNcQE="
+        }
+    ],
+    "assets": {},
+    "media": [],
+    "tags": [],
+    "service_description": {
+        "description": "Content_Quality_Score",
+        "url": "https://www.trustlevel.io/"
+    }
+}

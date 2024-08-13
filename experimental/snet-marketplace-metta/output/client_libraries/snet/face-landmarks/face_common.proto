@@ -1,0 +1,39 @@
+syntax = 'proto3';
+
+message ImageRGB {
+  bytes content = 1;
+}
+
+message BoundingBox {
+    int32 x = 1;
+    int32 y = 2;
+    int32 w = 3;
+    int32 h = 4;
+}
+
+message Point2D
+{
+    int32 x = 1;
+    int32 y = 2;
+}
+
+message FaceDetections {
+  repeated BoundingBox face_bbox = 1;
+}
+
+message FaceLandmarks
+{
+    string landmark_model = 1;
+    repeated Point2D point = 2;
+}
+
+message FaceLandmarkDescriptions
+{
+    string landmark_model = 1;
+    repeated string landmark_description = 2;
+    repeated Point2D landmark_avg = 3;
+}
+
+message FaceLandmarkModels {
+    repeated FaceLandmarkDescriptions model = 1;
+}

@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package adr;
+
+message InputString {
+    string s = 1;
+}
+
+//message ADRReturnFloat {
+//    float a = 1;
+//    float d = 2;
+//    float r = 3;
+//}
+
+message ADRReturnFloat {
+    float a = 1;
+    float d = 2;
+    float r = 3;
+    string img = 4;
+    int32 numr = 5;
+    int32 numc = 6;
+}
+
+service ServiceDefinition {
+    rpc adr(InputString) returns (ADRReturnFloat) {}
+    //rpc adr(InputString) returns (ReturnFloat) {}
+}
+
+//message UploadFileRequest {
+//    oneof request {
+//        MetaData metadata = 1;
+//        bytes chunk_data = 2;
+//    }
+//}

@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+// The greeting service definition.
+service Enigma {
+  // Sends hello world
+  rpc SayHello (HelloRequest) returns (StringResponse) {}
+  // Trains a model
+  rpc TrainModel(stream UploadFileRequest) returns (StringResponse) {}
+  // Predicts sentence class in the model
+  rpc InvokeModel(InvokeRequest) returns (StringResponse) {}
+}
+
+message HelloRequest {}
+
+message StringResponse {
+  string message = 1;
+}
+
+message FileResponse {
+  bytes chunk_data = 1;
+}
+
+message InvokeRequest {
+  string endpoint_name = 1;
+  string sentence = 2;
+}
+
+message MetaData {
+  string filename = 1;
+  string extension = 2;
+}
+
+message EndpointData {
+  string endpoint_name = 1;
+}
+
+message UploadFileRequest {
+  oneof request {
+    MetaData metadata = 1;
+    EndpointData endpoint_data = 2;
+    bytes chunk_data = 3;
+  }
+}

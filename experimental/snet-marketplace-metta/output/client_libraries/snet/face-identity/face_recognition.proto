@@ -1,0 +1,25 @@
+syntax = 'proto3';
+
+import "face_common.proto";
+
+message FaceRecognitionHeader {
+    repeated BoundingBox faces = 1;
+}
+
+message FaceRecognitionRequest {
+    FaceRecognitionHeader header = 1;
+    ImageRGB image_chunk = 2;
+}
+
+message FaceRecognitionResponse {
+    repeated FaceIdentity identities = 1;
+}
+
+message FaceIdentity {
+    repeated float identity = 1;
+}
+
+service FaceRecognition {
+    rpc RecogniseFace (FaceRecognitionRequest) returns (FaceRecognitionResponse) {};
+    rpc RecogniseFacePrealigned (FaceRecognitionRequest) returns (FaceRecognitionResponse) {};
+}

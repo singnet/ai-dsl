@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package ss;
+
+message Audio {
+    bytes data = 1;
+}
+
+message Output_Audio {
+    string first_speaker = 1; //string == bytes
+    string second_speaker = 2; //string == bytes
+}
+
+service SS {
+    rpc separate(Audio) returns (Output_Audio) {}
+}

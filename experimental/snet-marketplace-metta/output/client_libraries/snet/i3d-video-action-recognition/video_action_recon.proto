@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+message Input {
+    string model = 1;
+    string url = 2;
+}
+
+message Output {
+    string value = 1;
+}
+
+service VideoActionRecognition {
+    rpc video_action_recon(Input) returns (Output) {}
+}

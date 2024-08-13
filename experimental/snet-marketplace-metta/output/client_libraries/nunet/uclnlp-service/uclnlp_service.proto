@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package uclnlp_service;
+
+message InputData {
+    string headline = 1;
+    string body = 2;
+    string call_id = 3;
+}
+
+message Stance {
+    float agree = 1;
+    float disagree = 2;
+    float discuss = 3;
+    float unrelated = 4;
+}
+
+message Resp {
+    string response =1;
+}
+
+service UCLNLPStanceClassification {
+    rpc stance_classify(InputData) returns (Resp) {}
+}
+
+//TODO: warning -- upstream code change (SNET)

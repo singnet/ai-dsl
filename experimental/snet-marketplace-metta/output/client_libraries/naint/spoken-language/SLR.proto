@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package slr;
+
+message Audio {
+    bytes data = 1;
+}
+
+message Label {
+    string label = 1;
+}
+
+service SLR {
+    rpc sl2l(Audio) returns (Label) {}
+}

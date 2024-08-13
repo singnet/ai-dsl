@@ -1,0 +1,145 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+message ServiceDefnition {
+    string service_name=1;
+    string params=2;
+}
+
+message ServiceResponse {
+    string service_response=1;
+}
+
+//telemetry input message
+message TelemetryInput {
+    string result = 1;
+    float cpu_used = 2;
+    float memory_used = 3;
+    float net_used = 4;
+    float time_taken = 5;
+    string device_name = 6;
+    string call_id = 7;
+    string service_name=8;
+}
+
+
+message TelemetryOutput {
+    string response = 1;
+}
+
+message AdapterInput {
+    string service_name=1;
+    string params=2;
+    string declarations=3; 
+    string service_input_params=4;
+}
+
+message AdapterOutput {
+    string response=1;
+}
+
+message PaymentParamsInput {
+    string service_name=1;
+    string service_address=2;
+}
+
+
+message AdapterGetResultOutput {
+    string response=1;
+}
+
+
+
+message AdapterSignedTxn {
+    string signed_tx=1;
+}
+
+
+message AdapterTxnHash {
+    string txn_hash=1;
+}
+
+message PaymentParams {
+    string cost_per_process = 1;
+    string pubk = 2;
+    string call_id=3;
+
+}
+
+message AdapterSignedResult {
+    string escrow_address=1;
+}
+
+message priceParams {
+    string service_address=1;
+}
+
+message priceResp {
+    string cost_per_process=1;
+    string pubk=2;
+}
+
+message respAdapterMetadata {
+    string service_definition= 1; 
+}
+
+message metaAdapterParams {
+    string service_name=1;
+}
+
+message respServiceMetadata {
+    string service_definition= 1; 
+}
+
+message metaServiceParams {
+    string service_name=1;
+}
+
+
+message ServiceDefnitionWorkflow {
+    string service_name=1;
+    string params=2;
+    string declarations=3;
+    string call_id=4;
+    string service_input_params=5;
+}
+
+message AdapterReleaseFunds {
+    string escrow_address=1;
+    string public_key=2;
+    string agi_amount=3;
+}
+
+message AdapterReleaseFundsOutput {
+    string response = 1;
+}
+
+message AdapterMachineProviderInput {
+    string service_name=1;
+}
+
+message AdapterMachineProviderOutput {
+    string cost_per_process=1;
+    string pubk=2;
+}
+
+service NunetAdapter {
+    rpc reqService(ServiceDefnition) returns (ServiceResponse) {}
+    rpc telemetry(TelemetryInput) returns (TelemetryOutput) {}
+    rpc callAdapter(AdapterInput) returns (AdapterOutput) {}
+    rpc signAdapterTransaction(PaymentParams) returns (AdapterSignedResult) {}
+    rpc getAdapterResult(AdapterTxnHash) returns (AdapterGetResultOutput) {}
+    rpc makeAdapterTransaction(AdapterReleaseFunds) returns (AdapterReleaseFundsOutput) {}
+
+    rpc getPaymentParams(PaymentParamsInput) returns (PaymentParams) {}
+    rpc reqPrice(priceParams) returns (priceResp) {}
+
+    rpc reqAdapterMetadata(metaAdapterParams) returns (respAdapterMetadata) {}
+    
+    rpc reqServiceMetadata(metaServiceParams) returns (respServiceMetadata) {}
+    
+    rpc reqServiceWorkflow(ServiceDefnitionWorkflow) returns (ServiceResponse) {}
+    rpc getProviderPaymentParams(AdapterMachineProviderInput) returns (AdapterMachineProviderOutput) {}
+
+}
+

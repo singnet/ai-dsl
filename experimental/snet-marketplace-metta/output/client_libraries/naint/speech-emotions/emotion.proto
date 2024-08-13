@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package emotions;
+
+message Audio {
+    bytes data = 1;	
+}
+
+message Text {
+    string text = 1;	
+}
+
+service emotions {
+    rpc e2t(Audio) returns (Text) {}	
+}

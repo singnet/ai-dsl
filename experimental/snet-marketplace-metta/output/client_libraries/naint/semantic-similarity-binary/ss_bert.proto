@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package ss_bert;
+
+message Sentences {
+    string a = 1;
+    string b = 2;
+}
+
+message Answer {
+    string answer = 1;
+}
+
+service SSBERT {
+    rpc ss_bert(Sentences) returns (Answer) {}
+}

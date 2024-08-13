@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+message Input {
+    string input = 1;
+}
+
+message Output {
+    repeated Disambiguation disambiguation = 1;
+}
+
+message Disambiguation {
+    string named_entity = 1;
+    string disambiguation_word = 2;
+    string disambiguation_link = 3;
+}
+
+service Disambiguate {
+    rpc named_entity_disambiguation(Input) returns(Output) {};
+}

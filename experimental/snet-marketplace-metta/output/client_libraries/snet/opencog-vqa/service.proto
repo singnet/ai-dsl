@@ -1,0 +1,18 @@
+syntax = "proto3";
+  
+service VqaService {
+    rpc answer(VqaRequest) returns (VqaResponse);
+}
+
+message VqaRequest {
+    string question = 1;
+    bool use_pm = 3;
+    bytes image_data = 4;
+}
+
+message VqaResponse {
+    string answer = 1;
+    bool ok = 2;
+    string error_message = 3;
+}
+
