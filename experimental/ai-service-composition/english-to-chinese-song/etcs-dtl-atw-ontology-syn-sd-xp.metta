@@ -428,6 +428,9 @@
 ;; situation may not arise here.
 (= ((λ (s z) ((s z) $x)) $y) ($y $x))
 
+;; ;; Lambda application
+;; (= ((λ $x $y) $z) (let $x $z $y))
+
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Remove/add type ;;
 ;;;;;;;;;;;;;;;;;;;;;
@@ -725,6 +728,113 @@
 ;;   !(bc &kb Nil z (fromNumber 6)
 ;;        (: (λ z ((λ (s z) ((mixer.mix $accomp) $vocals)) $spleeter))
 ;;           (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+;;   ;; (: (λ z
+;;   ;;      ((λ (s z)
+;;   ;;         ((mixer.mix
+;;   ;;           (: (sound-spleeter.DTLOutput.accomp (: (s z) (sound-spleeter.DTLOutput "English"))) Instrumental))
+;;   ;;          (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) (sound-spleeter.DTLOutput "English"))) (VocalsIn "English"))) (VocalsIn "Chinese"))))
+;;   ;;       (: (sound-spleeter.spleeter (: z (SongIn "English"))) (sound-spleeter.DTLOutput "English"))))
+;;   ;;    (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+
+;; Synthesize part of the English to Chinese singing AI service
+;; composition, given the totally of its template with four holes,
+;;
+;; 1. $accomp, replacing
+;;
+;; (: (sound-spleeter.DTLOutput.accomp (: (s z) $a)) $b))
+;;
+;; 2. $vocals, replacing
+;;
+;; (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) $c)) $d)) $e)))
+;;
+;; 3. $spleeter, replacing
+;;
+;; (: (sound-spleeter.spleeter (: z $f)) $g)
+;;
+;; 4. $mix, replacing
+;;
+;; mixer.mix
+;;
+;; !(assertEqual
+  !(bc &kb Nil z (fromNumber 6)
+       (: (λ z ((λ (s z) (($mix $accomp) $vocals)) $spleeter))
+          (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+  ;; (: (λ z
+  ;;      ((λ (s z)
+  ;;         ((mixer.mix
+  ;;           (: (sound-spleeter.DTLOutput.accomp (: (s z) (sound-spleeter.DTLOutput "English"))) Instrumental))
+  ;;          (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) (sound-spleeter.DTLOutput "English"))) (VocalsIn "English"))) (VocalsIn "Chinese"))))
+  ;;       (: (sound-spleeter.spleeter (: z (SongIn "English"))) (sound-spleeter.DTLOutput "English"))))
+  ;;    (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+
+;; ;; Synthesize part of the English to Chinese singing AI service
+;; ;; composition, given the totally of its template with two holes,
+;; ;;
+;; ;; 1. $mav, replacing
+;; ;;
+;; ;; ((mixer.mix
+;; ;;   (: (sound-spleeter.DTLOutput.accomp (: (s z) (sound-spleeter.DTLOutput "English"))) Instrumental))
+;; ;;  (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) (sound-spleeter.DTLOutput "English"))) (VocalsIn "English"))) (VocalsIn "Chinese")))
+;; ;;
+;; ;; 2. $spleeter, replacing
+;; ;;
+;; ;; (: (sound-spleeter.spleeter (: z $f)) $g)
+;; ;;
+;; ;; !(assertEqual
+;;   !(bc &kb Nil z (fromNumber 6)
+;;        (: (λ z ((λ (s z) $mav) $spleeter))
+;;           (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+;;   ;; (: (λ z
+;;   ;;      ((λ (s z)
+;;   ;;         ((mixer.mix
+;;   ;;           (: (sound-spleeter.DTLOutput.accomp (: (s z) (sound-spleeter.DTLOutput "English"))) Instrumental))
+;;   ;;          (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) (sound-spleeter.DTLOutput "English"))) (VocalsIn "English"))) (VocalsIn "Chinese"))))
+;;   ;;       (: (sound-spleeter.spleeter (: z (SongIn "English"))) (sound-spleeter.DTLOutput "English"))))
+;;   ;;    (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+
+;; Synthesize part of the English to Chinese singing AI service
+;; composition, given the totally of its template with one hole,
+;;
+;; 1. $body, ideally replacing
+;;
+;;      ((λ (s z)
+;;         ((mixer.mix
+;;           (: (sound-spleeter.DTLOutput.accomp (: (s z) (sound-spleeter.DTLOutput "English"))) Instrumental))
+;;          (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) (sound-spleeter.DTLOutput "English"))) (VocalsIn "English"))) (VocalsIn "Chinese"))))
+;;       (: (sound-spleeter.spleeter (: z (SongIn "English"))) (sound-spleeter.DTLOutput "English")))
+;;
+;; !(assertEqual
+  !(bc &kb Nil z (fromNumber 6)
+       (: (λ z $bdy)
+          (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+  ;; (: (λ z
+  ;;      ((λ (s z)
+  ;;         ((mixer.mix
+  ;;           (: (sound-spleeter.DTLOutput.accomp (: (s z) (sound-spleeter.DTLOutput "English"))) Instrumental))
+  ;;          (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) (sound-spleeter.DTLOutput "English"))) (VocalsIn "English"))) (VocalsIn "Chinese"))))
+  ;;       (: (sound-spleeter.spleeter (: z (SongIn "English"))) (sound-spleeter.DTLOutput "English"))))
+  ;;    (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+
+  ;; (: (λ z
+  ;;      ((mixer.mix
+  ;;        (: (sound-spleeter.DTLOutput.accomp (: (sound-spleeter.spleeter (: z (SongIn "English"))) (sound-spleeter.DTLOutput "English"))) Instrumental))
+  ;;       (: (vocals-translator.translate
+  ;;           (: (sound-spleeter.DTLOutput.vocals (: (sound-spleeter.spleeter (: z (SongIn "English"))) (sound-spleeter.DTLOutput "English"))) (VocalsIn "English")))
+  ;;        (VocalsIn "Chinese"))))
+  ;;   (-> (: $3926 (SongIn "English")) (SongIn "Chinese")))
+
+  ;; (: (λ z
+  ;;      ((mixer.mix
+  ;;        (: (sound-spleeter.DTLOutput.accomp (: (sound-spleeter.spleeter (: z (SongIn "English"))) (sound-spleeter.DTLOutput "English"))) Instrumental))
+  ;;       (: (vocals-translator.translate
+  ;;           (: (sound-spleeter.DTLOutput.vocals (: ((λ (s z) (s z)) (: (sound-spleeter.spleeter (: z (SongIn "English"))) (sound-spleeter.DTLOutput "English"))) (sound-spleeter.DTLOutput "English"))) (VocalsIn "English"))) (VocalsIn "Chinese"))))
+  ;;   (-> (: $_3924 (SongIn "English")) (SongIn "Chinese")))
+
+;; ;; Synthesize part of the English to Chinese singing AI service
+;; ;; composition from scratch.
+;; ;;
+;; ;; !(assertEqual
+;;   !(bc &kb Nil z (fromNumber 6) (: $prg (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
 ;;   ;; (: (λ z
 ;;   ;;      ((λ (s z)
 ;;   ;;         ((mixer.mix
