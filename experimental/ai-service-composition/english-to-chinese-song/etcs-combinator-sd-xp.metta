@@ -1,4 +1,7 @@
-;; Scaled down version of etcs-combinator-xp.metta
+;; Scaled down version of etcs-combinator-xp.metta.
+;;
+;; Combinators are obtained from the Data.Aviary.Birds Haskell package
+;; https://hackage.haskell.org/package/data-aviary-0.4.0/docs/Data-Aviary-Birds.html
 
 ;;;;;;;;;
 ;; Nat ;;
@@ -58,15 +61,15 @@
           $b))                          ; Result
 
 ;; Base cases: match the knowledge base
-(= (bc $kb $env $idx $_ (: $prf $thrm))
+(= (bc $kb $_ (: $prf $thrm))
    (match $kb (: $prf $thrm) (: $prf $thrm)))
 
 ;; Recursive steps: proof application
-(= (bc $kb $env $idx (S $k) (: ($prfabs $prfarg) $thrm))
+(= (bc $kb (S $k) (: ($prfabs $prfarg) $thrm))
    (let* (((: $prfabs (-> (: $prfarg $prms) $thrm))
-           (bc $kb $env $idx $k (: $prfabs (-> (: $prfarg $prms) $thrm))))
+           (bc $kb $k (: $prfabs (-> (: $prfarg $prms) $thrm))))
           ((: $prfarg $prms)
-           (bc $kb $env $idx $k (: $prfarg $prms))))
+           (bc $kb $k (: $prfarg $prms))))
      (: ($prfabs $prfarg) $thrm)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -184,14 +187,14 @@
 ;; Description: Split then join
 ;; Type: (b -> c -> d) -> (a -> b) -> (a -> c) -> a -> d
 ;; Definition: phoenix f g h x = f (g x) (h x)
-;; Symbol: 𝚽 (Emacs math input representation: \mbfPhi)
+;; Symbol: Φ (LaTeX: \Phi, Math Emacs: \upPhi)
 ;; Diagram:
-;;     -b-
-;;    /   \
-;; -a-     -d->
-;;    \   /
-;;     -c-
-!(add-atom &kb (: 𝚽
+;;    b
+;;   / \
+;; -a   d->
+;;   \ /
+;;    c
+!(add-atom &kb (: Φ
                   (-> (: $f (-> (: $y $b) (-> (: $z $c) $d)))
                       (-> (: $g (-> (: $x $a) $b))
                           (-> (: $h (-> (: $x $a) $c))
@@ -248,15 +251,13 @@
 ;;
 ;; It should be equivalent to the following combinatory logic program
 ;;
-;; (. (𝚽 mix accomp (. translate vocals)) spleeter)
+;; (. (Φ mix accomp (. translate vocals)) spleeter)
 ;;
 ;; or with all parentheses
 ;;
-;; ((. ((((𝚽 mix) accomp) (. translate vocals)))) spleeter)
-;;
-;; Note that there is another possible candidate
-;;
-;; (𝚽 mix (. accomp spleeter) (. translate (. vocals spleeter)))
-;;
-;; but spleeter appears twice, thus the composition above is
-;; preferable.
+;; ((. (((Φ mix) accomp) ((. translate) vocals))) spleeter)
+
+;; Synthesize the full AI service composition
+!(bc &kb
+     (fromNumber 5)
+     (: $prg (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
