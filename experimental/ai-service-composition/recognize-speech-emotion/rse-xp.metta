@@ -341,6 +341,7 @@
 ;; Synthesize a program that takes speech as
 ;; naint.speech2text-en.Audio and returns emotion as
 ;; naint.text-emotions.Output.
+;; NEXT: use unique when fully supported
 !(let* (($results (collapse
                    (bc &kb
                        (: $prg (-> speech2text-en.Audio text-emotions.Output))
