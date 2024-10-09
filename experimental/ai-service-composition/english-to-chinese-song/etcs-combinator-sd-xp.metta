@@ -254,9 +254,9 @@
 ;;
 ;; ((. ((((𝚽 mix) accomp) (. translate vocals)))) spleeter)
 ;;
-;; Note that there is another (and probably more) possible candidate
+;; Note that there is another possible candidate
 ;;
 ;; (𝚽 mix (. accomp spleeter) (. translate (. vocals spleeter)))
 ;;
-;; but spleeter appears twice, thus is potentially called twice.  It
-;; is also less compact.  So the one above is preferable.
+;; but spleeter appears twice, thus the composition above is
+;; preferable.
