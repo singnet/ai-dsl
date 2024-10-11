@@ -242,27 +242,30 @@
 ;; ((. (. f)) (. g))
 ;;
 ;; are likely equivalent according to the backward chainer, indeed
-;; their type signature is
+;; inferring their type signatures leads in both cases to
 ;;
 ;; (a -> A) -> (a -> C)
 ;;
-;; where A is the domain of g and C is the codomain of f, in both
-;; cases.  So we can see that it is similar to . but applies the
-;; composition to higher level functions rather than concrete data.
+;; where A is the domain of g and C is the codomain of f.  We can see
+;; that it is similar to . but applies the composition to higher level
+;; functions rather than concrete data.  Thus maybe it could also be
+;; avoided by limiting sequential composition to concrete data,
+;; a.k.a. limited to first order.
 ;;
-;; Let us attempt to manually proof that they are equivalent
-;; nonetheless. to get an intuition behind why they are.  Let the type
+;; To get an intuition behind why they are seemingly equivalent, let
+;; us attempt to manually derive their type signatures.  Let the type
 ;; signatures of f and g be
 ;;
 ;; f : B -> C
 ;; g : A -> B
 ;;
 ;; In the following a, b and c are type variables scoped only within
-;; their own line.  Recalling
+;; their own line.  To avoid naming collision we append primes, such
+;; as a', etc.  Recall that
 ;;
 ;; . : (b -> c) -> (a -> b) -> a -> c
 ;;
-;; we can establish the following type relationships:
+;; We can establish the following type relationships:
 ;;
 ;; 1. For (. ((. f) g))
 ;;
@@ -301,11 +304,8 @@
 ;;
 ;; ((. (. f)) (. g))
 ;;
-;; Even after doing the derivation manually, I still don't fully
-;; understand, but I think it is safe to assume that they are
-;; equivalent and define a reduction rule accordingly.
-;;
-;; I suppose the ideal way involves proving that
+;; Even after doing the derivation manually, I still don't understand
+;; why they are equivalent.  Let us prove it by showing that
 ;;
 ;; ∀x,y (((. ((. f) g)) x) y) == ((((. (. f)) (. g)) x) y)
 ;;
@@ -333,10 +333,9 @@
 ;;
 ;; (f (g (x y)))
 ;;
-;; Bother reduces to the same normal form, they are therefor
-;; equivalent.
-;;
-;; We are thus allowed to write the following reduction rule
+;; I still don't understand, but since both reduce to the same normal
+;; form, they are definitely equivalent, we can thus safely introduce
+;; the following reduction rule
 (= ((. (. $f)) (. $g)) (. ((. $f) $g)))
 
 ;;;;;;;;;;
