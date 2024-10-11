@@ -236,6 +236,109 @@
 ;; read (to me anyway).
 (= ((. ((. $h) $g)) $f) ((. $h) ((. $g) $f)))
 
+;; The following sequential compositions
+;;
+;; (. ((. f) g))
+;; ((. (. f)) (. g))
+;;
+;; are likely equivalent according to the backward chainer, indeed
+;; their type signature is
+;;
+;; (a -> A) -> (a -> C)
+;;
+;; where A is the domain of g and C is the codomain of f, in both
+;; cases.  So we can see that it is similar to . but applies the
+;; composition to higher level functions rather than concrete data.
+;;
+;; Let us attempt to manually proof that they are equivalent
+;; nonetheless. to get an intuition behind why they are.  Let the type
+;; signatures of f and g be
+;;
+;; f : B -> C
+;; g : A -> B
+;;
+;; In the following a, b and c are type variables scoped only within
+;; their own line.  Recalling
+;;
+;; . : (b -> c) -> (a -> b) -> a -> c
+;;
+;; we can establish the following type relationships:
+;;
+;; 1. For (. ((. f) g))
+;;
+;; ((. f) g) : A -> C
+;;
+;; Thus
+;;
+;; (. ((. f) g)) : (a -> A) -> (a -> C)
+;;
+;; 2. For ((. (. f)) (. g))
+;;
+;; (. f) : (a -> B) -> a -> C
+;;
+;; Thus with bindings {b↦(a' -> B), c↦(a' -> C)}
+;;
+;; (. (. f)) : (a -> (a' -> B)) -> (a -> (a' -> C))
+;;
+;; Also
+;;
+;; (. g) : (a -> A) -> a -> B
+;;
+;; Thus, with bindings {a↦(a'' -> A), a'↦a''}
+;;
+;; ((. (. f)) (. g)) : (a'' -> A) -> (a'' -> C)
+;;
+;; Which is alpha-equivalent to
+;;
+;; ((. (. f)) (. g)) : (a -> A) -> (a -> C)
+;;
+;; Thus
+;;
+;; (. ((. f) g))
+;;
+;; is equivalent (as far as their type signature is concerned anyway)
+;; to
+;;
+;; ((. (. f)) (. g))
+;;
+;; Even after doing the derivation manually, I still don't fully
+;; understand, but I think it is safe to assume that they are
+;; equivalent and define a reduction rule accordingly.
+;;
+;; I suppose the ideal way involves proving that
+;;
+;; ∀x,y (((. ((. f) g)) x) y) == ((((. (. f)) (. g)) x) y)
+;;
+;; 1. Let us β-reduce (((. ((. f) g)) x) y) to normal form
+;;
+;; First, it reduces to
+;;
+;; (((. f) g) (x y))
+;;
+;; which finaly reduces to
+;;
+;; (f (g (x y)))
+;;
+;; 2. Let us β-reduce ((((. (. f)) (. g)) x) y) to normal form
+;;
+;; First, it reduces to
+;;
+;; (((. f) ((. g) x)) y)
+;;
+;; which reduces to
+;;
+;; (f (((. g) x) y))
+;;
+;; which finally reduces to
+;;
+;; (f (g (x y)))
+;;
+;; Bother reduces to the same normal form, they are therefor
+;; equivalent.
+;;
+;; We are thus allowed to write the following reduction rule
+(= ((. (. $f)) (. $g)) (. ((. $f) $g)))
+
 ;;;;;;;;;;
 ;; Test ;;
 ;;;;;;;;;;
@@ -261,3 +364,5 @@
 !(bc &kb
      (fromNumber 5)
      (: $prg (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+
+;; NEXT: specialize combinators to reflect more concrete data flow?
