@@ -85,9 +85,10 @@
 
 ;; The ontology is simply composed of an upper type Data which all
 ;; other data types are subtype of.
-!(add-atom &kb (: SD (<: (sound-spleeter.DTLOutput $l) Data)))
-!(add-atom &kb (: VD (<: (VocalsIn $l) Data)))
-!(add-atom &kb (: ID (<: Instrumental Data)))
+!(add-atom &kb (: SOD (<: (sound-spleeter.DTLOutput $l) Data)))
+!(add-atom &kb (: VID (<: (VocalsIn $l) Data)))
+!(add-atom &kb (: IND (<: Instrumental Data)))
+!(add-atom &kb (: SID (<: (SongIn $l) Data)))
 
 ;;;;;;;;;;;;;;
 ;; Services ;;
@@ -186,6 +187,8 @@
 ;; Combinators ;;
 ;;;;;;;;;;;;;;;;;
 
+;; NEXT: add implicit arrow type, =>
+
 ;; Name: Bluebird
 ;; Description: Sequential composition
 ;; Type: (b -> c) -> (a -> b) -> a -> c
@@ -226,44 +229,38 @@
 ;; Reduction rules ;;
 ;;;;;;;;;;;;;;;;;;;;;
 
-;; NEXT: re-enable reduction rules
+;; Composition to application
+(= ((((((. $aD) $bD) $cD) $g) $f) $x) ($g ($f $x)))
 
-;; ;; Composition to application
-;; (= ((((((. $aD) $bD) $cD) $g) $f) $x) ($g ($f $x)))
-
-;; ;; Right associate composition, meaning
-;; ;;
-;; ;; h . g . f
-;; ;;
-;; ;; should be represented as
-;; ;;
-;; ;; h . (g . f)
-;; ;;
-;; ;; or in MeTTa
-;; ;;
-;; ;; ((. h) ((. g) f))
-;; ;;
-;; ;; Thus anything deviating from that representation, such as
-;; ;;
-;; ;; (h . g) . f
-;; ;;
-;; ;; or in MeTTa
-;; ;;
-;; ;; ((. ((. h) g)) f)
-;; ;;
-;; ;; should be rewritten as
-;; ;;
-;; ;; ((. h) ((. g) f))
-;; ;;
-;; ;; f : a -> b
-;; ;; g : b -> c
-;; ;; h : c -> d
-;; ;;
-;; ;; The reason left associativity is choosen as default over right
-;; ;; associativity is because in prefix notation the former is easier to
-;; ;; read (to me anyway).
-;; ;; NEXT
-;; (= ((. ((. $h) $g)) $f) ((. $h) ((. $g) $f)))
+;; Right associate composition, meaning
+;;
+;; h . g . f
+;;
+;; should be represented as
+;;
+;; h . (g . f)
+;;
+;; or in MeTTa
+;;
+;; ((. h) ((. g) f))
+;;
+;; Thus anything deviating from that representation, such as
+;;
+;; (h . g) . f
+;;
+;; or in MeTTa
+;;
+;; ((. ((. h) g)) f)
+;;
+;; should be rewritten as
+;;
+;; ((. h) ((. g) f))
+;;
+;; The reason left associativity is choosen as default over right
+;; associativity is because in prefix notation the former is easier to
+;; read (to me anyway).
+(= (((((. $aD) $bD) $cD) (((((. $bD) $cD) $dD) $h) $g)) $f)
+   (((((. $bD) $cD) $dD) $h) (((((. $aD) $bD) $cD) $g) $f)))
 
 ;; ;; The following sequential compositions
 ;; ;;
@@ -367,6 +364,140 @@
 ;; ;; the following reduction rule
 ;; (= ((. (. $f)) (. $g)) (. ((. $f) $g)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Remove implicit arguments ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Remove implicit arguments, that is arguments proving that the types
+;; involved in combinators are subtypes of Data.  Only works on a
+;; closed expression.
+(: remove-implicit-arguments (-> $a $a))
+(= (remove-implicit-arguments $term)
+   (case (get-metatype $term)
+     ((Symbol $term)
+      (Variable $term)
+      (Grounded $term)
+      (Expression (case $term
+                    (((((((. $aD) $bD) $cD) $f) $g)
+                      (let* (($νf (remove-implicit-arguments $f))
+                             ($νg (remove-implicit-arguments $g)))
+                        ((. $νf) $νg)))
+                     ((((((((Φ $aD) $bD) $cD) $dD) $f) $g) $h)
+                      (let* (($νf (remove-implicit-arguments $f))
+                             ($νg (remove-implicit-arguments $g))
+                             ($νh (remove-implicit-arguments $h)))
+                        ((((Φ $νf) $νg)) $νh)))))))))
+
+;; Test remove-implicit-arguments
+!(assertEqual
+  (remove-implicit-arguments SD)
+  SD)
+!(assertEqual
+  (remove-implicit-arguments (((((. SD) VD) VD) translate) vocals))
+  ((. translate) vocals))
+!(assertEqual
+  (remove-implicit-arguments
+   (((((. SID) SOD) SID)
+     (((((((Φ SOD) IND) VID) VID) mix) accomp)
+      (((((. SOD) VID) VID) translate) vocals))) spleeter))
+  ((. ((((Φ mix) accomp)) ((. translate) vocals))) spleeter))
+
+;; NEXT: try to identify reduction rules to simplify the following candidates
+
+!(assertEqual
+  (remove-implicit-arguments
+   (((((. SID) SOD) SID)
+     (((((. SOD) SOD) SID) (((((((Φ SOD) IND) VID) VID) mix) accomp) vocals))
+      (((((. SOD) SID) SOD) spleeter)
+       (((((((Φ SOD) IND) VID) VID) mix) accomp) (((((. SOD) VID) VID) translate) vocals))))) spleeter))
+  ((. ((. ((((Φ mix) accomp)) vocals)) ((. spleeter) ((((Φ mix) accomp)) ((. translate) vocals))))) spleeter))
+
+!(assertEqual
+  (remove-implicit-arguments
+   (((((. SID) SOD) SID)
+     (((((. SOD) SOD) SID) (((((((Φ SOD) IND) VID) VID) mix) accomp) vocals))
+      (((((. SOD) SID) SOD) spleeter)
+       (((((((Φ SOD) IND) VID) VID) mix) accomp)
+        (((((. SOD) VID) VID) translate) vocals))))) spleeter))
+  ((. ((. ((((Φ mix) accomp)) vocals)) ((. spleeter) ((((Φ mix) accomp)) ((. translate) vocals)))))
+   spleeter))
+
+!(assertEqual
+  (remove-implicit-arguments
+   (((((. SID) SOD) SID)
+     (((((. SOD) SOD) SID) (((((((Φ SOD) IND) VID) VID) mix) accomp) vocals))
+      (((((. SOD) SID) SOD) spleeter)
+       (((((((Φ SOD) IND) VID) VID) mix) accomp)
+        (((((. SOD) VID) VID) translate) vocals)))))
+    (((((. SID) SOD) SOD)
+      (((((. SOD) SID) SOD) spleeter)
+       (((((((Φ SOD) IND) VID) VID) mix) accomp) vocals))) spleeter)))
+  ((. ((. ((((Φ mix) accomp)) vocals)) ((. spleeter) ((((Φ mix) accomp)) ((. translate) vocals)))))
+   ((. ((. spleeter) ((((Φ mix) accomp)) vocals))) spleeter)))
+
+!(assertEqual
+  (remove-implicit-arguments
+   (((((. SID) SOD) SID)
+     (((((. SOD) SOD) SID) (((((((Φ SOD) IND) VID) VID) mix) accomp) vocals))
+      (((((. SOD) SID) SOD) spleeter)
+       (((((((Φ SOD) IND) VID) VID) mix) accomp) vocals))))
+    (((((. SID) SOD) SOD)
+      (((((. SOD) SID) SOD) spleeter)
+       (((((((Φ SOD) IND) VID) VID) mix) accomp)
+        (((((. SOD) VID) VID) translate) vocals)))) spleeter)))
+  ((. ((. ((((Φ mix) accomp)) vocals)) ((. spleeter) ((((Φ mix) accomp)) vocals))))
+   ((. ((. spleeter) ((((Φ mix) accomp)) ((. translate) vocals)))) spleeter)))
+
+!(assertEqual
+  (remove-implicit-arguments
+   (((((. SID) SOD) SID)
+     (((((. SOD) SOD) SID) (((((((Φ SOD) IND) VID) VID) mix) accomp) vocals))
+      (((((. SOD) SID) SOD) spleeter)
+       (((((((Φ SOD) IND) VID) VID) mix) accomp) vocals))))
+    (((((. SID) SOD) SOD)
+      (((((. SOD) SID) SOD) spleeter)
+       (((((((Φ SOD) IND) VID) VID) mix) accomp) vocals)))
+     (((((. SID) SOD) SOD)
+       (((((. SOD) SID) SOD) spleeter)
+        (((((((Φ SOD) IND) VID) VID) mix) accomp)
+         (((((. SOD) VID) VID) translate) vocals)))) spleeter))))
+  ((. ((. ((((Φ mix) accomp)) vocals)) ((. spleeter) ((((Φ mix) accomp)) vocals))))
+   ((. ((. spleeter) ((((Φ mix) accomp)) vocals)))
+    ((. ((. spleeter) ((((Φ mix) accomp)) ((. translate) vocals)))) spleeter))))
+
+!(assertEqual
+  (remove-implicit-arguments (((((. SOD) SID) SID)
+                               (((((((Φ SID) IND) VID) VID) mix)
+                                 (((((. SID) SOD) IND) accomp) spleeter))
+                                (((((. SID) SOD) VID) vocals) spleeter)))
+                              (((((. SID) SOD) SID)
+                                (((((. SOD) SOD) SID)
+                                  (((((((Φ SOD) IND) VID) VID) mix) accomp) vocals))
+                                 (((((. SOD) SID) SOD) spleeter)
+                                  (((((((Φ SOD) IND) VID) VID) mix) accomp) vocals))))
+                               (((((. SID) SID) SOD)
+                                 (((((. SID) SID) SOD) spleeter)
+                                  (((((((Φ SID) IND) VID) VID) mix)
+                                    (((((. SID) SOD) IND) accomp) spleeter))
+                                   (((((. SID) SOD) VID) vocals) spleeter))))
+                                (((((. SID) SID) SID)
+                                  (((((((Φ SID) IND) VID) VID) mix)
+                                    (((((. SID) SOD) IND) accomp) spleeter))
+                                   (((((. SID) VID) VID) translate)
+                                    (((((. SID) SOD) VID) vocals) spleeter))))
+                                 (((((. SID) SOD) SID)
+                                   (((((((Φ SOD) IND) VID) VID) mix) accomp) vocals))
+                                  (((((. SID) SID) SOD) spleeter)
+                                   (((((((Φ SID) IND) VID) VID) mix)
+                                     (((((. SID) SOD) IND) accomp) spleeter))
+                                    (((((. SID) SOD) VID) vocals) spleeter)))))))))
+  ((. ((((Φ mix) ((. accomp) spleeter))) ((. vocals) spleeter)))
+   ((. ((. ((((Φ mix) accomp)) vocals)) ((. spleeter) ((((Φ mix) accomp)) vocals))))
+    ((. ((. spleeter) ((((Φ mix) ((. accomp) spleeter))) ((. vocals) spleeter))))
+     ((. ((((Φ mix) ((. accomp) spleeter))) ((. translate) ((. vocals) spleeter))))
+      ((. ((((Φ mix) accomp)) vocals))
+       ((. spleeter) ((((Φ mix) ((. accomp) spleeter))) ((. vocals) spleeter)))))))))
+
 ;;;;;;;;;;
 ;; Test ;;
 ;;;;;;;;;;
@@ -389,26 +520,90 @@
 ;; ((. (((Φ mix) accomp) ((. translate) vocals))) spleeter)
 
 ;; ;; Infer the type of .
-;; !(bc &kb (fromNumber 0) (: . $t))
+;; ;; TODO: re-enable once alpha equivalence is supported
+;; !(assertEqual
+;;   (bc &kb (fromNumber 0) (: . $t))
+;;   (: . (-> (: $aD (<: $a Data))
+;;            (-> (: $bD (<: $b Data))
+;;                (-> (: $cD (<: $c Data))
+;;                    (-> (: $f (-> (: $y $b) $c))
+;;                        (-> (: $g (-> (: $x $a) $b))
+;;                            (-> (: $x $a) $c))))))))
 
 ;; ;; Find all subtypes of Data
-;; !(bc &kb (fromNumber 0) (: $prf (<: $s Data)))
+;; ;; TODO: re-enable once alpha equivalence is supported
+;; !(assertEqualToResult
+;;   (bc &kb (fromNumber 0) (: $prf (<: $s Data)))
+;;   ((: IND (<: Instrumental Data))
+;;    (: SID (<: (SongIn $l) Data))
+;;    (: VID (<: (VocalsIn $l) Data))
+;;    (: SOD (<: (sound-spleeter.DTLOutput $l) Data))))
 
 ;; ;; Infer the type of (((. $aD) $bD) $cD)
+;; ;; TODO: re-enable once assert contain is supported
 ;; !(bc &kb (fromNumber 3) (: (((. $aD) $bD) $cD) $t))
 
 ;; ;; Infer the type of ((((. $aD) $bD) $cD) vocals)
+;; ;; TODO: re-enable once assert contain is supported
 ;; !(bc &kb (fromNumber 4) (: ((((. $aD) $bD) $cD) translate) $t))
 
 ;; ;; Infer the type of ((. translate) vocals)
-;; !(bc &kb (fromNumber 5) (: (((((. $aD) $bD) $cD) translate) vocals) $t))
+;; ;; TODO: re-enable once alpha-equivalence is supported
+;; !(assertEqual
+;;   (bc &kb (fromNumber 5) (: (((((. $aD) $bD) $cD) translate) vocals) $t))
+;;   (: (((((. SOD) VID) VID) translate) vocals)
+;;    (-> (: $x (sound-spleeter.DTLOutput "English")) (VocalsIn "Chinese"))))
 
-;; ;; Synthesize ((. translate) vocals)
-;; !(bc &kb
-;;      (fromNumber 5)
-;;      (: $prg (-> (: $so (sound-spleeter.DTLOutput "English")) (VocalsIn "Chinese"))))
+;; Synthesize ((. translate) vocals)
+!(assertEqual
+  (bc &kb
+      (fromNumber 5)
+      (: $prg (-> (: $x (sound-spleeter.DTLOutput "English")) (VocalsIn "Chinese"))))
+  (: (((((. SOD) VID) VID) translate) vocals)
+     (-> (: $x (sound-spleeter.DTLOutput "English")) (VocalsIn "Chinese"))))
 
-;; Synthesize the full AI service composition
+;; Synthesize (((Φ mix) accomp) ((. translate) vocals)) given a template
+!(assertEqual
+  (bc &kb
+      (fromNumber 7)
+      (: (((((((Φ $aD) $bD) $cD) $dD) $f) $g) $h)
+         (-> (: $x (sound-spleeter.DTLOutput "English")) (SongIn "Chinese"))))
+  (: (((((((Φ SOD) IND) VID) VID) mix) accomp)
+      (((((. SOD) VID) VID) translate) vocals))
+     (-> (: $x (sound-spleeter.DTLOutput "English")) (SongIn "Chinese"))))
+
+;; Synthesize (((Φ mix) accomp) ((. translate) vocals)) from scratch
+!(assertEqual
+  (bc &kb
+      (fromNumber 7)
+      (: $prg (-> (: $x (sound-spleeter.DTLOutput "English")) (SongIn "Chinese"))))
+  (: (((((((Φ SOD) IND) VID) VID) mix) accomp)
+      (((((. SOD) VID) VID) translate) vocals))
+     (-> (: $x (sound-spleeter.DTLOutput "English")) (SongIn "Chinese"))))
+
+;; ;; Type check
+;; ;;
+;; ;;       (: (((((. SID) SOD) SID)
+;; ;;            (((((((Φ SOD) IND) VID) VID) mix) accomp)
+;; ;;             (((((. SOD) VID) VID) translate) vocals))) spleeter)
+;; ;;          (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+;; ;;
+;; ;; TODO: re-enable once alpha-equivalence is supported
+;; !(assertEqual
+;;   (bc &kb
+;;       (fromNumber 12)
+;;       (: (((((. SID) SOD) SID)
+;;            (((((((Φ SOD) IND) VID) VID) mix) accomp)
+;;             (((((. SOD) VID) VID) translate) vocals))) spleeter)
+;;          (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+;;   (: (((((. SID) SOD) SID)
+;;        (((((((Φ SOD) IND) VID) VID) mix) accomp)
+;;         (((((. SOD) VID) VID) translate) vocals))) spleeter)
+;;      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+
+;; Synthesize full AI service composition
+;;
+;; ((. (((Φ mix) accomp) ((. translate) vocals))) spleeter)
 !(bc &kb
-     (fromNumber 15)
-     (: $prg (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+     (fromNumber 12)
+     (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
