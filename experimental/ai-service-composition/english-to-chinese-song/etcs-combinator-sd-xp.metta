@@ -3,6 +3,52 @@
 ;; Combinators are obtained from the Data.Aviary.Birds Haskell package
 ;; https://hackage.haskell.org/package/data-aviary-0.4.0/docs/Data-Aviary-Birds.html
 
+;;;;;;;;;;
+;; List ;;
+;;;;;;;;;;
+
+;; TODO: replace the following by `unique` once it really works.
+
+;; Declaration of List data type and constructors
+(: List (-> $a Type))
+(: Nil (List $a))
+(: Cons (-> $a (List $a) (List $a)))
+
+;; Build a list from an expression, containing all the sub-expressions
+;; as elements of the list.
+(: fromExpression (-> Expression (List $a)))
+(= (fromExpression $expr) (if (== $expr ())
+                              Nil
+                              (let* (($head (car-atom $expr))
+                                     ($tail (cdr-atom $expr)))
+                                (Cons $head (fromExpression $tail)))))
+
+;; Build an expression from a List, composed of all elements of the
+;; list as sub-expressions.
+(: fromList (-> (List $a) Expression))
+(= (fromList Nil) ())
+(= (fromList (Cons $head $tail)) (let $tail-sexps (fromList $tail)
+                                   (cons-atom $head $tail-sexps)))
+
+;; Check if an element is in a list (sorted or not)
+(: elem (-> $a (List $a) Bool))
+(= (elem $x Nil) False)
+(= (elem $x (Cons $head $tail)) (if (== $x $head) True (elem $x $tail)))
+
+;; Remove duplicates from a list (sorted or not)
+(: uniq_ (-> (List $a) (List $a) (List $a)))
+(= (uniq_ $acc Nil) Nil)
+(= (uniq_ $acc (Cons $head $tail))
+   (if (elem $head $acc)
+       (uniq_ $acc $tail)
+       (Cons $head (uniq_ (Cons $head $acc) $tail))))
+(: uniq (-> (List $a) (List $a)))
+(= (uniq $l) (uniq_ Nil $l))
+
+;; Remove all duplicated subexpressions of an expression
+(: uniqSExpr (-> Expression Expression))
+(= (uniqSExpr $expr) (fromList (uniq (fromExpression $expr))))
+
 ;;;;;;;;;
 ;; Nat ;;
 ;;;;;;;;;
@@ -338,6 +384,34 @@
 ;; the following reduction rule
 (= ((. (. $f)) (. $g)) (. ((. $f) $g)))
 
+;; Move sequential composition from aggregator to branch.
+;;
+;; (Φ (. f g) j (. h (. i j)))
+;;
+;; reduces to
+;;
+;; (Φ f (. g j) (. h (. i j)))
+(= (((Φ ((. $f) $g)) $j) ((. $h) ((. $i) $j)))
+   (((Φ $f) ((. $g) $j)) ((. $h) ((. $i) $j))))
+
+;; Factorize sequential branches of phoenix.
+;;
+;; (Φ f (. g i) (. h i))
+;;
+;; reduces to
+;;
+;; (. (Φ f g h) i)
+;;
+;; For now the reduction rule is overfit to our situation, which is
+;;
+;; (Φ f (. g j) (. h (. i j)))
+;;
+;; reduces to
+;;
+;; (. (Φ f g (. h i)) j)
+(= (((Φ $f) ((. $g) $j)) ((. $h) ((. $i) $j)))
+   ((. (((Φ $f) $g) ((. $h) $i))) $j))
+
 ;;;;;;;;;;
 ;; Test ;;
 ;;;;;;;;;;
@@ -360,8 +434,9 @@
 ;; ((. (((Φ mix) accomp) ((. translate) vocals))) spleeter)
 
 ;; Synthesize the full AI service composition
-!(bc &kb
-     (fromNumber 5)
-     (: $prg (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
-
-;; NEXT: specialize combinators to reflect more concrete data flow?
+!(let* (($results (collapse
+                   (bc &kb
+                       (fromNumber 5)
+                       (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
+        ($uniq-results (uniqSExpr $results)))
+   (superpose $uniq-results))
