@@ -221,15 +221,15 @@
 ;; exists they are all returned as alternate branches of a
 ;; non-deterministic execution.
 (: bc (-> $a                            ; Knowledge and rule base space
-          $b                            ; Query with holes
           Nat                           ; Maximum depth
+          $b                            ; Query with holes
           $b))                          ; Filled query
 ;; Base case
-(= (bc $kb (: $prf $ccln) $_) (match $kb (: $prf $ccln) (: $prf $ccln)))
+(= (bc $kb $_ (: $prf $ccln)) (match $kb (: $prf $ccln) (: $prf $ccln)))
 ;; Recursive step
-(= (bc $kb (: ($prfabs $prfarg) $ccln) (S $k))
-   (let* (((: $prfabs (-> $prms $ccln)) (bc $kb (: $prfabs (-> $prms $ccln)) $k))
-          ((: $prfarg $prms) (bc $kb (: $prfarg $prms) $k)))
+(= (bc $kb (S $k) (: ($prfabs $prfarg) $ccln))
+   (let* (((: $prfabs (-> $prms $ccln)) (bc $kb $k (: $prfabs (-> $prms $ccln))))
+          ((: $prfarg $prms) (bc $kb $k (: $prfarg $prms))))
      (: ($prfabs $prfarg) $ccln)))
 
 ;;;;;;;;;;;;;;;;;;;;;
@@ -295,48 +295,40 @@
 ;;;;;;;;;;
 
 ;; Look for a composition operator
-!(bc &kb (: $prg (-> (-> $b $c) (-> (-> $a $b) (-> $a $c)))) (fromNumber 0))
+!(bc &kb (fromNumber 0) (: $prg (-> (-> $b $c) (-> (-> $a $b) (-> $a $c)))))
 
 ;; Synthesize a program that takes speech as
 ;; naint.speech2text-en.Audio and returns text as
 ;; naint.speech2text-en.Text.
-!(bc &kb
-     (: $prg (-> speech2text-en.Audio speech2text-en.Text))
-     (fromNumber 0))
+!(bc &kb (fromNumber 0) (: $prg (-> speech2text-en.Audio speech2text-en.Text)))
 
 ;; Synthesize a program that takes text as naint.text-emotions.Input
 ;; and returns emotion as naint.text-emotions.Output.
-!(bc &kb
-     (: $prg (-> text-emotions.Input text-emotions.Output))
-     (fromNumber 0))
+!(bc &kb (fromNumber 0) (: $prg (-> text-emotions.Input text-emotions.Output)))
 
 ;; Synthesize a program that takes speech as Bytes and returns speech
 ;; as naint.speech2text-en.Audio.
-!(bc &kb
-     (: $prg (-> Bytes speech2text-en.Audio))
-     (fromNumber 0))
+!(bc &kb (fromNumber 0) (: $prg (-> Bytes speech2text-en.Audio)))
 
 ;; Synthesize a program that takes text as naint.speech2text-en.Text
 ;; and returns text as String.
-!(bc &kb
-     (: $prg (-> speech2text-en.Text String))
-     (fromNumber 0))
+!(bc &kb (fromNumber 0) (: $prg (-> speech2text-en.Text String)))
 
 ;; Synthesize a program that takes speech as Bytes and returns text as
 ;; naint.speech2text-en.Text.
-!(bc &kb (: $prg (-> Bytes speech2text-en.Text)) (fromNumber 2))
+!(bc &kb (fromNumber 2) (: $prg (-> Bytes speech2text-en.Text)))
 
 ;; Synthesize a program that takes speech as Bytes and returns text as
 ;; String.
-!(bc &kb (: $prg (-> Bytes String)) (fromNumber 3))
+!(bc &kb (fromNumber 3) (: $prg (-> Bytes String)))
 
 ;; Synthesize a program that takes text as String and returns emotion
 ;; as String.
-!(bc &kb (: $prg (-> String String)) (fromNumber 3))
+!(bc &kb (fromNumber 3) (: $prg (-> String String)))
 
 ;; Synthesize a program that takes speech as Bytes and returns text or
 ;; emotion as String.
-!(bc &kb (: $prg (-> Bytes String)) (fromNumber 5))
+!(bc &kb (fromNumber 5) (: $prg (-> Bytes String)))
 
 ;; Synthesize a program that takes speech as
 ;; naint.speech2text-en.Audio and returns emotion as
@@ -344,7 +336,7 @@
 ;; NEXT: use unique when fully supported
 !(let* (($results (collapse
                    (bc &kb
-                       (: $prg (-> speech2text-en.Audio text-emotions.Output))
-                       (fromNumber 4))))
+                       (fromNumber 4)
+                       (: $prg (-> speech2text-en.Audio text-emotions.Output)))))
         ($uniq-results (uniqSExpr $results)))
    (superpose $uniq-results))
