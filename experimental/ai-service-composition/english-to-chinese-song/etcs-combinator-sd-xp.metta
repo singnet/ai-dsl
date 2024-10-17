@@ -412,6 +412,12 @@
 (= (((Φ $f) ((. $g) $j)) ((. $h) ((. $i) $j)))
    ((. (((Φ $f) $g) ((. $h) $i))) $j))
 
+;; NEXT: add reduction rule for
+;; ((((Φ (Φ mix)) (. accomp)) (. ((. translate) vocals))) spleeter)
+
+;; NEXT: automatically prove equivalence to guaranty that reduction
+;; rules are correct.
+
 ;;;;;;;;;;
 ;; Test ;;
 ;;;;;;;;;;
