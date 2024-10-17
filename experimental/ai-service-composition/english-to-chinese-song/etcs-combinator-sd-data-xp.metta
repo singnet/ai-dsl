@@ -189,6 +189,8 @@
 
 ;; NEXT: add implicit arrow type, =>
 
+;; NEXT: consider moving subtype of Data in definition
+
 ;; Name: Bluebird
 ;; Description: Sequential composition
 ;; Type: (b -> c) -> (a -> b) -> a -> c
