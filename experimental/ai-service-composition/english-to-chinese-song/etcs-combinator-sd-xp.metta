@@ -246,8 +246,84 @@
                           (-> (: $h (-> (: $x $a) $c))
                               (-> (: $x $a) $d))))))
 
+
+
 ;;;;;;;;;;;;;;;;;;;;;
-;; Reduction rules ;;
+;; Reduction Proof ;;
+;;;;;;;;;;;;;;;;;;;;;
+
+;; Tools to help to prove correctness of reduction rules
+
+;; The following reduction functions seem overly complicated but that
+;; is to be able to call them on terms containing free variables,
+;; i.e. it is not required to be called on a closed term.  For that
+;; the reduction function can take any term, however it will return a
+;; Maybe, thus a (Just <REDUCED>) if it matches, and Nothing
+;; otherwise.
+;;
+;; So for instance instead of implementing reduction of . as
+;;
+;; (= (bluebird-reduce ((($d $g) $f) $x)) ($g ($f $x)))
+;;
+;; it is implemented using Maybe as shown below.
+
+;; Reduce (((. g) f) x) to (g (f x))
+(: bluebird-reduce (-> $a (Maybe $a)))
+(= (bluebird-reduce $term)
+   (case $term
+     ((((($bluebird $g) $f) $x) (if (== $bluebird .)
+                                    (Just ($g ($f $x)))
+                                    Nothing))
+      ($_ Nothing))))
+
+;; Reduce ((((Φ f) g) h) x) to ((f (g x)) (h x))
+(: phoenix-reduce (-> $a (Maybe $a)))
+(= (phoenix-reduce $term)
+   (case $term
+     (((((($phoenix $f) $g) $h) $x) (if (== $d .)
+                                        (Just (($f ($g $x)) ($h $x)))
+                                        Nothing))
+      ($_ Nothing))))
+
+;; Reduce any term to its normal form, in the λ-calculus sense
+(: reduce (-> $a $a))
+(: reduce (-> $a $a))
+(= (reduce $term)
+   (case (get-metatype $term)
+     ;; Base cases
+     ((Symbol $term)
+      (Grounded $term)
+      (Variable $term)
+      (Expression
+       (if (== $term ())
+           ()
+           ;; Recursive steps
+           (case $term
+             ;; Application
+             ((($f $g) (let* (($νf (reduce $f))
+                              ($νg (reduce $g)))
+                         (if (and (== $νf $f) (== $νg $g))
+                             ;; $f and $g are already reduced, try to
+                             ;; match them to known reduction rules
+                             (case (bluebird-reduce $term)
+                               (((Just $r) $r)
+                                (Nothing
+                                 (case (phoenix-reduce $term)
+                                   (((Just $r) $r)
+                                    ;; No reduction rules applicable,
+                                    ;; return unchanged
+                                    (Nothing ($f $g))))
+                                 )))
+                             ;; $f and $g changed, so attempt to
+                             ;; reduce their application once more
+                             (reduce ($νf $νg)))))
+              ;; Otherwise, return unchanged
+              ($_ $term))))))))
+
+;; NEXT: test
+
+;;;;;;;;;;;;;;;;;;;;;
+;; Reduction Rules ;;
 ;;;;;;;;;;;;;;;;;;;;;
 
 ;; Composition to application
