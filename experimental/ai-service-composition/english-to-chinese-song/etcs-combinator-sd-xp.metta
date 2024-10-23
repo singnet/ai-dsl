@@ -3,52 +3,6 @@
 ;; Combinators are obtained from the Data.Aviary.Birds Haskell package
 ;; https://hackage.haskell.org/package/data-aviary-0.4.0/docs/Data-Aviary-Birds.html
 
-;;;;;;;;;;
-;; List ;;
-;;;;;;;;;;
-
-;; TODO: replace the following by `unique` once it really works.
-
-;; Declaration of List data type and constructors
-(: List (-> $a Type))
-(: Nil (List $a))
-(: Cons (-> $a (List $a) (List $a)))
-
-;; Build a list from an expression, containing all the sub-expressions
-;; as elements of the list.
-(: fromExpression (-> Expression (List $a)))
-(= (fromExpression $expr) (if (== $expr ())
-                              Nil
-                              (let* (($head (car-atom $expr))
-                                     ($tail (cdr-atom $expr)))
-                                (Cons $head (fromExpression $tail)))))
-
-;; Build an expression from a List, composed of all elements of the
-;; list as sub-expressions.
-(: fromList (-> (List $a) Expression))
-(= (fromList Nil) ())
-(= (fromList (Cons $head $tail)) (let $tail-sexps (fromList $tail)
-                                   (cons-atom $head $tail-sexps)))
-
-;; Check if an element is in a list (sorted or not)
-(: elem (-> $a (List $a) Bool))
-(= (elem $x Nil) False)
-(= (elem $x (Cons $head $tail)) (if (== $x $head) True (elem $x $tail)))
-
-;; Remove duplicates from a list (sorted or not)
-(: uniq_ (-> (List $a) (List $a) (List $a)))
-(= (uniq_ $acc Nil) Nil)
-(= (uniq_ $acc (Cons $head $tail))
-   (if (elem $head $acc)
-       (uniq_ $acc $tail)
-       (Cons $head (uniq_ (Cons $head $acc) $tail))))
-(: uniq (-> (List $a) (List $a)))
-(= (uniq $l) (uniq_ Nil $l))
-
-;; Remove all duplicated subexpressions of an expression
-(: uniqSExpr (-> Expression Expression))
-(= (uniqSExpr $expr) (fromList (uniq (fromExpression $expr))))
-
 ;;;;;;;;;
 ;; Nat ;;
 ;;;;;;;;;
@@ -280,15 +234,14 @@
 (: phoenix-reduce (-> $a (Maybe $a)))
 (= (phoenix-reduce $term)
    (case $term
-     (((((($phoenix $f) $g) $h) $x) (if (== $d .)
+     (((((($phoenix $f) $g) $h) $x) (if (== $phoenix Φ)
                                         (Just (($f ($g $x)) ($h $x)))
                                         Nothing))
       ($_ Nothing))))
 
 ;; Reduce any term to its normal form, in the λ-calculus sense
-(: reduce (-> $a $a))
-(: reduce (-> $a $a))
-(= (reduce $term)
+(: β-reduce (-> $a $a))
+(= (β-reduce $term)
    (case (get-metatype $term)
      ;; Base cases
      ((Symbol $term)
@@ -300,8 +253,8 @@
            ;; Recursive steps
            (case $term
              ;; Application
-             ((($f $g) (let* (($νf (reduce $f))
-                              ($νg (reduce $g)))
+             ((($f $g) (let* (($νf (β-reduce $f))
+                              ($νg (β-reduce $g)))
                          (if (and (== $νf $f) (== $νg $g))
                              ;; $f and $g are already reduced, try to
                              ;; match them to known reduction rules
@@ -316,18 +269,71 @@
                                  )))
                              ;; $f and $g changed, so attempt to
                              ;; reduce their application once more
-                             (reduce ($νf $νg)))))
+                             (β-reduce ($νf $νg)))))
               ;; Otherwise, return unchanged
               ($_ $term))))))))
 
-;; NEXT: test
+;; Test bluebird β-reduction
+!(assertEqual
+  (β-reduce (((. $g) $f) $x))
+  ($g ($f $x)))
+
+;; Test phoenix β-reduction
+!(assertEqual
+  (β-reduce ((((Φ $f) $g) $h) $x))
+  (($f ($g $x)) ($h $x)))
+
+;; TODO: fix the following test
+
+;; ;; Test reduction of left and right associative composition
+;; !(assertEqual
+;;   (β-reduce (((. ((. $h) $g)) $f) $x))
+;;   (β-reduce (((. $h) ((. $g) $f)) $x))
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Reduction Rules ;;
 ;;;;;;;;;;;;;;;;;;;;;
 
-;; Composition to application
+;; Bluebird β-reduction
 (= (((. $g) $f) $x) ($g ($f $x)))
+
+;; ;; Phoenix β-reduction.  That rules is not recommended because it
+;; ;; results in a duplication of $x.
+;; (= ((((Φ $f) $g) $h) $x) (($f ($g $x)) ($h $x)))
+
+;; These tests allow to prove that the reduction rules are correct in
+;; the sense that the reduced term, if applied to arguments, β-reduces
+;; to the same term.  Note that in order to pass all combinator
+;; β-reduction rules need to be enabled.
+
+;; ;; Test that applying left associative composition reduces is
+;; ;; equivalent to applying right associative composition.
+;; !(assertEqual
+;;   (((. ((. $h) $g)) $f) $x)
+;;   (((. $h) ((. $g) $f)) $x))
+
+;; ;; Test that applying (. (. $f)) (. $g)) twice is equivalent to
+;; ;; applying (. ((. $f) $g)) twice.
+;; !(assertEqual
+;;   ((((. (. $f)) (. $g)) $x) $y)
+;;   (((. ((. $f) $g)) $x) $y))
+
+;; ;; Test that applying (((Φ ((. $f) $g)) $j) ((. $h) ((. $i) $j)))
+;; ;; once is equivalent to (((Φ $f) ((. $g) $j)) ((. $h) ((. $i) $j)))
+;; !(assertEqual
+;;   ((((Φ ((. $f) $g)) $j) ((. $h) ((. $i) $j))) $x)
+;;   ((((Φ $f) ((. $g) $j)) ((. $h) ((. $i) $j))) $x))
+
+;; ;; Test that applying (((Φ $f) ((. $g) $j)) ((. $h) ((. $i) $j))) once
+;; ;; is equivalent to ((. (((Φ $f) $g) ((. $h) $i))) $j)
+;; !(assertEqual
+;;   ((((Φ $f) ((. $g) $j)) ((. $h) ((. $i) $j))) $x)
+;;   (((. (((Φ $f) $g) ((. $h) $i))) $j) $x))
+
+;; ;; Test that applying ((. (((Φ $f) $g) ((. $h) $i))) $j)
+;; !(assertEqual
+;;   (((. (((Φ $f) $g) ((. $h) $i))) $j) $x)
+;;   (((((Φ (Φ $f)) (. $g)) (. ((. $h) $i))) $j) $x))
 
 ;; Right associate composition, meaning
 ;;
@@ -488,11 +494,12 @@
 (= (((Φ $f) ((. $g) $j)) ((. $h) ((. $i) $j)))
    ((. (((Φ $f) $g) ((. $h) $i))) $j))
 
-;; NEXT: add reduction rule for
-;; ((((Φ (Φ mix)) (. accomp)) (. ((. translate) vocals))) spleeter)
-
-;; NEXT: automatically prove equivalence to guaranty that reduction
-;; rules are correct.
+;; Simplify double phoenix (and other weird stuff I don't understand
+;; but proven to be true, see test earlier above).  Note that when
+;; phoenix β-reduction rule is enabled, the following is not
+;; necessary.
+(= ((((Φ (Φ $f)) (. $g)) (. ((. $h) $i))) $j)
+   ((. (((Φ $f) $g) ((. $h) $i))) $j))
 
 ;;;;;;;;;;
 ;; Test ;;
@@ -516,9 +523,8 @@
 ;; ((. (((Φ mix) accomp) ((. translate) vocals))) spleeter)
 
 ;; Synthesize the full AI service composition
-!(let* (($results (collapse
-                   (bc &kb
-                       (fromNumber 5)
-                       (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
-        ($uniq-results (uniqSExpr $results)))
-   (superpose $uniq-results))
+!(let $results (collapse
+                (bc &kb
+                    (fromNumber 5)
+                    (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese")))))
+   (unique (superpose $results)))
