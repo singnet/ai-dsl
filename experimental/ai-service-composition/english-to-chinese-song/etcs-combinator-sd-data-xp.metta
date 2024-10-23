@@ -191,6 +191,9 @@
 
 ;; NEXT: consider moving subtype of Data in definition
 
+;; NEXT: consider moving rules to dedicated backward chainer.  Maybe
+;; even uncurried version.
+
 ;; Name: Bluebird
 ;; Description: Sequential composition
 ;; Type: (b -> c) -> (a -> b) -> a -> c
