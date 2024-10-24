@@ -333,6 +333,8 @@
   (: (. (Φ mix accomp (. translate vocals)) spleeter)
      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
 
+;; NEXT: try depth of 4 or so to test the Data idea
+
 ;; Synthesize full AI service composition
 !(bc &kb
      (fromNumber 3)
