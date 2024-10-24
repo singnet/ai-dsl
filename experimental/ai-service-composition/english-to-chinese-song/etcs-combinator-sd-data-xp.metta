@@ -187,12 +187,7 @@
 ;; Combinators ;;
 ;;;;;;;;;;;;;;;;;
 
-;; NEXT: add implicit arrow type, =>
-
-;; NEXT: consider moving subtype of Data in definition
-
-;; NEXT: consider moving rules to dedicated backward chainer.  Maybe
-;; even uncurried version.
+;; TODO: experiment with implicit arrow type, =>
 
 ;; Name: Bluebird
 ;; Description: Sequential composition
