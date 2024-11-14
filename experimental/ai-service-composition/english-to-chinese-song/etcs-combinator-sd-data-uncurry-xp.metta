@@ -151,8 +151,9 @@
 ;; Backward chainer ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-;; Curried Backward Chainer with dependent types (no lambda
-;; abstraction here, combinatory logic is used instead).
+;; Uncurried Backward Chainer with dependent types (no lambda
+;; abstraction here, combinatory logic is used instead).  Inference
+;; rules are directly embedded in the backchainer chainer code.
 ;;
 ;; The arguments of the backward chainer are:
 ;;
