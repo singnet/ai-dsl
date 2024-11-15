@@ -184,11 +184,11 @@
    (match $kb (: $prf $thrm) (: $prf $thrm)))
 
 ;; ;; Recursive step for subtyping transitivity
-;; (= (bc $kb (S $k) (: (STTrans $ab $bc) (<: $a $c)))
-;;    (let* (;; Recurse on $ab
-;;           ((: $ab (<: $a $b)) (bc $kb $k (: $ab (<: $a $b))))
-;;           ;; Recurse on $bc
+;; (= (bc $kb (S $k) (: (STTrans $bc $ab) (<: $a $c)))
+;;    (let* (;; Recurse on $bc
 ;;           ((: $bc (<: $b $c)) (bc $kb $k (: $bc (<: $b $c))))
+;;           ;; Recurse on $ab
+;;           ((: $ab (<: $a $b)) (bc $kb $k (: $ab (<: $a $b))))
 ;;           ;; Prove that $a, $b and $c are concrete data types
 ;;           ;; (allocate only 0 depth, should be enough)
 ;;           ((: $aD (<: $a Data)) (bc $kb Z (: $aD (<: $a Data))))
@@ -196,7 +196,7 @@
 ;;           ((: $cD (<: $c Data)) (bc $kb Z (: $cD (<: $c Data)))))
 ;;      ;; Make sure $a, $b and $c are concrete data types
 ;;      (if (and (is-closed $aD) (and (is-closed $bD) (is-closed $cD)))
-;;          (: (STTrans $ab $bc) (<: $a $c))
+;;          (: (STTrans $bc $ab) (<: $a $c))
 ;;          (empty))))
 
 ;; ;; Recursive step for subtyping coercion.
@@ -257,21 +257,34 @@
 ;;          (: (Φ $f $g $h) (-> (: $x $a) $d))
 ;;          (empty))))
 
+;; Recursive step for machine-translation.translate.  The point of
+;; embedding the machine-translation.translate call in the backward
+;; chainer is to be able to infer the correct parameters (in/out
+;; languages) for call the service.
+(= (bc $kb (S $k) (: (machine-translation.translate $in-nl $out-nl)
+                     (-> (: $url (UniformResourceLocatorOfType (TextIn $in-nl)))
+                         (TextIn $out-nl))))
+   (let* (;; Recurse on $in-nl
+          ((: $in-nl NaturalLanguage) (bc $kb $k (: $in-nl NaturalLanguage)))
+          ;; Recurse on $out-nl
+          ((: $out-nl NaturalLanguage) (bc $kb $k (: $out-nl NaturalLanguage))))
+     (: (machine-translation.translate $in-nl $out-nl)
+        (-> (: $url (UniformResourceLocatorOfType (TextIn $in-nl)))
+            (TextIn $out-nl)))))
+
 ;; Recursive step for subtyping transitivity (no data constraint)
-(= (bc $kb (S $k) (: (STTrans $ab $bc) (<: $a $c)))
-   (let* (;; Recurse on $ab
-          ((: $ab (<: $a $b)) (bc $kb $k (: $ab (<: $a $b))))
-          ;; Recurse on $bc
-          ((: $bc (<: $b $c)) (bc $kb $k (: $bc (<: $b $c)))))
-     (: (STTrans $ab $bc) (<: $a $c))))
+(= (bc $kb (S $k) (: (STTrans $bc $ab) (<: $a $c)))
+   (let* (;; Recurse on $bc
+          ((: $bc (<: $b $c)) (bc $kb $k (: $bc (<: $b $c))))
+          ;; Recurse on $ab
+          ((: $ab (<: $a $b)) (bc $kb $k (: $ab (<: $a $b)))))
+     (: (STTrans $bc $ab) (<: $a $c))))
 
 ;; Recursive step for subtyping coercion (no data constraint)
-(= (bc $kb (S $k) (: (coerce $ab $x) $b))
-   (let* (;; Recurse on $ab
-          ((: $ab (<: $a $b)) (bc $kb $k (: $ab (<: $a $b))))
-          ;; Recurse on $x
-          ((: $x $a) (bc $kb $k (: $x $a))))
-     (: (coerce $ab $x) $b)))
+(= (bc $kb (S $k) (: (coerce $ab) (-> (: $x $a) $b)))
+   (let ;; Recurse on $ab
+       (: $ab (<: $a $b)) (bc $kb $k (: $ab (<: $a $b)))
+     (: (coerce $ab) (-> (: $x $a) $b))))
 
 ;; Recursive step: bluebird (no data constraints)
 (= (bc $kb (S $k) (: (. $f $g) (-> (: $x $a) $c)))
@@ -302,26 +315,65 @@
 ;; Ontology ;;
 ;;;;;;;;;;;;;;
 
-;; The ontology is simply composed of an upper type Data which all
-;; other data types are subtype of.
+;; The ontology tries to be based on existing ontologies when
+;; possible.  See the following discussion for a list of ontologies
+;;
+;; https://github.com/singnet/ai-dsl/discussions/18
+
+;; Language
+!(add-atom &kb (: NS (<: NaturalLanguage String)))             ; SUMO
+
+;; Text
+!(add-atom &kb (: TS (<: Text String)))
+!(add-atom &kb (: TIT (<: (TextIn $l) Text)))
+
+;; URL
+!(add-atom &kb (: US (<: UniformResourceLocator String)))      ; SUMO
+!(add-atom &kb (: UTU (<: (UniformResourceLocatorOfType $t) UniformResourceLocator)))
+
+;; MIDI
+!(add-atom &kb (: MB (<: MusicalInstrumentDigitalInterface Bytes)))
+
+;; Audio
+!(add-atom &kb (: AB (<: Audio Bytes)))
+!(add-atom &kb (: IA (<: Instrumental Audio)))
+!(add-atom &kb (: VA (<: Vocals Audio)))
+!(add-atom &kb (: VIV (<: (VocalsIn $l) Vocals)))
+!(add-atom &kb (: SIA (<: (SongIn $l) Audio)))
+
+;; Additionally we add an upper type called Data, which all data types
+;; are subtypes of.  This can be used as pruning criterion.  In
+;; principle we would only need to do that for the most general data
+;; types, like String, Number, etc, however, since it is used for
+;; pruning, such criterion should compute as fast as possible, so we
+;; directly provide the entire transitive closure.
+!(add-atom &kb (: BD (<: Bytes Data)))
+!(add-atom &kb (: SD (<: String Data)))
+!(add-atom &kb (: ND (<: NaturalLanguage Data)))
+!(add-atom &kb (: TD (<: Text Data)))
+!(add-atom &kb (: TID (<: (TextIn $l) Data)))
+!(add-atom &kb (: UD (<: UniformResourceLocator Data)))
+!(add-atom &kb (: UTD (<: (UniformResourceLocatorOfType $t) Data)))
+!(add-atom &kb (: MD (<: MusicalInstrumentDigitalInterface Data)))
+!(add-atom &kb (: AD (<: Audio Data)))
+!(add-atom &kb (: ID (<: Instrumental Data)))
+!(add-atom &kb (: VD (<: Vocals Data)))
+!(add-atom &kb (: VID (<: (VocalsIn $l) Data)))
+!(add-atom &kb (: SIA (<: (SongIn $l) Data)))
 !(add-atom &kb (: SOD (<: (sound-spleeter.DTLOutput $l) Data)))
 !(add-atom &kb (: VID (<: (VocalsIn $l) Data)))
 !(add-atom &kb (: IND (<: Instrumental Data)))
 !(add-atom &kb (: SID (<: (SongIn $l) Data)))
 
-;; NEXT: add scaled up ontology
-
 ;;;;;;;;;;;;;;
 ;; Services ;;
 ;;;;;;;;;;;;;;
-
-;; NEXT: add scaled up services
 
 ;; The following is partly obtained from crawling the actual
 ;; SingularityNET market place, partly made up to simplify the
 ;; composition.
 
-;; TODO: for now we paste the content of
+;; For now we paste the content of
 ;; english-song-to-chinese-song-services.metta here because the import
 ;; operation imports the stdlib as well and let stdlib functions being
 ;; used as rules and axioms by the backward chainer.
@@ -335,7 +387,9 @@
 ;;
 ;; vocals
 ;;
-;; Finally constructors and destructors are avoided when possible.
+;; Also, only the useful definitions are kept.  For instance the
+;; sound-spleeter.MkDTLOutput constructor is commented because it has
+;; no use in the final composition.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Services involved in creating a composite service to turn English
@@ -352,20 +406,93 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; MeTTa representation, generated by protobuf-metta
 ;;
+;; Protobuf file: translate.proto
+;; Protobuf syntax: proto3
+;; Prefix: naint.machine-translation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Define machine-translation.translate service method
+;;
+;; Note: this one remains curried because the first two arguments are
+;; viewed as parameters (this is a way to work around the rigidity of
+;; uncurried combinators).
+!(add-atom &kb (: machine-translation.translate
+                  (-> (: $in-nl NaturalLanguage)
+                      (: $out-nl NaturalLanguage)
+                      (-> (: $url (UniformResourceLocatorOfType (TextIn $in-nl)))
+                          (TextIn $out-nl)))))
+
+;; We add an extra micro service to turn Text into a URL
+!(add-atom &kb (: upload (-> (: $x $a)
+                             (UniformResourceLocatorOfType $a))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; MeTTa representation, generated by protobuf-metta
+;;
+;; Protobuf file: singingZH.proto
+;; Protobuf syntax: proto3
+;; Protobuf package: singingZH
+;; Prefix: midi2voice-zh
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Define midi2voice-zh.singingZH service method
+!(add-atom &kb (: midi2voice-zh.singingZH
+                  (-> (: $text (TextIn "Chinese"))
+                      (: $midi MusicalInstrumentDigitalInterface)
+                      (VocalsIn "Chinese"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; MeTTa representation, generated by protobuf-metta
+;;
 ;; Protobuf file: sound_spleeter.proto
 ;; Protobuf syntax: proto3
 ;; Prefix: snet.sound-spleeter
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;
+;; Message Types ;;
+;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;
+;; Output ;;
+;;;;;;;;;;;;
+
+;; ;; Define sound-spleeter.Output constuctor
+;; !(add-atom &kb (: sound-spleeter.MkOutput
+;;                   (-> (: $voc Vocals)
+;;                       (-> (: $inst Instrumental)
+;;                           sound-spleeter.Output))))
+
+;; ;; Define sound-spleeter.Output access functions
+
+;; ;; Define sound-spleeter.Output.vocals
+;; !(add-atom &kb (: sound-spleeter.Output.vocals
+;;                   (-> (: $out sound-spleeter.Output)
+;;                       Vocals)))
+
+;; ;; Define sound-spleeter.Output.accomp
+;; !(add-atom &kb (: sound-spleeter.Output.accomp
+;;                   (-> (: $out sound-spleeter.Output)
+;;                       Instrumental)))
+
+;; DTL version of Output
+
+;; ;; Define sound-spleeter.DTLOutput constuctor
+;; !(add-atom &kb (: sound-spleeter.MkDTLOutput
+;;                   (-> (: $l NaturalLanguage)
+;;                       (: $voc (VocalsIn $l))
+;;                       (: $inst Instrumental)
+;;                       (sound-spleeter.DTLOutput $l))))
+
 ;; Define sound-spleeter.DTLOutput access functions
 
 ;; Define sound-spleeter.DTLOutput.vocals
-!(add-atom &kb (: vocals
+!(add-atom &kb (: sound-spleeter.DTLOutput.vocals
                   (-> (: $out (sound-spleeter.DTLOutput $l))
                       (VocalsIn $l))))
 
-;; Define sound-spleeter.DTLOutput.accomp
-!(add-atom &kb (: accomp
+;; Define sound-spleeter.OutputDTL.accomp
+!(add-atom &kb (: sound-spleeter.DTLOutput.accomp
                   (-> (: $out (sound-spleeter.DTLOutput $l))
                       Instrumental)))
 
@@ -377,34 +504,75 @@
 ;; SoundSpleeter ;;
 ;;;;;;;;;;;;;;;;;;;
 
+;; ;; Define sound-spleeter.spleeter service method
+;; !(add-atom &kb (: sound-spleeter.spleeter
+;;                   (-> (: $audio Audio)
+;;                       ;; We reuse the spleeter Output type to hold
+;;                       ;; a pair of Audio
+;;                       sound-spleeter.Output)))
+
 ;; Define DTL version of sound-spleeter.spleeter
-!(add-atom &kb (: spleeter
+!(add-atom &kb (: sound-spleeter.spleeter
                   (-> (: $song (SongIn $l))
                       ;; We reuse the spleeter Output type to hold
                       ;; a pair of Audio
                       (sound-spleeter.DTLOutput $l))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; English vocals to Chinese vocals ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; MeTTa representation, generated by protobuf-metta
+;;
+;; Protobuf file: asr.proto
+;; Protobuf syntax: proto3
+;; Protobuf package: asr
+;; Prefix: speech-recognition
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; This made-up service, takes vocals in English and directly
-;; translate then into Chinsese, preserving melody and tempo.
+;; Define speech-recognition.s2t service method
+!(add-atom &kb (: speech-recognition.s2t
+                  (-> (: $audio Audio)
+                      (TextIn "English"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Handwrite missing services, ToMidi and Mixer ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;
+;; ToMidi ;;
+;;;;;;;;;;;;
 
 ;; Method
-!(add-atom &kb (: translate
-                  (-> (: $en-vocals (VocalsIn "English"))
-                      (VocalsIn "Chinese"))))
+!(add-atom &kb (: tomidi.a2m
+                  (-> (: $audio Audio)
+                      MusicalInstrumentDigitalInterface)))
 
 ;;;;;;;;;;;
 ;; Mixer ;;
 ;;;;;;;;;;;
 
+;; ;; Method
+;; !(add-atom &kb (: mixer.mix (-> (: $audio1 Audio)
+;;                                 (-> (: $audio2 Audio)
+;;                                     Audio))))
+
 ;; DTL version
-!(add-atom &kb (: mix
-                  (-> (: $inst Instrumental)
-                      (: $voc (VocalsIn $l))
-                      (SongIn $l))))
+!(add-atom &kb (: mixer.mix (-> (: $inst Instrumental)
+                                (: $voc (VocalsIn $l))
+                                (SongIn $l))))
+
+;; Acrobatic attempt to specify a property about mixing without
+;; overloading the type signature of the mixer
+;;
+;; (: $mixer Mixer) -> ($mixer (c1 $x) (c2 $y)) and (: $x (VocalsIn $l)) (: $y Instrumental) -> $z === mix ...) -> (: $z (SongIn $l))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Other type definitions ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; English language string
+!(add-atom &kb (: "English" NaturalLanguage))
+
+;; Chinese language string
+!(add-atom &kb (: "Chinese" NaturalLanguage))
 
 ;;;;;;;;;;;;;;;;;
 ;; Combinators ;;
@@ -555,127 +723,284 @@
 ;; Applying id to x outputs x
 (= (id $x) $x)
 
+;; Sequential coercion
+(= (. (coerce $bc) (coerce $ab)) (coerce (STTrans $bc $ab)))
+
 ;;;;;;;;;;
 ;; Test ;;
 ;;;;;;;;;;
 
-;; The following MeTTa program represents the AI service composition
-;; for the English to Chinese song translation using the made-up
-;; vocals-translator service.
+;; ;; Synthesize composition of
+;; ;;
+;; ;; (-> (SongIn "English") (sound-spleeter.DTLOutput "English"))
+;; ;;
+;; ;; which is merely a spleeter call
+;; !(assertEqual
+;;   (bc &kb
+;;       (fromNumber 0)
+;;       (: $prg
+;;          (-> (: $x (SongIn "English")) (sound-spleeter.DTLOutput "English"))))
+;;   (: sound-spleeter.spleeter
+;;      (-> (: $x (SongIn "English")) (sound-spleeter.DTLOutput "English"))))
+
+;; ;; Synthesize sequential composition of
+;; ;;
+;; ;; (-> Audio (TextIn "English"))
+;; ;;
+;; ;; which should merely be a call of speech-recognition.
+;; !(assertEqual
+;;   (bc &kb (fromNumber 0) (: $prg (-> (: $x Audio) (TextIn "English"))))
+;;   (: speech-recognition.s2t (-> (: $x Audio) (TextIn "English"))))
+
+;; ;; Prove that (<: (VocalsIn "English") Audio)
+;; !(assertEqual
+;;   (bc &kb (fromNumber 1) (: $prf (<: (VocalsIn "English") Audio)))
+;;   (: (STTrans VA VIV) (<: (VocalsIn "English") Audio)))
+
+;; ;; Synthesize composition of
+;; ;;
+;; ;; (-> (VocalsIn "English") Audio)
+;; ;;
+;; ;; which should be a coercion
+;; !(assertEqual
+;;   (unique
+;;    (capture
+;;     (bc &kb (fromNumber 2) (: $prg (-> (: $x (VocalsIn "English")) Audio)))))
+;;   (: (coerce (STTrans VA VIV)) (-> (: $x (VocalsIn "English")) Audio)))
+
+;; NEXT: explain this madness!!!! (can generate 5-deep tree with only 3)
+;; Clues:
 ;;
-;; (= (english-song-to-chinese-song $input)
-;;    (let $spleeter-output (spleeter $input)
-;;      ((mix (accomp $spleeter-output))
-;;       (translate (vocals $spleeter-output)))))
+;; 1. removing machine-translation.translate from kb doesn't solve it.
 ;;
-;; It should be equivalent to the following combinatory logic program
+;; 2. disabling reduction rule about sequential coercion doesn't solve it.
 ;;
-;; (. (Φ mix accomp (. translate vocals)) spleeter)
+;; 3. (: (. upload (. speech-recognition.s2t (coerce (STTrans VA VIV))))
+;;      (-> (: $x (VocalsIn "English"))
+;;          (UniformResourceLocatorOfType (TextIn "English"))))
+;;    can be solve with depth 3 instead of 4.
 
-;; ;; Find all subtypes of Data
-;; ;; TODO: re-enable once alpha equivalence is supported
-;; !(assertEqualToResult
-;;   (bc &kb (fromNumber 0) (: $prf (<: $s Data)))
-;;   ((: IND (<: Instrumental Data))
-;;    (: SID (<: (SongIn $l) Data))
-;;    (: VID (<: (VocalsIn $l) Data))
-;;    (: SOD (<: (sound-spleeter.DTLOutput $l) Data))))
-
-;; Infer the type of (. translate vocals)
-!(assertEqual
-  (bc &kb (fromNumber 1) (: (. translate vocals) (-> (: $x $a) $b)))
-  (: (. translate vocals) (-> (: $x (sound-spleeter.DTLOutput "English"))
-                              (VocalsIn "Chinese"))))
-
-;; Synthesize (. translate vocals)
-!(assertEqual
-  (bc &kb (fromNumber 1) (: $prg (-> (: $x (sound-spleeter.DTLOutput "English"))
-                                     (VocalsIn "Chinese"))))
-  (: (. translate vocals)
-     (-> (: $x (sound-spleeter.DTLOutput "English")) (VocalsIn "Chinese"))))
-
-;; Infer type of (Φ mix accomp (. translate vocals))
-!(assertEqual
-  (bc &kb
-      (fromNumber 2)
-      (: (Φ mix accomp (. translate vocals)) (-> (: $x $a) $b)))
-  (: (Φ mix accomp (. translate vocals))
-     (-> (: $x (sound-spleeter.DTLOutput "English")) (SongIn "Chinese"))))
-
-;; Type check (. (Φ mix accomp (. translate vocals)) spleeter)
-!(assertEqual
-  (bc &kb
-      (fromNumber 3)
-      (: (. (Φ mix accomp (. translate vocals)) spleeter)
-         (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
-  (: (. (Φ mix accomp (. translate vocals)) spleeter)
-     (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
-
-;; Synthesize full AI service composition
-!(assertEqual
-  (unique
-   (capture
-    (bc &kb
+;; Synthesize sequential composition of
+;;
+;; (-> (VocalsIn "English") (TextIn "English"))
+;;
+;; which should merely be a call of speech-recognition with proper
+;; casting from (VocalsIn "English") to Audio.
+;; !(assertEqual
+;;   (unique
+;;    (capture
+    !(bc &kb
         (fromNumber 3)
-        (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
-  (: (. (Φ mix accomp (. translate vocals)) spleeter)
-     (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+        (: $prg
+           (-> (: $x (VocalsIn "English")) (TextIn "English")))) ;))
+  ;; (: (. speech-recognition.s2t (coerce (STTrans VA VIV)))
+;;    (-> (: $x (VocalsIn "English")) (TextIn "English"))))
+;; NEXT: add reduction to avoid the following
+  ;; (: (. (machine-translation.translate "English" "English") (. upload (. speech-recognition.s2t (coerce (STTrans VA VIV))))) (-> (: $x (VocalsIn "English")) (TextIn "English")))
 
-;; Synthesize full AI service composition with depth 4.  Depth 3 is
-;; enough but we want to test how much reduction and Data constraints
-;; help to prune the search.
-;;
-;; At this depth though adding Data constraints still does not help.
-;; Indeed we get the same results with or without it.  However,
-;; without Data constraints it is about x3 faster, probably cause
-;; there is less code to evaluate.
-;;
-;; Reduction on the other hand tremedously helps.  Indeed, with
-;; reduction onle 1 result is returned instead of 80 without reduction
-;; (with or without Data constraints).
-!(assertEqual
-  (unique
-   (capture
-    (bc &kb
-        (fromNumber 4)
-        (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
-  (: (. (Φ mix accomp (. translate vocals)) spleeter)
-     (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+;; ;; Synthesize sequential composition of
+;; ;;
+;; ;; (-> Audio (UniformResourceLocatorOfType (TextIn "English")))
+;; ;;
+;; ;; which should be a sequential composition of speech-recognition and
+;; ;; upload.
+;; !(assertEqual
+;;   (bc &kb
+;;       (fromNumber 1)
+;;       (: $prg
+;;          (-> (: $x Audio) (UniformResourceLocatorOfType (TextIn "English")))))
+;;   (: (. upload speech-recognition.s2t)
+;;      (-> (: $x Audio) (UniformResourceLocatorOfType (TextIn "English")))))
 
-;; Synthesize full AI service composition with depth 5.  Data
-;; constraints still makes no difference.  Reduction obviously makes a
-;; tremendous difference.
-!(assertEqual
-  (unique
-   (capture
-    (bc &kb
-        (fromNumber 5)
-        (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
-  (: (. (Φ mix accomp (. translate vocals)) spleeter)
-     (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+;; ;; Synthesize sequential composition of
+;; ;;
+;; ;; (-> (VocalsIn "English") (UniformResourceLocatorOfType (TextIn "English")))
+;; ;;
+;; ;; which should be a sequential composition of speech-recognition,
+;; ;; upload and proper type coercion.
+;; !(assertEqual
+;;   (bc &kb
+;;       (fromNumber 3)
+;;       (: $prg
+;;          (-> (: $x (VocalsIn "English"))
+;;              (UniformResourceLocatorOfType (TextIn "English")))))
+;;   (: (. upload (. speech-recognition.s2t (coerce (STTrans VA VIV))))
+;;      (-> (: $x (VocalsIn "English"))
+;;          (UniformResourceLocatorOfType (TextIn "English")))))
 
-;; Synthesize full AI service composition with depth 6.  Data
-;; constraints still makes no difference.  Reduction obviously makes a
-;; tremendous difference.  Some candidates could not be reduced even
-;; though they are probably equivalent to the shortest one given some
-;; semantics assumptions.
-!(assertEqualToResult
-  (unique
-   (capture
-    (bc &kb
-        (fromNumber 6)
-        (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
-  ((: (. (Φ mix (. accomp (. spleeter (Φ mix accomp (. translate vocals))))
-            (. translate vocals)) spleeter)
-      (-> (: $x (SongIn "English")) (SongIn "Chinese")))
-   (: (. (Φ mix accomp (. vocals (. spleeter (Φ mix accomp (. translate vocals)))))
-         spleeter)
-      (-> (: $x (SongIn "English")) (SongIn "Chinese")))
-   (: (Φ mix (. accomp (. spleeter (. (Φ mix accomp (. translate vocals)) spleeter)))
-         (. translate (. vocals spleeter)))
-      (-> (: $x (SongIn "English")) (SongIn "Chinese")))
-   (: (. (Φ mix accomp (. translate vocals)) spleeter)
-      (-> (: $x (SongIn "English")) (SongIn "Chinese")))
-   (: (Φ mix (. accomp spleeter)
-         (. vocals (. spleeter (. (Φ mix accomp (. translate vocals)) spleeter))))
-      (-> (: $x (SongIn "English")) (SongIn "Chinese")))))
+;; ;; Synthesize composition of
+;; ;;
+;; ;; (-> (: "English" NaturalLanguage)
+;; ;;     (: "Chinese" NaturalLanguage)
+;; ;;     (-> (UniformResourceLocatorOfType (TextIn "English"))
+;; ;;         (TextIn "Chinese")))
+;; ;;
+;; ;; which should merely be a call to machine-translation.translate.
+;; !(assertEqual
+;;   (bc &kb
+;;       (fromNumber 0)
+;;       (: $prg
+;;          (-> (: "English" NaturalLanguage)
+;;              (: "Chinese" NaturalLanguage)
+;;              (-> (: $x (UniformResourceLocatorOfType (TextIn "English")))
+;;                  (TextIn "Chinese")))))
+;;   (: machine-translation.translate
+;;      (-> (: "English" NaturalLanguage)
+;;          (: "Chinese" NaturalLanguage)
+;;          (-> (: $x (UniformResourceLocatorOfType (TextIn "English")))
+;;              (TextIn "Chinese")))))
+
+;; ;; Synthesize composition of
+;; ;;
+;; ;; (-> (UniformResourceLocatorOfType (TextIn "English")) (TextIn "Chinese"))
+;; ;;
+;; ;; which should merely be a call to machine-translation.translate with
+;; ;; proper parameters.
+;; !(bc &kb
+;;      (fromNumber 1)
+;;      (: $prg
+;;         (-> (: $x (UniformResourceLocatorOfType (TextIn "English")))
+;;             (TextIn "Chinese"))))
+
+;; ;; Synthesize sequential composition of
+;; ;;
+;; ;; (-> (TextIn "English") (TextIn "Chinese"))
+;; ;;
+;; ;; which should be a sequential composition of
+;; ;; machine-translation.translate with proper parameters and upload.
+;; !(bc &kb
+;;      (fromNumber 5)
+;;      (: $prg
+;;         (-> (: $x (TextIn "English")) (TextIn "Chinese"))))
+
+;; ;; Synthesize sequential composition of
+;; ;;
+;; ;; (-> (VocalsIn "English") (TextIn "Chinese"))
+;; ;;
+;; ;; which should be the composition of speech-recognition.s2t and
+;; ;; machine-translation.translate
+;; !(bc &kb
+;;      (fromNu
+
+;; LIKELY IGNORE BELOW
+
+;; ;; The following MeTTa program represents the AI service composition
+;; ;; for the English to Chinese song translation using the made-up
+;; ;; vocals-translator service.
+;; ;;
+;; ;; (= (english-song-to-chinese-song $input)
+;; ;;    (let $spleeter-output (spleeter $input)
+;; ;;      ((mix (accomp $spleeter-output))
+;; ;;       (translate (vocals $spleeter-output)))))
+;; ;;
+;; ;; It should be equivalent to the following combinatory logic program
+;; ;;
+;; ;; (. (Φ mix accomp (. translate vocals)) spleeter)
+
+;; ;; ;; Find all subtypes of Data
+;; ;; ;; TODO: re-enable once alpha equivalence is supported
+;; ;; !(assertEqualToResult
+;; ;;   (bc &kb (fromNumber 0) (: $prf (<: $s Data)))
+;; ;;   ((: IND (<: Instrumental Data))
+;; ;;    (: SID (<: (SongIn $l) Data))
+;; ;;    (: VID (<: (VocalsIn $l) Data))
+;; ;;    (: SOD (<: (sound-spleeter.DTLOutput $l) Data))))
+
+;; ;; Infer the type of (. translate vocals)
+;; !(assertEqual
+;;   (bc &kb (fromNumber 1) (: (. translate vocals) (-> (: $x $a) $b)))
+;;   (: (. translate vocals) (-> (: $x (sound-spleeter.DTLOutput "English"))
+;;                               (VocalsIn "Chinese"))))
+
+;; ;; Synthesize (. translate vocals)
+;; !(assertEqual
+;;   (bc &kb (fromNumber 1) (: $prg (-> (: $x (sound-spleeter.DTLOutput "English"))
+;;                                      (VocalsIn "Chinese"))))
+;;   (: (. translate vocals)
+;;      (-> (: $x (sound-spleeter.DTLOutput "English")) (VocalsIn "Chinese"))))
+
+;; ;; Infer type of (Φ mix accomp (. translate vocals))
+;; !(assertEqual
+;;   (bc &kb
+;;       (fromNumber 2)
+;;       (: (Φ mix accomp (. translate vocals)) (-> (: $x $a) $b)))
+;;   (: (Φ mix accomp (. translate vocals))
+;;      (-> (: $x (sound-spleeter.DTLOutput "English")) (SongIn "Chinese"))))
+
+;; ;; Type check (. (Φ mix accomp (. translate vocals)) spleeter)
+;; !(assertEqual
+;;   (bc &kb
+;;       (fromNumber 3)
+;;       (: (. (Φ mix accomp (. translate vocals)) spleeter)
+;;          (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+;;   (: (. (Φ mix accomp (. translate vocals)) spleeter)
+;;      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+
+;; ;; Synthesize full AI service composition
+;; !(assertEqual
+;;   (unique
+;;    (capture
+;;     (bc &kb
+;;         (fromNumber 3)
+;;         (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
+;;   (: (. (Φ mix accomp (. translate vocals)) spleeter)
+;;      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+
+;; ;; Synthesize full AI service composition with depth 4.  Depth 3 is
+;; ;; enough but we want to test how much reduction and Data constraints
+;; ;; help to prune the search.
+;; ;;
+;; ;; At this depth though adding Data constraints still does not help.
+;; ;; Indeed we get the same results with or without it.  However,
+;; ;; without Data constraints it is about x3 faster, probably cause
+;; ;; there is less code to evaluate.
+;; ;;
+;; ;; Reduction on the other hand tremedously helps.  Indeed, with
+;; ;; reduction onle 1 result is returned instead of 80 without reduction
+;; ;; (with or without Data constraints).
+;; !(assertEqual
+;;   (unique
+;;    (capture
+;;     (bc &kb
+;;         (fromNumber 4)
+;;         (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
+;;   (: (. (Φ mix accomp (. translate vocals)) spleeter)
+;;      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+
+;; ;; Synthesize full AI service composition with depth 5.  Data
+;; ;; constraints still makes no difference.  Reduction obviously makes a
+;; ;; tremendous difference.
+;; !(assertEqual
+;;   (unique
+;;    (capture
+;;     (bc &kb
+;;         (fromNumber 5)
+;;         (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
+;;   (: (. (Φ mix accomp (. translate vocals)) spleeter)
+;;      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+
+;; ;; Synthesize full AI service composition with depth 6.  Data
+;; ;; constraints still makes no difference.  Reduction obviously makes a
+;; ;; tremendous difference.  Some candidates could not be reduced even
+;; ;; though they are probably equivalent to the shortest one given some
+;; ;; semantics assumptions.
+;; !(assertEqualToResult
+;;   (unique
+;;    (capture
+;;     (bc &kb
+;;         (fromNumber 6)
+;;         (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
+;;   ((: (. (Φ mix (. accomp (. spleeter (Φ mix accomp (. translate vocals))))
+;;             (. translate vocals)) spleeter)
+;;       (-> (: $x (SongIn "English")) (SongIn "Chinese")))
+;;    (: (. (Φ mix accomp (. vocals (. spleeter (Φ mix accomp (. translate vocals)))))
+;;          spleeter)
+;;       (-> (: $x (SongIn "English")) (SongIn "Chinese")))
+;;    (: (Φ mix (. accomp (. spleeter (. (Φ mix accomp (. translate vocals)) spleeter)))
+;;          (. translate (. vocals spleeter)))
+;;       (-> (: $x (SongIn "English")) (SongIn "Chinese")))
+;;    (: (. (Φ mix accomp (. translate vocals)) spleeter)
+;;       (-> (: $x (SongIn "English")) (SongIn "Chinese")))
+;;    (: (Φ mix (. accomp spleeter)
+;;          (. vocals (. spleeter (. (Φ mix accomp (. translate vocals)) spleeter))))
+;;       (-> (: $x (SongIn "English")) (SongIn "Chinese")))))
