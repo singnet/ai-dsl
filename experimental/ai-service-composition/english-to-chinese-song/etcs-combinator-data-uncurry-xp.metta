@@ -726,59 +726,57 @@
 ;; Sequential coercion
 (= (. (coerce $bc) (coerce $ab)) (coerce (STTrans $bc $ab)))
 
+;; Translating from/to the same language reduces to id
+(= (machine-translation.translate $l $l) id)
+
+;; Translating back and forth from/to the same languages reduces to
+;; id.  Obviously, this is not strictly true, but such combination is
+;; useless enough that it gets reduced anyway.
+(= (. (machine-translation.translate $l1 $l2)
+      (. upload (. (machine-translation.translate $l2 $l1) upload)))
+   id)
+
 ;;;;;;;;;;
 ;; Test ;;
 ;;;;;;;;;;
 
-;; ;; Synthesize composition of
-;; ;;
-;; ;; (-> (SongIn "English") (sound-spleeter.DTLOutput "English"))
-;; ;;
-;; ;; which is merely a spleeter call
-;; !(assertEqual
-;;   (bc &kb
-;;       (fromNumber 0)
-;;       (: $prg
-;;          (-> (: $x (SongIn "English")) (sound-spleeter.DTLOutput "English"))))
-;;   (: sound-spleeter.spleeter
-;;      (-> (: $x (SongIn "English")) (sound-spleeter.DTLOutput "English"))))
-
-;; ;; Synthesize sequential composition of
-;; ;;
-;; ;; (-> Audio (TextIn "English"))
-;; ;;
-;; ;; which should merely be a call of speech-recognition.
-;; !(assertEqual
-;;   (bc &kb (fromNumber 0) (: $prg (-> (: $x Audio) (TextIn "English"))))
-;;   (: speech-recognition.s2t (-> (: $x Audio) (TextIn "English"))))
-
-;; ;; Prove that (<: (VocalsIn "English") Audio)
-;; !(assertEqual
-;;   (bc &kb (fromNumber 1) (: $prf (<: (VocalsIn "English") Audio)))
-;;   (: (STTrans VA VIV) (<: (VocalsIn "English") Audio)))
-
-;; ;; Synthesize composition of
-;; ;;
-;; ;; (-> (VocalsIn "English") Audio)
-;; ;;
-;; ;; which should be a coercion
-;; !(assertEqual
-;;   (unique
-;;    (capture
-;;     (bc &kb (fromNumber 2) (: $prg (-> (: $x (VocalsIn "English")) Audio)))))
-;;   (: (coerce (STTrans VA VIV)) (-> (: $x (VocalsIn "English")) Audio)))
-
-;; NEXT: explain this madness!!!! (can generate 5-deep tree with only 3)
-;; Clues:
+;; Synthesize composition of
 ;;
-;; 1. removing machine-translation.translate from kb doesn't solve it.
+;; (-> (SongIn "English") (sound-spleeter.DTLOutput "English"))
 ;;
-;; 2. disabling reduction rule about sequential coercion doesn't solve it.
+;; which is merely a spleeter call
+!(assertEqual
+  (bc &kb
+      (fromNumber 0)
+      (: $prg
+         (-> (: $x (SongIn "English")) (sound-spleeter.DTLOutput "English"))))
+  (: sound-spleeter.spleeter
+     (-> (: $x (SongIn "English")) (sound-spleeter.DTLOutput "English"))))
+
+;; Synthesize sequential composition of
 ;;
-;; 3. (: (. upload (. speech-recognition.s2t (coerce (STTrans VA VIV))))
-;;      (-> (: $x (VocalsIn "English"))
-;;          (UniformResourceLocatorOfType (TextIn "English"))))
-;;    can be solve with depth 3 instead of 4.
+;; (-> Audio (TextIn "English"))
+;;
+;; which should merely be a call of speech-recognition.
+!(assertEqual
+  (bc &kb (fromNumber 0) (: $prg (-> (: $x Audio) (TextIn "English"))))
+  (: speech-recognition.s2t (-> (: $x Audio) (TextIn "English"))))
+
+;; Prove that (<: (VocalsIn "English") Audio)
+!(assertEqual
+  (bc &kb (fromNumber 1) (: $prf (<: (VocalsIn "English") Audio)))
+  (: (STTrans VA VIV) (<: (VocalsIn "English") Audio)))
+
+;; Synthesize composition of
+;;
+;; (-> (VocalsIn "English") Audio)
+;;
+;; which should be a coercion
+!(assertEqual
+  (unique
+   (capture
+    (bc &kb (fromNumber 2) (: $prg (-> (: $x (VocalsIn "English")) Audio)))))
+  (: (coerce (STTrans VA VIV)) (-> (: $x (VocalsIn "English")) Audio)))
 
 ;; Synthesize sequential composition of
 ;;
