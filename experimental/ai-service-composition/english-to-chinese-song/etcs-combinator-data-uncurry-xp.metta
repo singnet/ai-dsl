@@ -784,221 +784,128 @@
 ;;
 ;; which should merely be a call of speech-recognition with proper
 ;; casting from (VocalsIn "English") to Audio.
-;; !(assertEqual
-;;   (unique
-;;    (capture
-    !(bc &kb
+!(assertEqual
+  (unique
+   (capture
+    (bc &kb
         (fromNumber 3)
         (: $prg
-           (-> (: $x (VocalsIn "English")) (TextIn "English")))) ;))
-  ;; (: (. speech-recognition.s2t (coerce (STTrans VA VIV)))
-;;    (-> (: $x (VocalsIn "English")) (TextIn "English"))))
-;; NEXT: add reduction to avoid the following
-  ;; (: (. (machine-translation.translate "English" "English") (. upload (. speech-recognition.s2t (coerce (STTrans VA VIV))))) (-> (: $x (VocalsIn "English")) (TextIn "English")))
+           (-> (: $x (VocalsIn "English")) (TextIn "English"))))))
+  (: (. speech-recognition.s2t (coerce (STTrans VA VIV)))
+     (-> (: $x (VocalsIn "English")) (TextIn "English"))))
 
-;; ;; Synthesize sequential composition of
-;; ;;
-;; ;; (-> Audio (UniformResourceLocatorOfType (TextIn "English")))
-;; ;;
-;; ;; which should be a sequential composition of speech-recognition and
-;; ;; upload.
-;; !(assertEqual
-;;   (bc &kb
-;;       (fromNumber 1)
-;;       (: $prg
-;;          (-> (: $x Audio) (UniformResourceLocatorOfType (TextIn "English")))))
-;;   (: (. upload speech-recognition.s2t)
-;;      (-> (: $x Audio) (UniformResourceLocatorOfType (TextIn "English")))))
+;; Synthesize sequential composition of
+;;
+;; (-> Audio (UniformResourceLocatorOfType (TextIn "English")))
+;;
+;; which should be a sequential composition of speech-recognition and
+;; upload.
+!(assertEqual
+  (bc &kb
+      (fromNumber 1)
+      (: $prg
+         (-> (: $x Audio) (UniformResourceLocatorOfType (TextIn "English")))))
+  (: (. upload speech-recognition.s2t)
+     (-> (: $x Audio) (UniformResourceLocatorOfType (TextIn "English")))))
 
-;; ;; Synthesize sequential composition of
-;; ;;
-;; ;; (-> (VocalsIn "English") (UniformResourceLocatorOfType (TextIn "English")))
-;; ;;
-;; ;; which should be a sequential composition of speech-recognition,
-;; ;; upload and proper type coercion.
-;; !(assertEqual
-;;   (bc &kb
-;;       (fromNumber 3)
-;;       (: $prg
-;;          (-> (: $x (VocalsIn "English"))
-;;              (UniformResourceLocatorOfType (TextIn "English")))))
-;;   (: (. upload (. speech-recognition.s2t (coerce (STTrans VA VIV))))
-;;      (-> (: $x (VocalsIn "English"))
-;;          (UniformResourceLocatorOfType (TextIn "English")))))
+;; Synthesize sequential composition of
+;;
+;; (-> (VocalsIn "English") (UniformResourceLocatorOfType (TextIn "English")))
+;;
+;; which should be a sequential composition of speech-recognition,
+;; upload and proper type coercion.
+!(assertEqual
+  (bc &kb
+      (fromNumber 3)
+      (: $prg
+         (-> (: $x (VocalsIn "English"))
+             (UniformResourceLocatorOfType (TextIn "English")))))
+  (: (. upload (. speech-recognition.s2t (coerce (STTrans VA VIV))))
+     (-> (: $x (VocalsIn "English"))
+         (UniformResourceLocatorOfType (TextIn "English")))))
 
-;; ;; Synthesize composition of
-;; ;;
-;; ;; (-> (: "English" NaturalLanguage)
-;; ;;     (: "Chinese" NaturalLanguage)
-;; ;;     (-> (UniformResourceLocatorOfType (TextIn "English"))
-;; ;;         (TextIn "Chinese")))
-;; ;;
-;; ;; which should merely be a call to machine-translation.translate.
-;; !(assertEqual
-;;   (bc &kb
-;;       (fromNumber 0)
-;;       (: $prg
-;;          (-> (: "English" NaturalLanguage)
-;;              (: "Chinese" NaturalLanguage)
-;;              (-> (: $x (UniformResourceLocatorOfType (TextIn "English")))
-;;                  (TextIn "Chinese")))))
-;;   (: machine-translation.translate
-;;      (-> (: "English" NaturalLanguage)
-;;          (: "Chinese" NaturalLanguage)
-;;          (-> (: $x (UniformResourceLocatorOfType (TextIn "English")))
-;;              (TextIn "Chinese")))))
+;; Synthesize composition of
+;;
+;; (-> (: "English" NaturalLanguage)
+;;     (: "Chinese" NaturalLanguage)
+;;     (-> (UniformResourceLocatorOfType (TextIn "English"))
+;;         (TextIn "Chinese")))
+;;
+;; which should merely be a call to machine-translation.translate.
+!(assertEqual
+  (bc &kb
+      (fromNumber 0)
+      (: $prg
+         (-> (: "English" NaturalLanguage)
+             (: "Chinese" NaturalLanguage)
+             (-> (: $x (UniformResourceLocatorOfType (TextIn "English")))
+                 (TextIn "Chinese")))))
+  (: machine-translation.translate
+     (-> (: "English" NaturalLanguage)
+         (: "Chinese" NaturalLanguage)
+         (-> (: $x (UniformResourceLocatorOfType (TextIn "English")))
+             (TextIn "Chinese")))))
 
-;; ;; Synthesize composition of
-;; ;;
-;; ;; (-> (UniformResourceLocatorOfType (TextIn "English")) (TextIn "Chinese"))
-;; ;;
-;; ;; which should merely be a call to machine-translation.translate with
-;; ;; proper parameters.
-;; !(bc &kb
-;;      (fromNumber 1)
-;;      (: $prg
-;;         (-> (: $x (UniformResourceLocatorOfType (TextIn "English")))
-;;             (TextIn "Chinese"))))
+;; Synthesize composition of
+;;
+;; (-> (UniformResourceLocatorOfType (TextIn "English")) (TextIn "Chinese"))
+;;
+;; which should merely be a call to machine-translation.translate with
+;; proper parameters.
+!(assertEqual
+  (bc &kb
+      (fromNumber 1)
+      (: $prg
+         (-> (: $x (UniformResourceLocatorOfType (TextIn "English")))
+             (TextIn "Chinese"))))
+  (: (machine-translation.translate "English" "Chinese")
+     (-> (: $x (UniformResourceLocatorOfType (TextIn "English")))
+         (TextIn "Chinese"))))
 
-;; ;; Synthesize sequential composition of
-;; ;;
-;; ;; (-> (TextIn "English") (TextIn "Chinese"))
-;; ;;
-;; ;; which should be a sequential composition of
-;; ;; machine-translation.translate with proper parameters and upload.
-;; !(bc &kb
-;;      (fromNumber 5)
-;;      (: $prg
-;;         (-> (: $x (TextIn "English")) (TextIn "Chinese"))))
+;; Synthesize sequential composition of
+;;
+;; (-> (TextIn "English") (TextIn "Chinese"))
+;;
+;; which should be a sequential composition of
+;; machine-translation.translate with proper parameters and upload.
+!(assertEqual
+  (bc &kb
+      (fromNumber 2)
+      (: $prg
+         (-> (: $x (TextIn "English")) (TextIn "Chinese"))))
+  (: (. (machine-translation.translate "English" "Chinese") upload)
+     (-> (: $x (TextIn "English")) (TextIn "Chinese"))))
 
-;; ;; Synthesize sequential composition of
-;; ;;
-;; ;; (-> (VocalsIn "English") (TextIn "Chinese"))
-;; ;;
-;; ;; which should be the composition of speech-recognition.s2t and
-;; ;; machine-translation.translate
-;; !(bc &kb
-;;      (fromNu
+;; Synthesize sequential composition of type
+;;
+;; (-> Audio (TextIn "Chinese"))
+;;
+;; which should be the composition of speech-recognition.s2t and
+;; machine-translation.translate.
+!(assertEqual
+  (unique
+   (capture
+    (bc &kb
+        (fromNumber 3)
+        (: $prg
+           (-> (: $x Audio) (TextIn "Chinese"))))))
+  (: (. (machine-translation.translate "English" "Chinese")
+        (. upload speech-recognition.s2t))
+     (-> (: $x Audio) (TextIn "Chinese"))))
 
-;; LIKELY IGNORE BELOW
-
-;; ;; The following MeTTa program represents the AI service composition
-;; ;; for the English to Chinese song translation using the made-up
-;; ;; vocals-translator service.
-;; ;;
-;; ;; (= (english-song-to-chinese-song $input)
-;; ;;    (let $spleeter-output (spleeter $input)
-;; ;;      ((mix (accomp $spleeter-output))
-;; ;;       (translate (vocals $spleeter-output)))))
-;; ;;
-;; ;; It should be equivalent to the following combinatory logic program
-;; ;;
-;; ;; (. (Φ mix accomp (. translate vocals)) spleeter)
-
-;; ;; ;; Find all subtypes of Data
-;; ;; ;; TODO: re-enable once alpha equivalence is supported
-;; ;; !(assertEqualToResult
-;; ;;   (bc &kb (fromNumber 0) (: $prf (<: $s Data)))
-;; ;;   ((: IND (<: Instrumental Data))
-;; ;;    (: SID (<: (SongIn $l) Data))
-;; ;;    (: VID (<: (VocalsIn $l) Data))
-;; ;;    (: SOD (<: (sound-spleeter.DTLOutput $l) Data))))
-
-;; ;; Infer the type of (. translate vocals)
-;; !(assertEqual
-;;   (bc &kb (fromNumber 1) (: (. translate vocals) (-> (: $x $a) $b)))
-;;   (: (. translate vocals) (-> (: $x (sound-spleeter.DTLOutput "English"))
-;;                               (VocalsIn "Chinese"))))
-
-;; ;; Synthesize (. translate vocals)
-;; !(assertEqual
-;;   (bc &kb (fromNumber 1) (: $prg (-> (: $x (sound-spleeter.DTLOutput "English"))
-;;                                      (VocalsIn "Chinese"))))
-;;   (: (. translate vocals)
-;;      (-> (: $x (sound-spleeter.DTLOutput "English")) (VocalsIn "Chinese"))))
-
-;; ;; Infer type of (Φ mix accomp (. translate vocals))
-;; !(assertEqual
-;;   (bc &kb
-;;       (fromNumber 2)
-;;       (: (Φ mix accomp (. translate vocals)) (-> (: $x $a) $b)))
-;;   (: (Φ mix accomp (. translate vocals))
-;;      (-> (: $x (sound-spleeter.DTLOutput "English")) (SongIn "Chinese"))))
-
-;; ;; Type check (. (Φ mix accomp (. translate vocals)) spleeter)
-;; !(assertEqual
-;;   (bc &kb
-;;       (fromNumber 3)
-;;       (: (. (Φ mix accomp (. translate vocals)) spleeter)
-;;          (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
-;;   (: (. (Φ mix accomp (. translate vocals)) spleeter)
-;;      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
-
-;; ;; Synthesize full AI service composition
-;; !(assertEqual
-;;   (unique
-;;    (capture
-;;     (bc &kb
-;;         (fromNumber 3)
-;;         (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
-;;   (: (. (Φ mix accomp (. translate vocals)) spleeter)
-;;      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
-
-;; ;; Synthesize full AI service composition with depth 4.  Depth 3 is
-;; ;; enough but we want to test how much reduction and Data constraints
-;; ;; help to prune the search.
-;; ;;
-;; ;; At this depth though adding Data constraints still does not help.
-;; ;; Indeed we get the same results with or without it.  However,
-;; ;; without Data constraints it is about x3 faster, probably cause
-;; ;; there is less code to evaluate.
-;; ;;
-;; ;; Reduction on the other hand tremedously helps.  Indeed, with
-;; ;; reduction onle 1 result is returned instead of 80 without reduction
-;; ;; (with or without Data constraints).
-;; !(assertEqual
-;;   (unique
-;;    (capture
-;;     (bc &kb
-;;         (fromNumber 4)
-;;         (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
-;;   (: (. (Φ mix accomp (. translate vocals)) spleeter)
-;;      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
-
-;; ;; Synthesize full AI service composition with depth 5.  Data
-;; ;; constraints still makes no difference.  Reduction obviously makes a
-;; ;; tremendous difference.
-;; !(assertEqual
-;;   (unique
-;;    (capture
-;;     (bc &kb
-;;         (fromNumber 5)
-;;         (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
-;;   (: (. (Φ mix accomp (. translate vocals)) spleeter)
-;;      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
-
-;; ;; Synthesize full AI service composition with depth 6.  Data
-;; ;; constraints still makes no difference.  Reduction obviously makes a
-;; ;; tremendous difference.  Some candidates could not be reduced even
-;; ;; though they are probably equivalent to the shortest one given some
-;; ;; semantics assumptions.
-;; !(assertEqualToResult
-;;   (unique
-;;    (capture
-;;     (bc &kb
-;;         (fromNumber 6)
-;;         (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
-;;   ((: (. (Φ mix (. accomp (. spleeter (Φ mix accomp (. translate vocals))))
-;;             (. translate vocals)) spleeter)
-;;       (-> (: $x (SongIn "English")) (SongIn "Chinese")))
-;;    (: (. (Φ mix accomp (. vocals (. spleeter (Φ mix accomp (. translate vocals)))))
-;;          spleeter)
-;;       (-> (: $x (SongIn "English")) (SongIn "Chinese")))
-;;    (: (Φ mix (. accomp (. spleeter (. (Φ mix accomp (. translate vocals)) spleeter)))
-;;          (. translate (. vocals spleeter)))
-;;       (-> (: $x (SongIn "English")) (SongIn "Chinese")))
-;;    (: (. (Φ mix accomp (. translate vocals)) spleeter)
-;;       (-> (: $x (SongIn "English")) (SongIn "Chinese")))
-;;    (: (Φ mix (. accomp spleeter)
-;;          (. vocals (. spleeter (. (Φ mix accomp (. translate vocals)) spleeter))))
-;;       (-> (: $x (SongIn "English")) (SongIn "Chinese")))))
+;; Synthesize sequential composition of type
+;;
+;; (-> (VocalsIn "English") (TextIn "Chinese"))
+;;
+;; which should be the composition of speech-recognition.s2t and
+;; machine-translation.translate with the proper type coercions.
+!(assertEqual
+  (unique
+   (capture
+    (bc &kb
+      (fromNumber 4)
+      (: $prg
+         (-> (: $x (VocalsIn "English")) (TextIn "Chinese"))))))
+  (: (. (machine-translation.translate "English" "Chinese")
+        (. upload (. speech-recognition.s2t (coerce (STTrans VA VIV)))))
+     (-> (: $x (VocalsIn "English")) (TextIn "Chinese"))))
