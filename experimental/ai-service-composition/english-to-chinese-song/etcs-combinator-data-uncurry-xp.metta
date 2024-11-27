@@ -531,6 +531,11 @@
                   (-> (: $audio Audio)
                       (TextIn "English"))))
 
+;; ;; Define speech-recognition.s2t service method
+;; !(add-atom &kb (: speech-recognition.s2t
+;;                   (-> (: $x (VocalsIn "English"))
+;;                       (TextIn "English"))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Handwrite missing services, ToMidi and Mixer ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
