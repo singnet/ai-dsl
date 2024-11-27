@@ -359,7 +359,6 @@
 !(add-atom &kb (: ID (<: Instrumental Data)))
 !(add-atom &kb (: VD (<: Vocals Data)))
 !(add-atom &kb (: VID (<: (VocalsIn $l) Data)))
-!(add-atom &kb (: SIA (<: (SongIn $l) Data)))
 !(add-atom &kb (: SOD (<: (sound-spleeter.DTLOutput $l) Data)))
 !(add-atom &kb (: VID (<: (VocalsIn $l) Data)))
 !(add-atom &kb (: IND (<: Instrumental Data)))
