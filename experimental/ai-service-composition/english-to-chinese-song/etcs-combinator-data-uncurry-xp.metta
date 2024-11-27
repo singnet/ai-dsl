@@ -1,6 +1,29 @@
 ;; Like etcs-combinator-sd-data-uncurry-xp.metta but tested on the
 ;; whole AI service composition instead of the scaled down one.
 
+;;;;;;;;;;;
+;; Maybe ;;
+;;;;;;;;;;;
+
+;; Define Maybe type
+(: Maybe (-> $a Type))
+(: Nothing (Maybe $a))
+(: Just (-> $a (Maybe $a)))
+
+;;;;;;;;;;
+;; List ;;
+;;;;;;;;;;
+
+;; Declaration of List data type and constructors
+(: List (-> $a Type))
+(: Nil (List $a))
+(: Cons (-> $a (List $a) (List $a)))
+
+;; Define List.append (concatenate two lists).
+(: List.append (-> (List $a) (List $a) (List $a)))
+(= (List.append Nil $ys) $ys)
+(= (List.append (Cons $x $xs) $ys) (Cons $x (List.append $xs $ys)))
+
 ;;;;;;;;;
 ;; Nat ;;
 ;;;;;;;;;
@@ -20,6 +43,198 @@
 (: fromNat (-> Nat Number))
 (= (fromNat Z) 0)
 (= (fromNat (S $k)) (+ 1 (fromNat $k)))
+
+;;;;;;;;;
+;; DOT ;;
+;;;;;;;;;
+
+;; DOT Rankdir
+(: DOT.Rankdir Type)
+(: DOT.Rankdir.BT DOT.Rankdir)                 ; Bottom to top
+(: DOT.Rankdir.TB DOT.Rankdir)                 ; Top to bottom
+(: DOT.Rankdir.LR DOT.Rankdir)                 ; Left to right
+(: DOT.Rankdir.RL DOT.Rankdir)                 ; Right to left
+
+;; DOT Style
+(: DOT.Style Type)
+(: DOT.Style.Rounded DOT.Style)
+
+;; DOT shape
+(: DOT.Shape Type)
+(: DOT.Shape.Plain DOT.Shape)
+(: DOT.Shape.Box DOT.Shape)
+
+;; DOT attribute
+(: DOT.Attribute Type)
+
+;; Constructors
+(: DOT.MkLabelAttribute (-> String DOT.Attribute))
+(: DOT.MkStyleAttribute (-> DOT.Style DOT.Attribute))
+(: DOT.MkShapeAttribute (-> DOT.Shape DOT.Attribute))
+(: DOT.MkRankdirAttribute (-> DOT.Rankdir DOT.Attribute))
+
+;; Access functions
+(: DOT.Attribute.label (-> DOT.Attribute (Maybe String)))
+(= (DOT.Attribute.label $attribute)
+   (case $attribute
+     (((DOT.MkLabelAttribute $label) (Just $label))
+      ($else Nothing))))
+
+(: DOT.Attribute.style (-> DOT.Attribute (Maybe DOT.Style)))
+(= (DOT.Attribute.shape $style)
+   (case $style
+     (((DOT.MkStyleAttribute $style) (Just $style))
+      ($else Nothing))))
+
+(: DOT.Attribute.shape (-> DOT.Attribute (Maybe DOT.Shape)))
+(= (DOT.Attribute.shape $attribute)
+   (case $attribute
+     (((DOT.MkShapeAttribute $shape) (Just $shape))
+      ($else Nothing))))
+
+(: DOT.Attribute.rankdir (-> DOT.Attribute (Maybe DOT.Rankdir)))
+(= (DOT.Attribute.rankdir $attribute)
+   (case $attribute
+     (((DOT.MkRankdirAttribute $rankdir) (Just $rankdir))
+      ($else Nothing))))
+
+;; Test DOT attributes
+!(assertEqual
+  (get-type (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))
+  (List DOT.Attribute))
+
+;; DOT Identifier
+(: DOT.Identifier Type)
+
+;; Constructor
+(: DOT.MkIdentifier (-> Symbol Number DOT.Identifier))
+
+;; Access functions
+(: DOT.Identifier.symbol (-> DOT.Identifier Symbol))
+(= (DOT.Identifier.symbol (DOT.MkIdentifier $symbol $index)) $symbol)
+
+(: DOT.Identifier.index (-> DOT.Identifier Number))
+(= (DOT.Identifier.index (DOT.MkIdentifier $symbol $index)) $index)
+
+;; DOT node
+(: DOT.Node Type)
+
+;; Constructor
+(: DOT.MkNode (-> DOT.Identifier        ; Identifier
+                  (List DOT.Attribute)  ; Attributes
+                  DOT.Node))
+
+;; Access functions
+(: DOT.Node.identifier (-> DOT.Node Symbol))
+(= (DOT.Node.identifier (DOT.MkNode $identifier $attributes)) $identifier)
+
+(: DOT.Node.attributes (-> DOT.Node (List DOT.Attributes)))
+(= (DOT.Node.attributes (DOT.MkNode $identifier $attributes)) $attributes)
+
+;; Data type of DOT edge
+(: DOT.Edge Type)
+
+;; Constructor
+(: DOT.MkEdge (-> DOT.Node              ; Source
+                  DOT.Node              ; Destination
+                  (List DOT.Attribute)  ; Attributes
+                  DOT.Edge))
+
+;; Access functions
+(: DOT.Edge.source (-> DOT.Edge DOT.Node))
+(= (DOT.Edge.source (DOT.MkEdge $source $destination $attributes)) $source)
+
+(: DOT.Edge.destination (-> DOT.Edge DOT.Node))
+(= (DOT.Edge.destination (DOT.MkEdge $source $destination $attributes)) $destination)
+
+(: DOT.Edge.attributes (-> DOT.Edge (List DOT.Attribute)))
+(= (DOT.Node.attributes (DOT.MkEdge $source $destination $attributes)) $attributes)
+
+;; Data type to describe Graphviz DOT data
+(: DOT Type)
+(: MkDOT (-> (List DOT.Node)                ; List of nodes
+             (List DOT.Edge)                ; List of edges
+             DOT.Node                       ; Entry node
+             DOT.Node                       ; Exit node
+             (List DOT.Attribute)           ; List of attributes
+             DOT))
+
+;; Test MkDOT
+!(assertEqual
+  (MkDOT Nil
+         Nil
+         (DOT.MkNode (DOT.MkIdentifier mix 0)
+                     (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))
+         (DOT.MkNode (DOT.MkIdentifier mix 0)
+                     (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))
+         (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT) Nil))
+  (MkDOT Nil
+         Nil
+         (DOT.MkNode (DOT.MkIdentifier mix 0)
+                     (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))
+         (DOT.MkNode (DOT.MkIdentifier mix 0)
+                     (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))
+         (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT) Nil)))
+
+;; Return the default attributes of a DOT file
+(: globalAttributes (-> (List DOT.Attribute)))
+(= (globalAttributes) (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT) Nil))
+
+;; Return the default attributes of a node representing a function
+(: functionAttributes (-> (List DOT.Attribute)))
+(= (functionAttributes) (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))
+
+;; Build the DOT data structure corresponding to a given term.  That
+;; function is crafted around the assumption that the input term is an
+;; AI service composition.
+(: toDOT (-> Atom DOT))
+(= (toDOT $term)
+   (let (MkDOT $nodes $edges $entry $exit $attributes) (toDOT_ $term 0)
+        ;; Return DOT data plus some hardwired default attributes
+        (MkDOT $nodes
+               $edges
+               $entry
+               $exit
+               (List.append (globalAttributes) $attributes))))
+
+;; Make empty DOT data structure
+(: mkEmptyDOT (-> DOT))
+(= (mkEmptyDOT) (MkDOT Nil Nil (MkIdentifier _ 0) (MkIdentifier _ 0) Nil))
+
+;; Like toDOT but it is the recursive definition, not the entry point.
+;; The extra index argument is used to generate unique ID.
+(: toDOT_ (-> Atom Number DOT))
+(= (toDOT_ $term $index)
+   (case (get-metatype $term)
+     (;; Base case (for now Variable and Grounded are not supported)
+      (Symbol (let $node
+                  (DOT.MkNode (DOT.MkIdentifier $term $index) (functionAttributes))
+                (MkDOT (Cons $node Nil) Nil $node $node Nil)))
+      ;; Recursive step
+      (Expression (case $term
+                    (;; Base case
+                     (() (mkEmptyDOT))
+                     ;; Recursive steps
+                     ;; Bluebird
+                     ((. $f $g) NEXT)
+                     ;; Phoenix
+                     ((Φ $f $g $h) NEXT)
+                     ;; Otherwise
+                     ($else (mkEmptyDOT)))))
+      ($else (mkEmptyDOT)))))
+
+;; Test toDOT
+!(assertEqual
+  (toDOT mix)
+  (MkDOT (Cons (DOT.MkNode (DOT.MkIdentifier mix 0) (functionAttributes)) Nil)
+         Nil
+         (DOT.MkNode (DOT.MkIdentifier mix 0) (functionAttributes))
+         (DOT.MkNode (DOT.MkIdentifier mix 0) (functionAttributes))
+         (globalAttributes)))
+
+;; Takes a DOT data structure and output the corresponding string in
+;; DOT format.
+(: DOT.toString (-> DOT String))
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; Util functions ;;
