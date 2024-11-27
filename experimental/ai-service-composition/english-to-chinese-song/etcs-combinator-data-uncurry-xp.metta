@@ -1128,3 +1128,50 @@
   (: (. (machine-translation.translate "English" "Chinese")
         (. upload (. speech-recognition.s2t (coerce (STTrans VA VIV)))))
      (-> (: $x (VocalsIn "English")) (TextIn "Chinese"))))
+
+;; Type check the sequential composition
+;;
+;; (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter)
+!(assertEqual
+  (bc &kb (fromNumber 1)
+      (: (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter)
+         (-> (: $x (SongIn $l)) Instrumental)))
+  (: (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter)
+     (-> (: $x (SongIn $l)) Instrumental)))
+
+;; Type check the following AI service composition
+;;
+;; (. (Φ midi2voice-zh.singingZH
+;;       (. (machine-translation.translate "English" "Chinese")
+;;          (. upload speech-recognition.s2t))
+;;       tomidi.a2m)
+;;    (coerce SIA))
+!(assertEqual
+  (bc &kb (fromNumber 4)
+      (: (. (Φ midi2voice-zh.singingZH
+               (. (machine-translation.translate "English" "Chinese")
+                  (. upload speech-recognition.s2t))
+               tomidi.a2m)
+            (coerce SIA))
+         (-> (: $x (SongIn $l)) (VocalsIn "Chinese"))))
+  (: (. (Φ midi2voice-zh.singingZH
+           (. (machine-translation.translate "English" "Chinese")
+              (. upload speech-recognition.s2t))
+           tomidi.a2m)
+        (coerce SIA))
+     (-> (: $x (SongIn $l)) (VocalsIn "Chinese"))))
+
+;; ;; Synthesize all AI service composition going from (SongIn "English")
+;; ;; to (SongIn "Chinese")
+;; ;; !(assertEqual  ; Re-enable on assert contain is supported
+;; !(bc &kb (fromNumber 6)
+;;      (: $prg
+;;         (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+;; ;; (: (. (Φ mixer.mix sound-spleeter.DTLOutput.accomp
+;; ;;          (. (Φ midi2voice-zh.singingZH
+;; ;;                (. (machine-translation.translate "English" "Chinese")
+;; ;;                   (. upload speech-recognition.s2t))
+;; ;;                tomidi.a2m)
+;; ;;             (. (coerce IA) sound-spleeter.DTLOutput.accomp)))
+;; ;;       sound-spleeter.spleeter)
+;; ;;    (-> (: $x (SongIn "English")) (SongIn "Chinese")))
