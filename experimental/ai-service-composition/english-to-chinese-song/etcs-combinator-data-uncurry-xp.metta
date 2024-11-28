@@ -259,7 +259,48 @@
          (DOT.MkNode (DOT.MkIdentifier mix 0) (functionAttributes))
          (globalAttributes)))
 
-;; Takes a DOT data structure and output the corresponding string in
+;; Output the string representing a style in DOT format
+(: DOT.Style.toString (-> DOT.Style String))
+(= (DOT.Style.toString DOT.Style.Rounded) "rounded")
+
+;; Output the string representing a shape in DOT format
+(: DOT.Shape.toString (-> DOT.Shape String))
+(= (DOT.Shape.toString DOT.Shape.Plain) "plain")
+(= (DOT.Shape.toString DOT.Shape.Box) "box")
+
+;; Output the string representing a rankdir in DOT format
+(: DOT.Rankdir.toString (-> DOT.Rankdir String))
+(= (DOT.Rankdir.toString DOT.Rankdir.BT) "BT")
+(= (DOT.Rankdir.toString DOT.Rankdir.TB) "TB")
+(= (DOT.Rankdir.toString DOT.Rankdir.LR) "LR")
+(= (DOT.Rankdir.toString DOT.Rankdir.RL) "RL")
+
+;; Output the string representing an attribute in DOT format
+(: DOT.Attribute.toString (-> DOT.Attribute String))
+(= (DOT.Attribute.toString (DOT.MkLabelAttribute $label))
+   (String.append "label=" $label))
+(= (DOT.Attribute.toString (DOT.MkStyleAttribute $style))
+   (String.append "style=" (DOT.Style.toString $style)))
+(= (DOT.Attribute.toString (DOT.MkShapeAttribute $shape))
+   (String.append "shape=" (DOT.Shape.toString $shape)))
+(= (DOT.Attribute.toString (DOT.MkRankdirAttribute $rankdir))
+   (String.append "rankdir=" (DOT.Rankdir.toString $rankdir)))
+
+;; Test DOT.Attribute.toString
+!(assertEqual
+  (DOT.Attribute.toString (DOT.MkLabelAttribute "mix"))
+  "label=mix")
+!(assertEqual
+  (DOT.Attribute.toString (DOT.MkStyleAttribute DOT.Style.Rounded))
+  "style=rounded")
+!(assertEqual
+  (DOT.Attribute.toString (DOT.MkShapeAttribute DOT.Shape.Box))
+  "shape=box")
+!(assertEqual
+  (DOT.Attribute.toString (DOT.MkRankdirAttribute DOT.Rankdir.BT))
+  "rankdir=BT")
+
+;; Takes a DOT data structure and outputs the corresponding string in
 ;; DOT format.
 (: DOT.toString (-> DOT String))
 
