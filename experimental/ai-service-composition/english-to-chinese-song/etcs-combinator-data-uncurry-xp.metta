@@ -24,6 +24,33 @@
 (= (List.append Nil $ys) $ys)
 (= (List.append (Cons $x $xs) $ys) (Cons $x (List.append $xs $ys)))
 
+;;;;;;;;;;
+; String ;
+;;;;;;;;;;
+
+;; Fold a tuple from right to left
+(: foldr (-> (-> $a $b $b) $b $c $d))
+(= (foldr $f $i $xs)
+   (if (== $xs ())
+       $i
+       (let* (($h (car-atom $xs))
+              ($t (cdr-atom $xs))
+              ($ft (foldr $f $i $t)))
+         ($f $h $ft))))
+
+;; Concatenate two terms
+(: append (-> $a $a $a))
+(= (append $lhs $rhs) (foldr cons-atom $rhs $lhs))
+
+;; Concatenate two strings
+(: String.append (-> String String String))
+(= (String.append $x $y) (let* (($xcs (stringToChars $x))
+                                ($ycs (stringToChars $y))
+                                ($xycs (append $xcs $ycs)))
+                           (charsToString $xycs)))
+
+!(assertEqual (String.append "abc" "def") "abcdef")
+
 ;;;;;;;;;
 ;; Nat ;;
 ;;;;;;;;;
@@ -236,9 +263,12 @@
 ;; DOT format.
 (: DOT.toString (-> DOT String))
 
-;;;;;;;;;;;;;;;;;;;;
-;; Util functions ;;
-;;;;;;;;;;;;;;;;;;;;
+;; NEXT: implement DOT.toString, you may use the following builtin
+;; repr: convert Atom to string.
+
+;;;;;;;;;;;;;
+;; Uncurry ;;
+;;;;;;;;;;;;;
 
 ;; Return True iff $term is closed
 ;; TODO: generalize for n-ary expression
