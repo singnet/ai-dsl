@@ -24,6 +24,12 @@
 (= (List.append Nil $ys) $ys)
 (= (List.append (Cons $x $xs) $ys) (Cons $x (List.append $xs $ys)))
 
+;; Define List.map (produce a new list by applying unary function to
+;; all elements of a list).
+(: List.map (-> (-> $a $b) (List $a) (List $b)))
+(= (List.map $f Nil) Nil)
+(= (List.map $f (Cons $head $tail)) (Cons ($f $head) (List.map $f $tail)))
+
 ;;;;;;;;;;
 ; String ;
 ;;;;;;;;;;
@@ -42,14 +48,27 @@
 (: append (-> $a $a $a))
 (= (append $lhs $rhs) (foldr cons-atom $rhs $lhs))
 
-;; Concatenate two strings
-(: String.append (-> String String String))
-(= (String.append $x $y) (let* (($xcs (stringToChars $x))
-                                ($ycs (stringToChars $y))
-                                ($xycs (append $xcs $ycs)))
-                           (charsToString $xycs)))
+;; Concatenate two strings (implemented in my own branch)
+;; (: String.append (-> String String String))
+;; (= (String.append $x $y) (let* (($xcs (stringToChars $x))
+;;                                 ($ycs (stringToChars $y))
+;;                                 ($xycs (append $xcs $ycs)))
+;;                            (charsToString $xycs)))
 
+;; Test String.append
 !(assertEqual (String.append "abc" "def") "abcdef")
+
+;; Join a list of string by a separator
+(: String.join (-> String (List String) String))
+(= (String.join $separator Nil) "")
+(= (String.join $separator (Cons $head $tail))
+   (case $tail
+     ((Nil $head)
+      ($else (String.append (String.append $head $separator)
+                            (String.join $separator $tail))))))
+
+;; Test String.join
+!(assertEqual (String.join ", " (Cons "x=42" (Cons "y=24" Nil))) "x=42, y=24")
 
 ;;;;;;;;;
 ;; Nat ;;
@@ -152,7 +171,7 @@
                   DOT.Node))
 
 ;; Access functions
-(: DOT.Node.identifier (-> DOT.Node Symbol))
+(: DOT.Node.identifier (-> DOT.Node DOT.Identifier))
 (= (DOT.Node.identifier (DOT.MkNode $identifier $attributes)) $identifier)
 
 (: DOT.Node.attributes (-> DOT.Node (List DOT.Attributes)))
@@ -300,12 +319,80 @@
   (DOT.Attribute.toString (DOT.MkRankdirAttribute DOT.Rankdir.BT))
   "rankdir=BT")
 
+;; Output the string representing a list of attributes in DOT format
+(: DOT.Attributes.toOneLinerString (-> (List DOT.Attribute) String))
+(= (DOT.Attributes.toOneLinerString $attributes)
+   (let $joined_attributes
+       (String.join ", " (List.map DOT.Attribute.toString $attributes))
+     (String.append "[" (String.append $joined_attributes "]"))))
+
+;; Test DOT.Attributes.toOneLinerString
+!(assertEqual
+  (DOT.Attributes.toOneLinerString
+   (Cons (DOT.MkLabelAttribute "mix")
+         (Cons (DOT.MkStyleAttribute DOT.Style.Rounded)
+               (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))))
+  "[label=mix, style=rounded, shape=box]")
+
+;; Output the string representing an identifier in DOT format
+(: DOT.Identifier.toString (-> DOT.Identifier String))
+(= (DOT.Identifier.toString (DOT.MkIdentifier $symbol $index))
+   (String.append (repr $symbol) (repr $index)))
+
+;; Test DOT.Identifier.toString
+!(assertEqual (DOT.Identifier.toString (DOT.MkIdentifier mix 0)) "mix0")
+
+;; Output the string representing a node in DOT format.
+(: DOT.Node.toString (-> DOT.Node String))
+(= (DOT.Node.toString (DOT.MkNode $identifier $attributes))
+   (let* (($id_repr (DOT.Identifier.toString $identifier))
+          ($attr_repr (DOT.Attributes.toOneLinerString $attributes)))
+     (String.append $id_repr (String.append " " $attr_repr))))
+
+;; Test DOT.Node.toString
+!(assertEqual
+  (DOT.Node.toString (DOT.MkNode (DOT.MkIdentifier mix 0) Nil))
+  "mix0 []")
+!(assertEqual
+  (DOT.Node.toString (DOT.MkNode (DOT.MkIdentifier mix 0)
+                                 (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil)))
+  "mix0 [shape=box]")
+
+;; Output the string representing an edge in DOT format.
+(: DOT.Edge.toString (-> DOT.Edge String))
+(= (DOT.Edge.toString (DOT.MkEdge $source $destination $attributes))
+   (let* (($src_repr (DOT.Identifier.toString (DOT.Node.identifier $source)))
+          ($dst_repr (DOT.Identifier.toString (DOT.Node.identifier $destination)))
+          ($edge_repr (String.append $src_repr (String.append " -> " $dst_repr)))
+          ($attrs_repr (DOT.Attributes.toOneLinerString $attributes)))
+     (String.append $edge_repr (String.append " " $attrs_repr))))
+
+;; Test DOT.Edge.toString
+!(assertEqual
+  (DOT.Edge.toString (DOT.MkEdge (DOT.MkNode (DOT.MkIdentifier src 0) Nil)
+                                 (DOT.MkNode (DOT.MkIdentifier dst 0) Nil)
+                                 Nil))
+  "src0 -> dst0 []")
+
 ;; Takes a DOT data structure and outputs the corresponding string in
 ;; DOT format.
 (: DOT.toString (-> DOT String))
+(= (DOT.toString (MkDOT $nodes $edges $entry $exit $attrs))
+   (let* (($nodes_repr (String.join "\n" (List.map DOT.Node.toString $nodes)))
+          ($edges_repr (String.join "\n" (List.map DOT.Edge.toString $edges)))
+          ($attrs_repr (String.join "\n" (List.map DOT.Attribute.toString $attrs)))
+          ($nodes_repr_nl (String.append $nodes_repr "\n\n"))
+          ($attrs_repr_nl (String.append $attrs_repr "\n\n")))
+     (String.append "digraph Flowchart {\n"
+                    (String.append $attrs_repr_nl
+                                   (String.append $nodes_repr_nl
+                                                  (String.append $edges_repr
+                                                                 "\n}"))))))
 
-;; NEXT: implement DOT.toString, you may use the following builtin
-;; repr: convert Atom to string.
+;; Test DOT.toString
+!(assertEqual
+  (DOT.toString (toDOT mix))
+  "digraph Flowchart {\nrankdir=BT\n\nmix0 [shape=box]\n\n\n}")
 
 ;;;;;;;;;;;;;
 ;; Uncurry ;;
