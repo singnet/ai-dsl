@@ -254,7 +254,10 @@
    (case (get-metatype $term)
      (;; Base case (for now Variable and Grounded are not supported)
       (Symbol (let $node
-                  (DOT.MkNode (DOT.MkIdentifier $term $index) (functionAttributes))
+                  (DOT.MkNode (DOT.MkIdentifier $term $index)
+                              (List.append (functionAttributes)
+                                           (Cons (DOT.MkLabelAttribute (repr $term))
+                                                 Nil)))
                 (MkDOT (Cons $node Nil) Nil $node $node Nil)))
       ;; Recursive step
       (Expression (case $term
@@ -272,11 +275,10 @@
 ;; Test toDOT
 !(assertEqual
   (toDOT mix)
-  (MkDOT (Cons (DOT.MkNode (DOT.MkIdentifier mix 0) (functionAttributes)) Nil)
-         Nil
-         (DOT.MkNode (DOT.MkIdentifier mix 0) (functionAttributes))
-         (DOT.MkNode (DOT.MkIdentifier mix 0) (functionAttributes))
-         (globalAttributes)))
+  (let $node (DOT.MkNode (DOT.MkIdentifier mix 0)
+                         (List.append (functionAttributes)
+                                      (Cons (DOT.MkLabelAttribute "mix") Nil)))
+    (MkDOT (Cons $node Nil) Nil $node $node (globalAttributes))))
 
 ;; Output the string representing a style in DOT format
 (: DOT.Style.toString (-> DOT.Style String))
@@ -392,7 +394,7 @@
 ;; Test DOT.toString
 !(assertEqual
   (DOT.toString (toDOT mix))
-  "digraph Flowchart {\nrankdir=BT\n\nmix0 [shape=box]\n\n\n}")
+  "digraph Flowchart {\nrankdir=BT\n\nmix0 [shape=box, label=mix]\n\n\n}")
 
 ;;;;;;;;;;;;;
 ;; Uncurry ;;
