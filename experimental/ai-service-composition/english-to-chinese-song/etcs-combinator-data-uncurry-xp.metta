@@ -48,7 +48,7 @@
 (: append (-> $a $a $a))
 (= (append $lhs $rhs) (foldr cons-atom $rhs $lhs))
 
-;; Concatenate two strings (implemented in my own branch)
+;; ;; Concatenate two strings (implemented in my own branch)
 ;; (: String.append (-> String String String))
 ;; (= (String.append $x $y) (let* (($xcs (stringToChars $x))
 ;;                                 ($ycs (stringToChars $y))
@@ -152,15 +152,14 @@
 ;; DOT Identifier
 (: DOT.Identifier Type)
 
-;; Constructor
-(: DOT.MkIdentifier (-> Symbol Number DOT.Identifier))
-
-;; Access functions
-(: DOT.Identifier.symbol (-> DOT.Identifier Symbol))
-(= (DOT.Identifier.symbol (DOT.MkIdentifier $symbol $index)) $symbol)
-
-(: DOT.Identifier.index (-> DOT.Identifier Number))
-(= (DOT.Identifier.index (DOT.MkIdentifier $symbol $index)) $index)
+;; Constructors.  The Symbol based identifier constructor takes an
+;; extra index argument to be treated as unique in the flowchart where
+;; it appears (because if it appears with different arguments it is
+;; should be treated as different).  The Grounded based identifier
+;; constructor does not need such extra index because it used for
+;; constants only, which should be unique since they take no argument.
+(: DOT.MkSymbolIdentifier (-> Symbol Number DOT.Identifier))
+(: DOT.MkGroundedIdentifier (-> Grounded DOT.Identifier))
 
 ;; DOT node
 (: DOT.Node Type)
@@ -209,16 +208,16 @@
 !(assertEqual
   (MkDOT Nil
          Nil
-         (DOT.MkNode (DOT.MkIdentifier mix 0)
+         (DOT.MkNode (DOT.MkSymbolIdentifier mix 0)
                      (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))
-         (DOT.MkNode (DOT.MkIdentifier mix 0)
+         (DOT.MkNode (DOT.MkSymbolIdentifier mix 0)
                      (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))
          (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT) Nil))
   (MkDOT Nil
          Nil
-         (DOT.MkNode (DOT.MkIdentifier mix 0)
+         (DOT.MkNode (DOT.MkSymbolIdentifier mix 0)
                      (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))
-         (DOT.MkNode (DOT.MkIdentifier mix 0)
+         (DOT.MkNode (DOT.MkSymbolIdentifier mix 0)
                      (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))
          (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT) Nil)))
 
@@ -229,6 +228,17 @@
 ;; Return the default attributes of a node representing a function
 (: functionAttributes (-> (List DOT.Attribute)))
 (= (functionAttributes) (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))
+
+;; Return the default attributes of a node representing a constant
+(: constantAttributes (-> (List DOT.Attribute)))
+(= (constantAttributes) (Cons (DOT.MkShapeAttribute DOT.Shape.Box)
+                              (Cons (DOT.MkStyleAttribute DOT.Style.Rounded)
+                                    Nil)))
+
+;; Return the default attributes of a node representing a phoenix
+(: phoenixAttributes (-> (List DOT.Attribute)))
+(= (phoenixAttributes) (Cons (DOT.MkShapeAttribute DOT.Shape.Plain)
+                             (Cons (DOT.MkLabelAttribute "Φ") Nil)))
 
 ;; Build the DOT data structure corresponding to a given term.  That
 ;; function is crafted around the assumption that the input term is an
@@ -245,37 +255,126 @@
 
 ;; Make empty DOT data structure
 (: mkEmptyDOT (-> DOT))
-(= (mkEmptyDOT) (MkDOT Nil Nil (MkIdentifier _ 0) (MkIdentifier _ 0) Nil))
+(= (mkEmptyDOT)
+   (MkDOT Nil Nil (MkGroundedIdentifier "") (MkGroundedIdentifier "") Nil))
 
 ;; Like toDOT but it is the recursive definition, not the entry point.
 ;; The extra index argument is used to generate unique ID.
 (: toDOT_ (-> Atom Number DOT))
 (= (toDOT_ $term $index)
    (case (get-metatype $term)
-     (;; Base case (for now Variable and Grounded are not supported)
-      (Symbol (let $node
-                  (DOT.MkNode (DOT.MkIdentifier $term $index)
-                              (List.append (functionAttributes)
-                                           (Cons (DOT.MkLabelAttribute (repr $term))
-                                                 Nil)))
+     (;; Base cases
+      (Symbol (let* (($id (DOT.MkSymbolIdentifier $term $index))
+                     ($attrs (Cons (DOT.Identifier.toAttribute $id)
+                                   (functionAttributes)))
+                     ($node (DOT.MkNode $id $attrs)))
                 (MkDOT (Cons $node Nil) Nil $node $node Nil)))
+      (Grounded (let* (($id (DOT.MkGroundedIdentifier $term))
+                       ($attrs (Cons (DOT.Identifier.toAttribute $id)
+                                     (constantAttributes)))
+                       ($node (DOT.MkNode $id $attrs)))
+                  (MkDOT (Cons $node Nil) Nil $node $node Nil)))
       ;; Recursive step
       (Expression (case $term
                     (;; Base case
+                     ;; Empty expression
                      (() (mkEmptyDOT))
                      ;; Recursive steps
+                     ;; Type annotation
+                     ((: $f (-> $in $out)) NEXT)
                      ;; Bluebird
-                     ((. $f $g) NEXT)
+                     ((. $f $g) (let* (($fd (toDOT_ $f (+ $index 1)))
+                                       ($gd (toDOT_ $g (+ $index 10)))
+                                       ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
+                                       ((MkDOT $gns $ges $gentry $gexit $gas) $gd)
+                                       ($gf (DOT.MkEdge $gexit $fentry Nil))
+                                       ($nns (List.append $fns $gns))
+                                       ($nes (Cons $gf (List.append $fes $ges)))
+                                       ($nentry $gentry)
+                                       ($nexit $fexit)
+                                       ($nas (List.append $fas $gas)))
+                                  (MkDOT $nns $nes $nentry $nexit $nas)))
                      ;; Phoenix
-                     ((Φ $f $g $h) NEXT)
+                     ((Φ $f $g $h) (let* (($fd (toDOT_ $f (+ $index 1)))
+                                          ($gd (toDOT_ $g (+ $index 10)))
+                                          ($hd (toDOT_ $h (+ $index 100)))
+                                          ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
+                                          ((MkDOT $gns $ges $gentry $gexit $gas) $gd)
+                                          ((MkDOT $hns $hes $hentry $hexit $has) $hd)
+                                          ($Φid (DOT.MkSymbolIdentifier
+                                                 Φ (+ $index 1000)))
+                                          ($Φ (DOT.MkNode $Φid (phoenixAttributes)))
+                                          ($Φg (DOT.MkEdge $Φ $gentry Nil))
+                                          ($Φh (DOT.MkEdge $Φ $hentry Nil))
+                                          ($gf (DOT.MkEdge $gexit $fentry Nil))
+                                          ($hf (DOT.MkEdge $hexit $fentry Nil))
+                                          ($nns (Cons
+                                                 $Φ
+                                                 (List.append
+                                                  $fns
+                                                  (List.append $gns $hns))))
+                                          ($nes (Cons
+                                                 $Φg
+                                                 (Cons
+                                                  $Φh
+                                                  (Cons
+                                                   $gf
+                                                   (Cons
+                                                    $hf
+                                                    (List.append
+                                                     $fes
+                                                     (List.append $ges $hes)))))))
+                                          ($nentry $Φ)
+                                          ($nexit $fexit)
+                                          ($nas (List.append $fas
+                                                             (List.append $gas
+                                                                          $has))))
+                                  (MkDOT $nns $nes $nentry $nexit $nas)))
+                     ;; Unary application
+                     (($f $x) (let* (($fd (toDOT_ $f (+ $index 1)))
+                                     ($xd (toDOT_ $x (+ $index 10)))
+                                     ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
+                                     ((MkDOT $xns $xes $xentry $xexit $xas) $xd)
+                                     ($xf (DOT.MkEdge $xexit $fentry Nil))
+                                     ($nns (List.append $fns $xns))
+                                     ($nes (Cons $xf (List.append $fes $xes)))
+                                     ($nentry $fentry)
+                                     ($nexit $fexit)
+                                     ($nas (List.append $fas $xas)))
+                                (MkDOT $nns $nes $nentry $nexit $nas)))
+                     ;; Binary application
+                     (($f $x $y) (let* (($fd (toDOT_ $f (+ $index 1)))
+                                        ($xd (toDOT_ $x (+ $index 10)))
+                                        ($yd (toDOT_ $y (+ $index 100)))
+                                        ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
+                                        ((MkDOT $xns $xes $xentry $xexit $xas) $xd)
+                                        ((MkDOT $yns $yes $yentry $yexit $yas) $yd)
+                                        ($xf (DOT.MkEdge $xexit $fentry Nil))
+                                        ($yf (DOT.MkEdge $yexit $fentry Nil))
+                                        ($nns (List.append
+                                               $fns (List.append $xns $yns)))
+                                        ($nes (Cons
+                                               $xf
+                                               (Cons
+                                                $yf
+                                                (List.append
+                                                 $fes (List.append $xes $yes)))))
+                                        ($nentry $fentry)
+                                        ($nexit $fexit)
+                                        ($nas (List.append $fas
+                                                           (List.append $xas $yas))))
+                                   (MkDOT $nns $nes $nentry $nexit $nas)))
+                     ;; Trinary application (TODO)
+                     (($f $x $y $z) (mkEmptyDOT))
                      ;; Otherwise
                      ($else (mkEmptyDOT)))))
+      ;; Variable is not supported
       ($else (mkEmptyDOT)))))
 
 ;; Test toDOT
 !(assertEqual
   (toDOT mix)
-  (let $node (DOT.MkNode (DOT.MkIdentifier mix 0)
+  (let $node (DOT.MkNode (DOT.MkSymbolIdentifier mix 0)
                          (List.append (functionAttributes)
                                       (Cons (DOT.MkLabelAttribute "mix") Nil)))
     (MkDOT (Cons $node Nil) Nil $node $node (globalAttributes))))
@@ -338,11 +437,33 @@
 
 ;; Output the string representing an identifier in DOT format
 (: DOT.Identifier.toString (-> DOT.Identifier String))
-(= (DOT.Identifier.toString (DOT.MkIdentifier $symbol $index))
-   (String.append (repr $symbol) (repr $index)))
+(= (DOT.Identifier.toString (DOT.MkSymbolIdentifier $symbol $index))
+   (String.append "\""
+                  (String.append (repr $symbol)
+                                 (String.append (repr $index)
+                                                "\""))))
+(= (DOT.Identifier.toString (DOT.MkGroundedIdentifier $grounded))
+   (case (get-type $grounded)
+     ((String (repr $grounded))
+      ($else (String.append "\"" (String.append (repr $grounded) "\""))))))
+
+;; Output the string representing the label corresponding to an
+;; identifier in DOT format
+(: DOT.Identifier.toLabelString (-> DOT.Identifier String))
+(= (DOT.Identifier.toLabelString (DOT.MkSymbolIdentifier $symbol $index))
+   (String.append "\"" (String.append (repr $symbol) "\"")))
+(= (DOT.Identifier.toLabelString (DOT.MkGroundedIdentifier $grounded))
+   (case (get-type $grounded)
+     ((String (repr $grounded))
+      ($else (String.append "\"" (String.append (repr $grounded) "\""))))))
+
+;; Output the label attribute corresponding to an identifier
+(: DOT.Identifier.toAttribute (-> DOT.Identifier DOT.Attribute))
+(= (DOT.Identifier.toAttribute $identifier)
+   (DOT.MkLabelAttribute (DOT.Identifier.toLabelString $identifier)))
 
 ;; Test DOT.Identifier.toString
-!(assertEqual (DOT.Identifier.toString (DOT.MkIdentifier mix 0)) "mix0")
+!(assertEqual (DOT.Identifier.toString (DOT.MkSymbolIdentifier mix 0)) "mix0")
 
 ;; Output the string representing a node in DOT format.
 (: DOT.Node.toString (-> DOT.Node String))
@@ -353,10 +474,13 @@
 
 ;; Test DOT.Node.toString
 !(assertEqual
-  (DOT.Node.toString (DOT.MkNode (DOT.MkIdentifier mix 0) Nil))
+  (DOT.Node.toString (DOT.MkNode (DOT.MkSymbolIdentifier mix 0) Nil))
   "mix0 []")
 !(assertEqual
-  (DOT.Node.toString (DOT.MkNode (DOT.MkIdentifier mix 0)
+  (DOT.Node.toString (DOT.MkNode (DOT.MkGroundedIdentifier "Hello World!") Nil))
+  "\"Hello World!\" []")
+!(assertEqual
+  (DOT.Node.toString (DOT.MkNode (DOT.MkSymbolIdentifier mix 0)
                                  (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil)))
   "mix0 [shape=box]")
 
@@ -371,8 +495,8 @@
 
 ;; Test DOT.Edge.toString
 !(assertEqual
-  (DOT.Edge.toString (DOT.MkEdge (DOT.MkNode (DOT.MkIdentifier src 0) Nil)
-                                 (DOT.MkNode (DOT.MkIdentifier dst 0) Nil)
+  (DOT.Edge.toString (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier src 0) Nil)
+                                 (DOT.MkNode (DOT.MkSymbolIdentifier dst 0) Nil)
                                  Nil))
   "src0 -> dst0 []")
 
@@ -395,6 +519,18 @@
 !(assertEqual
   (DOT.toString (toDOT mix))
   "digraph Flowchart {\nrankdir=BT\n\nmix0 [shape=box, label=mix]\n\n\n}")
+!(assertEqual
+  (DOT.toString (toDOT (. f g)))
+  "digraph Flowchart {\nrankdir=BT\n\nf1 [shape=box, label=f]\ng10 [shape=box, label=g]\n\ng10 -> f1 []\n}")
+!(assertEqual
+  (DOT.toString (toDOT (Φ f g h)))
+  "digraph Flowchart {\nrankdir=BT\n\nΦ1000 [shape=plain, label=Φ]\nf1 [shape=box, label=f]\ng10 [shape=box, label=g]\nh100 [shape=box, label=h]\n\nΦ1000 -> g10 []\nΦ1000 -> h100 []\ng10 -> f1 []\nh100 -> f1 []\n}")
+!(assertEqual
+  (DOT.toString (toDOT (f "Hello World!")))
+  "digraph Flowchart {\nrankdir=BT\n\nf1 [shape=box, label=f]\n\"Hello World!\" [shape=box, style=rounded, label=\"Hello World!\"]\n\n\"Hello World!\" -> f1 []\n}")
+!(assertEqual
+  (DOT.toString (toDOT (f "Hello" "World!")))
+  "digraph Flowchart {\nrankdir=BT\n\nf1 [shape=box, label=f]\n\"Hello\" [shape=box, style=rounded, label=\"Hello\"]\n\"World!\" [shape=box, style=rounded, label=\"World!\"]\n\n\"Hello\" -> f1 []\n\"World!\" -> f1 []\n}")
 
 ;;;;;;;;;;;;;
 ;; Uncurry ;;
