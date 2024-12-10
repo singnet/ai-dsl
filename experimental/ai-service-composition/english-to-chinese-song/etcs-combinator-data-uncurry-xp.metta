@@ -310,7 +310,17 @@
                      (() (mkEmptyDOT))
                      ;; Recursive steps
                      ;; Type annotation
-                     ((: $f (-> $in $out)) NEXT)
+                     ((: $f (-> $inty $outy)) (let* (($fd (toDOT_ $f (+ $index 1)))
+                                                  ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
+                                                  ($in (inputNode))
+                                                  ($on (outputNode))
+                                                  ($if (DOT.MkEdge $in $fentry
+                                                                   (Cons (DOT.MkLabelAttribute (repr $inty)) Nil)))
+                                                  ($of (DOT.MkEdge $fexit $on
+                                                                   (Cons (DOT.MkLabelAttribute (repr $outy)) Nil)))
+                                                  ($nns (Cons $in (Cons $on $fns)))
+                                                  ($nes (Cons $if (Cons $of $fes))))
+                                                (MkDOT $nns $nes $in $on $fas)))
                      ;; Bluebird
                      ((. $f $g) (let* (($fd (toDOT_ $f (+ $index 1)))
                                        ($gd (toDOT_ $g (+ $index 10)))
