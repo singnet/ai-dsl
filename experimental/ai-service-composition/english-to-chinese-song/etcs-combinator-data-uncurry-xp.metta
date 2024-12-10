@@ -109,6 +109,8 @@
 (: DOT.Shape Type)
 (: DOT.Shape.Plain DOT.Shape)
 (: DOT.Shape.Box DOT.Shape)
+(: DOT.Shape.None DOT.Shape)
+(: DOT.Shape.Parallelogram DOT.Shape)
 
 ;; DOT attribute
 (: DOT.Attribute Type)
@@ -387,6 +389,8 @@
 (: DOT.Shape.toString (-> DOT.Shape String))
 (= (DOT.Shape.toString DOT.Shape.Plain) "plain")
 (= (DOT.Shape.toString DOT.Shape.Box) "box")
+(= (DOT.Shape.toString DOT.Shape.None) "none")
+(= (DOT.Shape.toString DOT.Shape.Parallelogram) "parallelogram")
 
 ;; Output the string representing a rankdir in DOT format
 (: DOT.Rankdir.toString (-> DOT.Rankdir String))
