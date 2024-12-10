@@ -48,8 +48,10 @@
 (: append (-> $a $a $a))
 (= (append $lhs $rhs) (foldr cons-atom $rhs $lhs))
 
-;; ;; Concatenate two strings (implemented in my own branch)
-;; (: String.append (-> String String String))
+;; Concatenate two strings (implemented in my own branch)
+(: String.append (-> String String String))
+;; Note that the following relies on MeTTaLog
+(= (String.append $x $y) (call-fn string_concat $x $y))
 ;; (= (String.append $x $y) (let* (($xcs (stringToChars $x))
 ;;                                 ($ycs (stringToChars $y))
 ;;                                 ($xycs (append $xcs $ycs)))
