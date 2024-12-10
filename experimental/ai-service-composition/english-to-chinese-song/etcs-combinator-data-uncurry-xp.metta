@@ -303,6 +303,12 @@
                                      (constantAttributes)))
                        ($node (DOT.MkNode $id $attrs)))
                   (MkDOT (Cons $node Nil) Nil $node $node Nil)))
+      ;; NEXT: support variables
+      ;; (Variable (let* (($id (DOT.MkGroundedIdentifier $term))
+      ;;                  ($attrs (Cons (DOT.Identifier.toAttribute $id)
+      ;;                                (variableAttributes)))
+      ;;                  ($node (DOT.MkNode $id $attrs)))
+      ;;             (MkDOT (Cons $node Nil) Nil $node $node Nil)))
       ;; Recursive step
       (Expression (case $term
                     (;; Base case
@@ -407,7 +413,7 @@
                      (($f $x $y $z) (mkEmptyDOT))
                      ;; Otherwise
                      ($else (mkEmptyDOT)))))
-      ;; Variable is not supported
+      ;; Otherwise
       ($else (mkEmptyDOT)))))
 
 ;; Test toDOT
