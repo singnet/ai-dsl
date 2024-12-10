@@ -237,6 +237,33 @@
                               (Cons (DOT.MkStyleAttribute DOT.Style.Rounded)
                                     Nil)))
 
+;; Return the default attributes of a none node, typically used as
+;; input and output
+(: noneAttributes (-> (List DOT.Attributes)))
+(= (noneAttributes) (Cons (DOT.MkShapeAttribute DOT.Shape.None)
+                          (Cons (DOT.MkLabelAttribute "\"\"")
+                                Nil)))
+
+;; Return the default attibutes of the input node
+(: inputAttributes (-> (List DOT.Attributes)))
+(= (inputAttributes) (Cons (DOT.MkShapeAttribute DOT.Shape.Parallelogram)
+                           (Cons (DOT.MkLabelAttribute "In")
+                                 Nil)))
+
+;; Return the default attibutes of the output node
+(: outputAttributes (-> (List DOT.Attributes)))
+(= (outputAttributes) (Cons (DOT.MkShapeAttribute DOT.Shape.Parallelogram)
+                            (Cons (DOT.MkLabelAttribute "Out")
+                                  Nil)))
+
+;; Build default input node
+(: inputNode (-> DOT.Node))
+(= (inputNode) (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (noneAttributes)))
+
+;; Build default output node
+(: outputNode (-> DOT.Node))
+(= (outputNode) (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (noneAttributes)))
+
 ;; Return the default attributes of a node representing a phoenix
 (: phoenixAttributes (-> (List DOT.Attribute)))
 (= (phoenixAttributes) (Cons (DOT.MkShapeAttribute DOT.Shape.Plain)
