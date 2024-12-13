@@ -1440,8 +1440,7 @@
 ;; which should be a coercion
 !(assertEqual
   (unique
-   (capture
-    (bc &kb (fromNumber 2) (: $prg (-> (: $x (VocalsIn "English")) Audio)))))
+   (bc &kb (fromNumber 2) (: $prg (-> (: $x (VocalsIn "English")) Audio))))
   (: (coerce (STTrans VA VIV)) (-> (: $x (VocalsIn "English")) Audio)))
 
 ;; Synthesize sequential composition of
@@ -1452,11 +1451,10 @@
 ;; casting from (VocalsIn "English") to Audio.
 !(assertEqual
   (unique
-   (capture
-    (bc &kb
-        (fromNumber 3)
-        (: $prg
-           (-> (: $x (VocalsIn "English")) (TextIn "English"))))))
+   (bc &kb
+       (fromNumber 3)
+       (: $prg
+          (-> (: $x (VocalsIn "English")) (TextIn "English")))))
   (: (. speech-recognition.s2t (coerce (STTrans VA VIV)))
      (-> (: $x (VocalsIn "English")) (TextIn "English"))))
 
@@ -1550,11 +1548,10 @@
 ;; machine-translation.translate.
 !(assertEqual
   (unique
-   (capture
-    (bc &kb
-        (fromNumber 3)
-        (: $prg
-           (-> (: $x Audio) (TextIn "Chinese"))))))
+   (bc &kb
+       (fromNumber 3)
+       (: $prg
+          (-> (: $x Audio) (TextIn "Chinese")))))
   (: (. (machine-translation.translate "English" "Chinese")
         (. upload speech-recognition.s2t))
      (-> (: $x Audio) (TextIn "Chinese"))))
@@ -1567,11 +1564,10 @@
 ;; machine-translation.translate with the proper type coercions.
 !(assertEqual
   (unique
-   (capture
-    (bc &kb
-      (fromNumber 4)
-      (: $prg
-         (-> (: $x (VocalsIn "English")) (TextIn "Chinese"))))))
+   (bc &kb
+       (fromNumber 4)
+       (: $prg
+          (-> (: $x (VocalsIn "English")) (TextIn "Chinese")))))
   (: (. (machine-translation.translate "English" "Chinese")
         (. upload (. speech-recognition.s2t (coerce (STTrans VA VIV)))))
      (-> (: $x (VocalsIn "English")) (TextIn "Chinese"))))
