@@ -328,20 +328,20 @@
 ;; Return the default attributes of a none node, typically used as
 ;; input and output
 (: noneAttributes (-> (List DOT.Attributes)))
-(= (noneAttributes) (Cons (DOT.MkShapeAttribute DOT.Shape.None)
-                          (Cons (DOT.MkLabelAttribute "\"\"")
+(= (noneAttributes) (Cons (DOT.MkLabelAttribute "\"\"")
+                          (Cons (DOT.MkShapeAttribute DOT.Shape.None)
                                 Nil)))
 
 ;; Return the default attibutes of the input node
 (: inputAttributes (-> (List DOT.Attributes)))
-(= (inputAttributes) (Cons (DOT.MkShapeAttribute DOT.Shape.Parallelogram)
-                           (Cons (DOT.MkLabelAttribute "In")
+(= (inputAttributes) (Cons (DOT.MkLabelAttribute "In")
+                           (Cons (DOT.MkShapeAttribute DOT.Shape.Parallelogram)
                                  Nil)))
 
 ;; Return the default attibutes of the output node
 (: outputAttributes (-> (List DOT.Attributes)))
-(= (outputAttributes) (Cons (DOT.MkShapeAttribute DOT.Shape.Parallelogram)
-                            (Cons (DOT.MkLabelAttribute "Out")
+(= (outputAttributes) (Cons (DOT.MkLabelAttribute "Out")
+                            (Cons (DOT.MkShapeAttribute DOT.Shape.Parallelogram)
                                   Nil)))
 
 ;; Build default input node
@@ -354,8 +354,15 @@
 
 ;; Return the default attributes of a node representing a phoenix
 (: phoenixAttributes (-> (List DOT.Attribute)))
-(= (phoenixAttributes) (Cons (DOT.MkShapeAttribute DOT.Shape.Plain)
-                             (Cons (DOT.MkLabelAttribute "Φ") Nil)))
+(= (phoenixAttributes) (Cons (DOT.MkLabelAttribute "\"Φ\"")
+                             (Cons (DOT.MkShapeAttribute DOT.Shape.Plain) Nil)))
+
+
+;; Return the default attributes of an edge providing the term to use
+;; as edge label
+(: edgeAttributes (-> Atom (List DOT.Attribute)))
+(= (edgeAttributes $term)
+   (Cons (DOT.MkLabelAttribute (let $rt (repr $term) (repr $rt))) Nil))
 
 ;; Build the DOT data structure corresponding to a given term.  That
 ;; function is crafted around the assumption that the input term is an
@@ -375,6 +382,30 @@
 (= (mkEmptyDOT)
    (MkDOT Nil Nil (MkGroundedIdentifier "") (MkGroundedIdentifier "") Nil))
 
+;; Output the string representing the label corresponding to an
+;; identifier in DOT format
+(: DOT.Identifier.toLabelString (-> DOT.Identifier String))
+(= (DOT.Identifier.toLabelString (DOT.MkSymbolIdentifier $symbol $index))
+   (let $sr (repr $symbol) (repr $sr)))
+(= (DOT.Identifier.toLabelString (DOT.MkGroundedIdentifier $grounded))
+   (let $gr (repr $grounded) (repr $gr)))
+
+;; Output the label attribute corresponding to an identifier
+(: DOT.Identifier.toLabelAttribute (-> DOT.Identifier DOT.Attribute))
+(= (DOT.Identifier.toLabelAttribute $identifier)
+   (DOT.MkLabelAttribute (DOT.Identifier.toLabelString $identifier)))
+
+;; Test DOT.Identifier.toLabelAttribute
+!(assertEqual
+  (DOT.Identifier.toLabelAttribute (DOT.MkSymbolIdentifier mix 0))
+  (DOT.MkLabelAttribute "\"mix\""))
+!(assertEqual
+  (DOT.Identifier.toLabelAttribute (DOT.MkGroundedIdentifier 42))
+  (DOT.MkLabelAttribute "\"42\""))
+!(assertEqual
+  (DOT.Identifier.toLabelAttribute (DOT.MkGroundedIdentifier "Hello World!"))
+  (DOT.MkLabelAttribute "\"\\\"Hello World!\\\"\""))
+
 ;; Like toDOT but it is the recursive definition, not the entry point.
 ;; The extra index argument is used to generate unique ID.
 (: toDOT_ (-> Atom Number DOT))
@@ -382,18 +413,18 @@
    (case (get-metatype $term)
      (;; Base cases
       (Symbol (let* (($id (DOT.MkSymbolIdentifier $term $index))
-                     ($attrs (Cons (DOT.Identifier.toAttribute $id)
+                     ($attrs (Cons (DOT.Identifier.toLabelAttribute $id)
                                    (functionAttributes)))
                      ($node (DOT.MkNode $id $attrs)))
                 (MkDOT (Cons $node Nil) Nil $node $node Nil)))
       (Grounded (let* (($id (DOT.MkGroundedIdentifier $term))
-                       ($attrs (Cons (DOT.Identifier.toAttribute $id)
+                       ($attrs (Cons (DOT.Identifier.toLabelAttribute $id)
                                      (constantAttributes)))
                        ($node (DOT.MkNode $id $attrs)))
                   (MkDOT (Cons $node Nil) Nil $node $node Nil)))
       ;; NEXT: support variables
       ;; (Variable (let* (($id (DOT.MkGroundedIdentifier $term))
-      ;;                  ($attrs (Cons (DOT.Identifier.toAttribute $id)
+      ;;                  ($attrs (Cons (DOT.Identifier.toLabelAttribute $id)
       ;;                                (variableAttributes)))
       ;;                  ($node (DOT.MkNode $id $attrs)))
       ;;             (MkDOT (Cons $node Nil) Nil $node $node Nil)))
@@ -404,17 +435,18 @@
                      (() (mkEmptyDOT))
                      ;; Recursive steps
                      ;; Type annotation
-                     ((: $f (-> $inty $outy)) (let* (($fd (toDOT_ $f (+ $index 1)))
-                                                  ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
-                                                  ($in (inputNode))
-                                                  ($on (outputNode))
-                                                  ($if (DOT.MkEdge $in $fentry
-                                                                   (Cons (DOT.MkLabelAttribute (repr $inty)) Nil)))
-                                                  ($of (DOT.MkEdge $fexit $on
-                                                                   (Cons (DOT.MkLabelAttribute (repr $outy)) Nil)))
-                                                  ($nns (Cons $in (Cons $on $fns)))
-                                                  ($nes (Cons $if (Cons $of $fes))))
-                                                (MkDOT $nns $nes $in $on $fas)))
+                     ((: $f (-> $inty $outy))
+                      (let* (($fd (toDOT_ $f (+ $index 1)))
+                             ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
+                             ($in (inputNode))
+                             ($on (outputNode))
+                             ($if (DOT.MkEdge $in $fentry
+                                              (edgeAttributes $inty)))
+                             ($of (DOT.MkEdge $fexit $on
+                                              (edgeAttributes $outy)))
+                             ($nns (Cons $in (Cons $on $fns)))
+                             ($nes (Cons $if (Cons $of $fes))))
+                        (MkDOT $nns $nes $in $on $fas)))
                      ;; Bluebird
                      ((. $f $g) (let* (($fd (toDOT_ $f (+ $index 1)))
                                        ($gd (toDOT_ $g (+ $index 10)))
@@ -508,8 +540,7 @@
 !(assertEqual
   (toDOT mix)
   (let $node (DOT.MkNode (DOT.MkSymbolIdentifier mix 0)
-                         (List.append (functionAttributes)
-                                      (Cons (DOT.MkLabelAttribute "mix") Nil)))
+                         (Cons (DOT.MkLabelAttribute "\"mix\"") (functionAttributes)))
     (MkDOT (Cons $node Nil) Nil $node $node (globalAttributes))))
 
 ;; Output the string representing a style in DOT format
