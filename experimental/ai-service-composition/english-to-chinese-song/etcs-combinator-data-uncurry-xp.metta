@@ -44,6 +44,19 @@
 (: Nil (List $a))
 (: Cons (-> $a (List $a) (List $a)))
 
+;; Construct list from tuple
+(: toList (-> Expression (List $a)))
+(= (toList $expr) (if (== $expr ())
+                      Nil
+                      (let* (($head (car-atom $expr))
+                             ($tail (cdr-atom $expr)))
+                        (Cons $head (toList $tail)))))
+
+;; Test toList
+!(assertEqual
+  (toList (A (A B) (A B (C D))))
+  (Cons A (Cons (A B) (Cons (A B (C D)) Nil))))
+
 ;; Define List.append (concatenate two lists).
 (: List.append (-> (List $a) (List $a) (List $a)))
 (= (List.append Nil $ys) $ys)
