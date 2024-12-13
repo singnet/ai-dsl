@@ -30,6 +30,47 @@
 (= (List.map $f Nil) Nil)
 (= (List.map $f (Cons $head $tail)) (Cons ($f $head) (List.map $f $tail)))
 
+;; Insert an element to a presumably sorted list according to a given
+;; order (less than).  The result remains sorted.
+(: List.insertWith (-> (-> $a $a Bool) $a (List $a) (List $a)))
+(= (List.insertWith $lt $x Nil) (Cons $x Nil))
+(= (List.insertWith $lt $x (Cons $head $tail))
+   (if ($lt $x $head)
+       (Cons $x (Cons $head $tail))
+       (Cons $head (List.insertWith $lt $x $tail))))
+
+;; Sort a list according to a given a less than order.
+(: List.sortWith (-> (-> $a $a Bool) (List $a) (List $a)))
+(= (List.sortWith $lt Nil) Nil)
+(= (List.sortWith $lt (Cons $head $tail))
+   (List.insertWith $lt $head (List.sortWith $lt $tail)))
+
+;; Test sortWith
+!(assertEqual
+  (List.sortWith termLengthLT Nil)
+  Nil)
+!(assertEqual
+  (List.sortWith termLengthLT (Cons A Nil))
+  (Cons A Nil))
+!(assertEqual
+  (List.sortWith termLengthLT (Cons (A B) (Cons A Nil)))
+  (Cons A (Cons (A B) Nil)))
+!(assertEqual
+  (List.sortWith termLengthLT (Cons (A B) (Cons A (Cons (A B (C D)) (Cons () Nil)))))
+  (Cons () (Cons A (Cons (A B) (Cons (A B (C D)) Nil)))))
+
+;; Returns the pre predix of a list of a given length.
+(: List.take (-> Number (List $a) (List $a)))
+(= (List.take $n Nil) Nil)
+(= (List.take $n (Cons $head $tail)) (if (< 0 $n)
+                                         (Cons $head (List.take (- $n 1) $tail))
+                                         Nil))
+
+;; Test List.take
+!(assertEqual
+  (List.take 2 (Cons A (Cons B (Cons C Nil))))
+  (Cons A (Cons B Nil)))
+
 ;;;;;;;;;;
 ; String ;
 ;;;;;;;;;;
