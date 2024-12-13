@@ -572,7 +572,7 @@
 (= (DOT.Attribute.toString (DOT.MkRankdirAttribute $rankdir))
    (String.append "rankdir=" (DOT.Rankdir.toString $rankdir)))
 
-;; Test DOT.Attribute.toString
+;; test DOT.Attribute.toString
 !(assertEqual
   (DOT.Attribute.toString (DOT.MkLabelAttribute "mix"))
   "label=mix")
@@ -591,7 +591,7 @@
 (= (DOT.Attributes.toOneLinerString $attributes)
    (let $joined_attributes
        (String.join ", " (List.map DOT.Attribute.toString $attributes))
-     (String.append "[" (String.append $joined_attributes "]"))))
+     (String.append3 "[" $joined_attributes "]")))
 
 ;; Test DOT.Attributes.toOneLinerString
 !(assertEqual
@@ -604,67 +604,52 @@
 ;; Output the string representing an identifier in DOT format
 (: DOT.Identifier.toString (-> DOT.Identifier String))
 (= (DOT.Identifier.toString (DOT.MkSymbolIdentifier $symbol $index))
-   (String.append "\""
-                  (String.append (repr $symbol)
-                                 (String.append (repr $index)
-                                                "\""))))
+   (let $sir (String.append (repr $symbol) (repr $index)) (repr $sir)))
 (= (DOT.Identifier.toString (DOT.MkGroundedIdentifier $grounded))
-   (case (get-type $grounded)
-     ((String (repr $grounded))
-      ($else (String.append "\"" (String.append (repr $grounded) "\""))))))
-
-;; Output the string representing the label corresponding to an
-;; identifier in DOT format
-(: DOT.Identifier.toLabelString (-> DOT.Identifier String))
-(= (DOT.Identifier.toLabelString (DOT.MkSymbolIdentifier $symbol $index))
-   (String.append "\"" (String.append (repr $symbol) "\"")))
-(= (DOT.Identifier.toLabelString (DOT.MkGroundedIdentifier $grounded))
-   (case (get-type $grounded)
-     ((String (repr $grounded))
-      ($else (String.append "\"" (String.append (repr $grounded) "\""))))))
-
-;; Output the label attribute corresponding to an identifier
-(: DOT.Identifier.toAttribute (-> DOT.Identifier DOT.Attribute))
-(= (DOT.Identifier.toAttribute $identifier)
-   (DOT.MkLabelAttribute (DOT.Identifier.toLabelString $identifier)))
+   (repr $grounded))
 
 ;; Test DOT.Identifier.toString
-!(assertEqual (DOT.Identifier.toString (DOT.MkSymbolIdentifier mix 0)) "mix0")
+!(assertEqual
+  (DOT.Identifier.toString (DOT.MkSymbolIdentifier mix 0))
+  "\"mix0\"")
+!(assertEqual
+  (DOT.Identifier.toString (DOT.MkGroundedIdentifier "Hello World!"))
+  "\"Hello World!\"")
 
 ;; Output the string representing a node in DOT format.
 (: DOT.Node.toString (-> DOT.Node String))
 (= (DOT.Node.toString (DOT.MkNode $identifier $attributes))
    (let* (($id_repr (DOT.Identifier.toString $identifier))
           ($attr_repr (DOT.Attributes.toOneLinerString $attributes)))
-     (String.append $id_repr (String.append " " $attr_repr))))
+     (String.append3 $id_repr " " $attr_repr)))
 
 ;; Test DOT.Node.toString
 !(assertEqual
   (DOT.Node.toString (DOT.MkNode (DOT.MkSymbolIdentifier mix 0) Nil))
-  "mix0 []")
+  "\"mix0\" []")
 !(assertEqual
   (DOT.Node.toString (DOT.MkNode (DOT.MkGroundedIdentifier "Hello World!") Nil))
   "\"Hello World!\" []")
 !(assertEqual
   (DOT.Node.toString (DOT.MkNode (DOT.MkSymbolIdentifier mix 0)
                                  (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil)))
-  "mix0 [shape=box]")
+  "\"mix0\" [shape=box]")
 
 ;; Output the string representing an edge in DOT format.
 (: DOT.Edge.toString (-> DOT.Edge String))
 (= (DOT.Edge.toString (DOT.MkEdge $source $destination $attributes))
    (let* (($src_repr (DOT.Identifier.toString (DOT.Node.identifier $source)))
           ($dst_repr (DOT.Identifier.toString (DOT.Node.identifier $destination)))
-          ($edge_repr (String.append $src_repr (String.append " -> " $dst_repr)))
+          ($edge_repr (String.append3 $src_repr " -> " $dst_repr))
           ($attrs_repr (DOT.Attributes.toOneLinerString $attributes)))
-     (String.append $edge_repr (String.append " " $attrs_repr))))
+     (String.append3 $edge_repr " " $attrs_repr)))
 
 ;; Test DOT.Edge.toString
 !(assertEqual
   (DOT.Edge.toString (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier src 0) Nil)
                                  (DOT.MkNode (DOT.MkSymbolIdentifier dst 0) Nil)
                                  Nil))
-  "src0 -> dst0 []")
+  "\"src0\" -> \"dst0\" []")
 
 ;; Takes a DOT data structure and outputs the corresponding string in
 ;; DOT format.
@@ -675,28 +660,28 @@
           ($attrs_repr (String.join "\n" (List.map DOT.Attribute.toString $attrs)))
           ($nodes_repr_nl (String.append $nodes_repr "\n\n"))
           ($attrs_repr_nl (String.append $attrs_repr "\n\n")))
-     (String.append "digraph Flowchart {\n"
-                    (String.append $attrs_repr_nl
-                                   (String.append $nodes_repr_nl
-                                                  (String.append $edges_repr
-                                                                 "\n}"))))))
+     (String.append5 "digraph Flowchart {\n"
+                     $attrs_repr_nl $nodes_repr_nl $edges_repr "\n}")))
 
 ;; Test DOT.toString
 !(assertEqual
   (DOT.toString (toDOT mix))
-  "digraph Flowchart {\nrankdir=BT\n\nmix0 [shape=box, label=mix]\n\n\n}")
+  "digraph Flowchart {\nrankdir=BT\n\n\"mix0\" [label=\"mix\", shape=box]\n\n\n}")
 !(assertEqual
   (DOT.toString (toDOT (. f g)))
-  "digraph Flowchart {\nrankdir=BT\n\nf1 [shape=box, label=f]\ng10 [shape=box, label=g]\n\ng10 -> f1 []\n}")
+  "digraph Flowchart {\nrankdir=BT\n\n\"f1\" [label=\"f\", shape=box]\n\"g10\" [label=\"g\", shape=box]\n\n\"g10\" -> \"f1\" []\n}")
 !(assertEqual
   (DOT.toString (toDOT (Φ f g h)))
-  "digraph Flowchart {\nrankdir=BT\n\nΦ1000 [shape=plain, label=Φ]\nf1 [shape=box, label=f]\ng10 [shape=box, label=g]\nh100 [shape=box, label=h]\n\nΦ1000 -> g10 []\nΦ1000 -> h100 []\ng10 -> f1 []\nh100 -> f1 []\n}")
+  "digraph Flowchart {\nrankdir=BT\n\n\"Φ1000\" [label=\"Φ\", shape=plain]\n\"f1\" [label=\"f\", shape=box]\n\"g10\" [label=\"g\", shape=box]\n\"h100\" [label=\"h\", shape=box]\n\n\"Φ1000\" -> \"g10\" []\n\"Φ1000\" -> \"h100\" []\n\"g10\" -> \"f1\" []\n\"h100\" -> \"f1\" []\n}")
 !(assertEqual
   (DOT.toString (toDOT (f "Hello World!")))
-  "digraph Flowchart {\nrankdir=BT\n\nf1 [shape=box, label=f]\n\"Hello World!\" [shape=box, style=rounded, label=\"Hello World!\"]\n\n\"Hello World!\" -> f1 []\n}")
+  "digraph Flowchart {\nrankdir=BT\n\n\"f1\" [label=\"f\", shape=box]\n\"Hello World!\" [label=\"\\\"Hello World!\\\"\", shape=box, style=rounded]\n\n\"Hello World!\" -> \"f1\" []\n}")
 !(assertEqual
   (DOT.toString (toDOT (f "Hello" "World!")))
-  "digraph Flowchart {\nrankdir=BT\n\nf1 [shape=box, label=f]\n\"Hello\" [shape=box, style=rounded, label=\"Hello\"]\n\"World!\" [shape=box, style=rounded, label=\"World!\"]\n\n\"Hello\" -> f1 []\n\"World!\" -> f1 []\n}")
+  "digraph Flowchart {\nrankdir=BT\n\n\"f1\" [label=\"f\", shape=box]\n\"Hello\" [label=\"\\\"Hello\\\"\", shape=box, style=rounded]\n\"World!\" [label=\"\\\"World!\\\"\", shape=box, style=rounded]\n\n\"Hello\" -> \"f1\" []\n\"World!\" -> \"f1\" []\n}")
+!(assertEqual
+  (DOT.toString (toDOT (: f (-> (: $x (SongIn "English")) (SongIn "Chinese")))))
+  "digraph Flowchart {\nrankdir=BT\n\n\"__IN__0\" [label=\"\", shape=none]\n\"__OUT__0\" [label=\"\", shape=none]\n\"f1\" [label=\"f\", shape=box]\n\n\"__IN__0\" -> \"f1\" [label=\"(: $10000 (SongIn \\\"English\\\"))\"]\n\"f1\" -> \"__OUT__0\" [label=\"(SongIn \\\"Chinese\\\")\"]\n}")
 
 ;;;;;;;;;;;;;
 ;; Uncurry ;;
