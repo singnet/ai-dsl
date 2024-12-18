@@ -697,6 +697,10 @@
   (DOT.toString (toDOT (: f (-> (: $x (SongIn "English")) (SongIn "Chinese")))))
   "digraph Flowchart {\nrankdir=BT\n\n\"__IN__0\" [label=\"\", shape=none]\n\"__OUT__0\" [label=\"\", shape=none]\n\"f1\" [label=\"f\", shape=box]\n\n\"__IN__0\" -> \"f1\" [label=\"(: $10000 (SongIn \\\"English\\\"))\"]\n\"f1\" -> \"__OUT__0\" [label=\"(SongIn \\\"Chinese\\\")\"]\n}")
 
+;; Print a MeTTa term in DOT format
+(= (DOT.println! $term)
+   (println! (DOT.toString (toDOT $term))))
+
 ;;;;;;;;;;;;;
 ;; Uncurry ;;
 ;;;;;;;;;;;;;
