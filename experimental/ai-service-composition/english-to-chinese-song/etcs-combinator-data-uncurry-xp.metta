@@ -1325,18 +1325,29 @@
 (= (Φ $f (. $g $j) (. $h (. $i $j)))
    (. (Φ $f $g (. $h $i)) $j))
 
-;; ;; (Φ mix (. accomp spleeter) (. vocals spleeter))
-;; (. (Φ mix (. accomp spleeter) (. vocals spleeter)) $f)
-
 ;; The composition of spleeter with the mixing of accomp
 ;; and vocals is involutive.
-(= (. (Φ mix accomp vocals) spleeter) id)
-(= (. spleeter (Φ mix accomp vocals)) id)
+(= (. (Φ mixer.mix
+         sound-spleeter.DTLOutput.accomp
+         sound-spleeter.DTLOutput.vocals)
+      sound-spleeter.spleeter)
+   id)
+(= (. sound-spleeter.spleeter (Φ mixer.mix
+                                 sound-spleeter.DTLOutput.accomp
+                                 sound-spleeter.DTLOutput.vocals))
+   id)
 
 ;; The composition of (. spleeter f) or (. f spleeter) with the mixing
 ;; of accomp and vocals is idempotent with respect to f.
-(= (. (Φ mix accomp vocals) (. spleeter $f)) $f)
-(= (. (. $f spleeter) (Φ mix accomp vocals)) $f)
+(= (. (Φ mixer.mix
+         sound-spleeter.Output.accomp
+         sound-spleeter.DTLOutput.vocals) (. sound-spleeter.spleeter $f))
+   $f)
+(= (. (. $f sound-spleeter.spleeter)
+      (Φ mixer.mix
+         sound-spleeter.Output.accomp
+         sound-spleeter.DTLOutput.vocals))
+   $f)
 
 ;; Composing with id is idempotent.  Or id is the identity element of
 ;; composition.
@@ -1348,6 +1359,7 @@
 
 ;; Sequential coercion
 (= (. (coerce $bc) (coerce $ab)) (coerce (STTrans $bc $ab)))
+(= (. (coerce $bc) (. (coerce $ab) $f)) (. (coerce (STTrans $bc $ab)) $f))
 
 ;; Translating from/to the same language reduces to id
 (= (machine-translation.translate $l $l) id)
