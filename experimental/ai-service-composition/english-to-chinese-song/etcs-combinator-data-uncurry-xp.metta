@@ -2,17 +2,12 @@
 ;; whole AI service composition instead of the scaled down one.
 
 ;;;;;;;;;;;
-;; Maybe ;;
+;; Utils ;;
 ;;;;;;;;;;;
 
-;; Define Maybe type
-(: Maybe (-> $a Type))
-(: Nothing (Maybe $a))
-(: Just (-> $a (Maybe $a)))
-
-;;;;;;;;;;;;;;;;;
-;; Term length ;;
-;;;;;;;;;;;;;;;;;
+;; Run the code if the condition is true, otherwise prune the branch
+(: when (-> Bool $a $a))
+(= (when $c $x) (if $c $x (empty)))
 
 ;; Return the total length of a term, corresponding roughly to the
 ;; number of symbols in the term.
@@ -34,6 +29,25 @@
 ;; Compare two terms by their lengths
 (: termLengthLT (-> Atom Atom Bool))
 (= (termLengthLT $x $y) (< (termLength $x) (termLength $y)))
+
+;; Return True iff $term is closed
+;; TODO: generalize for n-ary expression
+(: is-closed (-> Atom Bool))
+(= (is-closed $term)
+   (case (, $term (get-metatype $term))
+     (((, $_ Variable) False)
+      ((, ($abs $arg) Expression) (and (is-closed $abs) (is-closed $arg)))
+      ($otherwise True))))
+
+;;;;;;;;;;;
+;; Maybe ;;
+;;;;;;;;;;;
+
+;; Define Maybe type
+(: Maybe (-> $a Type))
+(: Nothing (Maybe $a))
+(: Just (-> $a (Maybe $a)))
+
 
 ;;;;;;;;;;
 ;; List ;;
@@ -686,15 +700,6 @@
 ;;;;;;;;;;;;;
 ;; Uncurry ;;
 ;;;;;;;;;;;;;
-
-;; Return True iff $term is closed
-;; TODO: generalize for n-ary expression
-(: is-closed (-> Atom Bool))
-(= (is-closed $term)
-   (case (, $term (get-metatype $term))
-     (((, $_ Variable) False)
-      ((, ($abs $arg) Expression) (and (is-closed $abs) (is-closed $arg)))
-      ($otherwise True))))
 
 ;; Uncurry ((. f) g) to (. f g)
 (: bluebird-uncurry (-> Atom (Maybe Atom)))
