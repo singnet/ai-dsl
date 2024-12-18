@@ -420,6 +420,8 @@
   (DOT.Identifier.toLabelAttribute (DOT.MkGroundedIdentifier "Hello World!"))
   (DOT.MkLabelAttribute "\"\\\"Hello World!\\\"\""))
 
+;; NEXT: make sure the index is unique
+
 ;; Like toDOT but it is the recursive definition, not the entry point.
 ;; The extra index argument is used to generate unique ID.
 (: toDOT_ (-> Atom Number DOT))
