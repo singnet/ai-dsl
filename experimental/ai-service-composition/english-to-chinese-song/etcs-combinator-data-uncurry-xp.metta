@@ -818,6 +818,18 @@
 ;; Backward chainer ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
+;; Check is a given type is a subtype of Data.  Use the backward
+;; chainer for type checking but only allow a depth of 0 in order to
+;; have maximum efficiency.
+(: isData (-> Type Bool))
+(= (isData $a)
+   True)                                ; Disabled for now because it
+                                        ; does not result in pruning,
+                                        ; and only slows down for no
+                                        ; reason.
+   ;; (let (: $prf (<: $a Data)) (limit 1 (bc $kb Z (: $prf (<: $a Data))))
+   ;;      (is-closed $prf)))
+
 ;; Uncurried Backward Chainer with dependent types (no lambda
 ;; abstraction here, combinatory logic is used instead).  Inference
 ;; rules are directly embedded in the backchainer chainer code.
