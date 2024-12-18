@@ -869,78 +869,45 @@
    (match $kb (: $prf $thrm) (: $prf $thrm)))
 
 ;; ;; Recursive step for subtyping transitivity
-;; (= (bc $kb (S $k) (: (STTrans $bc $ab) (<: $a $c)))
-;;    (let* (;; Recurse on $bc
-;;           ((: $bc (<: $b $c)) (bc $kb $k (: $bc (<: $b $c))))
-;;           ;; Recurse on $ab
-;;           ((: $ab (<: $a $b)) (bc $kb $k (: $ab (<: $a $b))))
-;;           ;; Prove that $a, $b and $c are concrete data types
-;;           ;; (allocate only 0 depth, should be enough)
-;;           ((: $aD (<: $a Data)) (bc $kb Z (: $aD (<: $a Data))))
-;;           ((: $bD (<: $b Data)) (bc $kb Z (: $bD (<: $b Data))))
-;;           ((: $cD (<: $c Data)) (bc $kb Z (: $cD (<: $c Data)))))
-;;      ;; Make sure $a, $b and $c are concrete data types
-;;      (if (and (is-closed $aD) (and (is-closed $bD) (is-closed $cD)))
-;;          (: (STTrans $bc $ab) (<: $a $c))
-;;          (empty))))
+(= (bc $kb (S $k) (: (STTrans $bc $ab) (<: $a $c)))
+   (let* (;; Recurse on $bc
+          ((: $bc (<: $b $c)) (bc $kb $k (: $bc (<: $b $c))))
+          ;; Recurse on $ab
+          ((: $ab (<: $a $b)) (bc $kb $k (: $ab (<: $a $b)))))
+     ;; Make sure $a, $b and $c are subtypes of Data
+     (when (and (isData $a) (and (isData $b) (isData $c)))
+       (: (STTrans $bc $ab) (<: $a $c)))))
 
-;; ;; Recursive step for subtyping coercion.
-;; ;;
-;; ;; Relationship between subtyping and type assume explicit coercion.
-;; ;; That is if a term `t` is of type `S` a subtype of `T`, then
-;; ;; `(coerce proof_S<:T t)` is of type `T`, where `proof_S<:T` is a
-;; ;; proof that `S` is a subtype of `T`.
-;; (= (bc $kb (S $k) (: (coerce $ab $x) $b))
-;;    (let* (;; Recurse on $ab
-;;           ((: $ab (<: $a $b)) (bc $kb $k (: $ab (<: $a $b))))
-;;           ;; Recurse on $x
-;;           ((: $x $a) (bc $kb $k (: $x $a)))
-;;           ;; Prove that $a and $b are concrete data types
-;;           ;; (allocate only 0 depth, should be enough)
-;;           ((: $aD (<: $a Data)) (bc $kb Z (: $aD (<: $a Data))))
-;;           ((: $bD (<: $b Data)) (bc $kb Z (: $bD (<: $b Data)))))
-;;      ;; Make sure $a, $b and $c are concrete data types
-;;      (if (and (is-closed $aD) (is-closed $bD))
-;;          (: (coerce $ab $x) $b)
-;;          (empty))))
+;; Recursive step for subtyping coercion.
+(= (bc $kb (S $k) (: (coerce $ab) (-> (: $x $a) $b)))
+   (let ;; Recurse on $ab
+       (: $ab (<: $a $b)) (bc $kb $k (: $ab (<: $a $b)))
+     ;; Make sure $a, $b and $c are subtypes of Data
+     (when (and (isData $a) (isData $b))
+       (: (coerce $ab) (-> (: $x $a) $b)))))
 
-;; ;; Recursive step: bluebird
-;; (= (bc $kb (S $k) (: (. $f $g) (-> (: $x $a) $c)))
-;;    (let* (;; Recurse on f
-;;           ((: $f (-> (: $y $b) $c)) (bc $kb $k (: $f (-> (: $y $b) $c))))
-;;           ;; Recurse on g
-;;           ((: $g (-> (: $x $a) $b)) (bc $kb $k (: $g (-> (: $x $a) $b))))
-;;           ;; Prove that $a, $b and $c are concrete data types
-;;           ;; (allocate only 0 depth, should be enough)
-;;           ((: $aD (<: $a Data)) (bc $kb Z (: $aD (<: $a Data))))
-;;           ((: $bD (<: $b Data)) (bc $kb Z (: $bD (<: $b Data))))
-;;           ((: $cD (<: $c Data)) (bc $kb Z (: $cD (<: $c Data)))))
-;;      ;; Make sure $a, $b and $c are concrete data types
-;;      (if (and (is-closed $aD) (and (is-closed $bD) (is-closed $cD)))
-;;          (: (. $f $g) (-> (: $x $a) $c))
-;;          (empty))))
+;; Recursive step: bluebird
+(= (bc $kb (S $k) (: (. $f $g) (-> (: $x $a) $c)))
+   (let* (;; Recurse on f
+          ((: $f (-> (: $y $b) $c)) (bc $kb $k (: $f (-> (: $y $b) $c))))
+          ;; Recurse on g
+          ((: $g (-> (: $x $a) $b)) (bc $kb $k (: $g (-> (: $x $a) $b)))))
+     ;; Make sure $a, $b and $c are subtypes of Data
+     (when (and (isData $a) (and (isData $b) (isData $c)))
+       (: (. $f $g) (-> (: $x $a) $c)))))
 
-;; ;; Recursive step: phoenix
-;; (= (bc $kb (S $k) (: (Φ $f $g $h) (-> (: $x $a) $d)))
-;;    (let* (;; Recurse on f
-;;           ((: $f (-> (: $y $b) (: $z $c) $d))
-;;            (bc $kb $k (: $f (-> (: $y $b) (: $z $c) $d))))
-;;           ;; Recurse on g
-;;           ((: $g (-> (: $x $a) $b)) (bc $kb $k (: $g (-> (: $x $a) $b))))
-;;           ;; Recurse on h
-;;           ((: $h (-> (: $x $a) $c)) (bc $kb $k (: $h (-> (: $x $a) $c))))
-;;           ;; Prove that $a, $b, $c and $d are concrete data types
-;;           ;; (allocate only 0 depth, should be enough)
-;;           ((: $aD (<: $a Data)) (bc $kb Z (: $aD (<: $a Data))))
-;;           ((: $bD (<: $b Data)) (bc $kb Z (: $bD (<: $b Data))))
-;;           ((: $cD (<: $c Data)) (bc $kb Z (: $cD (<: $c Data))))
-;;           ((: $dD (<: $d Data)) (bc $kb Z (: $dD (<: $d Data)))))
-;;      ;; Make sure $a, $b and $c are concrete data types
-;;      (if (and (is-closed $aD)
-;;               (and (is-closed $bD) (and (is-closed $cD)
-;;                                         (is-closed $dD))))
-;;          (: (Φ $f $g $h) (-> (: $x $a) $d))
-;;          (empty))))
+;; Recursive step: phoenix
+(= (bc $kb (S $k) (: (Φ $f $g $h) (-> (: $x $a) $d)))
+   (let* (;; Recurse on f
+          ((: $f (-> (: $y $b) (: $z $c) $d))
+           (bc $kb $k (: $f (-> (: $y $b) (: $z $c) $d))))
+          ;; Recurse on g
+          ((: $g (-> (: $x $a) $b)) (bc $kb $k (: $g (-> (: $x $a) $b))))
+          ;; Recurse on h
+          ((: $h (-> (: $x $a) $c)) (bc $kb $k (: $h (-> (: $x $a) $c)))))
+     ;; Make sure $a, $b, $c and $d are subtypes of Data
+     (when (and (isData $a) (and (isData $b) (and (isData $c) (isData $d))))
+       (: (Φ $f $g $h) (-> (: $x $a) $d)))))
 
 ;; Recursive step for machine-translation.translate.  The point of
 ;; embedding the machine-translation.translate call in the backward
@@ -956,39 +923,6 @@
      (: (machine-translation.translate $in-nl $out-nl)
         (-> (: $url (UniformResourceLocatorOfType (TextIn $in-nl)))
             (TextIn $out-nl)))))
-
-;; Recursive step for subtyping transitivity (no data constraint)
-(= (bc $kb (S $k) (: (STTrans $bc $ab) (<: $a $c)))
-   (let* (;; Recurse on $bc
-          ((: $bc (<: $b $c)) (bc $kb $k (: $bc (<: $b $c))))
-          ;; Recurse on $ab
-          ((: $ab (<: $a $b)) (bc $kb $k (: $ab (<: $a $b)))))
-     (: (STTrans $bc $ab) (<: $a $c))))
-
-;; Recursive step for subtyping coercion (no data constraint)
-(= (bc $kb (S $k) (: (coerce $ab) (-> (: $x $a) $b)))
-   (let ;; Recurse on $ab
-       (: $ab (<: $a $b)) (bc $kb $k (: $ab (<: $a $b)))
-     (: (coerce $ab) (-> (: $x $a) $b))))
-
-;; Recursive step: bluebird (no data constraints)
-(= (bc $kb (S $k) (: (. $f $g) (-> (: $x $a) $c)))
-   (let* (;; Recurse on f
-          ((: $f (-> (: $y $b) $c)) (bc $kb $k (: $f (-> (: $y $b) $c))))
-          ;; Recurse on g
-          ((: $g (-> (: $x $a) $b)) (bc $kb $k (: $g (-> (: $x $a) $b)))))
-     (: (. $f $g) (-> (: $x $a) $c))))
-
-;; Recursive step: phoenix (no data constraints)
-(= (bc $kb (S $k) (: (Φ $f $g $h) (-> (: $x $a) $d)))
-   (let* (;; Recurse on f
-          ((: $f (-> (: $y $b) (: $z $c) $d))
-           (bc $kb $k (: $f (-> (: $y $b) (: $z $c) $d))))
-          ;; Recurse on g
-          ((: $g (-> (: $x $a) $b)) (bc $kb $k (: $g (-> (: $x $a) $b))))
-          ;; Recurse on h
-          ((: $h (-> (: $x $a) $c)) (bc $kb $k (: $h (-> (: $x $a) $c)))))
-         (: (Φ $f $g $h) (-> (: $x $a) $d))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Knowledge and rule base ;;
