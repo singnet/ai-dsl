@@ -1573,12 +1573,22 @@
         (coerce SIA))
      (-> (: $x (SongIn $l)) (VocalsIn "Chinese"))))
 
-;; Synthesize all AI service composition going from (SongIn "English")
-;; to (SongIn "Chinese").  Sort by lengths and select the top 10.
-;; !(assertEqual  ; Re-enable on assert contain is supported
-!(List.take 10
-            (List.sortWith termLengthLT
-                           (toList (collapse (bc &kb (fromNumber 6)
-                                                 (: $prg
-                                                    (-> (: $x (SongIn "English"))
-                                                        (SongIn "Chinese"))))))))
+;; ;; Synthesize all AI service composition going from (SongIn "English")
+;; ;; to (SongIn "Chinese").  Sort by lengths and select the top 10.
+;; ;; !(assertEqual  ; Re-enable on assert contain is supported
+;; !(List.sortWith termLengthLT
+;;                 (toList (collapse
+                               !(limit 6
+                                (bc &kb (fromNumber 6)
+                                    (: $prg
+                                       (-> (: $x (SongIn "English"))
+                                           (SongIn "Chinese")))));)))
+
+;; The first 6 candidates are printed in DOT format
+
+;; !(DOT.println! (: (. (Φ mixer.mix sound-spleeter.DTLOutput.accomp (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce IA) sound-spleeter.DTLOutput.accomp))) sound-spleeter.spleeter) (-> (: $10000 (SongIn "English")) (SongIn "Chinese"))))
+;; !(DOT.println! (: (. (Φ mixer.mix sound-spleeter.DTLOutput.accomp (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce SIA) (Φ mixer.mix sound-spleeter.DTLOutput.accomp sound-spleeter.DTLOutput.vocals)))) sound-spleeter.spleeter) (-> (: $10000 (SongIn "English")) (SongIn "Chinese"))))
+;; !(DOT.println! (: (. (Φ mixer.mix sound-spleeter.DTLOutput.accomp (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce (STTrans VA VIV)) sound-spleeter.DTLOutput.vocals))) sound-spleeter.spleeter) (-> (: $10000 (SongIn "English")) (SongIn "Chinese"))))
+;; !(DOT.println! (: (. (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (coerce SIA))) (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (coerce SIA)))) (-> (: $10000 (SongIn "English")) (SongIn "Chinese"))))
+;; !(DOT.println! (: (. (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (coerce SIA))) (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce IA) (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter))))) (-> (: $10000 (SongIn "English")) (SongIn "Chinese"))))
+;; !(DOT.println! (: (. (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (coerce SIA))) (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce (STTrans VA VIV)) (. sound-spleeter.DTLOutput.vocals sound-spleeter.spleeter))))) (-> (: $10000 (SongIn "English")) (SongIn "Chinese"))))
