@@ -32,13 +32,17 @@
 ;;;;;;;;;;;;;;;;;;;;
 
 ;; Return True iff $term is closed
-;; TODO: generalize for n-ary expression
 (: is-closed (-> Atom Bool))
 (= (is-closed $term)
-   (case (, $term (get-metatype $term))
-     (((, $_ Variable) False)
-      ((, ($abs $arg) Expression) (and (is-closed $abs) (is-closed $arg)))
-      ($otherwise True))))
+   (case (get-metatype $term)
+     ((Variable False)
+      (Symbol True)
+      (Grounded True)
+      (Expression (if (== $term ())
+                      True
+                      (let* (($head (car-atom $term))
+                             ($tail (cdr-atom $term)))
+                        (and (is-closed $head) (is-closed $tail))))))))
 
 ;; Uncurry ((. f) g) to (. f g)
 (: bluebird-uncurry (-> Atom (Maybe Atom)))
