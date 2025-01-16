@@ -872,7 +872,7 @@
 (= (bc $kb $_ (: $prf $thrm))
    (match $kb (: $prf $thrm) (: $prf $thrm)))
 
-;; ;; Recursive step for subtyping transitivity
+;; Recursive step for subtyping transitivity
 (= (bc $kb (S $k) (: (STTrans $bc $ab) (<: $a $c)))
    (let* (;; Recurse on $bc
           ((: $bc (<: $b $c)) (bc $kb $k (: $bc (<: $b $c))))
