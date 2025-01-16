@@ -831,7 +831,7 @@
                                         ; does not result in pruning,
                                         ; and only slows down for no
                                         ; reason.
-   ;; (let (: $prf (<: $a Data)) (limit 1 (bc $kb Z (: $prf (<: $a Data))))
+   ;; (let (: $prf (<: $a Data)) (limit 1 (bc &kb Z (: $prf (<: $a Data))))
    ;;      (is-closed $prf)))
 
 ;; Uncurried Backward Chainer with dependent types (no lambda
