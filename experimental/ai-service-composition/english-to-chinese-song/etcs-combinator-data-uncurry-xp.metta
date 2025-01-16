@@ -1,9 +1,14 @@
 ;; Like etcs-combinator-sd-data-uncurry-xp.metta but tested on the
 ;; whole AI service composition instead of the scaled down one.
 
+;; NOTE: only runs with MeTTaLog.
+
 ;;;;;;;;;;;
 ;; Utils ;;
 ;;;;;;;;;;;
+
+;; Select a random number within [L, U)
+(= (random-int $l $u) (call-fn random_between $l (- $u 1)))
 
 ;; Run the code if the condition is true, otherwise prune the branch
 (: when (-> Bool $a $a))
@@ -387,7 +392,7 @@
 ;; AI service composition.
 (: toDOT (-> Atom DOT))
 (= (toDOT $term)
-   (let (MkDOT $nodes $edges $entry $exit $attributes) (toDOT_ $term 0)
+   (let (MkDOT $nodes $edges $entry $exit $attributes) (toDOT_ $term)
         ;; Return DOT data plus some hardwired default attributes
         (MkDOT $nodes
                $edges
@@ -424,15 +429,15 @@
   (DOT.Identifier.toLabelAttribute (DOT.MkGroundedIdentifier "Hello World!"))
   (DOT.MkLabelAttribute "\"\\\"Hello World!\\\"\""))
 
-;; NEXT: make sure the index is unique
+(: random-index (-> Number))
+(= (random-index) (random-int 0 1000000))
 
 ;; Like toDOT but it is the recursive definition, not the entry point.
-;; The extra index argument is used to generate unique ID.
-(: toDOT_ (-> Atom Number DOT))
-(= (toDOT_ $term $index)
+(: toDOT_ (-> Atom DOT))
+(= (toDOT_ $term)
    (case (get-metatype $term)
      (;; Base cases
-      (Symbol (let* (($id (DOT.MkSymbolIdentifier $term $index))
+      (Symbol (let* (($id (DOT.MkSymbolIdentifier $term (random-index)))
                      ($attrs (Cons (DOT.Identifier.toLabelAttribute $id)
                                    (functionAttributes)))
                      ($node (DOT.MkNode $id $attrs)))
@@ -456,7 +461,7 @@
                      ;; Recursive steps
                      ;; Type annotation
                      ((: $f (-> $inty $outy))
-                      (let* (($fd (toDOT_ $f (+ $index 1)))
+                      (let* (($fd (toDOT_ $f))
                              ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
                              ($in (inputNode))
                              ($on (outputNode))
@@ -468,8 +473,8 @@
                              ($nes (Cons $if (Cons $of $fes))))
                         (MkDOT $nns $nes $in $on $fas)))
                      ;; Bluebird
-                     ((. $f $g) (let* (($fd (toDOT_ $f (+ $index 1)))
-                                       ($gd (toDOT_ $g (+ $index 10)))
+                     ((. $f $g) (let* (($fd (toDOT_ $f))
+                                       ($gd (toDOT_ $g))
                                        ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
                                        ((MkDOT $gns $ges $gentry $gexit $gas) $gd)
                                        ($gf (DOT.MkEdge $gexit $fentry Nil))
@@ -480,14 +485,14 @@
                                        ($nas (List.append $fas $gas)))
                                   (MkDOT $nns $nes $nentry $nexit $nas)))
                      ;; Phoenix
-                     ((Φ $f $g $h) (let* (($fd (toDOT_ $f (+ $index 1)))
-                                          ($gd (toDOT_ $g (+ $index 10)))
-                                          ($hd (toDOT_ $h (+ $index 100)))
+                     ((Φ $f $g $h) (let* (($fd (toDOT_ $f))
+                                          ($gd (toDOT_ $g))
+                                          ($hd (toDOT_ $h))
                                           ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
                                           ((MkDOT $gns $ges $gentry $gexit $gas) $gd)
                                           ((MkDOT $hns $hes $hentry $hexit $has) $hd)
                                           ($Φid (DOT.MkSymbolIdentifier
-                                                 Φ (+ $index 1000)))
+                                                 Φ (random-index)))
                                           ($Φ (DOT.MkNode $Φid (phoenixAttributes)))
                                           ($Φg (DOT.MkEdge $Φ $gentry Nil))
                                           ($Φh (DOT.MkEdge $Φ $hentry Nil))
@@ -516,8 +521,8 @@
                                                                           $has))))
                                   (MkDOT $nns $nes $nentry $nexit $nas)))
                      ;; Unary application
-                     (($f $x) (let* (($fd (toDOT_ $f (+ $index 1)))
-                                     ($xd (toDOT_ $x (+ $index 10)))
+                     (($f $x) (let* (($fd (toDOT_ $f))
+                                     ($xd (toDOT_ $x))
                                      ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
                                      ((MkDOT $xns $xes $xentry $xexit $xas) $xd)
                                      ($xf (DOT.MkEdge $xexit $fentry Nil))
@@ -528,9 +533,9 @@
                                      ($nas (List.append $fas $xas)))
                                 (MkDOT $nns $nes $nentry $nexit $nas)))
                      ;; Binary application
-                     (($f $x $y) (let* (($fd (toDOT_ $f (+ $index 1)))
-                                        ($xd (toDOT_ $x (+ $index 10)))
-                                        ($yd (toDOT_ $y (+ $index 100)))
+                     (($f $x $y) (let* (($fd (toDOT_ $f))
+                                        ($xd (toDOT_ $x))
+                                        ($yd (toDOT_ $y))
                                         ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
                                         ((MkDOT $xns $xes $xentry $xexit $xas) $xd)
                                         ((MkDOT $yns $yes $yentry $yexit $yas) $yd)
