@@ -3,6 +3,9 @@
 
 ;; NOTE: only runs with MeTTaLog.
 
+;; NEXT support type annotated programs in order to add labels on
+;; edges with type information.
+
 ;;;;;;;;;;;
 ;; Utils ;;
 ;;;;;;;;;;;
@@ -951,6 +954,202 @@
         (-> (: $url (UniformResourceLocatorOfType (TextIn $in-nl)))
             (TextIn $out-nl)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Backward Chainer with Type Annotation ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Like bc but infer a fully type annotated program.  For instance
+;; instead of inferring
+;;
+;; (: (ϕ f g h) (-> T1 T2))
+;;
+;; it will infer
+;;
+;; (: (ϕ (: f T3) (: g T4) (: h T5)) (-> T1 T2))
+(: type-annotated-bc (-> $a                      ; Knowledge base space
+                         Nat                     ; Maximum depth
+                         $b                      ; Query
+                         $b))                     Result
+
+;; Base cases: match the knowledge base
+(= (type-annotated-bc $kb $_ (: $prf $thrm))
+   (match $kb (: $prf $thrm) (: $prf $thrm)))
+
+;; Recursive step for subtyping transitivity
+(= (type-annotated-bc $kb
+                      (S $k)
+                      (: (STTrans (: $bc (<: $b $c))
+                                  (: $ab (<: $a $b)))
+                         (<: $a $c)))
+   (let* (;; Recurse on $bc
+          ((: $bc (<: $b $c)) (type-annotated-bc $kb $k (: $bc (<: $b $c))))
+          ;; Recurse on $ab
+          ((: $ab (<: $a $b)) (type-annotated-bc $kb $k (: $ab (<: $a $b)))))
+     ;; Make sure $a, $b and $c are subtypes of Data
+     (when (and (isData $a) (and (isData $b) (isData $c)))
+       (: (STTrans (: $bc (<: $b $c))
+                   (: $ab (<: $a $b)))
+          (<: $a $c)))))
+
+;; Recursive step for subtyping coercion.
+(= (type-annotated-bc $kb
+                      (S $k)
+                      (: (coerce (: $ab (<: $a $b))) (-> (: $x $a) $b)))
+   (let ;; Recurse on $ab
+       (: $ab (<: $a $b)) (type-annotated-bc $kb $k (: $ab (<: $a $b)))
+     ;; Make sure $a, $b and $c are subtypes of Data
+     (when (and (isData $a) (isData $b))
+       (: (coerce (: $ab (<: $a $b))) (-> (: $x $a) $b)))))
+
+;; Recursive step: bluebird
+(= (type-annotated-bc $kb
+                      (S $k)
+                      (: (. (: $f (-> (: $y $b) $c))
+                            (: $g (-> (: $x $a) $b)))
+                         (-> (: $x $a) $c)))
+   (let* (;; Recurse on f
+          ((: $f (-> (: $y $b) $c))
+           (type-annotated-bc $kb $k (: $f (-> (: $y $b) $c))))
+          ;; Recurse on g
+          ((: $g (-> (: $x $a) $b))
+           (type-annotated-bc $kb $k (: $g (-> (: $x $a) $b)))))
+     ;; Make sure $a, $b and $c are subtypes of Data
+     (when (and (isData $a) (and (isData $b) (isData $c)))
+       (: (. (: $f (-> (: $y $b) $c))
+             (: $g (-> (: $x $a) $b)))
+          (-> (: $x $a) $c)))))
+
+;; Recursive step: phoenix
+(= (type-annotated-bc $kb
+                      (S $k)
+                      (: (Φ (: $f (-> (: $y $b) (: $z $c) $d))
+                            (: $g (-> (: $x $a) $b)
+                            (: $h (-> (: $x $a) $c)))
+                         (-> (: $x $a) $d))))
+   (let* (;; Recurse on f
+          ((: $f (-> (: $y $b) (: $z $c) $d))
+           (type-annotated-bc $kb $k (: $f (-> (: $y $b) (: $z $c) $d))))
+          ;; Recurse on g
+          ((: $g (-> (: $x $a) $b))
+           (type-annotated-bc $kb $k (: $g (-> (: $x $a) $b))))
+          ;; Recurse on h
+          ((: $h (-> (: $x $a) $c))
+           (type-annotated-bc $kb $k (: $h (-> (: $x $a) $c)))))
+     ;; Make sure $a, $b, $c and $d are subtypes of Data
+     (when (and (isData $a) (and (isData $b) (and (isData $c) (isData $d))))
+       (: (Φ (: $f (-> (: $y $b) (: $z $c) $d))
+             (: $g (-> (: $x $a) $b)
+                (: $h (-> (: $x $a) $c)))
+             (-> (: $x $a) $d))))))
+
+;; Recursive step for machine-translation.translate.  The point of
+;; embedding the machine-translation.translate call in the backward
+;; chainer is to be able to infer the correct parameters (in/out
+;; languages) for call the service.
+(= (type-annotated-bc $kb
+                      (S $k)
+                      (: (machine-translation.translate (: $in-nl NaturalLanguage)
+                                                        (: $out-nl NaturalLanguage))
+                         (-> (: $url (UniformResourceLocatorOfType (TextIn $in-nl)))
+                             (TextIn $out-nl))))
+   (let* (;; Recurse on $in-nl
+          ((: $in-nl NaturalLanguage)
+           (type-annotated-bc $kb $k (: $in-nl NaturalLanguage)))
+          ;; Recurse on $out-nl
+          ((: $out-nl NaturalLanguage)
+           (type-annotated-bc $kb $k (: $out-nl NaturalLanguage))))
+     (: (machine-translation.translate (: $in-nl NaturalLanguage)
+                                       (: $out-nl NaturalLanguage))
+        (-> (: $url (UniformResourceLocatorOfType (TextIn $in-nl)))
+            (TextIn $out-nl)))))
+
+;; NEXT: adapt add-type
+
+;; Add type missing annotation to be compatible with bc query format.
+;; Whatever is missing is only added as variables, not inferred, for
+;; that one may use the bc.  Note that the first annotation must be
+;; provided manually
+;;
+;; For instance
+;;
+;; (add-type ((ModusPonens ab) a))
+;;
+;; only outputs
+;;
+;; ((ModusPonens (: ab $t#1)) (: a $t#2))
+;;
+;; not
+;;
+;; (: ((ModusPonens (: ab $t#1)) (: a $t#2)) $t#3)
+;;
+;; That is because add-type can only detect application, that is a
+;; term of the form (<ABS> <ARG>) to add the type annotation to <ARG>.
+;;
+;; Last but not least, De Bruijn indices are treated atomically,
+;; meaning that the whole index is type annotated, not its
+;; sub-indices.  For instance
+;;
+;; (add-type (λ z (λ (s z) ((ModusPonens (s z)) z))))
+;;
+;; outputs
+;;
+;; (λ z (λ (s z) ((ModusPonens (: (s z) $t1)) (: z $t2))))
+;;
+;; not
+;;
+;; (λ z (λ (s z) ((ModusPonens (: (s (: z $t3)) $t1)) (: z $t2))))
+(: add-type (-> $a $a))
+(= (add-type $term)
+   (case (get-metatype $term)
+     ((Symbol $term)
+      (Grounded $term)
+      (Variable $term)
+      (Expression (case $term
+                    ((() ())
+                     (($x) ($x))
+                     (($x $y) (if (== $x s)
+                                  ;; Treat De Bruijn index atomically
+                                  $term
+                                  ;; Add type annotation to argument of application
+                                  (let $νx (add-type $x) ($νx (: (add-type $y) $t)))))
+                     (($x $y $z) (if (== $x :)
+                                     ;; Already a type annotation, recurse only on $y
+                                     (: (add-type $y) $z)
+                                     (if (== $x λ)
+                                         ;; Recurse only on body of lambda abstraction
+                                         (λ $y (add-type $z))
+                                         $term)))
+                     ($_ $_)))))))
+
+;; NEXT: adapt remove-type
+
+;; Remove type annotations from a query.
+;;
+;; For instance
+;;
+;; (remove-type (: ((ModusPonens (: ab (→ A B))) (: a A)) B))
+;;
+;; outputs
+;;
+;; ((ModusPonens ab) a)
+(: remove-type (-> $a $a))
+(= (remove-type $term)
+   (case (get-metatype $term)
+     ((Symbol $term)
+      (Grounded $term)
+      (Variable $term)
+      (Expression (case $term
+                    ;; Only covers up to trinary expression because
+                    ;; for now the bc is not supposed to generate
+                    ;; n-ary expression where n is greater 3.
+                    ((() ())
+                     (($x) ((remove-type $x)))
+                     (($x $y) ((remove-type $x) (remove-type $y)))
+                     (($x $y $z) (if (== $x :)
+                                     (remove-type $y)
+                                     ((remove-type $x) (remove-type $y) (remove-type $z))))
+                     ($_ $_)))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Knowledge and rule base ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1414,6 +1613,8 @@
          (-> (: $x (SongIn "English")) (sound-spleeter.DTLOutput "English"))))
   (: sound-spleeter.spleeter
      (-> (: $x (SongIn "English")) (sound-spleeter.DTLOutput "English"))))
+
+;; NEXT: add corresponding tests for type-annotated-bc
 
 ;; Synthesize sequential composition of
 ;;
