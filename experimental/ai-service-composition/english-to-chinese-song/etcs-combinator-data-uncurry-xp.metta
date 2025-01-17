@@ -442,9 +442,24 @@
                                    (functionAttributes)))
                      ($node (DOT.MkNode $id $attrs)))
                 (MkDOT (Cons $node Nil) Nil $node $node Nil)))
-      (Grounded (let* (($id (DOT.MkGroundedIdentifier $term))
+      (Grounded (let* (($id (if (== $term coerce) ; We need to add
+                                                  ; this conditional
+                                                  ; because MeTTaLog
+                                                  ; types coerce as
+                                                  ; Grounded instead
+                                                  ; of Symbol
+                                (DOT.MkSymbolIdentifier $term (random-index))
+                                (DOT.MkGroundedIdentifier $term)))
                        ($attrs (Cons (DOT.Identifier.toLabelAttribute $id)
-                                     (constantAttributes)))
+                                     (if (== $term coerce) ; We need
+                                                           ; to add this
+                                                           ; conditional
+                                                           ; because MeTTaLog
+                                                           ; types coerce as
+                                                           ; Grounded instead
+                                                           ; of Symbol
+                                         (functionAttributes)
+                                         (constantAttributes))))
                        ($node (DOT.MkNode $id $attrs)))
                   (MkDOT (Cons $node Nil) Nil $node $node Nil)))
       ;; NEXT: support variables
