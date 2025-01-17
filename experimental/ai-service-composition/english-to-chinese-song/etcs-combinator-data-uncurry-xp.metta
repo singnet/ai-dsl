@@ -577,10 +577,12 @@
       ($else (mkEmptyDOT)))))
 
 ;; Test toDOT
+!(set-random-seed 0)                    ; NEXT: fix this
 !(assertEqual
   (toDOT mix)
   (let $node (DOT.MkNode (DOT.MkSymbolIdentifier mix 0)
-                         (Cons (DOT.MkLabelAttribute "\"mix\"") (functionAttributes)))
+                         (Cons (DOT.MkLabelAttribute "\"mix\"")
+                               (functionAttributes)))
     (MkDOT (Cons $node Nil) Nil $node $node (globalAttributes))))
 
 ;; Output the string representing a style in DOT format
@@ -704,6 +706,7 @@
                      $attrs_repr_nl $nodes_repr_nl $edges_repr "\n}")))
 
 ;; Test DOT.toString
+;; NEXT: set random seed
 !(assertEqual
   (DOT.toString (toDOT mix))
   "digraph Flowchart {\nrankdir=BT\n\n\"mix0\" [label=\"mix\", shape=box]\n\n\n}")
@@ -818,7 +821,7 @@
               ;; Otherwise, return unchanged
               ($else $term))))))))
 
-;; ;; Test uncurry
+;; Test uncurry
 !(assertEqual
   (uncurry ((. $f) $g))
   (. $f $g))
