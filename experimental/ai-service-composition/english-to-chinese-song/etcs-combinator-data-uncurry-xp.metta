@@ -7,8 +7,8 @@
 ;; Utils ;;
 ;;;;;;;;;;;
 
-;; Select a random number within [L, U)
-(= (random-int $l $u) (call-fn random_between $l (- $u 1)))
+;; Set the random seed of the random generator
+(= (set-random-seed $s) (call-fn setrand $s))
 
 ;; Run the code if the condition is true, otherwise prune the branch
 (: when (-> Bool $a $a))
