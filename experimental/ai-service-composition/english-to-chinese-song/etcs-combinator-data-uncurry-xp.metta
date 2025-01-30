@@ -836,25 +836,25 @@
               ;; Otherwise, return unchanged
               ($else $term))))))))
 
-;; Test uncurry ; NEXT: re-enable when fixed
-;; !(assertEqual
-;;   (uncurry ((. $f) $g))
-;;   (. $f $g))
-;; !(assertEqual
-;;   (uncurry (((Φ $f) $g) $h))
-;;   (Φ $f $g $h))
-;; !(assertEqual
-;;   (uncurry (((Φ (. $f $g)) $j) ((. $h) ((. $i) $j))))
-;;   (Φ (. $f $g) $j (. $h (. $i $j))))
-;; !(assertEqual
-;;   (uncurry (((Φ $f) ((. $g) $j)) ((. $h) ((. $i) $j))))
-;;   (Φ $f (. $g $j) (. $h (. $i $j))))
-;; !(assertEqual
-;;   (uncurry (((Φ $f) ((. $g) $j)) ((. $h) ((. $i) $j))))
-;;   (Φ $f (. $g $j) (. $h (. $i $j))))
-;; !(assertEqual
-;;   (uncurry ((. (((Φ $f) $g) ((. $h) $i))) $j))
-;;   (. (Φ $f $g (. $h $i)) $j))
+;; Test uncurry
+!(assertEqual
+  (uncurry ((. $f) $g))
+  (. $f $g))
+!(assertEqual
+  (uncurry (((Φ $f) $g) $h))
+  (Φ $f $g $h))
+!(assertEqual
+  (uncurry (((Φ (. $f $g)) $j) ((. $h) ((. $i) $j))))
+  (Φ (. $f $g) $j (. $h (. $i $j))))
+!(assertEqual
+  (uncurry (((Φ $f) ((. $g) $j)) ((. $h) ((. $i) $j))))
+  (Φ $f (. $g $j) (. $h (. $i $j))))
+!(assertEqual
+  (uncurry (((Φ $f) ((. $g) $j)) ((. $h) ((. $i) $j))))
+  (Φ $f (. $g $j) (. $h (. $i $j))))
+!(assertEqual
+  (uncurry ((. (((Φ $f) $g) ((. $h) $i))) $j))
+  (. (Φ $f $g (. $h $i)) $j))
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; Backward chainer ;;
@@ -1121,13 +1121,13 @@
                      ($_ $_)))))))
 
 ;; Test add-type-annotation-holes
-!(assertEqual                           ; NEXT: use assertAlphaEqual
+!(assertAlphaEqual
   (add-type-annotation-holes (: (STTrans VA VIV) (<: (VocalsIn "English") Audio)))
   (: (STTrans (: VA $a) (: VIV $b)) (<: (VocalsIn "English") Audio)))
-!(assertEqual                           ; NEXT: use assertAlphaEqual
+!(assertAlphaEqual
   (add-type-annotation-holes (coerce (STTrans VA VIV)))
   (coerce (: (STTrans (: VA $a) (: VIV $b)) $c)))
-!(assertEqual                           ; NEXT: use assertAlphaEqual
+!(assertAlphaEqual
   (add-type-annotation-holes
    (: (. (Φ midi2voice-zh.singingZH
             (. (machine-translation.translate "English" "Chinese")
@@ -1140,7 +1140,7 @@
                                                       (: "Chinese" $c)) $d)
                     (: (. (: upload $e) (: speech-recognition.s2t $f)) $g)) $h)
               (: tomidi.a2m $i)) $j)
-        (: (coerce (: SIA $k)) $l))
+        (: (coerce (: SIA $k)) $m))
      (-> (: $x (SongIn $l)) (VocalsIn "Chinese"))))
 
 ;; Remove type annotations from a query.
