@@ -282,7 +282,7 @@
 (: DOT.Node.identifier (-> DOT.Node DOT.Identifier))
 (= (DOT.Node.identifier (DOT.MkNode $identifier $attributes)) $identifier)
 
-(: DOT.Node.attributes (-> DOT.Node (List DOT.Attributes)))
+(: DOT.Node.attributes (-> DOT.Node (List DOT.Attribute)))
 (= (DOT.Node.attributes (DOT.MkNode $identifier $attributes)) $attributes)
 
 ;; Data type of DOT edge
@@ -346,30 +346,33 @@
 
 ;; Return the default attributes of a none node, typically used as
 ;; input and output
-(: noneAttributes (-> (List DOT.Attributes)))
-(= (noneAttributes) (Cons (DOT.MkLabelAttribute "\"\"")
-                          (Cons (DOT.MkShapeAttribute DOT.Shape.None)
-                                Nil)))
+(: noneAttributes (-> (List DOT.Attribute)))
+(= (noneAttributes)
+   (Cons (DOT.MkLabelAttribute "\"\"")
+         (Cons (DOT.MkShapeAttribute DOT.Shape.None)
+               Nil)))
 
 ;; Return the default attibutes of the input node
-(: inputAttributes (-> (List DOT.Attributes)))
+(: inputAttributes (-> (List DOT.Attribute)))
 (= (inputAttributes) (Cons (DOT.MkLabelAttribute "In")
                            (Cons (DOT.MkShapeAttribute DOT.Shape.Parallelogram)
                                  Nil)))
 
 ;; Return the default attibutes of the output node
-(: outputAttributes (-> (List DOT.Attributes)))
+(: outputAttributes (-> (List DOT.Attribute)))
 (= (outputAttributes) (Cons (DOT.MkLabelAttribute "Out")
                             (Cons (DOT.MkShapeAttribute DOT.Shape.Parallelogram)
                                   Nil)))
 
 ;; Build default input node
 (: inputNode (-> DOT.Node))
-(= (inputNode) (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (noneAttributes)))
+(= (inputNode)
+   (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (noneAttributes)))
 
 ;; Build default output node
 (: outputNode (-> DOT.Node))
-(= (outputNode) (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (noneAttributes)))
+(= (outputNode)
+   (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (noneAttributes)))
 
 ;; Return the default attributes of a node representing a phoenix
 (: phoenixAttributes (-> (List DOT.Attribute)))
