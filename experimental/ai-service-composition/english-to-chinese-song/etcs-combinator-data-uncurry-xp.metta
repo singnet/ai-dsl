@@ -154,15 +154,12 @@
 
 ;; Concatenate two strings (implemented in my own branch)
 (: String.append (-> String String String))
-;; Note that the following relies on MeTTaLog
-(= (String.append $x $y) (call-fn string_concat $x $y))
-;; (= (String.append $x $y) (let* (($xcs (stringToChars $x))
-;;                                 ($ycs (stringToChars $y))
-;;                                 ($xycs (append $xcs $ycs)))
-;;                            (charsToString $xycs)))
+;; (= (String.append $x $y) (call-fn string_concat $x $y)) ; Only MeTTaLog
+(= (String.append $x $y) ((py-dot $x __add__ (-> String String String)) $y))
 
 ;; Test String.append
 !(assertEqual (String.append "abc" "def") "abcdef")
+!(assertEqual (String.append "\"" "\"") "\"\"")
 
 ;; Overload String.append to support more than 2 arguments
 (: String.append3 (-> String String String String))
