@@ -253,10 +253,10 @@
      (((DOT.MkRankdirAttribute $rankdir) (Just $rankdir))
       ($else Nothing))))
 
-;; ;; Test DOT attributes ; NEXT: fix (see bug.metta)
-;; ;; !(assertEqual
-;;   !(get-type (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))
-;;   ;; (List DOT.Attribute))
+;; Test DOT attributes
+!(assertEqual
+  (get-type (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))
+  (List DOT.Attribute))
 
 ;; DOT Identifier
 (: DOT.Identifier Type)
