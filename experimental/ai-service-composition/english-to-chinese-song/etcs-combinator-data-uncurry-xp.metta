@@ -733,6 +733,18 @@
 (= (DOT.println! $term)
    (println! (DOT.toString (toDOT $term))))
 
+;; ;; Test DOT.println!
+;; !(DOT.println! mix)
+;; !(DOT.println! (STTrans VA VIV))
+;; !(DOT.println! (. upload speech-recognition.s2t))
+;; !(DOT.println! (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)))
+;; !(DOT.println! (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m))
+;; !(DOT.println! (. (Φ mixer.mix sound-spleeter.DTLOutput.accomp (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce IA) sound-spleeter.DTLOutput.accomp))) sound-spleeter.spleeter))
+;; NEXT: make the following work
+;; !(DOT.println! (: (STTrans (: VA (<: Vocals Audio))
+;;                            (: VIV (<: (VocalsIn "English") Vocals)))
+;;                   (<: (VocalsIn "English") Audio)))
+
 ;;;;;;;;;;;;;
 ;; Uncurry ;;
 ;;;;;;;;;;;;;
