@@ -1168,24 +1168,49 @@
                                      ((remove-type-annotations $x)
                                       (remove-type-annotations $y)
                                       (remove-type-annotations $z))))
-                     ($else (let* (($head (remove-type-annotations (car-atom $term)))
-                                   ($tail (remove-type-annotations (cdr-atom $term))))
-                              (cons-atom $head $tail)))))))))
-                     (($x) ((remove-type-annotations $x)))
-                     (($x $y) ((remove-type-annotations $x)
-                               (remove-type-annotations $y)))
-                     (($x $y $z $w) ((remove-type-annotations $x)
-                                     (remove-type-annotations $y)
-                                     (remove-type-annotations $z)
-                                     (remove-type-annotations $w)))
-                     ($_ $_)))))))
+                     ($else (let* (($head (car-atom $term))
+                                   ($tail (cdr-atom $term))
+                                   ($rth (remove-type-annotations $head))
+                                   ($rtt (remove-type-annotations $tail)))
+                              (cons-atom $rth $rtt)))))))))
 
 ;; Test remove-type-annotations
 !(assertEqual
   (remove-type-annotations
    (: (STTrans (: VA $a) (: VIV $b)) (<: (VocalsIn "English") Audio)))
   (STTrans VA VIV))
-!(assertEqual                           ; NEXT: use assertAlphaEqual
+!(assertAlphaEqual
+  (remove-type-annotations
+   (: (. (: (machine-translation.translate (: "English" $b)
+                                           (: "Chinese" $c)) $d)
+         (: (. (: upload $e) (: speech-recognition.s2t $f)) $g)) $h))
+  (. (machine-translation.translate "English" "Chinese")
+     (. upload speech-recognition.s2t)))
+!(assertAlphaEqual
+  (remove-type-annotations
+   (: (Φ (: midi2voice-zh.singingZH $a)
+         (: (. (: (machine-translation.translate (: "English" $b)
+                                                 (: "Chinese" $c)) $d)
+               (: (. (: upload $e) (: speech-recognition.s2t $f)) $g)) $h)
+         (: tomidi.a2m $i)) $j))
+  (Φ midi2voice-zh.singingZH
+     (. (machine-translation.translate "English" "Chinese")
+        (. upload speech-recognition.s2t))
+        tomidi.a2m))
+!(assertAlphaEqual
+  (remove-type-annotations
+   (. (: (Φ (: midi2voice-zh.singingZH $a)
+               (: (. (: (machine-translation.translate (: "English" $b)
+                                                       (: "Chinese" $c)) $d)
+                     (: (. (: upload $e) (: speech-recognition.s2t $f)) $g)) $h)
+               (: tomidi.a2m $i)) $j)
+         (: (coerce (: SIA $k)) $l)))
+  (. (Φ midi2voice-zh.singingZH
+        (. (machine-translation.translate "English" "Chinese")
+           (. upload speech-recognition.s2t))
+        tomidi.a2m)
+     (coerce SIA)))
+!(assertAlphaEqual
   (remove-type-annotations
    (: (. (: (Φ (: midi2voice-zh.singingZH $a)
                (: (. (: (machine-translation.translate (: "English" $b)
