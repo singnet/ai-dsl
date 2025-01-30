@@ -573,13 +573,20 @@
       ($else (mkEmptyDOT)))))
 
 ;; Test toDOT
-!(set-random-seed 0)                    ; NEXT: fix this
+;; !(set-random-seed 0)                    ; NEXT: fix this
 ;; !(assertEqual
 ;;   (toDOT mix)
 ;;   (let $node (DOT.MkNode (DOT.MkSymbolIdentifier mix 0)
 ;;                          (Cons (DOT.MkLabelAttribute "\"mix\"")
 ;;                                (functionAttributes)))
 ;;     (MkDOT (Cons $node Nil) Nil $node $node (globalAttributes))))
+;; !(toDOT (STTrans VA VIV))
+;; NEXT: make the following work
+;; !(toDOT (: (STTrans VA VIV) (<: (VocalsIn "English") Audio)))
+;; NEXT: make the following work
+;; !(toDOT (: (STTrans (: VA (<: Vocals Audio))
+;;                     (: VIV (<: (VocalsIn "English") Vocals)))
+;;            (<: (VocalsIn "English") Audio)))
 
 ;; Output the string representing a style in DOT format
 (: DOT.Style.toString (-> DOT.Style String))
