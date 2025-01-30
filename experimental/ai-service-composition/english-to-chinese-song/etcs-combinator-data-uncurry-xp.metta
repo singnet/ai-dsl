@@ -1737,8 +1737,8 @@
 ;;
 ;; which should be a coercion
 !(assertEqual
-  (unique
-   (bc &kb (fromNumber 2) (: $prg (-> (: $x (VocalsIn "English")) Audio))))
+  (unique (capture
+   (bc &kb (fromNumber 2) (: $prg (-> (: $x (VocalsIn "English")) Audio)))))
   (: (coerce (STTrans VA VIV)) (-> (: $x (VocalsIn "English")) Audio)))
 
 ;; Like above but doing type inference using type-annotated-bc
@@ -1752,184 +1752,230 @@
                 (<: (VocalsIn "English") Audio)))
      (-> (: $x (VocalsIn "English")) Audio)))
 
-;; NEXT: add corresponding tests for type-annotated-bc
+;; Synthesize sequential composition of
+;;
+;; (-> (VocalsIn "English") (TextIn "English"))
+;;
+;; which should merely be a call of speech-recognition with proper
+;; casting from (VocalsIn "English") to Audio.
+!(assertEqual
+  (unique (capture
+   (bc &kb
+       (fromNumber 3)
+       (: $prg
+          (-> (: $x (VocalsIn "English")) (TextIn "English"))))))
+  (: (. speech-recognition.s2t (coerce (STTrans VA VIV)))
+     (-> (: $x (VocalsIn "English")) (TextIn "English"))))
 
-;; ;; Synthesize sequential composition of
-;; ;;
-;; ;; (-> (VocalsIn "English") (TextIn "English"))
-;; ;;
-;; ;; which should merely be a call of speech-recognition with proper
-;; ;; casting from (VocalsIn "English") to Audio.
-;; !(assertEqual
-;;   (unique
-;;    (bc &kb
-;;        (fromNumber 3)
-;;        (: $prg
-;;           (-> (: $x (VocalsIn "English")) (TextIn "English")))))
-;;   (: (. speech-recognition.s2t (coerce (STTrans VA VIV)))
-;;      (-> (: $x (VocalsIn "English")) (TextIn "English"))))
+;; Like above but doing type inference using type-annotated-bc
+!(assertAlphaEqual
+  (type-annotated-bc &kb
+                     (fromNumber 3)
+                     (: (add-type-annotation-holes
+                         (. speech-recognition.s2t (coerce (STTrans VA VIV))))
+                        (-> (: $x (VocalsIn "English")) (TextIn "English"))))
+  (: (. (: speech-recognition.s2t (-> (: $y Audio) (TextIn "English")))
+        (: (coerce (: (STTrans (: VA (<: Vocals Audio))
+                               (: VIV (<: (VocalsIn "English") Vocals)))
+                      (<: (VocalsIn "English") Audio)))
+           (-> (: $x (VocalsIn "English")) Audio)))
+     (-> (: $x (VocalsIn "English")) (TextIn "English"))))
 
-;; ;; Synthesize sequential composition of
-;; ;;
-;; ;; (-> Audio (UniformResourceLocatorOfType (TextIn "English")))
-;; ;;
-;; ;; which should be a sequential composition of speech-recognition and
-;; ;; upload.
-;; !(assertEqual
-;;   (bc &kb
-;;       (fromNumber 1)
-;;       (: $prg
-;;          (-> (: $x Audio) (UniformResourceLocatorOfType (TextIn "English")))))
-;;   (: (. upload speech-recognition.s2t)
-;;      (-> (: $x Audio) (UniformResourceLocatorOfType (TextIn "English")))))
+;; Synthesize sequential composition of
+;;
+;; (-> Audio (UniformResourceLocatorOfType (TextIn "English")))
+;;
+;; which should be a sequential composition of speech-recognition and
+;; upload.
+!(assertEqual
+  (bc &kb
+      (fromNumber 1)
+      (: $prg
+         (-> (: $x Audio) (UniformResourceLocatorOfType (TextIn "English")))))
+  (: (. upload speech-recognition.s2t)
+     (-> (: $x Audio) (UniformResourceLocatorOfType (TextIn "English")))))
 
-;; ;; Synthesize sequential composition of
-;; ;;
-;; ;; (-> (VocalsIn "English") (UniformResourceLocatorOfType (TextIn "English")))
-;; ;;
-;; ;; which should be a sequential composition of speech-recognition,
-;; ;; upload and proper type coercion.
-;; !(assertEqual
-;;   (bc &kb
-;;       (fromNumber 3)
-;;       (: $prg
-;;          (-> (: $x (VocalsIn "English"))
-;;              (UniformResourceLocatorOfType (TextIn "English")))))
-;;   (: (. upload (. speech-recognition.s2t (coerce (STTrans VA VIV))))
-;;      (-> (: $x (VocalsIn "English"))
-;;          (UniformResourceLocatorOfType (TextIn "English")))))
+;; Like above but doing type inference using type-annotated-bc
+!(assertAlphaEqual
+  (type-annotated-bc &kb
+                     (fromNumber 1)
+                     (add-type-annotation-holes
+                      (: (. upload speech-recognition.s2t)
+                         (-> (: $x Audio)
+                             (UniformResourceLocatorOfType (TextIn "English"))))))
+  (: (. (: upload (-> (: $y (TextIn "English"))
+                      (UniformResourceLocatorOfType (TextIn "English"))))
+        (: speech-recognition.s2t (-> (: $x Audio) (TextIn "English"))))
+     (-> (: $x Audio) (UniformResourceLocatorOfType (TextIn "English")))))
 
-;; ;; Synthesize composition of
-;; ;;
-;; ;; (-> (: "English" NaturalLanguage)
-;; ;;     (: "Chinese" NaturalLanguage)
-;; ;;     (-> (UniformResourceLocatorOfType (TextIn "English"))
-;; ;;         (TextIn "Chinese")))
-;; ;;
-;; ;; which should merely be a call to machine-translation.translate.
-;; !(assertEqual
-;;   (bc &kb
-;;       (fromNumber 0)
-;;       (: $prg
-;;          (-> (: "English" NaturalLanguage)
-;;              (: "Chinese" NaturalLanguage)
-;;              (-> (: $x (UniformResourceLocatorOfType (TextIn "English")))
-;;                  (TextIn "Chinese")))))
-;;   (: machine-translation.translate
-;;      (-> (: "English" NaturalLanguage)
-;;          (: "Chinese" NaturalLanguage)
-;;          (-> (: $x (UniformResourceLocatorOfType (TextIn "English")))
-;;              (TextIn "Chinese")))))
+;; Synthesize sequential composition of
+;;
+;; (-> (VocalsIn "English") (UniformResourceLocatorOfType (TextIn "English")))
+;;
+;; which should be a sequential composition of speech-recognition,
+;; upload and proper type coercion.
+!(assertEqual
+  (bc &kb
+      (fromNumber 3)
+      (: $prg
+         (-> (: $x (VocalsIn "English"))
+             (UniformResourceLocatorOfType (TextIn "English")))))
+  (: (. upload (. speech-recognition.s2t (coerce (STTrans VA VIV))))
+     (-> (: $x (VocalsIn "English"))
+         (UniformResourceLocatorOfType (TextIn "English")))))
 
-;; ;; Synthesize composition of
-;; ;;
-;; ;; (-> (UniformResourceLocatorOfType (TextIn "English")) (TextIn "Chinese"))
-;; ;;
-;; ;; which should merely be a call to machine-translation.translate with
-;; ;; proper parameters.
-;; !(assertEqual
-;;   (bc &kb
-;;       (fromNumber 1)
-;;       (: $prg
-;;          (-> (: $x (UniformResourceLocatorOfType (TextIn "English")))
-;;              (TextIn "Chinese"))))
-;;   (: (machine-translation.translate "English" "Chinese")
-;;      (-> (: $x (UniformResourceLocatorOfType (TextIn "English")))
-;;          (TextIn "Chinese"))))
+;; Like above but doing type inference using type-annotated-bc
+!(assertAlphaEqual
+  (type-annotated-bc
+   &kb
+   (fromNumber 4)
+   (: (. (: upload $a)
+         (: (. (: speech-recognition.s2t $b)
+               (: (coerce (: (STTrans (: VA $c) (: VIV $d)) $e)) $f)) $g))
+      (-> (: $x (VocalsIn "English"))
+          (UniformResourceLocatorOfType (TextIn "English")))))
+  (: (. (: upload (-> (: $y (TextIn "English"))
+                      (UniformResourceLocatorOfType (TextIn "English"))))
+        (: (. (: speech-recognition.s2t (-> (: $z Audio) (TextIn "English")))
+              (: (coerce (: (STTrans (: VA (<: Vocals Audio))
+                                     (: VIV (<: (VocalsIn "English") Vocals)))
+                            (<: (VocalsIn "English") Audio)))
+                 (-> (: $x (VocalsIn "English")) Audio)))
+           (-> (: $x (VocalsIn "English")) (TextIn "English"))))
+     (-> (: $x (VocalsIn "English"))
+         (UniformResourceLocatorOfType (TextIn "English")))))
 
-;; ;; Synthesize sequential composition of
-;; ;;
-;; ;; (-> (TextIn "English") (TextIn "Chinese"))
-;; ;;
-;; ;; which should be a sequential composition of
-;; ;; machine-translation.translate with proper parameters and upload.
-;; !(assertEqual
-;;   (bc &kb
-;;       (fromNumber 2)
-;;       (: $prg
-;;          (-> (: $x (TextIn "English")) (TextIn "Chinese"))))
-;;   (: (. (machine-translation.translate "English" "Chinese") upload)
-;;      (-> (: $x (TextIn "English")) (TextIn "Chinese"))))
+;; Synthesize composition of
+;;
+;; (-> (: "English" NaturalLanguage)
+;;     (: "Chinese" NaturalLanguage)
+;;     (-> (UniformResourceLocatorOfType (TextIn "English"))
+;;         (TextIn "Chinese")))
+;;
+;; which should merely be a call to machine-translation.translate.
+!(assertEqual
+  (bc &kb
+      (fromNumber 0)
+      (: $prg
+         (-> (: "English" NaturalLanguage)
+             (: "Chinese" NaturalLanguage)
+             (-> (: $x (UniformResourceLocatorOfType (TextIn "English")))
+                 (TextIn "Chinese")))))
+  (: machine-translation.translate
+     (-> (: "English" NaturalLanguage)
+         (: "Chinese" NaturalLanguage)
+         (-> (: $x (UniformResourceLocatorOfType (TextIn "English")))
+             (TextIn "Chinese")))))
 
-;; ;; Synthesize sequential composition of type
-;; ;;
-;; ;; (-> Audio (TextIn "Chinese"))
-;; ;;
-;; ;; which should be the composition of speech-recognition.s2t and
-;; ;; machine-translation.translate.
-;; !(assertEqual
-;;   (unique
-;;    (bc &kb
-;;        (fromNumber 3)
-;;        (: $prg
-;;           (-> (: $x Audio) (TextIn "Chinese")))))
-;;   (: (. (machine-translation.translate "English" "Chinese")
-;;         (. upload speech-recognition.s2t))
-;;      (-> (: $x Audio) (TextIn "Chinese"))))
+;; Synthesize composition of
+;;
+;; (-> (UniformResourceLocatorOfType (TextIn "English")) (TextIn "Chinese"))
+;;
+;; which should merely be a call to machine-translation.translate with
+;; proper parameters.
+!(assertEqual
+  (bc &kb
+      (fromNumber 1)
+      (: $prg
+         (-> (: $x (UniformResourceLocatorOfType (TextIn "English")))
+             (TextIn "Chinese"))))
+  (: (machine-translation.translate "English" "Chinese")
+     (-> (: $x (UniformResourceLocatorOfType (TextIn "English")))
+         (TextIn "Chinese"))))
 
-;; ;; Synthesize sequential composition of type
-;; ;;
-;; ;; (-> (VocalsIn "English") (TextIn "Chinese"))
-;; ;;
-;; ;; which should be the composition of speech-recognition.s2t and
-;; ;; machine-translation.translate with the proper type coercions.
-;; !(assertEqual
-;;   (unique
-;;    (bc &kb
-;;        (fromNumber 4)
-;;        (: $prg
-;;           (-> (: $x (VocalsIn "English")) (TextIn "Chinese")))))
-;;   (: (. (machine-translation.translate "English" "Chinese")
-;;         (. upload (. speech-recognition.s2t (coerce (STTrans VA VIV)))))
-;;      (-> (: $x (VocalsIn "English")) (TextIn "Chinese"))))
+;; Synthesize sequential composition of
+;;
+;; (-> (TextIn "English") (TextIn "Chinese"))
+;;
+;; which should be a sequential composition of
+;; machine-translation.translate with proper parameters and upload.
+!(assertEqual
+  (bc &kb
+      (fromNumber 2)
+      (: $prg
+         (-> (: $x (TextIn "English")) (TextIn "Chinese"))))
+  (: (. (machine-translation.translate "English" "Chinese") upload)
+     (-> (: $x (TextIn "English")) (TextIn "Chinese"))))
 
-;; ;; Type check the sequential composition
-;; ;;
-;; ;; (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter)
-;; !(assertEqual
-;;   (bc &kb (fromNumber 1)
-;;       (: (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter)
-;;          (-> (: $x (SongIn $l)) Instrumental)))
-;;   (: (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter)
-;;      (-> (: $x (SongIn $l)) Instrumental)))
+;; Synthesize sequential composition of type
+;;
+;; (-> Audio (TextIn "Chinese"))
+;;
+;; which should be the composition of speech-recognition.s2t and
+;; machine-translation.translate.
+!(assertEqual
+  (unique (capture
+   (bc &kb
+       (fromNumber 3)
+       (: $prg
+          (-> (: $x Audio) (TextIn "Chinese"))))))
+  (: (. (machine-translation.translate "English" "Chinese")
+        (. upload speech-recognition.s2t))
+     (-> (: $x Audio) (TextIn "Chinese"))))
 
-;; ;; Type check the following AI service composition
-;; ;;
-;; ;; (. (Φ midi2voice-zh.singingZH
-;; ;;       (. (machine-translation.translate "English" "Chinese")
-;; ;;          (. upload speech-recognition.s2t))
-;; ;;       tomidi.a2m)
-;; ;;    (coerce SIA))
-;; !(assertEqual
-;;   (bc &kb (fromNumber 4)
-;;       (: (. (Φ midi2voice-zh.singingZH
-;;                (. (machine-translation.translate "English" "Chinese")
-;;                   (. upload speech-recognition.s2t))
-;;                tomidi.a2m)
-;;             (coerce SIA))
-;;          (-> (: $x (SongIn $l)) (VocalsIn "Chinese"))))
-;;   (: (. (Φ midi2voice-zh.singingZH
-;;            (. (machine-translation.translate "English" "Chinese")
-;;               (. upload speech-recognition.s2t))
-;;            tomidi.a2m)
-;;         (coerce SIA))
-;;      (-> (: $x (SongIn $l)) (VocalsIn "Chinese"))))
+;; Synthesize sequential composition of type
+;;
+;; (-> (VocalsIn "English") (TextIn "Chinese"))
+;;
+;; which should be the composition of speech-recognition.s2t and
+;; machine-translation.translate with the proper type coercions.
+!(assertEqual
+  (unique (capture
+   (bc &kb
+       (fromNumber 4)
+       (: $prg
+          (-> (: $x (VocalsIn "English")) (TextIn "Chinese"))))))
+  (: (. (machine-translation.translate "English" "Chinese")
+        (. upload (. speech-recognition.s2t (coerce (STTrans VA VIV)))))
+     (-> (: $x (VocalsIn "English")) (TextIn "Chinese"))))
 
-;; ;; ;; ;; Synthesize all AI service composition going from (SongIn "English")
-;; ;; ;; ;; to (SongIn "Chinese").  Sort by lengths and select the top 10.
-;; ;; ;; ;; !(assertEqual  ; Re-enable on assert contain is supported
-;; ;; ;; !(List.sortWith termLengthLT
-;; ;; ;;                 (toList (collapse
-;; ;;                                !(limit 6
-;; ;;                                 (bc &kb (fromNumber 6)
-;; ;;                                     (: $prg
-;; ;;                                        (-> (: $x (SongIn "English"))
-;; ;;                                            (SongIn "Chinese")))));)))
+;; Type check the sequential composition
+;;
+;; (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter)
+!(assertEqual
+  (bc &kb (fromNumber 1)
+      (: (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter)
+         (-> (: $x (SongIn $l)) Instrumental)))
+  (: (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter)
+     (-> (: $x (SongIn $l)) Instrumental)))
 
-;; ;; ;; The first 6 candidates are printed in DOT format
-;; ;; !(DOT.println! (: (. (Φ mixer.mix sound-spleeter.DTLOutput.accomp (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce IA) sound-spleeter.DTLOutput.accomp))) sound-spleeter.spleeter) (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
-;; ;; !(DOT.println! (: (. (Φ mixer.mix sound-spleeter.DTLOutput.accomp (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce SIA) (Φ mixer.mix sound-spleeter.DTLOutput.accomp sound-spleeter.DTLOutput.vocals)))) sound-spleeter.spleeter) (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
-;; ;; !(DOT.println! (: (. (Φ mixer.mix sound-spleeter.DTLOutput.accomp (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce (STTrans VA VIV)) sound-spleeter.DTLOutput.vocals))) sound-spleeter.spleeter) (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
-;; ;; !(DOT.println! (: (. (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (coerce SIA))) (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (coerce SIA)))) (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
-;; ;; !(DOT.println! (: (. (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (coerce SIA))) (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce IA) (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter))))) (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
-;; ;; !(DOT.println! (: (. (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (coerce SIA))) (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce (STTrans VA VIV)) (. sound-spleeter.DTLOutput.vocals sound-spleeter.spleeter))))) (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+;; Type check the following AI service composition
+;;
+;; (. (Φ midi2voice-zh.singingZH
+;;       (. (machine-translation.translate "English" "Chinese")
+;;          (. upload speech-recognition.s2t))
+;;       tomidi.a2m)
+;;    (coerce SIA))
+!(assertEqual
+  (bc &kb (fromNumber 4)
+      (: (. (Φ midi2voice-zh.singingZH
+               (. (machine-translation.translate "English" "Chinese")
+                  (. upload speech-recognition.s2t))
+               tomidi.a2m)
+            (coerce SIA))
+         (-> (: $x (SongIn $l)) (VocalsIn "Chinese"))))
+  (: (. (Φ midi2voice-zh.singingZH
+           (. (machine-translation.translate "English" "Chinese")
+              (. upload speech-recognition.s2t))
+           tomidi.a2m)
+        (coerce SIA))
+     (-> (: $x (SongIn $l)) (VocalsIn "Chinese"))))
+
+;; ;; Synthesize all AI service composition going from (SongIn "English")
+;; ;; to (SongIn "Chinese").  Sort by lengths and select the top 10.
+;; ;; !(assertEqual  ; Re-enable on assert contain is supported
+;; !(List.sortWith termLengthLT
+;;                 (toList (collapse
+                               ;; !(limit 6
+                                !(bc &kb (fromNumber 6)
+                                    (: $prg
+                                       (-> (: $x (SongIn "English"))
+                                           (SongIn "Chinese")))););)))
+
+;; ;; The first 6 candidates are printed in DOT format
+;; !(DOT.println! (: (. (Φ mixer.mix sound-spleeter.DTLOutput.accomp (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce IA) sound-spleeter.DTLOutput.accomp))) sound-spleeter.spleeter) (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+;; !(DOT.println! (: (. (Φ mixer.mix sound-spleeter.DTLOutput.accomp (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce SIA) (Φ mixer.mix sound-spleeter.DTLOutput.accomp sound-spleeter.DTLOutput.vocals)))) sound-spleeter.spleeter) (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+;; !(DOT.println! (: (. (Φ mixer.mix sound-spleeter.DTLOutput.accomp (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce (STTrans VA VIV)) sound-spleeter.DTLOutput.vocals))) sound-spleeter.spleeter) (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+;; !(DOT.println! (: (. (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (coerce SIA))) (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (coerce SIA)))) (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+;; !(DOT.println! (: (. (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (coerce SIA))) (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce IA) (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter))))) (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+;; !(DOT.println! (: (. (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (coerce SIA))) (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce (STTrans VA VIV)) (. sound-spleeter.DTLOutput.vocals sound-spleeter.spleeter))))) (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
