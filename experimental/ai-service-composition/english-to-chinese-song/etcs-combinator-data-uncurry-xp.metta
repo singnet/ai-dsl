@@ -302,7 +302,7 @@
 (= (DOT.Edge.destination (DOT.MkEdge $source $destination $attributes)) $destination)
 
 (: DOT.Edge.attributes (-> DOT.Edge (List DOT.Attribute)))
-(= (DOT.Node.attributes (DOT.MkEdge $source $destination $attributes)) $attributes)
+(= (DOT.Edge.attributes (DOT.MkEdge $source $destination $attributes)) $attributes)
 
 ;; Data type to describe Graphviz DOT data
 (: DOT Type)
