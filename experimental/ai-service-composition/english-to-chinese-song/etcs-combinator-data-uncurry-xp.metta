@@ -1,8 +1,6 @@
 ;; Like etcs-combinator-sd-data-uncurry-xp.metta but tested on the
 ;; whole AI service composition instead of the scaled down one.
 
-;; NOTE: only runs with MeTTaLog.
-
 ;;;;;;;;;;;
 ;; Utils ;;
 ;;;;;;;;;;;
@@ -58,7 +56,6 @@
 (: Maybe (-> $a Type))
 (: Nothing (Maybe $a))
 (: Just (-> $a (Maybe $a)))
-
 
 ;;;;;;;;;;
 ;; List ;;
