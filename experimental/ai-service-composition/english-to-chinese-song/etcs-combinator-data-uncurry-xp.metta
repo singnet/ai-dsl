@@ -432,6 +432,7 @@
 (= (random-index) (random-int 0 1000000))
 
 ;; Like toDOT but it is the recursive definition, not the entry point.
+;; NEXT: add surrounding source and destination nodes as arguments.
 (: toDOT_ (-> Atom DOT))
 (= (toDOT_ $term)
    (case (get-metatype $term)
@@ -474,18 +475,26 @@
                      (() (mkEmptyDOT))
                      ;; Recursive steps
                      ;; Type annotation
-                     ((: $f (-> $inty $outy))
-                      (let* (($fd (toDOT_ $f))
-                             ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
-                             ($in (inputNode))
-                             ($on (outputNode))
-                             ($if (DOT.MkEdge $in $fentry
-                                              (edgeAttributes $inty)))
-                             ($of (DOT.MkEdge $fexit $on
-                                              (edgeAttributes $outy)))
-                             ($nns (Cons $in (Cons $on $fns)))
-                             ($nes (Cons $if (Cons $of $fes))))
-                        (MkDOT $nns $nes $in $on $fas)))
+                     ((: $f $ty)
+                      (case (get-metatype $ty)
+                        ((Symbol NEXT)
+                         (Grounded NEXT)
+                         (Variable NEXT)
+                         (Expression
+                          (case $ty
+                            (((-> $inty $outy)
+                              (let* (($fd (toDOT_ $f))
+                                     ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
+                                     ($in (inputNode))
+                                     ($on (outputNode))
+                                     ($if (DOT.MkEdge $in $fentry
+                                                      (edgeAttributes $inty)))
+                                     ($of (DOT.MkEdge $fexit $on
+                                                      (edgeAttributes $outy)))
+                                     ($nns (Cons $in (Cons $on $fns)))
+                                     ($nes (Cons $if (Cons $of $fes))))
+                                (MkDOT $nns $nes $in $on $fas)))
+                             ($else NEXT)))))))
                      ;; Bluebird
                      ((. $f $g) (let* (($fd (toDOT_ $f))
                                        ($gd (toDOT_ $g))
