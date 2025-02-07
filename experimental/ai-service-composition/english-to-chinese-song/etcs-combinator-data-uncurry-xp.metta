@@ -84,6 +84,14 @@
 (= (List.append Nil $ys) $ys)
 (= (List.append (Cons $x $xs) $ys) (Cons $x (List.append $xs $ys)))
 
+;; Overload List.append to support more than 2 arguments
+(: List.append3 (-> (List $a) (List $a) (List $a) (List $a)))
+(= (List.append3 $x $y $z) (List.append $x (List.append $y $z)))
+(: List.append4 (-> (List $a) (List $a) (List $a) (List $a) (List $a)))
+(= (List.append4 $x $y $z $w) (List.append $x (List.append3 $y $z $w)))
+(: List.append5 (-> (List $a) (List $a) (List $a) (List $a) (List $a) (List $a)))
+(= (List.append5 $x $y $z $w $s) (List.append $x (List.append4 $y $z $w $s)))
+
 ;; Define List.map (produce a new list by applying unary function to
 ;; all elements of a list).
 (: List.map (-> (-> $a $b) (List $a) (List $b)))
