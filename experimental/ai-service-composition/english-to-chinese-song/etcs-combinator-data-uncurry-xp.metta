@@ -389,23 +389,32 @@
 
 
 ;; Return the default attributes of an edge providing the term to use
-;; as edge label
+;; as edge label.  Typically that term may represent a type.
 (: edgeAttributes (-> Atom (List DOT.Attribute)))
 (= (edgeAttributes $term)
    (Cons (DOT.MkLabelAttribute (let $rt (repr $term) (repr $rt))) Nil))
 
 ;; Build the DOT data structure corresponding to a given term.  That
 ;; function is crafted around the assumption that the input term is an
-;; AI service composition.
+;; AI service composition, which, from overall standpoint, corresponds
+;; to a unary function.
 (: toDOT (-> Atom DOT))
 (= (toDOT $term)
-   (let (MkDOT $nodes $edges $entry $exit $attributes) (toDOT_ $term)
-        ;; Return DOT data plus some hardwired default attributes
-        (MkDOT $nodes
-               $edges
-               $entry
-               $exit
-               (List.append (globalAttributes) $attributes))))
+   (let* (;; Construct external input and output nodes
+          ($ext_in (inputNode))
+          ($ext_out (outputNode))
+          ;; Call toDOT_ on term, with external input and output nodes
+          ((MkDOT $nodes $edges $entry $exit $attributes)
+           (toDOT_ (Just $ext_in) (Just $ext_out) $term))
+          ;; Add external nodes to node collection
+          ($νnodes (Cons $ext_in (Cons $ext_out $nodes))))
+          ;; Return genereated DOT data plus hardcoded global
+          ;; attributes
+     (MkDOT $νnodes
+            $edges
+            $ext_in
+            $ext_out
+            (List.append (globalAttributes) $attributes))))
 
 ;; Make empty DOT data structure
 (: mkEmptyDOT (-> DOT))
@@ -439,174 +448,474 @@
 (: random-index (-> Number))
 (= (random-index) (random-int 0 1000000))
 
+;; Create edges between optionally provided entry and exit nodes and
+;; internal entry and exit nodes
+(: externalToInteralEdges (-> (Maybe DOT.Node)      ; Optional external entry node
+                              (Maybe DOT.Node)      ; Optional external exit node
+                              Atom                  ; Internal entry node
+                              Atom                  ; Internal exit node
+                              (List DOT.Attribute)  ; Attributes of entry edge
+                              (List DOT.Attribute)  ; Attributes of exit edge
+                              (List DOT.Edge)))
+(= (externalToInteralEdges (Just $ext_entry)
+                           (Just $ext_exit)
+                           $int_entry
+                           $int_exit
+                           $entry_attrs
+                           $exit_attrs)
+   (Cons (DOT.MkEdge $ext_entry $int_entry $entry_attrs)
+         (Cons (DOT.MkEdge $int_exit $ext_exit $exit_attrs)
+               Nil)))
+(= (externalToInteralEdges (Just $ext_entry)
+                           Nothing
+                           $int_entry
+                           $int_exit
+                           $entry_attrs
+                           $exit_attrs)
+   (Cons (DOT.MkEdge $ext_entry $int_entry $entry_attrs)
+         Nil))
+(= (externalToInteralEdges Nothing
+                           (Just $ext_exit)
+                           $int_entry
+                           $int_exit
+                           $entry_attrs
+                           $exit_attrs)
+   (Cons (DOT.MkEdge $int_exit $ext_exit $exit_attrs)
+         Nil))
+(= (externalToInteralEdges Nothing
+                           Nothing
+                           $int_entry
+                           $int_exit
+                           $entry_attrs
+                           $exit_attrs)
+    Nil)
+
 ;; Like toDOT but it is the recursive definition, not the entry point.
-;; NEXT: add surrounding source and destination nodes as arguments.
-(: toDOT_ (-> Atom DOT))
-(= (toDOT_ $term)
+;; It also adds two extra arguments, optional entry and exit nodes
+;; external the graph to be produced.  The returned graph will
+;; possibly contain links between the external nodes, if these are
+;; provided, and the internal entry and exit nodes of the given term.
+;; It will not contain the external nodes, these will need to be added
+;; by the called if needed.
+;;
+;; TODO: it should actually take a list of entry nodes, corresponding
+;; to the arity of the function corresponding to the term.  But to
+;; determine that arity we need the type.
+(: toDOT_ (-> (Maybe DOT.Node)          ; Optional external entry node
+              (Maybe DOT.Node)          ; Optional external exit node
+              Atom                      ; Term to convert to DOT
+              DOT))
+(= (toDOT_ $ext_entry $ext_exit $term)
    (case (get-metatype $term)
      (;; Base cases
-      (Symbol (let* (($id (DOT.MkSymbolIdentifier $term (random-index)))
-                     ($attrs (Cons (DOT.Identifier.toLabelAttribute $id)
-                                   (functionAttributes)))
-                     ($node (DOT.MkNode $id $attrs)))
-                (MkDOT (Cons $node Nil) Nil $node $node Nil)))
-      (Grounded (let* (($id (if (== $term coerce) ; We need to add
+      (Symbol
+       (let* (($id (DOT.MkSymbolIdentifier $term (random-index)))
+              ($attrs (Cons (DOT.Identifier.toLabelAttribute $id)
+                            (functionAttributes)))
+              ($node (DOT.MkNode $id $attrs))
+              ($nodes (Cons $node Nil))
+              ($edges (externalToInteralEdges $ext_entry
+                                              $ext_exit
+                                              $node
+                                              $node
+                                              Nil
+                                              Nil)))
+         (MkDOT $nodes $edges $node $node Nil)))
+      (Grounded
+       (let* (($id (if (== $term coerce) ; We need to add this
+                                         ; conditional because
+                                         ; MeTTaLog types coerce as
+                                         ; Grounded instead of Symbol
+                       (DOT.MkSymbolIdentifier $term (random-index))
+                       (DOT.MkGroundedIdentifier $term)))
+              ($attrs (Cons (DOT.Identifier.toLabelAttribute $id)
+                            (if (== $term coerce) ; We need to add
                                                   ; this conditional
                                                   ; because MeTTaLog
                                                   ; types coerce as
                                                   ; Grounded instead
                                                   ; of Symbol
-                                (DOT.MkSymbolIdentifier $term (random-index))
-                                (DOT.MkGroundedIdentifier $term)))
-                       ($attrs (Cons (DOT.Identifier.toLabelAttribute $id)
-                                     (if (== $term coerce) ; We need
-                                                           ; to add this
-                                                           ; conditional
-                                                           ; because MeTTaLog
-                                                           ; types coerce as
-                                                           ; Grounded instead
-                                                           ; of Symbol
-                                         (functionAttributes)
-                                         (constantAttributes))))
-                       ($node (DOT.MkNode $id $attrs)))
-                  (MkDOT (Cons $node Nil) Nil $node $node Nil)))
+                                (functionAttributes)
+                                (constantAttributes))))
+              ($node (DOT.MkNode $id $attrs))
+              ($nodes (Cons $node Nil))
+              ($edges (externalToInteralEdges $ext_entry
+                                              $ext_exit
+                                              $node
+                                              $node
+                                              Nil
+                                              Nil)))
+         (MkDOT $nodes $edges $node $node Nil)))
       ;; NEXT: support variables
-      ;; (Variable (let* (($id (DOT.MkGroundedIdentifier $term))
-      ;;                  ($attrs (Cons (DOT.Identifier.toLabelAttribute $id)
-      ;;                                (variableAttributes)))
-      ;;                  ($node (DOT.MkNode $id $attrs)))
-      ;;             (MkDOT (Cons $node Nil) Nil $node $node Nil)))
+      ;; (Variable
+      ;;  (let* (($id (DOT.MkGroundedIdentifier $term))
+      ;;         ($attrs (Cons (DOT.Identifier.toLabelAttribute $id)
+      ;;                       (variableAttributes)))
+      ;;         ($node (DOT.MkNode $id $attrs)))
+      ;;    (MkDOT (Cons $node Nil) Nil $node $node Nil)))
       ;; Recursive step
-      (Expression (case $term
-                    (;; Base case
-                     ;; Empty expression
-                     (() (mkEmptyDOT))
-                     ;; Recursive steps
-                     ;; Type annotation
-                     ((: $f $ty)
-                      (case (get-metatype $ty)
-                        ((Symbol NEXT)
-                         (Grounded NEXT)
-                         (Variable NEXT)
-                         (Expression
-                          (case $ty
-                            (((-> $inty $outy)
-                              (let* (($fd (toDOT_ $f))
-                                     ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
-                                     ($in (inputNode))
-                                     ($on (outputNode))
-                                     ($if (DOT.MkEdge $in $fentry
-                                                      (edgeAttributes $inty)))
-                                     ($of (DOT.MkEdge $fexit $on
-                                                      (edgeAttributes $outy)))
-                                     ($nns (Cons $in (Cons $on $fns)))
-                                     ($nes (Cons $if (Cons $of $fes))))
-                                (MkDOT $nns $nes $in $on $fas)))
-                             ($else NEXT)))))))
-                     ;; Bluebird
-                     ((. $f $g) (let* (($fd (toDOT_ $f))
-                                       ($gd (toDOT_ $g))
-                                       ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
-                                       ((MkDOT $gns $ges $gentry $gexit $gas) $gd)
-                                       ($gf (DOT.MkEdge $gexit $fentry Nil))
-                                       ($nns (List.append $fns $gns))
-                                       ($nes (Cons $gf (List.append $fes $ges)))
-                                       ($nentry $gentry)
-                                       ($nexit $fexit)
-                                       ($nas (List.append $fas $gas)))
-                                  (MkDOT $nns $nes $nentry $nexit $nas)))
-                     ;; Phoenix
-                     ((Φ $f $g $h) (let* (($fd (toDOT_ $f))
-                                          ($gd (toDOT_ $g))
-                                          ($hd (toDOT_ $h))
-                                          ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
-                                          ((MkDOT $gns $ges $gentry $gexit $gas) $gd)
-                                          ((MkDOT $hns $hes $hentry $hexit $has) $hd)
-                                          ($Φid (DOT.MkSymbolIdentifier
-                                                 Φ (random-index)))
-                                          ($Φ (DOT.MkNode $Φid (phoenixAttributes)))
-                                          ($Φg (DOT.MkEdge $Φ $gentry Nil))
-                                          ($Φh (DOT.MkEdge $Φ $hentry Nil))
-                                          ($gf (DOT.MkEdge $gexit $fentry Nil))
-                                          ($hf (DOT.MkEdge $hexit $fentry Nil))
-                                          ($nns (Cons
-                                                 $Φ
-                                                 (List.append
-                                                  $fns
-                                                  (List.append $gns $hns))))
-                                          ($nes (Cons
-                                                 $Φg
-                                                 (Cons
-                                                  $Φh
-                                                  (Cons
-                                                   $gf
-                                                   (Cons
-                                                    $hf
-                                                    (List.append
-                                                     $fes
-                                                     (List.append $ges $hes)))))))
-                                          ($nentry $Φ)
-                                          ($nexit $fexit)
-                                          ($nas (List.append $fas
-                                                             (List.append $gas
-                                                                          $has))))
-                                  (MkDOT $nns $nes $nentry $nexit $nas)))
-                     ;; Unary application
-                     (($f $x) (let* (($fd (toDOT_ $f))
-                                     ($xd (toDOT_ $x))
-                                     ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
-                                     ((MkDOT $xns $xes $xentry $xexit $xas) $xd)
-                                     ($xf (DOT.MkEdge $xexit $fentry Nil))
-                                     ($nns (List.append $fns $xns))
-                                     ($nes (Cons $xf (List.append $fes $xes)))
-                                     ($nentry $fentry)
-                                     ($nexit $fexit)
-                                     ($nas (List.append $fas $xas)))
-                                (MkDOT $nns $nes $nentry $nexit $nas)))
-                     ;; Binary application
-                     (($f $x $y) (let* (($fd (toDOT_ $f))
-                                        ($xd (toDOT_ $x))
-                                        ($yd (toDOT_ $y))
-                                        ((MkDOT $fns $fes $fentry $fexit $fas) $fd)
-                                        ((MkDOT $xns $xes $xentry $xexit $xas) $xd)
-                                        ((MkDOT $yns $yes $yentry $yexit $yas) $yd)
-                                        ($xf (DOT.MkEdge $xexit $fentry Nil))
-                                        ($yf (DOT.MkEdge $yexit $fentry Nil))
-                                        ($nns (List.append
-                                               $fns (List.append $xns $yns)))
-                                        ($nes (Cons
-                                               $xf
-                                               (Cons
-                                                $yf
-                                                (List.append
-                                                 $fes (List.append $xes $yes)))))
-                                        ($nentry $fentry)
-                                        ($nexit $fexit)
-                                        ($nas (List.append $fas
-                                                           (List.append $xas $yas))))
-                                   (MkDOT $nns $nes $nentry $nexit $nas)))
-                     ;; Trinary application (TODO)
-                     (($f $x $y $z) (mkEmptyDOT))
-                     ;; Otherwise
-                     ($else (mkEmptyDOT)))))
+      (Expression
+       (case $term
+         (;; Base case
+          ;; Empty expression
+          (() (mkEmptyDOT))
+          ;; Recursive steps
+          ;; Type annotation
+          ((: $f $ty)
+           (let
+               ;; Recursive call on $f.  Do not pass external nodes as
+               ;; arguments of toDOT_ as they are treated further below.
+               (MkDOT $fnodes $fedges $fentry $fexit $fattrs)
+               (toDOT_ Nothing Nothing $f)
+             (case (get-metatype $ty)
+               ((Expression
+                 (case $ty
+                   (;; Unary arrow type
+                    ((-> $inty $outy)
+                     (let* (;; Convert input and output types to edge attributes
+                            ($inty_attr (edgeAttributes $inty))
+                            ($outy_attr (edgeAttributes $outy))
+                            ;; Create edges between external and internal nodes
+                            ($ext_edges (externalToInteralEdges $ext_entry
+                                                                $ext_exit
+                                                                $fentry
+                                                                $fexit
+                                                                $inty_attr
+                                                                $outy_attr))
+                            ;; Append external and internal edges
+                            ($edges (List.append $ext_edges $fedges)))
+                       ;; Return DOT object.  The entry and exit nodes
+                       ;; are still those of $f, replacing them by the
+                       ;; external nodes is up to the caller.
+                       (MkDOT $fnodes $edges $fentry $fexit $fattrs)))
+                    ;; Binary arrow type
+                    ((-> $inty1 $inty2 $outy)
+                     (let* (;; Convert output type to edge attributes
+                            ($outy_attr (edgeAttributes $outy))
+                            ;; Create edge from internal to extern exit
+                            ;; nodes.  The external entry nodes are
+                            ;; ignored because toDOT does not generally
+                            ;; support nary arity functions, only those
+                            ;; used inside a phoenix, and for that it
+                            ;; will never be given the entry nodes
+                            ;; anyway.
+                            ($ext_edges (externalToInteralEdges Nothing
+                                                                $ext_exit
+                                                                $fentry
+                                                                $fexit
+                                                                Nil
+                                                                $outy_attr))
+                            ;; Concatenate external and internal edges
+                            ($edges (List.append $ext_edges $fedges)))
+                       ;; Return DOT object.  The entry and exit nodes
+                       ;; are still those of $f, replacing them by the
+                       ;; external nodes is up to the caller.
+                       (MkDOT $fnodes $edges $fentry $fexit $fattrs)))
+                    ;; TODO: support nary arrow types
+                    ;; Non-arrow type
+                    ($else
+                     (let* (;; Convert type to output edge attributes
+                            ($ty_attr (edgeAttributes $ty))
+                            ;; Create edge from internal exit to
+                            ;; external exit nodes.
+                            ($ext_edges (externalToInteralEdges Nothing
+                                                                $ext_exit
+                                                                $fentry
+                                                                $fexit
+                                                                Nil
+                                                                $ty_attr))
+                            ;; Append external and internal edges
+                            ($edges (List.append $ext_edges $fedges)))
+                       ;; Return DOT object.  The entry and exit nodes
+                       ;; are still those of $f, replacing them by the
+                       ;; external nodes is up to the caller.
+                       (MkDOT $fnodes $edges $fentry $fexit $fattrs))))))
+                ($else       ; Symbol, Grounded, Variable
+                 (let* (;; Convert type to output edge attributes
+                        ($ty_attr (edgeAttributes $ty))
+                        ;; Create edge from internal exit to
+                        ;; external exit nodes.
+                        ($ext_edges (externalToInteralEdges Nothing
+                                                            $ext_exit
+                                                            $fentry
+                                                            $fexit
+                                                            Nil
+                                                            $ty_attr))
+                        ;; Append external and internal edges
+                        ($edges (List.append $ext_edges $fedges)))
+                   ;; Return DOT object.  The entry and exit nodes
+                   ;; are still those of $f, replacing them by the
+                   ;; external nodes is up to the caller.
+                   (MkDOT $fnodes $edges $fentry $fexit $fattrs)))))))
+          ;; Bluebird
+          ((. $f $g) (let* (;; Recursive call on $g, passing the
+                            ;; external entry node.
+                            ((MkDOT $gnodes $gedges $gentry $gexit $gattrs)
+                             (toDOT_ $ext_entry Nothing $g))
+                            ;; Recursive call on $f, passing both the
+                            ;; exit node of g and the external exit node.
+                            ((MkDOT $fnodes $fedges $fentry $fexit $fattrs)
+                             (toDOT_ (Just $gexit) $ext_exit $f))
+                            ;; Concatenate nodes of $f and $g
+                            ($nodes (List.append $fnodes $gnodes))
+                            ;; Concatenate edges of $f and $g and in between
+                            ($edges (List.append $fedges $gedges))
+                            ;; Concatenate attributes of $f and $g
+                            ($attrs (List.append $fattrs $gattrs)))
+                       (MkDOT $nodes $edges $gentry $fexit $attrs)))
+          ;; Phoenix
+          ((Φ $f $g $h) (let* (;; Recursive call on $f, passing the
+                               ;; external exit node
+                               ((MkDOT $fnodes $fedges $fentry $fexit $fattrs)
+                                (toDOT_ Nothing $ext_exit $f))
+                               ;; Create phoenix node
+                               ($Φid (DOT.MkSymbolIdentifier Φ (random-index)))
+                               ($Φ (DOT.MkNode $Φid (phoenixAttributes)))
+                               ;; Create edge from external entry to $Φ
+                               ($ext_edges (externalToInteralEdges $ext_entry
+                                                                   Nothing
+                                                                   $Φ
+                                                                   $Φ
+                                                                   Nil
+                                                                   Nil))
+                               ;; Recursive call on $g, passing both
+                               ;; the internal entry node of $f and $Φ
+                               ((MkDOT $gnodes $gedges $gentry $gexit $gattrs)
+                                (toDOT_ (Just $Φ) (Just $fentry) $g))
+                               ;; Recursive call on $h, passing both
+                               ;; the internal entry node of $f and $Φ
+                               ((MkDOT $hnodes $hedges $hentry $hexit $hattrs)
+                                (toDOT_ (Just $Φ) (Just $fentry) $h))
+                               ;; Concatenate all nodes
+                               ($nodes (Cons $Φ
+                                             (List.append3 $fnodes $gnodes $hnodes)))
+                               ;; Concatenate all edges
+                               ($edges (List.append4 $ext_edges
+                                                     $fedges
+                                                     $gedges
+                                                     $hedges))
+                               ;; Concatenate all attributes
+                               ($attrs (List.append3 $fattrs $gattrs $hattrs)))
+                          (MkDOT $nodes $edges $Φ $fexit $attrs)))
+          ;; Unary application
+          (($f $x) (let* (;; Recursive call on $f
+                          ((MkDOT $fnodes $fedges $fentry $fexit $fattrs)
+                           (toDOT_ $ext_entry $ext_exit $f))
+                          ;; Recusive call on $x, passing $fentry as
+                          ;; external exit node.  We assume that $x is
+                          ;; non-arrow typed.
+                          ((MkDOT $xnodes $xedges $xentry $xexit $xattrs)
+                           (toDOT_ Nothing (Just $fentry) $x))
+                          ;; Append all nodes
+                          ($nodes (List.append $fnodes $xnodes))
+                          ;; Append all edges
+                          ($edges (List.append $fedges $xedges))
+                          ;; Append all attributes
+                          ($attrs (List.append $fattrs $xattrs)))
+                     (MkDOT $nodes $edges $fentry $fexit $attrs)))
+          ;; Binary application
+          (($f $x $y) (let* (;; Recursive call on $f
+                             ((MkDOT $fnodes $fedges $fentry $fexit $fattrs)
+                              (toDOT_ $ext_entry $ext_exit $f))
+                             ;; Recusive call on $x, passing $fentry
+                             ;; as external exit node.  We assume that
+                             ;; $x is non-arrow typed.
+                             ((MkDOT $xnodes $xedges $xentry $xexit $xattrs)
+                              (toDOT_ Nothing (Just $fentry) $x))
+                             ;; Recusive call on $y, passing $fentry
+                             ;; as external exit node.  We assume that
+                             ;; $y is non-arrow typed.
+                             ((MkDOT $ynodes $yedges $yentry $yexit $yattrs)
+                              (toDOT_ Nothing (Just $fentry) $y))
+                             ;; Append all nodes
+                             ($nodes (List.append3 $fnodes $xnodes $ynodes))
+                             ;; Append all edges
+                             ($edges (List.append3 $fedges $xedges $yedges))
+                             ;; Append all attributes
+                             ($attrs (List.append3 $fattrs $xattrs $yattrs)))
+                        (MkDOT $nodes $edges $fentry $fexit $attrs)))
+          ;; Trinary application (TODO)
+          (($f $x $y $z) (mkEmptyDOT))
+          ;; Otherwise
+          ($else (mkEmptyDOT)))))
       ;; Otherwise
       ($else (mkEmptyDOT)))))
 
 ;; Test toDOT
-;; !(set-random-seed 0)                    ; NEXT: fix this
+;; !(set-random-seed 0)  ; NEXT: fix this, and re-enable tests below
 ;; !(assertEqual
 ;;   (toDOT mix)
 ;;   (let $node (DOT.MkNode (DOT.MkSymbolIdentifier mix 0)
 ;;                          (Cons (DOT.MkLabelAttribute "\"mix\"")
 ;;                                (functionAttributes)))
 ;;     (MkDOT (Cons $node Nil) Nil $node $node (globalAttributes))))
+;; !(toDOT (: f (-> A B)))
 ;; !(toDOT (STTrans VA VIV))
-;; NEXT: make the following work
 ;; !(toDOT (: (STTrans VA VIV) (<: (VocalsIn "English") Audio)))
-;; NEXT: make the following work
 ;; !(toDOT (: (STTrans (: VA (<: Vocals Audio))
 ;;                     (: VIV (<: (VocalsIn "English") Vocals)))
 ;;            (<: (VocalsIn "English") Audio)))
+;; !(toDOT (. upload speech-recognition.s2t))
+;; !(toDOT (: (coerce (: (STTrans (: VA (<: Vocals Audio))
+;;                                (: VIV (<: (VocalsIn "English") Vocals)))
+;;                       (<: (VocalsIn "English") Audio)))
+;;            (-> (: $x (VocalsIn "English")) Audio)))
+;; !(toDOT (: (. (: speech-recognition.s2t (-> (: $y Audio) (TextIn "English")))
+;;               (: (coerce (: (STTrans (: VA (<: Vocals Audio))
+;;                                      (: VIV (<: (VocalsIn "English") Vocals)))
+;;                             (<: (VocalsIn "English") Audio)))
+;;                  (-> (: $x (VocalsIn "English")) Audio)))
+;;            (-> (: $x (VocalsIn "English")) (TextIn "English"))))
+;; !(toDOT (Φ f g h))
+;; !(toDOT
+;;   (: (Φ (: midi2voice-zh.singingZH
+;;            (-> (: $y (TextIn "Chinese"))
+;;                (: $z MusicalInstrumentDigitalInterface)
+;;                (VocalsIn "Chinese")))
+;;         g
+;;         h)
+;;      (-> (: $u Audio) (VocalsIn "Chinese"))))
+;; !(toDOT
+;;   (: (Φ (: f (-> B C D))
+;;         (: g (-> A B))
+;;         h)
+;;      (-> (: $u Audio) (VocalsIn "Chinese"))))
+;; !(toDOT
+;;   (: (Φ (: midi2voice-zh.singingZH
+;;            (-> (: $y (TextIn "Chinese"))
+;;                (: $z MusicalInstrumentDigitalInterface)
+;;                (VocalsIn "Chinese")))
+;;         (: g (-> A B))
+;;         h)
+;;      (-> (: $u Audio) (VocalsIn "Chinese"))))
+;; !(toDOT
+;;   (: (Φ (: midi2voice-zh.singingZH
+;;            (-> (: $y (TextIn "Chinese"))
+;;                (: $z MusicalInstrumentDigitalInterface)
+;;                (VocalsIn "Chinese")))
+;;         g
+;;         (: tomidi.a2m (-> (: $u Audio) MusicalInstrumentDigitalInterface)))
+;;      (-> (: $u Audio) (VocalsIn "Chinese"))))
+;; !(toDOT
+;;   (: (Φ (: midi2voice-zh.singingZH
+;;            (-> (: $y (TextIn "Chinese"))
+;;                (: $z MusicalInstrumentDigitalInterface)
+;;                (VocalsIn "Chinese")))
+;;         (: g (-> A B))
+;;         (: tomidi.a2m (-> (: $u Audio) MusicalInstrumentDigitalInterface)))
+;;      (-> (: $u Audio) (VocalsIn "Chinese"))))
+;; !(toDOT (machine-translation.translate "English" "Chinese"))
+;; !(toDOT (machine-translation.translate (: "English" NaturalLanguage)
+;;                                        (: "Chinese" NaturalLanguage)))
+;; !(toDOT
+;;   (: (machine-translation.translate
+;;       (: "English" NaturalLanguage)
+;;       (: "Chinese" NaturalLanguage))
+;;      (-> (: $w (UniformResourceLocatorOfType (TextIn "English")))
+;;          (TextIn "Chinese"))))
+;; !(toDOT
+;;   (: (. (: (machine-translation.translate
+;;             (: "English" NaturalLanguage)
+;;             (: "Chinese" NaturalLanguage))
+;;            (-> (: $w (UniformResourceLocatorOfType (TextIn "English")))
+;;                (TextIn "Chinese")))
+;;         g)
+;;      (-> (: $u Audio) (TextIn "Chinese"))))
+;; !(toDOT
+;;   (: (. (: (machine-translation.translate
+;;             (: "English" NaturalLanguage)
+;;             (: "Chinese" NaturalLanguage))
+;;            (-> (: $w (UniformResourceLocatorOfType (TextIn "English")))
+;;                (TextIn "Chinese")))
+;;         (: (. (: upload
+;;                  (-> (: $t (TextIn "English"))
+;;                      (UniformResourceLocatorOfType (TextIn "English"))))
+;;               (: speech-recognition.s2t
+;;                  (-> (: $u Audio) (TextIn "English"))))
+;;            (-> (: $u Audio)
+;;                (UniformResourceLocatorOfType (TextIn "English")))))
+;;      (-> (: $u Audio) (TextIn "Chinese"))))
+;; !(toDOT
+;;   (: (Φ f
+;;         (: (. (: (machine-translation.translate
+;;                   (: "English" NaturalLanguage)
+;;                   (: "Chinese" NaturalLanguage))
+;;                  (-> (: $w (UniformResourceLocatorOfType (TextIn "English")))
+;;                      (TextIn "Chinese")))
+;;               (: (. (: upload
+;;                        (-> (: $t (TextIn "English"))
+;;                            (UniformResourceLocatorOfType (TextIn "English"))))
+;;                     (: speech-recognition.s2t
+;;                        (-> (: $u Audio) (TextIn "English"))))
+;;                  (-> (: $u Audio)
+;;                      (UniformResourceLocatorOfType (TextIn "English")))))
+;;            (-> (: $u Audio) (TextIn "Chinese")))
+;;         h)
+;;      (-> (: $u Audio) (VocalsIn "Chinese"))))
+;; !(toDOT
+;;   (: (Φ (: midi2voice-zh.singingZH
+;;            (-> (: $y (TextIn "Chinese"))
+;;                (: $z MusicalInstrumentDigitalInterface)
+;;                (VocalsIn "Chinese")))
+;;         (: (. (: (machine-translation.translate
+;;                   (: "English" NaturalLanguage)
+;;                   (: "Chinese" NaturalLanguage))
+;;                  (-> (: $w (UniformResourceLocatorOfType (TextIn "English")))
+;;                      (TextIn "Chinese")))
+;;               (: (. (: upload
+;;                        (-> (: $t (TextIn "English"))
+;;                            (UniformResourceLocatorOfType (TextIn "English"))))
+;;                     (: speech-recognition.s2t
+;;                        (-> (: $u Audio) (TextIn "English"))))
+;;                  (-> (: $u Audio)
+;;                      (UniformResourceLocatorOfType (TextIn "English")))))
+;;            (-> (: $u Audio) (TextIn "Chinese")))
+;;         (: tomidi.a2m (-> (: $u Audio) MusicalInstrumentDigitalInterface)))
+;;      (-> (: $u Audio) (VocalsIn "Chinese"))))
+;; !(toDOT
+;;   (: (. (: (Φ (: midi2voice-zh.singingZH
+;;                  (-> (: $y (TextIn "Chinese"))
+;;                      (: $z MusicalInstrumentDigitalInterface)
+;;                      (VocalsIn "Chinese")))
+;;               (: (. (: (machine-translation.translate
+;;                         (: "English" NaturalLanguage)
+;;                         (: "Chinese" NaturalLanguage))
+;;                        (-> (: $w (UniformResourceLocatorOfType (TextIn "English")))
+;;                            (TextIn "Chinese")))
+;;                     (: (. (: upload
+;;                              (-> (: $t (TextIn "English"))
+;;                                  (UniformResourceLocatorOfType (TextIn "English"))))
+;;                           (: speech-recognition.s2t
+;;                              (-> (: $u Audio) (TextIn "English"))))
+;;                        (-> (: $u Audio)
+;;                            (UniformResourceLocatorOfType (TextIn "English")))))
+;;                  (-> (: $u Audio) (TextIn "Chinese")))
+;;               (: tomidi.a2m (-> (: $u Audio) MusicalInstrumentDigitalInterface)))
+;;            (-> (: $u Audio) (VocalsIn "Chinese")))
+;;         (: (coerce (: SIA (<: (SongIn $l) Audio)))
+;;            (-> (: $x (SongIn $l)) Audio)))
+;;      (-> (: $x (SongIn $l)) (VocalsIn "Chinese"))))
+;; !(toDOT
+;;   (: (. (: (Φ (: mixer.mix $a)
+;;               (: sound-spleeter.DTLOutput.accomp $b)
+;;               (: (. (: (Φ (: midi2voice-zh.singingZH $c)
+;;                           (: (. (: (machine-translation.translate (: "English" $d)
+;;                                                                   (: "Chinese" $e))
+;;                                    $f)
+;;                                 (: (. (: upload $g)
+;;                                       (: speech-recognition.s2t $h))
+;;                                    $i))
+;;                              $j)
+;;                           (: tomidi.a2m $k))
+;;                        $l)
+;;                     (: (. (: (coerce (: (STTrans (: VA $m) (: VIV $n)) $o))
+;;                              $p)
+;;                           (: sound-spleeter.DTLOutput.vocals $q))
+;;                        $r))
+;;                  $s))
+;;            $t)
+;;         (: sound-spleeter.spleeter $u))
+;;      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
 
 ;; Output the string representing a style in DOT format
 (: DOT.Style.toString (-> DOT.Style String))
@@ -729,7 +1038,7 @@
                      $attrs_repr_nl $nodes_repr_nl $edges_repr "\n}")))
 
 ;; Test DOT.toString
-;; NEXT: set random seed
+;; NEXT: set random seed and re-enable tests below
 ;; !(assertEqual
 ;;   (DOT.toString (toDOT mix))
 ;;   "digraph Flowchart {\nrankdir=BT\n\n\"mix0\" [label=\"mix\", shape=box]\n\n\n}")
@@ -755,15 +1064,60 @@
 
 ;; ;; Test DOT.println!
 ;; !(DOT.println! mix)
+;; !(DOT.println! (: f (-> A B)))
 ;; !(DOT.println! (STTrans VA VIV))
-;; !(DOT.println! (. upload speech-recognition.s2t))
-;; !(DOT.println! (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)))
-;; !(DOT.println! (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m))
-;; !(DOT.println! (. (Φ mixer.mix sound-spleeter.DTLOutput.accomp (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce IA) sound-spleeter.DTLOutput.accomp))) sound-spleeter.spleeter))
-;; NEXT: make the following work
+;; !(DOT.println! (: (STTrans VA VIV) (<: (VocalsIn "English") Audio)))
 ;; !(DOT.println! (: (STTrans (: VA (<: Vocals Audio))
 ;;                            (: VIV (<: (VocalsIn "English") Vocals)))
 ;;                   (<: (VocalsIn "English") Audio)))
+;; !(DOT.println! (. upload speech-recognition.s2t))
+;; !(DOT.println! (: (coerce (: (STTrans (: VA (<: Vocals Audio))
+;;                                       (: VIV (<: (VocalsIn "English") Vocals)))
+;;                              (<: (VocalsIn "English") Audio)))
+;;                   (-> (: $x (VocalsIn "English")) Audio)))
+;; !(DOT.println! (: (. (: speech-recognition.s2t (-> (: $y Audio) (TextIn "English")))
+;;                      (: (coerce (: (STTrans (: VA (<: Vocals Audio))
+;;                                             (: VIV (<: (VocalsIn "English") Vocals)))
+;;                                    (<: (VocalsIn "English") Audio)))
+;;                         (-> (: $x (VocalsIn "English")) Audio)))
+;;                   (-> (: $x (VocalsIn "English")) (TextIn "English"))))
+;; !(DOT.println!
+;;   (: (. (: upload (-> (: $y (TextIn "English"))
+;;                       (UniformResourceLocatorOfType (TextIn "English"))))
+;;         (: (. (: speech-recognition.s2t (-> (: $z Audio) (TextIn "English")))
+;;               (: (coerce (: (STTrans (: VA (<: Vocals Audio))
+;;                                      (: VIV (<: (VocalsIn "English") Vocals)))
+;;                             (<: (VocalsIn "English") Audio)))
+;;                  (-> (: $x (VocalsIn "English")) Audio)))
+;;            (-> (: $x (VocalsIn "English")) (TextIn "English"))))
+;;      (-> (: $x (VocalsIn "English"))
+;;          (UniformResourceLocatorOfType (TextIn "English")))))
+;; !(DOT.println! (Φ f g h))
+;; !(DOT.println! (: (Φ f g h) (-> A D)))
+;; !(DOT.println! (: (Φ (: f (-> B C D)) (: g (-> A B)) (: h (-> A C))) (-> A D)))
+;; !(DOT.println!
+;;   (: (. (: (Φ (: midi2voice-zh.singingZH
+;;                  (-> (: $y (TextIn "Chinese"))
+;;                      (: $z MusicalInstrumentDigitalInterface)
+;;                      (VocalsIn "Chinese")))
+;;               (: (. (: (machine-translation.translate
+;;                         (: "English" NaturalLanguage)
+;;                         (: "Chinese" NaturalLanguage))
+;;                        (-> (: $w (UniformResourceLocatorOfType (TextIn "English")))
+;;                            (TextIn "Chinese")))
+;;                     (: (. (: upload
+;;                              (-> (: $t (TextIn "English"))
+;;                                  (UniformResourceLocatorOfType (TextIn "English"))))
+;;                           (: speech-recognition.s2t
+;;                              (-> (: $u Audio) (TextIn "English"))))
+;;                        (-> (: $u Audio)
+;;                            (UniformResourceLocatorOfType (TextIn "English")))))
+;;                  (-> (: $u Audio) (TextIn "Chinese")))
+;;               (: tomidi.a2m (-> (: $u Audio) MusicalInstrumentDigitalInterface)))
+;;            (-> (: $u Audio) (VocalsIn "Chinese")))
+;;         (: (coerce (: SIA (<: (SongIn $l) Audio)))
+;;            (-> (: $x (SongIn $l)) Audio)))
+;;      (-> (: $x (SongIn $l)) (VocalsIn "Chinese"))))
 
 ;;;;;;;;;;;;;
 ;; Uncurry ;;
