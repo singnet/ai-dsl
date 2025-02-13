@@ -1409,9 +1409,9 @@
 (= (type-annotated-bc $kb
                       (S $k)
                       (: (Φ (: $f (-> (: $y $b) (: $z $c) $d))
-                            (: $g (-> (: $x $a) $b)
+                            (: $g (-> (: $x $a) $b))
                             (: $h (-> (: $x $a) $c)))
-                         (-> (: $x $a) $d))))
+                         (-> (: $x $a) $d)))
    (let* (;; Recurse on f
           ((: $f (-> (: $y $b) (: $z $c) $d))
            (type-annotated-bc $kb $k (: $f (-> (: $y $b) (: $z $c) $d))))
@@ -1424,9 +1424,9 @@
      ;; Make sure $a, $b, $c and $d are subtypes of Data
      (when (and (isData $a) (and (isData $b) (and (isData $c) (isData $d))))
        (: (Φ (: $f (-> (: $y $b) (: $z $c) $d))
-             (: $g (-> (: $x $a) $b)
-                (: $h (-> (: $x $a) $c)))
-             (-> (: $x $a) $d))))))
+             (: $g (-> (: $x $a) $b))
+             (: $h (-> (: $x $a) $c)))
+          (-> (: $x $a) $d)))))
 
 ;; Recursive step for machine-translation.translate.  The point of
 ;; embedding the machine-translation.translate call in the backward
