@@ -2367,6 +2367,41 @@
         (coerce SIA))
      (-> (: $x (SongIn $l)) (VocalsIn "Chinese"))))
 
+;; Like above but doing type inference using type-annotated-bc
+!(assertAlphaEqual
+  (type-annotated-bc
+   &kb
+   (fromNumber 4)
+   (: (. (: (Φ (: midi2voice-zh.singingZH $a)
+               (: (. (: (machine-translation.translate (: "English" $b)
+                                                       (: "Chinese" $c)) $d)
+                     (: (. (: upload $e) (: speech-recognition.s2t $f)) $g)) $h)
+               (: tomidi.a2m $i)) $j)
+         (: (coerce (: SIA $k)) $m))
+      (-> (: $x (SongIn $l)) (VocalsIn "Chinese"))))
+  (: (. (: (Φ (: midi2voice-zh.singingZH
+                 (-> (: $y (TextIn "Chinese"))
+                     (: $z MusicalInstrumentDigitalInterface)
+                     (VocalsIn "Chinese")))
+              (: (. (: (machine-translation.translate
+                        (: "English" NaturalLanguage)
+                        (: "Chinese" NaturalLanguage))
+                       (-> (: $w (UniformResourceLocatorOfType (TextIn "English")))
+                           (TextIn "Chinese")))
+                    (: (. (: upload
+                             (-> (: $t (TextIn "English"))
+                                 (UniformResourceLocatorOfType (TextIn "English"))))
+                          (: speech-recognition.s2t
+                             (-> (: $u Audio) (TextIn "English"))))
+                       (-> (: $u Audio)
+                           (UniformResourceLocatorOfType (TextIn "English")))))
+                 (-> (: $u Audio) (TextIn "Chinese")))
+              (: tomidi.a2m (-> (: $u Audio) MusicalInstrumentDigitalInterface)))
+           (-> (: $u Audio) (VocalsIn "Chinese")))
+        (: (coerce (: SIA (<: (SongIn $l) Audio)))
+           (-> (: $x (SongIn $l)) Audio)))
+     (-> (: $x (SongIn $l)) (VocalsIn "Chinese"))))
+
 ;; ;; Synthesize all AI service composition going from (SongIn "English")
 ;; ;; to (SongIn "Chinese").  Sort by lengths and select the top 10.
 ;; ;; !(assertEqual  ; Re-enable on assert contain is supported
@@ -2377,6 +2412,156 @@
                                     (: $prg
                                        (-> (: $x (SongIn "English"))
                                            (SongIn "Chinese")))););)))
+
+;; One the solutions above but slightly simplified
+!(assertAlphaEqual
+  (type-annotated-bc
+   &kb
+   (fromNumber 5)
+   (: (Φ (: mixer.mix $a)
+         (: sound-spleeter.DTLOutput.accomp $b)
+         (: (. (: (Φ (: midi2voice-zh.singingZH $c)
+                     (: (. (: (machine-translation.translate (: "English" $d)
+                                                             (: "Chinese" $e))
+                              $f)
+                           (: (. (: upload $g)
+                                 (: speech-recognition.s2t $h))
+                              $i))
+                        $j)
+                     (: tomidi.a2m $k))
+                  $l)
+               (: (. (: (coerce (: (STTrans (: VA $m) (: VIV $n)) $o))
+                        $p)
+                     (: sound-spleeter.DTLOutput.vocals $q))
+                  $r))
+            $s))
+      $t))
+  (: (Φ (: mixer.mix (-> (: $x Instrumental)
+                         (: $y (VocalsIn "Chinese"))
+                         (SongIn "Chinese")))
+        (: sound-spleeter.DTLOutput.accomp
+           (-> (: $z (sound-spleeter.DTLOutput $l)) Instrumental))
+        (: (. (: (Φ (: midi2voice-zh.singingZH
+                       (-> (: $w (TextIn "Chinese"))
+                           (: $u MusicalInstrumentDigitalInterface)
+                           (VocalsIn "Chinese")))
+                    (: (. (: (machine-translation.translate
+                              (: "English" NaturalLanguage)
+                              (: "Chinese" NaturalLanguage))
+                             (-> (: $s (UniformResourceLocatorOfType
+                                              (TextIn "English")))
+                                 (TextIn "Chinese")))
+                          (: (. (: upload
+                                   (-> (: $t (TextIn "English"))
+                                       (UniformResourceLocatorOfType
+                                        (TextIn "English"))))
+                                (: speech-recognition.s2t
+                                   (-> (: $i Audio)
+                                       (TextIn "English"))))
+                             (-> (: $i Audio)
+                                 (UniformResourceLocatorOfType
+                                  (TextIn "English")))))
+                       (-> (: $i Audio)
+                           (TextIn "Chinese")))
+                    (: tomidi.a2m
+                       (-> (: $i Audio)
+                           MusicalInstrumentDigitalInterface)))
+                 (-> (: $i Audio)
+                     (VocalsIn "Chinese")))
+              (: (. (: (coerce (: (STTrans (: VA (<: Vocals Audio))
+                                           (: VIV (<: (VocalsIn $l) Vocals)))
+                                  (<: (VocalsIn $l) Audio)))
+                       (-> (: $j (VocalsIn $l)) Audio))
+                    (: sound-spleeter.DTLOutput.vocals
+                       (-> (: $z (sound-spleeter.DTLOutput $l))
+                           (VocalsIn $l))))
+                 (-> (: $z (sound-spleeter.DTLOutput $l))
+                     Audio)))
+           (-> (: $z
+                  (sound-spleeter.DTLOutput $l))
+               (VocalsIn "Chinese"))))
+     (-> (: $z (sound-spleeter.DTLOutput $l)) (SongIn "Chinese"))))
+
+;; NEXT: make the following two calls terminate
+
+;; One of the solutions from above but doing type inference using
+;; type-annotated-bc
+;; !(assertAlphaEqual
+  !(type-annotated-bc
+   &kb
+   (fromNumber 6)
+   (: (. (: (Φ (: mixer.mix $a)
+               (: sound-spleeter.DTLOutput.accomp $b)
+               (: (. (: (Φ (: midi2voice-zh.singingZH $c)
+                           (: (. (: (machine-translation.translate (: "English" $d)
+                                                                   (: "Chinese" $e))
+                                    $f)
+                                 (: (. (: upload $g)
+                                       (: speech-recognition.s2t $h))
+                                    $i))
+                              $j)
+                           (: tomidi.a2m $k))
+                        $l)
+                     (: (. (: (coerce (: (STTrans (: VA $m) (: VIV $n)) $o))
+                              $p)
+                           (: sound-spleeter.DTLOutput.vocals $q))
+                        $r))
+                  $s))
+            $t)
+         (: sound-spleeter.spleeter $u))
+      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+
+;; Like above but provide types when possible
+  !(type-annotated-bc
+   &kb
+   (fromNumber 6)
+   (: (. (: (Φ (: mixer.mix (-> (: $x Instrumental)
+                                (: $y (VocalsIn "Chinese"))
+                                (SongIn "Chinese")))
+               (: sound-spleeter.DTLOutput.accomp
+                  (-> (: $z (sound-spleeter.DTLOutput $l)) Instrumental))
+               (: (. (: (Φ (: midi2voice-zh.singingZH
+                              (-> (: $w (TextIn "Chinese"))
+                                  (: $u MusicalInstrumentDigitalInterface)
+                                  (VocalsIn "Chinese")))
+                           (: (. (: (machine-translation.translate
+                                     (: "English" NaturalLanguage)
+                                     (: "Chinese" NaturalLanguage))
+                                    (-> (: $s (UniformResourceLocatorOfType
+                                               (TextIn "English")))
+                                        (TextIn "Chinese")))
+                                 (: (. (: upload
+                                          (-> (: $t (TextIn "English"))
+                                              (UniformResourceLocatorOfType
+                                               (TextIn "English"))))
+                                       (: speech-recognition.s2t
+                                          (-> (: $i Audio)
+                                              (TextIn "English"))))
+                                    (-> (: $i Audio)
+                                        (UniformResourceLocatorOfType
+                                         (TextIn "English")))))
+                              (-> (: $i Audio)
+                                  (TextIn "Chinese")))
+                           (: tomidi.a2m
+                              (-> (: $i Audio)
+                                  MusicalInstrumentDigitalInterface)))
+                        (-> (: $i Audio)
+                            (VocalsIn "Chinese")))
+                     (: (. (: (coerce (: (STTrans (: VA (<: Vocals Audio))
+                                                  (: VIV (<: (VocalsIn $l) Vocals)))
+                                         (<: (VocalsIn $l) Audio)))
+                              (-> (: $j (VocalsIn $l)) Audio))
+                           (: sound-spleeter.DTLOutput.vocals
+                              (-> (: $z (sound-spleeter.DTLOutput $l))
+                                  (VocalsIn $l))))
+                 (-> (: $z (sound-spleeter.DTLOutput $l))
+                     Audio)))
+                  (-> (: $z
+                         (sound-spleeter.DTLOutput $l))
+                      (VocalsIn "Chinese"))))
+            (-> (: $z (sound-spleeter.DTLOutput $l)) (SongIn "Chinese")))
+         (: sound-spleeter.spleeter (-> (: $song (SongIn $m)) (sound-spleeter.DTLOutput $m))))
+      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
 
 ;; ;; The first 6 candidates are printed in DOT format
 ;; !(DOT.println! (: (. (Φ mixer.mix sound-spleeter.DTLOutput.accomp (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce IA) sound-spleeter.DTLOutput.accomp))) sound-spleeter.spleeter) (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
