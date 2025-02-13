@@ -1950,7 +1950,7 @@
 ;; ;; Phoenix β-reduction.
 ;; ;;
 ;; ;; That rules is not recommended because it results in a duplication
-;; ;; of $x.  It is therefor disabled during AI-service composition
+;; ;; of $x.  It is therefore disabled during AI-service composition
 ;; ;; synthesis.
 ;; (= ((Φ $f $g $h) $x) (($f ($g $x)) ($h $x)))
 
