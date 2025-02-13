@@ -1516,6 +1516,38 @@
               (: tomidi.a2m $i)) $j)
         (: (coerce (: SIA $k)) $m))
      (-> (: $x (SongIn $l)) (VocalsIn "Chinese"))))
+!(assertAlphaEqual
+  (add-type-annotation-holes
+   (: (. (Φ mixer.mix
+            sound-spleeter.DTLOutput.accomp
+            (. (Φ midi2voice-zh.singingZH
+                  (. (machine-translation.translate "English" "Chinese")
+                     (. upload speech-recognition.s2t))
+                  tomidi.a2m)
+               (. (coerce (STTrans VA VIV))
+                  sound-spleeter.DTLOutput.vocals)))
+         sound-spleeter.spleeter)
+      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+  (: (. (: (Φ (: mixer.mix $a)
+              (: sound-spleeter.DTLOutput.accomp $b)
+              (: (. (: (Φ (: midi2voice-zh.singingZH $c)
+                          (: (. (: (machine-translation.translate (: "English" $d)
+                                                                  (: "Chinese" $e))
+                                   $f)
+                                (: (. (: upload $g)
+                                      (: speech-recognition.s2t $h))
+                                   $i))
+                             $j)
+                          (: tomidi.a2m $k))
+                       $l)
+                    (: (. (: (coerce (: (STTrans (: VA $m) (: VIV $n)) $o))
+                             $p)
+                          (: sound-spleeter.DTLOutput.vocals $q))
+                       $r))
+                 $s))
+           $t)
+        (: sound-spleeter.spleeter $u))
+     (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
 
 ;; Remove type annotations from a query.
 ;;
