@@ -1959,23 +1959,23 @@
 ;; to the same term.  Note that in order to pass all combinator
 ;; β-reduction rules need to be enabled.
 
-;; ;; Test that applying left associative composition reduces is
-;; ;; equivalent to applying right associative composition.
-;; !(assertEqual
-;;   ((. (. $h $g) $f) $x)
-;;   ((. $h (. $g $f)) $x))
+;; Test that applying left associative composition reduces is
+;; equivalent to applying right associative composition.
+!(assertEqual
+  ((. (. $h $g) $f) $x)
+  ((. $h (. $g $f)) $x))
 
-;; ;; Test that applying (Φ (. $f $g) $j (. $h (. $i $j)))
-;; ;; once is equivalent to (Φ $f (. $g $j) (. $h (. $i $j)))
-;; !(assertEqual
-;;   ((Φ (. $f $g) $j (. $h (. $i $j))) $x)
-;;   ((Φ $f (. $g $j) (. $h (. $i $j))) $x))
+;; Test that applying (Φ (. $f $g) $j (. $h (. $i $j)))
+;; once is equivalent to (Φ $f (. $g $j) (. $h (. $i $j)))
+!(assertEqual
+  ((Φ (. $f $g) $j (. $h (. $i $j))) $x)
+  ((Φ $f (. $g $j) (. $h (. $i $j))) $x))
 
-;; ;; Test that applying (Φ $f (. $g $j) (. $h (. $i $j))) once is
-;; ;; equivalent to (. (Φ $f $g (. $h $i)) $j)
-;; !(assertEqual
-;;   ((Φ $f (. $g $j) (. $h (. $i $j))) $x)
-;;   ((. (Φ $f $g (. $h $i)) $j) $x))
+;; Test that applying (Φ $f (. $g $j) (. $h (. $i $j))) once is
+;; equivalent to (. (Φ $f $g (. $h $i)) $j)
+!(assertEqual
+  ((Φ $f (. $g $j) (. $h (. $i $j))) $x)
+  ((. (Φ $f $g (. $h $i)) $j) $x))
 
 ;; Right associate composition, meaning
 ;;
