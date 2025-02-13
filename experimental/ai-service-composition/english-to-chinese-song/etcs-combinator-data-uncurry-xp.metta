@@ -1355,7 +1355,7 @@
 (: type-annotated-bc (-> $a                      ; Knowledge base space
                          Nat                     ; Maximum depth
                          $b                      ; Query
-                         $b))                     Result
+                         $b))                    ; Result
 
 ;; Base cases: match the knowledge base
 (= (type-annotated-bc $kb $_ (: $prf $thrm))
