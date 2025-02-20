@@ -2415,7 +2415,8 @@
                                        (-> (: $x (SongIn "English"))
                                            (SongIn "Chinese")))););)))
 
-;; One the solutions above but slightly simplified
+;; Infer the type annotations of one of the solutions above but
+;; slightly simplified
 !(assertAlphaEqual
   (type-annotated-bc
    &kb
