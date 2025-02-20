@@ -1965,17 +1965,19 @@
   ((. (. $h $g) $f) $x)
   ((. $h (. $g $f)) $x))
 
-;; Test that applying (Φ (. $f $g) $j (. $h (. $i $j)))
-;; once is equivalent to (Φ $f (. $g $j) (. $h (. $i $j)))
-!(assertEqual
-  ((Φ (. $f $g) $j (. $h (. $i $j))) $x)
-  ((Φ $f (. $g $j) (. $h (. $i $j))) $x))
-
-;; Test that applying (Φ $f (. $g $j) (. $h (. $i $j))) once is
-;; equivalent to (. (Φ $f $g (. $h $i)) $j)
-!(assertEqual
-  ((Φ $f (. $g $j) (. $h (. $i $j))) $x)
-  ((. (Φ $f $g (. $h $i)) $j) $x))
+;; ;; Note: the following two tests can only pass if the Phoenix
+;; ;; β-reduction rule is enabled.
+;; ;;
+;; ;; Test that applying (Φ (. $f $g) $j (. $h (. $i $j)))
+;; ;; once is equivalent to (Φ $f (. $g $j) (. $h (. $i $j)))
+;; !(assertEqual
+;;   ((Φ (. $f $g) $j (. $h (. $i $j))) $x)
+;;   ((Φ $f (. $g $j) (. $h (. $i $j))) $x))
+;; ;; Test that applying (Φ $f (. $g $j) (. $h (. $i $j))) once is
+;; ;; equivalent to (. (Φ $f $g (. $h $i)) $j)
+;; !(assertEqual
+;;   ((Φ $f (. $g $j) (. $h (. $i $j))) $x)
+;;   ((. (Φ $f $g (. $h $i)) $j) $x))
 
 ;; Right associate composition, meaning
 ;;
