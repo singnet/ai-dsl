@@ -1,0 +1,369 @@
+%% Technical Report for the work on the AI-DSL over 2024
+
+\documentclass[]{report}
+\usepackage{url}
+\usepackage{minted}
+\usepackage[textsize=footnotesize]{todonotes}
+\newcommand{\kabir}[2][]{\todo[color=yellow,author=kabir, #1]{#2}}
+\newcommand{\nil}[2][]{\todo[color=purple,author=nil, #1]{#2}}
+\usepackage[hyperindex,breaklinks]{hyperref}
+\usepackage{breakurl}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=false,frame=single}
+\usepackage{float}
+\restylefloat{table}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage[skip=0pt]{subcaption}
+\usepackage{circledsteps}
+
+\begin{document}
+
+\title{AI-DSL Technical Report 2024}
+\author{Nil Geisweiller}
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+
+\tableofcontents
+
+\chapter{Introduction}
+
+During the middle of 2023 it became apparent that MeTTa~\cite{MeTTa}
+could soon be used instead of Idris~\cite{Idris} for program
+synthesis.  Around the end of 2023 a general purpose
+chainer~\cite{Chaining} was developed and improved throughout 2024 and
+we thus began experimenting with it to synthesize AI service
+compositions.  In this document we will go over the work that was done
+in order to accomplished such a feat.  It can be summarized as
+follows:
+\begin{itemize}
+\item Develop and improve a general purpose chainer in MeTTa
+  supporting backward, forward and in fact \emph{omniward} chaining
+  and can handle dependent types.
+\item Develop a SingularityNET Market Place crawler to gather
+  information about AI services and convert that information into
+  MeTTa specifications.
+\item Extensively experiment with AI service composition using the
+  aforementioned chainer.  Various AI service composition
+  representations (including lambda abstraction and combinatory logic)
+  were explored, as well as the tractability of the corresponding
+  synthesis processes.
+\item Prototype an AI-DSL ontology in MeTTa.
+\item Implement a MeTTa to DOT converter to graphically display
+  synthesized AI service compositions.
+\end{itemize}
+At the end of this process we finally managed to efficiently
+synthesize the English to Chinese Song test case described
+in~\cite{AIDSLService2023} (an add-on to the technical report of
+2022~\cite{AIDSLReport2022}).  By itself this is of course very
+promising.  It should be mentioned though that, in order to make the
+synthesis tractable, only the services involved in that composition
+were considered in the knowledge base fed to the chainer.  Attempting
+to perform such synthesis while considering all available AI services
+will be the subject of the next round of work on the AI-DSL.
+
+\chapter{Program Synthesis in MeTTa}
+
+In this chapter I will explain how program synthesis can be done in
+MeTTa and go over the various backward chainers I have prototyped
+during 2023 and 2024.  This will come handy for
+Chapter~\ref{chap:xpaicompo} which goes over a number of experiments
+on AI service compositions based on these chainers.  Why backward
+chaining, you may ask?  Because it allows to go from theorems to
+axioms.  In the context of AI service composition, a theorem would be
+the formal specification of an overall AI service composition, such
+as\\
+
+\emph{Turn any English song into a corresponding Chinese one}\\[0.4cm]
+and the axioms would be the formal specification of every AI service
+involved in the composition, such as
+\begin{itemize}
+\item \emph{Convert speech to text.}
+\item \emph{Translate English to Chinese.}
+\item \emph{Turn Audio into MIDI.}
+\item $\dots$
+\end{itemize}
+Then the backward chainer would take the overall specification and
+combine existing AI services to fulfill it altogether.  Going forward
+could be useful as well but for a different type of queries, such as\\
+
+\emph{Given all these AI services, what can you come up with by
+combining them?}\\[0.4cm] and the forward chainer would combine them
+to form random, albeit valid, compositions and provide their formal
+specifications.  Then there is everything between forward and backward
+chaining, what I call \emph{omni} chaining.  For instance, the query
+could provide an incomplete specification of the overall composition,
+alongside some AI services which should be involved, and let the omni
+chainer come up with completions of such specifications using the
+provided AI services.  My prototypes cover all of these possibilities,
+but in this report I will only focus on backward chaining because that
+is what I exclusively used for the AI-DSL work so far.
+\section{Curried Backward Chainer}
+
+Let us begin with the Curried Backward Chainer, the simplest of them
+all.  The curried backward chainer is simple because it assumes that
+there is only one way to construct terms, using unary function
+application.  In this context a term an AI service composition, and
+can be either
+\begin{itemize}
+\item a constant,
+\item or a term applied to a term.
+\end{itemize}
+A constant could represent a value such as \mintinline{scheme}{42}, or
+a function like a standalone AI service such as
+\mintinline{scheme}{speech2text}.  In an application, the first term
+must correspond to a unary function, such as \mintinline{scheme}{foo},
+and the second term must correspond to its argument, such as
+\mintinline{scheme}{42}, resulting in an application such as
+\mintinline{scheme}{(foo 42)}.  Emulating n-ary application can be
+done by considering higher order unary functions.  For instance
+\mintinline{scheme}{(+ 1 2)} can be represented in curried format by
+\mintinline{scheme}{((+ 1) 2)}.  Contrary to most functional
+programming languages, currying is not handled automatically in MeTTa,
+thus a non-curried version of \mintinline{scheme}{+} would be typed
+\begin{minted}{scheme}
+  (-> Number Number Number)
+\end{minted}
+while a curried version would be typed
+\begin{minted}{scheme}
+  (-> Number (-> Number Number))
+\end{minted}
+In the curried backward chainer, all functions are assumed to be unary
+and that is how currying is handled.  As per the Curry-Howard
+correspondence, functions on the programming side correspond to
+inference rules on the logical side, so our curried backward chainer
+can also handle synthesizing proofs, not just programs.  The AI-DSL
+actually uses both sides at the same time producing AI service
+compositions containing programs and proofs.  Why on earth would we
+want that is explained in detail in Chapter~\ref{chap:xpaicompo}.\\
+
+The MeTTa implementation of the curried backward chainer can be found
+in~\cite{CurriedBackwardChainer} is given in full below\pagebreak
+\begin{minted}{scheme}
+;; Curried Backward Chainer type signature
+(: bc (-> $a                            ; Knowledge base space
+          Nat                           ; Maximum depth
+          $b                            ; Query
+          $b))                          ; Result
+
+;; Base case
+(= (bc $kb $_ (: $prf $ccln))
+   (match $kb (: $prf $ccln) (: $prf $ccln)))
+
+;; Recursive step
+(= (bc $kb (S $k) (: ($prfabs $prfarg) $ccln))
+   (let* (;; Recursive call on function
+          ((: $prfabs (-> $prms $ccln))
+           (bc $kb $k (: $prfabs (-> $prms $ccln))))
+          ;; Recursive call on argument
+          ((: $prfarg $prms)
+           (bc $kb $k (: $prfarg $prms))))
+     ;; Query with holes filled
+     (: ($prfabs $prfarg) $ccln)))
+\end{minted}
+Let us walk over that code.
+\begin{enumerate}
+\item The type signature takes
+  \begin{itemize}
+  \item A knowledge base containing the axioms, which can in fact be
+    viewed as the rewrite rules as well.  In a way the knowledge base
+    contains the description of the logic the backward chainer is
+    going to operate on.
+  \item A maximum depth corresponding to the maximum depth of the
+    syntax tree that the backward chainer is allowed to produce.
+  \item A query of the form
+    \begin{minted}{scheme}
+      (: TERM TYPE)
+    \end{minted}
+    indicating that \mintinline{scheme}{TERM} is of type
+    \mintinline{scheme}{TYPE}.  The query may contains free variables
+    representing holes that the backward chainer must fill.  For
+    instance if the query is
+    \begin{minted}{scheme}
+      (: $prg (-> Number String))
+    \end{minted}
+    there is one big hole, \mintinline{scheme}{$prg}, in place of the
+    term, indicating that the backward chainer must find a program
+    with the type signature
+    \begin{minted}{scheme}
+      (-> Number String)
+    \end{minted}
+    The same backward chainer can be used to infer a type if the hole is
+    placed on type.  For instance the query
+    \begin{minted}{scheme}
+      (: (foo 42) $type)
+    \end{minted}
+    indicates that the backward chainer must infer the type of
+    \mintinline{scheme}{(foo 42)}.  Holes can be placed anywhere and
+    at any depth across the term and the type of the query, such as
+    \begin{minted}{scheme}
+      (: (+ $val) (-> $input Number))
+    \end{minted}
+    and the backward chainer must attempt to fill the holes
+    regardless.  Each result returned will be the query itself with
+    the holes filled.  If more than one result exists then the
+    backward chainer will return a superposition of results.
+  \end{itemize}
+\item The base case
+  \begin{minted}{scheme}
+    (match $kb (: $prf $ccln) (: $prf $ccln)))
+  \end{minted}
+  is simply a match query over the knowledge base. If the query is an
+  axiom, then it returns it.  If it matches several axioms, then it
+  returns a superposition of all matches.
+\item The recursive step occurs if the query is of the form
+  \begin{minted}{scheme}
+    (: ($prfabs $prfarg) $ccln)
+  \end{minted}
+  corresponding to a unary application, and the depth is greater than
+  zero, enforced by having to match the depth argument
+  \mintinline{scheme}{(S $k)}.  If the backward chainer enters that
+  call, then it breaks up the query into two subqueries:
+  \begin{enumerate}
+  \item one to discover \mintinline{scheme}{$prfabs}, the function,
+  \item the other to discover \mintinline{scheme}{$prfarg}, the
+    argument.
+  \end{enumerate}
+  \mintinline{scheme}{$prfabs} stands for \emph{proof abstraction},
+  reflecting the idea that it is a function that takes a proof in
+  input and outputs a proof, merely corresponding to a regular
+  function on the programming side of the Curry-Howard isomorphism.
+  And \mintinline{scheme}{$prfarg} stands for \emph{proof argument},
+  reflecting the idea that it is an argument provided to a proof
+  abstraction.  On the logical side of the Curry-Howard
+  correspondence, you can roughly think of
+  \mintinline{scheme}{$prfabs} as being an inference rule, while
+  \mintinline{scheme}{$prfarg} being the proof of a premise of that
+  inference rule.  I say roughly because \mintinline{scheme}{$prfabs}
+  may not just be an inference rule, it can be more general than that,
+  a proof function that takes in input a proof and outputs a proof, or
+  \emph{proof abstraction} as I like to say, which you can think as a
+  composite inference rule.  The broken up query to discover the
+  function is
+  \begin{minted}{scheme}
+    (bc $kb $k (: $prfabs (-> $prms $ccln)))
+  \end{minted}
+  ordering the backward chainer to look for a proof abstraction that,
+  if given a proof of a premise, \mintinline{scheme}{$prms}, to be
+  discovered as well, then it outputs a proof of
+  \mintinline{scheme}{$ccln}, the conclusion.  The broken up query to
+  discover the argument is
+  \begin{minted}{scheme}
+    (bc $kb $k (: $prfarg $prms))
+  \end{minted}
+  ordering the backward chainer to look for a proof of the premise
+  \mintinline{scheme}{$prms}.
+\end{enumerate}
+One may notice that, unlike function definitions in regular functional
+programming languages, the base case is not constrained by its depth.
+In the base case of this MeTTa program, \mintinline{scheme}{$_} does
+not mean \emph{otherwise}, it means \emph{any time}.  The
+non-determinism of MeTTa allows both the base case and the recursive
+step to be taken simultaneously.  The resulting effect is that a call
+of \mintinline{scheme}{bc} can bottom down at any depth up to the
+maximum depth, producing proof trees of any size up to the maximum
+depth.  Let us now provide an example.  First, let us fill the
+knowledge with a theory
+\begin{minted}{scheme}
+;; Knowledge base
+!(bind! &kb (new-space))
+!(add-atom &kb (: 42 Number))
+!(add-atom &kb (: foo (-> Number String)))
+!(add-atom &kb (: bar (-> String Bool)))
+!(add-atom &kb (: . (-> (-> $b $c) (-> (-> $a $b) (-> $a $c)))))
+\end{minted}
+That theory expresses that \mintinline{scheme}{42} is a number,
+provides two casting functions, one from \mintinline{scheme}{Number}
+to \mintinline{scheme}{String}, called \mintinline{scheme}{foo}, and
+the other one from \mintinline{scheme}{String} to
+\mintinline{scheme}{Bool}, called \mintinline{scheme}{bar}.  Finally,
+it provides a higher order composition operator \mintinline{scheme}{.}
+also called the \emph{Bluebird} combinator in~\cite{TODO}.  Given that
+theory we can now call the backward chainer with a few queries.  For
+starter, let us infer the type of 42.
+\begin{minted}{scheme}
+;; Infer the type of 42
+!(bc &kb Z (: 42 $type))
+\end{minted}
+which outputs
+\begin{minted}{scheme}
+[(: 42 Number)]
+\end{minted}
+Next, let us synthesize terms of type \mintinline{scheme}{String}
+\begin{minted}{scheme}
+;; Synthesize terms of type String
+!(bc &kb (S Z) (: $prg String))
+\end{minted}
+which outputs
+\begin{minted}{scheme}
+[(: (foo 42) String)]
+\end{minted}
+The depth for this query must be at least 1, represented by
+\mintinline{scheme}{(S Z)} as \mintinline{scheme}{Nat}, because the
+term to be synthesized is a function application requiring to enter
+the recursive step of \mintinline{scheme}{bc} at least once.  Finally,
+let us synthesize all unary functions that outputs a Boolean value.
+\begin{minted}{scheme}
+;; Synthesize all functions that output a Boolean value
+!(bc &kb (S (S Z)) (: $prg (-> $intput Bool)))
+\end{minted}
+which outputs the superposition of two solutions
+\begin{minted}{scheme}
+[(: ((. bar) foo) (-> Number Bool)),
+ (: bar (-> String Bool))]
+\end{minted}
+one turning a number into a Boolean value,
+\mintinline{scheme}{((. bar) foo)}, the other one turning a string
+into a Boolean value, \mintinline{scheme}{bar}.\\
+
+To understand what is going on I recommend to run that code while
+tracing the calls.  Below is the trace for the last query that I have
+commented {\footnotesize
+\begin{minted}{scheme}
+  ;; Original call (base case entry)
+  (bc-bas (S (S Z)) (: $prg (-> $intput Bool)))
+  ;; Original call (recursive step entry)
+  (bc-rec (S (S Z)) (: $prf#253 (-> $intput Bool)))
+  ;; First recursive call on function (base case entry)
+  (bc-bas (S Z) (: $prfabs#250 (-> $prms#254 (-> $intput Bool))))
+  ;; First recursive call on argument (recursive step entry)
+  (bc-rec (S Z) (: $prf#858 (-> $prms#254 (-> $intput Bool))))
+  ;; Second recursive call on function (base case entry)
+  (bc-bas Z (: $prfabs#855 (-> $prms#859 (-> $prms#254 (-> $intput Bool)))))
+  ;; Second recursive call on argument (base case entry)
+  (bc-bas Z (: $prfarg#856 (-> $b#1753 Bool)))
+  ;; First recursive call on argument (base case entry)
+  (bc-bas (S Z) (: $prfarg#251 (-> $intput String)))
+  ;; First recursive call on argument (recursive step entry)
+  (bc-rec (S Z) (: $prf#2654 (-> $intput String)))
+  ;; Second recursive call on function (base case entry)
+  (bc-bas Z (: $prfabs#2651 (-> $prms#2655 (-> $intput String))))
+\end{minted}
+}
+NEXT: arrange in tree like trace
+
+\chapter{Crawling the SingularityNET Market Place}
+
+\chapter{Experimenting with AI Service Composition in MeTTa}
+\label{chap:xpaicompo}
+
+\section{AI-DSL Ontology}
+
+\chapter{Conclusion}
+
+\section{Acknowledgments}
+
+Thanks to Matt Ikle and Khellar Crawford for our numerous discussions.
+Thanks to Remy Clarke for mentioning APL and BQN.  Thanks to Douglas
+Miles and his team for making MeTTaLog without which that work would
+not have been possible.
+
+%% \appendix
+%% \chapter{Glossary}
+
+\bibliographystyle{splncs04} \bibliography{local}
+
+\end{document}
