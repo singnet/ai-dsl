@@ -319,32 +319,58 @@ one turning a number into a Boolean value,
 \mintinline{scheme}{((. bar) foo)}, the other one turning a string
 into a Boolean value, \mintinline{scheme}{bar}.\\
 
-To understand what is going on I recommend to run that code while
-tracing the calls.  Below is the trace for the last query that I have
-commented {\footnotesize
+To help you understand what is going I have printed the trace of the
+\mintinline{scheme}{bc} call of the last query, showing only the
+queries formatted as a call tree and commented\\
+\begin{footnotesize}
 \begin{minted}{scheme}
-  ;; Original call (base case entry)
-  (bc-bas (S (S Z)) (: $prg (-> $intput Bool)))
-  ;; Original call (recursive step entry)
-  (bc-rec (S (S Z)) (: $prf#253 (-> $intput Bool)))
-  ;; First recursive call on function (base case entry)
-  (bc-bas (S Z) (: $prfabs#250 (-> $prms#254 (-> $intput Bool))))
-  ;; First recursive call on argument (recursive step entry)
-  (bc-rec (S Z) (: $prf#858 (-> $prms#254 (-> $intput Bool))))
-  ;; Second recursive call on function (base case entry)
-  (bc-bas Z (: $prfabs#855 (-> $prms#859 (-> $prms#254 (-> $intput Bool)))))
-  ;; Second recursive call on argument (base case entry)
-  (bc-bas Z (: $prfarg#856 (-> $b#1753 Bool)))
-  ;; First recursive call on argument (base case entry)
-  (bc-bas (S Z) (: $prfarg#251 (-> $intput String)))
-  ;; First recursive call on argument (recursive step entry)
-  (bc-rec (S Z) (: $prf#2654 (-> $intput String)))
-  ;; Second recursive call on function (base case entry)
-  (bc-bas Z (: $prfabs#2651 (-> $prms#2655 (-> $intput String))))
+| ;; Original call, base case, succeeds (match bar)
+|-(bc-bas (S (S Z)) (: $prg (-> $intput Bool)))
+| ;; Original call, recursive step
+|-(bc-rec (S (S Z)) (: ($prfabs#219 $prfarg#220) (-> $intput Bool)))
+  | ;; First recursive call on function, base case, fails
+  |-(bc-bas (S Z) (: $prfabs#219 (-> $prms#222 (-> $intput Bool))))
+  | ;; First recursive call on function, recursive step
+  |-(bc-rec (S Z) (: ($prfabs#730 $prfarg#731) (-> $prms#222 (-> $intput Bool))))
+  | | ;; Second recursive call on function, base case, succeeds (match .)
+  | |-(bc-bas Z (: $prfabs#730 (-> $prms#733 (-> $prms#222 (-> $intput Bool)))))
+  | | ;; Second recursive call on argument, base case, succeeds (match bar)
+  | |-(bc-bas Z (: $prfarg#731 (-> $b#1364 Bool)))
+  | ;; First recursive call on argument, base case, succeeds (match foo)
+  |-(bc-bas (S Z) (: $prfarg#220 (-> $intput String)))
+  | ;; First recursive call on argument, recursive step
+  |-(bc-rec (S Z) (: ($prfabs#2202 $prfarg#2203) (-> $intput String)))
+    | ;; Second recursive call on function, base case, fails
+    |-(bc-bas Z (: $prfabs#2202 (-> $prms#2205 (-> $intput String))))
 \end{minted}
-}
-NEXT: arrange in tree like trace
+\end{footnotesize} Upon the second recursive call on function, entering the base case
+\begin{small}
+\begin{minted}{scheme}
+(bc-bas Z (: $prfabs#730 (-> $prms#733 (-> $prms#222 (-> $intput Bool)))))
+\end{minted}
+\end{small} the successful match of the query against
+\begin{small}
+\begin{minted}{scheme}
+(: . (-> (-> $b $c) (-> (-> $a $b) (-> $a $c))))
+\end{minted}
+\end{small}
+creates bindings which are passed upstream to
+the caller (the first recursive call on function).  As a result, by
+the time the second recursive call on argument enters the base case
+\begin{small}
+\begin{minted}{scheme}
+(bc-bas Z (: $prfarg#731 (-> $b#1364 Bool)))
+\end{minted}
+\end{small} the premise \mintinline{scheme}{$prms#733} has been substituted by
+\mintinline{scheme}{(-> $b#1364 Bool)}, this comes from
+\mintinline{scheme}{(-> $b $c)} because \mintinline{scheme}{$c} was
+unified with \mintinline{scheme}{Bool} while attempting to match
+\mintinline{scheme}{(-> $intput Bool)} against
+\mintinline{scheme}{(-> $a $c)}.\\
 
+If at this point what is going on is still unclear, I recommend to run
+the code, query by query, while tracing the function calls.  To that
+end I have included in this folder NEXT
 \chapter{Crawling the SingularityNET Market Place}
 
 \chapter{Experimenting with AI Service Composition in MeTTa}
