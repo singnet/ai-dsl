@@ -320,8 +320,17 @@ one turning a number into a Boolean value,
 into a Boolean value, \mintinline{scheme}{bar}.\\
 
 To help you understand what is going I have printed the trace of the
-\mintinline{scheme}{bc} call of the last query, showing only the
-queries formatted as a call tree and commented\\
+\mintinline{scheme}{bc} call of the last query.
+\mintinline{scheme}{bc-bas} corresponds to the base case entry,
+\mintinline{scheme}{bc-rec} corresponds to the recursive step entry.
+The knowledge base argument is missing from the trace to be more
+concise.  I have manually reconstructed the tree representing the
+recursive calls and added some comments.  Note that the tree does not
+show the distinction between non-determinism across branches and
+regular functional evaluation along one branch.  I hope the trace
+conveys what is going on in spite of that.  Obviously it would be nice
+if MeTTa could offer a tool to automatically display such trace and
+show such distinctions.\\
 \begin{footnotesize}
 \begin{minted}{scheme}
 | ;; Original call, base case, succeeds (match bar)
@@ -362,7 +371,7 @@ the time the second recursive call on argument enters the base case
 (bc-bas Z (: $prfarg#731 (-> $b#1364 Bool)))
 \end{minted}
 \end{small} the premise \mintinline{scheme}{$prms#733} has been substituted by
-\mintinline{scheme}{(-> $b#1364 Bool)}, this comes from
+\mintinline{scheme}{(-> $b#1364 Bool)}.  This comes from
 \mintinline{scheme}{(-> $b $c)} because \mintinline{scheme}{$c} was
 unified with \mintinline{scheme}{Bool} while attempting to match
 \mintinline{scheme}{(-> $intput Bool)} against
