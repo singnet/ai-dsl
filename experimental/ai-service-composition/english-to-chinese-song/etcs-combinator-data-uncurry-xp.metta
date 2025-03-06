@@ -2620,3 +2620,61 @@
 ;;                   (sound-spleeter.DTLOutput $l))
 ;;                (VocalsIn "Chinese"))))
 ;;      (-> (: $z (sound-spleeter.DTLOutput $l)) (SongIn "Chinese"))))
+
+;; ;; 3rd candidate (the solution) printed in DOT format with type
+;; ;; annotations on the edges
+;; !(DOT.println!
+;;   (: (. (: (Φ (: mixer.mix (-> (: $i Instrumental)
+;;                                (: $vc (VocalsIn "Chinese"))
+;;                                (SongIn "Chinese")))
+;;               (: sound-spleeter.DTLOutput.accomp
+;;                  (-> (: $s (sound-spleeter.DTLOutput "English"))
+;;                      Instrumental))
+;;               (: (. (: (Φ (: midi2voice-zh.singingZH
+;;                              (-> (: $tc (TextIn "Chinese"))
+;;                                  (: $m MusicalInstrumentDigitalInterface)
+;;                                  (VocalsIn "Chinese")))
+;;                           (: (. (: (machine-translation.translate
+;;                                     (: "English" NaturalLanguage)
+;;                                     (: "Chinese" NaturalLanguage))
+;;                                    (-> (: $u
+;;                                           (UniformResourceLocatorOfType
+;;                                            (TextIn "English")))
+;;                                        (TextIn "Chinese")))
+;;                                 (: (. (: upload
+;;                                          (-> (: $te (TextIn "English"))
+;;                                              (UniformResourceLocatorOfType
+;;                                               (TextIn "English"))))
+;;                                       (: speech-recognition.s2t
+;;                                          (-> (: $a Audio)
+;;                                              (TextIn "English"))))
+;;                                    (-> (: $a Audio)
+;;                                        (UniformResourceLocatorOfType
+;;                                         (TextIn "English")))))
+;;                              (-> (: $a Audio)
+;;                                  (TextIn "Chinese")))
+;;                           (: tomidi.a2m
+;;                              (-> (: $a Audio)
+;;                                  MusicalInstrumentDigitalInterface)))
+;;                        (-> (: $a Audio)
+;;                            (VocalsIn "Chinese")))
+;;                     (: (. (: (coerce
+;;                               (: (STTrans
+;;                                   (: VA (<: Vocals Audio))
+;;                                   (: VIV (<: (VocalsIn "English") Vocals)))
+;;                                  (<: (VocalsIn "English") Audio)))
+;;                              (-> (: $ve (VocalsIn "English"))
+;;                                  Audio))
+;;                           (: sound-spleeter.DTLOutput.vocals
+;;                              (-> (: $s (sound-spleeter.DTLOutput "English"))
+;;                                  (VocalsIn "English"))))
+;;                        (-> (: $s (sound-spleeter.DTLOutput "English"))
+;;                            Audio)))
+;;                  (-> (: $s (sound-spleeter.DTLOutput "English"))
+;;                      (VocalsIn "Chinese"))))
+;;            (-> (: $s (sound-spleeter.DTLOutput "English"))
+;;                (SongIn "Chinese")))
+;;         (: sound-spleeter.spleeter
+;;            (-> (: $x (SongIn "English"))
+;;                (sound-spleeter.DTLOutput "English"))))
+;;      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
