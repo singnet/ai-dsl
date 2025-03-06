@@ -737,14 +737,15 @@
       ($else (mkEmptyDOT)))))
 
 ;; Test toDOT
-;; !(set-random-seed 0)  ; NEXT: fix this, and re-enable tests below
-;; !(assertEqual
-;;   (toDOT mix)
-;;   (let $node (DOT.MkNode (DOT.MkSymbolIdentifier mix 0)
-;;                          (Cons (DOT.MkLabelAttribute "\"mix\"")
-;;                                (functionAttributes)))
-;;     (MkDOT (Cons $node Nil) Nil $node $node (globalAttributes))))
-;; !(toDOT (: f (-> A B)))
+!(set-random-seed &rng 0)
+!(assertEqual
+  (toDOT mix)
+  (MkDOT (Cons (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkNode (DOT.MkSymbolIdentifier mix 731113) (Cons (DOT.MkLabelAttribute "\"mix\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) Nil))) (Cons (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier mix 731113) (Cons (DOT.MkLabelAttribute "\"mix\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) Nil) (Cons (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier mix 731113) (Cons (DOT.MkLabelAttribute "\"mix\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) Nil) Nil)) (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT) Nil)))
+!(set-random-seed &rng 0)
+!(assertEqual
+  (toDOT (: f (-> A B)))
+  (MkDOT (Cons (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkNode (DOT.MkSymbolIdentifier f 731113) (Cons (DOT.MkLabelAttribute "\"f\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) Nil))) (Cons (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier f 731113) (Cons (DOT.MkLabelAttribute "\"f\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) (Cons (DOT.MkLabelAttribute "\"A\"") Nil)) (Cons (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier f 731113) (Cons (DOT.MkLabelAttribute "\"f\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkLabelAttribute "\"B\"") Nil)) Nil)) (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT) Nil)))
+;; TODO: re-enable as needed  (don't forget to reset the random seed at every test)
 ;; !(toDOT (STTrans VA VIV))
 ;; !(toDOT (: (STTrans VA VIV) (<: (VocalsIn "English") Audio)))
 ;; !(toDOT (: (STTrans (: VA (<: Vocals Audio))
@@ -1033,13 +1034,15 @@
                      $attrs_repr_nl $nodes_repr_nl $edges_repr "\n}")))
 
 ;; Test DOT.toString
-;; NEXT: set random seed and re-enable tests below
-;; !(assertEqual
-;;   (DOT.toString (toDOT mix))
-;;   "digraph Flowchart {\nrankdir=BT\n\n\"mix0\" [label=\"mix\", shape=box]\n\n\n}")
-;; !(assertEqual
-;;   (DOT.toString (toDOT (. f g)))
-;;   "digraph Flowchart {\nrankdir=BT\n\n\"f1\" [label=\"f\", shape=box]\n\"g10\" [label=\"g\", shape=box]\n\n\"g10\" -> \"f1\" []\n}")
+!(set-random-seed &rng 0)
+!(assertEqual
+  (DOT.toString (toDOT mix))
+  "digraph Flowchart {\nrankdir=BT\n\n\"__IN__0\" [label=\"\", shape=none]\n\"__OUT__0\" [label=\"\", shape=none]\n\"mix731113\" [label=\"mix\", shape=box]\n\n\"__IN__0\" -> \"mix731113\" []\n\"mix731113\" -> \"__OUT__0\" []\n}")
+!(set-random-seed &rng 0)
+!(assertEqual
+  (DOT.toString (toDOT (. f g)))
+  "digraph Flowchart {\nrankdir=BT\n\n\"__IN__0\" [label=\"\", shape=none]\n\"__OUT__0\" [label=\"\", shape=none]\n\"f773460\" [label=\"f\", shape=box]\n\"g731113\" [label=\"g\", shape=box]\n\n\"g731113\" -> \"f773460\" []\n\"f773460\" -> \"__OUT__0\" []\n\"__IN__0\" -> \"g731113\" []\n}")
+;; TODO: re-enable as needed (don't forget to reset the random seed at every test)
 ;; !(assertEqual
 ;;   (DOT.toString (toDOT (Φ f g h)))
 ;;   "digraph Flowchart {\nrankdir=BT\n\n\"Φ1000\" [label=\"Φ\", shape=plain]\n\"f1\" [label=\"f\", shape=box]\n\"g10\" [label=\"g\", shape=box]\n\"h100\" [label=\"h\", shape=box]\n\n\"Φ1000\" -> \"g10\" []\n\"Φ1000\" -> \"h100\" []\n\"g10\" -> \"f1\" []\n\"h100\" -> \"f1\" []\n}")
