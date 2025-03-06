@@ -2485,8 +2485,8 @@
      (-> (: $z (sound-spleeter.DTLOutput $l)) (SongIn "Chinese"))))
 
 ;; Infer the type annotations of one of the solutions from above
-;; !(assertAlphaEqual
-  !(type-annotated-bc
+!(assertAlphaEqual
+  (type-annotated-bc
    &kb
    (fromNumber 6)
    (: (. (: (Φ (: mixer.mix $a)
@@ -2509,6 +2509,60 @@
             $t)
          (: sound-spleeter.spleeter $u))
       (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+  (: (. (: (Φ (: mixer.mix (-> (: $i Instrumental)
+                               (: $vc (VocalsIn "Chinese"))
+                               (SongIn "Chinese")))
+              (: sound-spleeter.DTLOutput.accomp
+                 (-> (: $s (sound-spleeter.DTLOutput "English"))
+                     Instrumental))
+              (: (. (: (Φ (: midi2voice-zh.singingZH
+                             (-> (: $tc (TextIn "Chinese"))
+                                 (: $m MusicalInstrumentDigitalInterface)
+                                 (VocalsIn "Chinese")))
+                          (: (. (: (machine-translation.translate
+                                    (: "English" NaturalLanguage)
+                                    (: "Chinese" NaturalLanguage))
+                                   (-> (: $u
+                                          (UniformResourceLocatorOfType
+                                           (TextIn "English")))
+                                       (TextIn "Chinese")))
+                                (: (. (: upload
+                                         (-> (: $te (TextIn "English"))
+                                             (UniformResourceLocatorOfType
+                                              (TextIn "English"))))
+                                      (: speech-recognition.s2t
+                                         (-> (: $a Audio)
+                                             (TextIn "English"))))
+                                   (-> (: $a Audio)
+                                       (UniformResourceLocatorOfType
+                                        (TextIn "English")))))
+                             (-> (: $a Audio)
+                                 (TextIn "Chinese")))
+                          (: tomidi.a2m
+                             (-> (: $a Audio)
+                                 MusicalInstrumentDigitalInterface)))
+                       (-> (: $a Audio)
+                           (VocalsIn "Chinese")))
+                    (: (. (: (coerce
+                              (: (STTrans
+                                  (: VA (<: Vocals Audio))
+                                  (: VIV (<: (VocalsIn "English") Vocals)))
+                                 (<: (VocalsIn "English") Audio)))
+                             (-> (: $ve (VocalsIn "English"))
+                                 Audio))
+                          (: sound-spleeter.DTLOutput.vocals
+                             (-> (: $s (sound-spleeter.DTLOutput "English"))
+                                 (VocalsIn "English"))))
+                       (-> (: $s (sound-spleeter.DTLOutput "English"))
+                           Audio)))
+                 (-> (: $s (sound-spleeter.DTLOutput "English"))
+                     (VocalsIn "Chinese"))))
+           (-> (: $s (sound-spleeter.DTLOutput "English"))
+               (SongIn "Chinese")))
+        (: sound-spleeter.spleeter
+           (-> (: $x (SongIn "English"))
+               (sound-spleeter.DTLOutput "English"))))
+     (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
 
 ;; ;; The first 6 candidates are printed in DOT format
 ;; !(DOT.println! (: (. (Φ mixer.mix sound-spleeter.DTLOutput.accomp (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce IA) sound-spleeter.DTLOutput.accomp))) sound-spleeter.spleeter) (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
