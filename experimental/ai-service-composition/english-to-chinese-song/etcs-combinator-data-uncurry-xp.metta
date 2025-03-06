@@ -74,10 +74,24 @@
   (toList (A (A B) (A B (C D))))
   (Cons A (Cons (A B) (Cons (A B (C D)) Nil))))
 
+;; Fold a List from right to left
+(: List.foldr (-> (-> $a $b $b) $b (List $a) $b))
+(= (List.foldr $f $i Nil) $i)
+(= (List.foldr $f $i (Cons $h $t)) ($f $h (List.foldr $f $i $t)))
+
+;; Fold a List from left to right
+(: List.foldl (-> (-> $b $a $b) $b (List $a) $b))
+(= (List.foldl $f $i Nil) $i)
+(= (List.foldl $f $i (Cons $h $t)) (List.foldl $f ($f $i $h) $t))
+
 ;; Define List.append (concatenate two lists).
 (: List.append (-> (List $a) (List $a) (List $a)))
-(= (List.append Nil $ys) $ys)
-(= (List.append (Cons $x $xs) $ys) (Cons $x (List.append $xs $ys)))
+(= (List.append $xs $ys) (List.foldr Cons $ys $xs))
+
+;; Test List.append
+!(assertEqual
+  (List.append (Cons a (Cons b Nil)) (Cons c (Cons d Nil)))
+  (Cons a (Cons b (Cons c (Cons d Nil)))))
 
 ;; Overload List.append to support more than 2 arguments
 (: List.append3 (-> (List $a) (List $a) (List $a) (List $a)))
