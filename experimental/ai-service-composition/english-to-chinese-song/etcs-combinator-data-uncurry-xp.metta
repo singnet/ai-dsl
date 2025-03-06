@@ -240,7 +240,7 @@
       ($else Nothing))))
 
 (: DOT.Attribute.style (-> DOT.Attribute (Maybe DOT.Style)))
-(= (DOT.Attribute.shape $style)
+(= (DOT.Attribute.style $style)
    (case $style
      (((DOT.MkStyleAttribute $style) (Just $style))
       ($else Nothing))))
