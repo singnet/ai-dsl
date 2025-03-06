@@ -2402,16 +2402,17 @@
            (-> (: $x (SongIn $l)) Audio)))
      (-> (: $x (SongIn $l)) (VocalsIn "Chinese"))))
 
-;; ;; Synthesize all AI service composition going from (SongIn "English")
-;; ;; to (SongIn "Chinese").  Sort by lengths and select the top 10.
-;; ;; !(assertEqual  ; Re-enable on assert contain is supported
-;; !(List.sortWith termLengthLT
-;;                 (toList (collapse
-                               ;; !(limit 6
-                                !(bc &kb (fromNumber 6)
-                                    (: $prg
-                                       (-> (: $x (SongIn "English"))
-                                           (SongIn "Chinese")))););)))
+;; ;; ;; Enable this to carry out the final service composition
+;; ;; ;; Synthesize all AI service composition going from (SongIn "English")
+;; ;; ;; to (SongIn "Chinese").  Sort by lengths and select the top 10.
+;; ;; ;; !(assertEqual  ; Re-enable on assert contain is supported
+;; ;; !(List.sortWith termLengthLT
+;; ;;                 (toList (collapse
+;;                                ;; !(limit 6
+;;                                 !(bc &kb (fromNumber 6)
+;;                                     (: $prg
+;;                                        (-> (: $x (SongIn "English"))
+;;                                            (SongIn "Chinese")))););)))
 
 ;; Infer the type annotations of one of the solutions above but
 ;; slightly simplified
