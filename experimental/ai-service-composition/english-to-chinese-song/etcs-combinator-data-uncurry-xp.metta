@@ -5,11 +5,6 @@
 ;; Utils ;;
 ;;;;;;;;;;;
 
-;; Set the random seed of the random generator
-(= (set-random-seed $s)
-   (call-p setrand $s))
-   ;; (call-p set_random [seed $s]))
-
 ;; Run the code if the condition is true, otherwise prune the branch
 (: when (-> Bool $a $a))
 (= (when $c $x) (if $c $x (empty)))
@@ -441,8 +436,10 @@
   (DOT.Identifier.toLabelAttribute (DOT.MkGroundedIdentifier "Hello World!"))
   (DOT.MkLabelAttribute "\"\\\"Hello World!\\\"\""))
 
+;; Randomly sample an index, to be (almost) sure that every node has a
+;; unique ID.
 (: random-index (-> Number))
-(= (random-index) (random-int 0 1000000))
+(= (random-index) (random-int &rng 0 1000000))
 
 ;; Create edges between optionally provided entry and exit nodes and
 ;; internal entry and exit nodes
