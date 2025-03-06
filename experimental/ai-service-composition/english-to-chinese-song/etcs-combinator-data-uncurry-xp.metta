@@ -566,6 +566,8 @@
                    (;; Unary arrow type
                     ((-> $inty $outy)
                      (let* (;; Convert input and output types to edge attributes
+                            ;; TODO: if $ext_entry is a phoenix, then
+                            ;; do not add $inty as label
                             ($inty_attr (edgeAttributes $inty))
                             ($outy_attr (edgeAttributes $outy))
                             ;; Create edges between external and internal nodes
