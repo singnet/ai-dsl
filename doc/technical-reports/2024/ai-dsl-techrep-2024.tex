@@ -102,12 +102,12 @@ provided AI services.  My prototypes cover all of these possibilities,
 but in this report I will only focus on backward chaining because that
 is what I exclusively used for the AI-DSL work so far.
 \section{Curried Backward Chainer}
+\label{sec:curriedbc}
 
 Let us begin with the Curried Backward Chainer, the simplest of them
 all.  The curried backward chainer is simple because it assumes that
 there is only one way to construct terms, using unary function
-application.  In this context a term an AI service composition, and
-can be either
+application.  In this case a term can be either
 \begin{itemize}
 \item a constant,
 \item or a term applied to a term.
@@ -154,6 +154,7 @@ in~\cite{CurriedBackwardChainer} is given in full below\pagebreak
    (match $kb (: $prf $ccln) (: $prf $ccln)))
 
 ;; Recursive step
+;; Unary proof application
 (= (bc $kb (S $k) (: ($prfabs $prfarg) $ccln))
    (let* (;; Recursive call on function
           ((: $prfabs (-> $prms $ccln))
@@ -328,9 +329,9 @@ concise.  I have manually reconstructed the tree representing the
 recursive calls and added some comments.  Note that the tree does not
 show the distinction between non-determinism across branches and
 regular functional evaluation along one branch.  I hope the trace
-conveys what is going on in spite of that.  Obviously it would be nice
-if MeTTa could offer a tool to automatically display such trace and
-show such distinctions.\\
+conveys what is going on in spite of that omission.  Obviously it
+would be nice if MeTTa could offer a tool to automatically display
+such trace and show such distinctions.\\
 \begin{footnotesize}
 \begin{minted}{scheme}
 | ;; Original call, base case, succeeds (match bar)
@@ -379,7 +380,190 @@ unified with \mintinline{scheme}{Bool} while attempting to match
 
 If at this point what is going on is still unclear, I recommend to run
 the code, query by query, while tracing the function calls.  To that
-end I have included in this folder NEXT
+end I have included a file~\cite{TODO}
+\begin{minted}{bash}
+  curry-backward-chainer-example.metta
+\end{minted}
+containing the code described above, wrapped in \texttt{trace!} calls.
+As its name indicates \texttt{trace!} is a MeTTa primitive to trace
+MeTTa code.
+
+\section{Uncurried Backward Chainer}
+
+It is not always convenient to manipulate curried expression, in that
+case, extending the curried backward chainer to support more than
+unary functions can be done by adding more entries in the backward
+chainer definition.  Specifically, right below the unary proof
+application recursive step
+\begin{minted}{scheme}
+;; Unary proof application
+(= (bc $kb (S $k) (: ($prfabs $prfarg) $ccln))
+   ...)
+\end{minted}
+one may simply add
+\begin{minted}{scheme}
+;; Binary proof application
+(= (bc $kb (S $k) (: ($prfabs $prfarg1 $prfarg2) $ccln))
+   (let* (;; Recursive call on function
+          ((: $prfabs (-> $prms1 $prms2 $ccln))
+           (bc $kb $k (: $prfabs (-> $prms1 $prms2 $ccln))))
+          ;; Recursive call on first argument
+          ((: $prfarg $prms1)
+           (bc $kb $k (: $prfarg1 $prms1)))
+          ;; Recursive call on second argument
+          ((: $prfarg $prms2)
+           (bc $kb $k (: $prfarg2 $prms2))))
+     ;; Query with holes filled
+     (: ($prfabs $prfarg1 $prfarg2) $ccln)))
+\end{minted}
+to support uncurried binary functions.  Or
+\begin{minted}{scheme}
+;; Ternary proof application
+(= (bc $kb (S $k) (: ($prfabs $prfarg1 $prfarg2 $prfarg3) $ccln))
+   (let* (;; Recursive call on function
+          ((: $prfabs (-> $prms1 $prms2 $prms3 $ccln))
+           (bc $kb $k (: $prfabs (-> $prms1 $prms2 $prms3 $ccln))))
+          ;; Recursive call on first argument
+          ((: $prfarg $prms1)
+           (bc $kb $k (: $prfarg1 $prms1)))
+          ;; Recursive call on second argument
+          ((: $prfarg $prms2)
+           (bc $kb $k (: $prfarg2 $prms2)))
+          ;; Recursive call on third argument
+          ((: $prfarg $prms3)
+           (bc $kb $k (: $prfarg3 $prms3))))
+     ;; Query with holes filled
+     (: ($prfabs $prfarg1 $prfarg2 $prfarg3) $ccln)))
+\end{minted}
+to support uncurried ternary functions, etc.  One may write a MeTTa
+macro (which is just a regular MeTTa program) to generate such code
+for any given arity.  Although since the arities of the functions we
+manipulate for reasoning are usually low, we have not found the need
+to do that so far.
+
+\section{Embed Inference Rules}
+
+Another possible extension of the backward chainer is to embed its
+axioms and inference rules directly in its code.  For instance the
+theory given in example in Section~\ref{sec:curriedbc} we be directly
+implemented as the following specialized backward chainer
+
+\begin{minted}{scheme}
+;; Base cases
+(= (bc $_ (: 42 Number)) (: 42 Number))
+(= (bc $_ (: foo (-> Number String))) (: foo (-> Number String)))
+(= (bc $_ (: bar (-> String Bool))) (: bar (-> String Bool)))
+
+;; Recursive step
+;; Function composition
+(= (bc (S $k) (: (. $prfarg1 $prfarg2) (-> $a $c)))
+   (let* (;; Recursive call on first argument
+          ((: $prfarg1 (-> $b $c))
+           (bc $kb $k (: $prfarg1 (-> $b $c))))
+          ;; Recursive call on second argument
+          ((: $prfarg2 (-> $a $b))
+           (bc $kb $k (: $prfarg2 (-> $a $b)))))
+      (: (. $prfarg1 $prfarg2) (-> $a $c))))
+\end{minted}
+In this example the entire theory is embedded in the backward chainer
+implementation, but one can also write a hybrid backward chainer with
+some rules being generic, and some being embedded in the code.  One
+advantage of embedding the theory directly in the backward chainer
+implementation is that some axioms or rules can be given some special
+treatments.  Examples of such implementations will be shown in
+Chapter~\ref{TODO}.
+
+\section{Dependent Types}
+
+Simply explained, \emph{dependent types}~\cite{TODO} allow to use
+values inside types.  An example of what can be done with dependent
+types that is often given is a vector data structure where the size of
+the vector is specified within the type itself.  Such definition may
+in Idris look like
+\begin{minted}{idris}
+-- Vector type parameterized by element type and size
+Vect : a -> Nat -> Type
+
+-- Build a vector by repeating a given element n times
+repeat : a -> (n : Nat) -> (Vect a n)
+\end{minted}
+Given that definition one may build the following
+\begin{minted}{idris}
+(repeat "abc" 42) : (Vect String 42)
+\end{minted}
+corresponding to a vector of 42 strings of \mintinline{idris}{"abc"}.
+One can then pursue to write operators manipulating vectors allowing
+consistency checking on their sizes to take place at compile time.
+For instance \mintinline{idris}{append} would have the following type
+signature
+\begin{minted}{idris}
+-- Append one vector of size n with another one of size m
+append : (Vect a n) -> (Vect a m) -> (Vect a (n + m))
+\end{minted}
+Note that the vector size inside the output type is
+\mintinline{idris}{(n + m)}.\\
+
+As of today, dependent types are not supported by the built-in type
+checker of MeTTa.  Luckily for us however, only a few modifications
+need to be operated to have the backward chainer support dependent
+types in MeTTa.
+
+\subsection{Rule Format for Dependent Types}
+First, the format of an inference rule must be changed from
+\begin{minted}{scheme}
+(-> PREMISE CONCLUSION)
+\end{minted}
+to
+\begin{minted}{scheme}
+(-> (: ARGUMENT PREMISE) CONCLUSION)
+\end{minted}
+where \mintinline{scheme}{ARGUMENT} would typically appear inside
+\mintinline{scheme}{CONCLUSION}, the \emph{dependent} part of
+dependent types.  An example of such inference rule would be
+\begin{minted}{scheme}
+(: translate
+   (-> (: $src-lang NaturalLanguage) (: $dst-lang NaturalLanguage)
+       (-> (: $_ (TextIn $src-lang)) (TextIn $dst-lang))))
+\end{minted}
+This inference rule represents an actually AI service from the
+SingularityNET market place that translates a text in some source
+language to an equivalent text in some destination language.  The
+first two arguments of the type signature of the service are the
+source and destination languages
+\begin{minted}{scheme}
+(: $src-lang NaturalLanguage)
+(: $dst-lang NaturalLanguage)
+\end{minted}
+Because the argument terms, \mintinline{scheme}{$src-lang} and
+\mintinline{scheme}{$dst-lang}, are specified in the type signature,
+they can be passed as parameters to the other following types
+\begin{minted}{scheme}
+(TextIn $src-lang)
+(TextIn $dst-lang)
+\end{minted}
+where \mintinline{scheme}{TextIn} is a parameterized type representing
+a text in a given language.  One may notice the use of
+\mintinline{scheme}{$_} representing a variable that is not
+subsequently used to create dependencies\footnote{Please be aware that
+in MeTTa \mintinline{scheme}{$_} is a regular variable and does behave
+like an underscore in a functional programming language like Haskell.
+Thus multiple occurrences of \mintinline{scheme}{$_} within the same
+scope still will point to the same variable.}.  That is because in the
+current format, unlike in Idris, specifying the argument associated to
+the input of an arrow type is mandatory.  This may eventually become
+optional to have more concise type signatures.  One may also notice
+that the rule is a mixture of curried and uncurried arguments.  The
+first two arguments are uncurried while the last one is curried.  This
+is perfectly fine and comes from a convention that has been adopted in
+some experiments, which is that arguments of AI services corresponding
+to hyper-parameters are uncurried, while those corresponding to data
+being processed are curried.  The reason for this convention is
+explained in detail in Chapter~\ref{TODO}.
+
+\subsection{Backward Chainer for Dependent Types}
+
+NEXT
+
 \chapter{Crawling the SingularityNET Market Place}
 
 \chapter{Experimenting with AI Service Composition in MeTTa}
