@@ -10,6 +10,7 @@
    (match $kb (: $prf $ccln) (: $prf $ccln))))
 
 ;; Recursive step
+;; Unary proof application
 (= (bc $kb (S $k) (: ($prfabs $prfarg) $ccln))
    (trace! (bc-rec (S $k) (: ($prfabs $prfarg) $ccln))
    (let* (;; Recursive call on function
