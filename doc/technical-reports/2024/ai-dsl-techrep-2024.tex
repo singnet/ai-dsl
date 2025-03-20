@@ -625,11 +625,12 @@ function application can be viewed as modus ponens.  That is, given a
 body $c : C$, containing a free variable $x$ of type $H$, one can use
 lambda abstraction to construct the following implication $$\lambda
 x. c : H \to C$$ Likewise, applying such proof abstraction to proof $h
-: H$, results in proof $$((\lambda x. c)\ h) : C$$ emulating the
-behavior of the modus ponens inference rule.  Thus one may conclude
-that the backward chainer presented so far is essentially a generic
+: H$, results in proof $$((\lambda x. c)\ h) : C$$ perfectly emulating
+the behavior of the modus ponens rule.  Thus one may conclude that the
+backward chainer presented so far is essentially a generic
 implementation of modus ponens.  It makes sense therefore that one
-would want to support its dual operation, lambda abstraction.
+would want to support its dual operation, lambda abstraction.  NEXT:
+combinatory logic as alternative.
 
 \chapter{Crawling the SingularityNET Market Place}
 
