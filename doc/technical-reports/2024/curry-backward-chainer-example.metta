@@ -5,22 +5,22 @@
           $b))                          ; Result
 
 ;; Base case
-(= (bc $kb $_ (: $prf $ccln))
-   (trace! (bc-bas $_ (: $prf $ccln))
-   (match $kb (: $prf $ccln) (: $prf $ccln))))
+(= (bc $kb $_ (: $prf $thrm))
+   (trace! (bc-bas $_ (: $prf $thrm))
+   (match $kb (: $prf $thrm) (: $prf $thrm))))
 
 ;; Recursive step
 ;; Unary proof application
-(= (bc $kb (S $k) (: ($prfabs $prfarg) $ccln))
-   (trace! (bc-rec (S $k) (: ($prfabs $prfarg) $ccln))
+(= (bc $kb (S $k) (: ($prfabs $prfarg) $thrm))
+   (trace! (bc-rec (S $k) (: ($prfabs $prfarg) $thrm))
    (let* (;; Recursive call on function
-          ((: $prfabs (-> $prms $ccln))
-           (bc $kb $k (: $prfabs (-> $prms $ccln))))
+          ((: $prfabs (-> $prms $thrm))
+           (bc $kb $k (: $prfabs (-> $prms $thrm))))
           ;; Recursive call on argument
           ((: $prfarg $prms)
            (bc $kb $k (: $prfarg $prms))))
      ;; Query with holes filled
-     (: ($prfabs $prfarg) $ccln))))
+     (: ($prfabs $prfarg) $thrm))))
 
 ;; Knowledge base
 !(bind! &kb (new-space))

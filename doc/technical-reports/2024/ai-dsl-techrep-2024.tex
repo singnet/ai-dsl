@@ -150,20 +150,20 @@ in~\cite{CurriedBackwardChainer} is given in full below\pagebreak
           $b))                          ; Result
 
 ;; Base case
-(= (bc $kb $_ (: $prf $ccln))
-   (match $kb (: $prf $ccln) (: $prf $ccln)))
+(= (bc $kb $_ (: $prf $thrm))
+   (match $kb (: $prf $thrm) (: $prf $thrm)))
 
 ;; Recursive step
 ;; Unary proof application
-(= (bc $kb (S $k) (: ($prfabs $prfarg) $ccln))
+(= (bc $kb (S $k) (: ($prfabs $prfarg) $thrm))
    (let* (;; Recursive call on function
-          ((: $prfabs (-> $prms $ccln))
-           (bc $kb $k (: $prfabs (-> $prms $ccln))))
+          ((: $prfabs (-> $prms $thrm))
+           (bc $kb $k (: $prfabs (-> $prms $thrm))))
           ;; Recursive call on argument
           ((: $prfarg $prms)
            (bc $kb $k (: $prfarg $prms))))
      ;; Query with holes filled
-     (: ($prfabs $prfarg) $ccln)))
+     (: ($prfabs $prfarg) $thrm)))
 \end{minted}
 Let us walk over that code.
 \begin{enumerate}
@@ -210,14 +210,14 @@ Let us walk over that code.
   \end{itemize}
 \item The base case
   \begin{minted}{scheme}
-    (match $kb (: $prf $ccln) (: $prf $ccln)))
+    (match $kb (: $prf $thrm) (: $prf $thrm)))
   \end{minted}
   is simply a match query over the knowledge base. If the query is an
   axiom, then it returns it.  If it matches several axioms, then it
   returns a superposition of all matches.
 \item The recursive step occurs if the query is of the form
   \begin{minted}{scheme}
-    (: ($prfabs $prfarg) $ccln)
+    (: ($prfabs $prfarg) $thrm)
   \end{minted}
   corresponding to a unary application, and the depth is greater than
   zero, enforced by having to match the depth argument
@@ -245,12 +245,12 @@ Let us walk over that code.
   composite inference rule.  The broken up query to discover the
   function is
   \begin{minted}{scheme}
-    (bc $kb $k (: $prfabs (-> $prms $ccln)))
+    (bc $kb $k (: $prfabs (-> $prms $thrm)))
   \end{minted}
   ordering the backward chainer to look for a proof abstraction that,
   if given a proof of a premise, \mintinline{scheme}{$prms}, to be
   discovered as well, then it outputs a proof of
-  \mintinline{scheme}{$ccln}, the conclusion.  The broken up query to
+  \mintinline{scheme}{$thrm}, the conclusion.  The broken up query to
   discover the argument is
   \begin{minted}{scheme}
     (bc $kb $k (: $prfarg $prms))
@@ -397,16 +397,16 @@ chainer definition.  Specifically, right below the unary proof
 application recursive step
 \begin{minted}{scheme}
 ;; Unary proof application
-(= (bc $kb (S $k) (: ($prfabs $prfarg) $ccln))
+(= (bc $kb (S $k) (: ($prfabs $prfarg) $thrm))
    ...)
 \end{minted}
 one may simply add
 \begin{minted}{scheme}
 ;; Binary proof application
-(= (bc $kb (S $k) (: ($prfabs $prfarg1 $prfarg2) $ccln))
+(= (bc $kb (S $k) (: ($prfabs $prfarg1 $prfarg2) $thrm))
    (let* (;; Recursive call on function
-          ((: $prfabs (-> $prms1 $prms2 $ccln))
-           (bc $kb $k (: $prfabs (-> $prms1 $prms2 $ccln))))
+          ((: $prfabs (-> $prms1 $prms2 $thrm))
+           (bc $kb $k (: $prfabs (-> $prms1 $prms2 $thrm))))
           ;; Recursive call on first argument
           ((: $prfarg $prms1)
            (bc $kb $k (: $prfarg1 $prms1)))
@@ -414,15 +414,15 @@ one may simply add
           ((: $prfarg $prms2)
            (bc $kb $k (: $prfarg2 $prms2))))
      ;; Query with holes filled
-     (: ($prfabs $prfarg1 $prfarg2) $ccln)))
+     (: ($prfabs $prfarg1 $prfarg2) $thrm)))
 \end{minted}
 to support uncurried binary functions.  Or
 \begin{minted}{scheme}
 ;; Ternary proof application
-(= (bc $kb (S $k) (: ($prfabs $prfarg1 $prfarg2 $prfarg3) $ccln))
+(= (bc $kb (S $k) (: ($prfabs $prfarg1 $prfarg2 $prfarg3) $thrm))
    (let* (;; Recursive call on function
-          ((: $prfabs (-> $prms1 $prms2 $prms3 $ccln))
-           (bc $kb $k (: $prfabs (-> $prms1 $prms2 $prms3 $ccln))))
+          ((: $prfabs (-> $prms1 $prms2 $prms3 $thrm))
+           (bc $kb $k (: $prfabs (-> $prms1 $prms2 $prms3 $thrm))))
           ;; Recursive call on first argument
           ((: $prfarg $prms1)
            (bc $kb $k (: $prfarg1 $prms1)))
@@ -433,7 +433,7 @@ to support uncurried binary functions.  Or
           ((: $prfarg $prms3)
            (bc $kb $k (: $prfarg3 $prms3))))
      ;; Query with holes filled
-     (: ($prfabs $prfarg1 $prfarg2 $prfarg3) $ccln)))
+     (: ($prfabs $prfarg1 $prfarg2 $prfarg3) $thrm)))
 \end{minted}
 to support uncurried ternary functions, etc.  One may write a MeTTa
 macro (which is just a regular MeTTa program) to generate such code
@@ -509,6 +509,7 @@ need to be operated to have the backward chainer support dependent
 types in MeTTa.
 
 \subsection{Rule Format for Dependent Types}
+\label{subsec:frmtdt}
 First, the format of an inference rule must be changed from
 \begin{minted}{scheme}
 (-> PREMISE CONCLUSION)
@@ -562,7 +563,73 @@ explained in detail in Chapter~\ref{TODO}.
 
 \subsection{Backward Chainer for Dependent Types}
 
-NEXT
+With all that said, modifying the backward chainer to support
+dependent types is as trivial as it may be.  The code is identical to
+the backward chainers presented above but the queries must follow the
+format presented in Subsection~\ref{subsec:frmtdt}.  The full
+implementation for the modified curried backward chainer is given
+below
+\begin{minted}{scheme}
+;; Dependently Typed Curried Backward Chainer type signature
+(: bc (-> $a                            ; Knowledge base space
+          Nat                           ; Maximum depth
+          $b                            ; Query
+          $b))                          ; Result
+
+;; Base case
+(= (bc $kb $_ (: $prf $thrm))
+   (match $kb (: $prf $thrm) (: $prf $thrm)))
+
+;; Recursive step
+;; Unary proof application
+(= (bc $kb (S $k) (: ($prfabs $prfarg) $thrm))
+   (let* (;; Recursive call on function
+          ((: $prfabs (-> (: $prfarg $prms) $thrm))
+           (bc $kb $k (: $prfabs (-> (: $prfarg $prms) $thrm))))
+          ;; Recursive call on argument
+          ((: $prfarg $prms)
+           (bc $kb $k (: $prfarg $prms))))
+     ;; Query with holes filled
+     (: ($prfabs $prfarg) $thrm)))
+\end{minted}
+Only two lines have changed, the query of the recursive call on
+function has gone from
+\begin{minted}{scheme}
+(: $prfabs (-> $prms $thrm))
+\end{minted}
+to
+\begin{minted}{scheme}
+(: $prfabs (-> (: $prfarg $prms) $thrm))
+\end{minted}
+that is all.  An example of using such dependently typed backward
+chainer to prove properties about programs can be found in~\ref{TODO}.
+The chainer used for most of the AI-DSL experiments is based on it,
+with the additional support for uncurried and embedded rules.  We are
+almost done regarding chaining, but there is one last extension we
+need to cover because some experiments were conducted with it, the
+support for lambda abstraction.
+
+\section{Lambda Abstraction}
+In $\lambda$-calculus, lambda abstraction, or $\lambda$ abstraction,
+is a way to construct functions.  On the proof side of the
+Curry-Howard correspondence, $\lambda$ abstraction is a way to
+construct proof functions, or what I like to call \emph{proof
+abstractions}, a function that takes a proof in argument and outputs a
+proof.  If the argument is the proof of a certain hypothesis $H$, and
+the output is a proof of a conclusion $C$, then the proof abstraction
+is a function that computes a way to go from a proof of $H$ to a proof
+of $C$, which can be denoted with the arrow type as $H \to C$.
+Function construction is the dual of function application.  Just like
+function construction can be viewed as hypothesis introduction,
+function application can be viewed as modus ponens.  That is, given a
+body $c : C$, containing a free variable $x$ of type $H$, one can use
+lambda abstraction to construct the following implication $$\lambda
+x. c : H \to C$$ Likewise, applying such proof abstraction to proof $h
+: H$, results in proof $$((\lambda x. c)\ h) : C$$ emulating the
+behavior of the modus ponens inference rule.  Thus one may conclude
+that the backward chainer presented so far is essentially a generic
+implementation of modus ponens.  It makes sense therefore that one
+would want to support its dual operation, lambda abstraction.
 
 \chapter{Crawling the SingularityNET Market Place}
 
