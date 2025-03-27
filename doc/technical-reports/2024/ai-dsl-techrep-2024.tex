@@ -690,7 +690,7 @@ dynamically modifying a theory, such as modal and contextual
 reasoning, which are not presented in this document but are also of
 capital importance.
 
-\subsection{Locally Modifiable Space}
+\subsection{Locally Modifying Space}
 
 Below is the code of our MeTTa implementation of a locally modifiable
 space.
@@ -734,12 +734,22 @@ encoded as De Bruijn indices.
 \end{minted}
 Thus \mintinline{scheme}{z} represents the first De Bruijn index,
 \mintinline{scheme}{(s z)} represents the second,
-\mintinline{scheme}{(s (s z))} represents the third, and so on.
+\mintinline{scheme}{(s (s z))} represents the third, and so on.  One
+may notice that \mintinline{scheme}{DeBruijn} is isomorphic to
+\mintinline{scheme}{Nat}
+\begin{minted}{scheme}
+;; Define Nat type and constructors
+(: Nat Type)
+(: Z Nat)
+(: S (-> Nat Nat))
+\end{minted}
+It still needs to be provided though so that the backward chainer can
+make the distinction between a natural number and a variable.
 
 \subsection{Lambda Abstraction in MeTTa}
 With all that in hand we can finally provide the full implement of the
 backward chainer supporting $\lambda$ abstraction.  Let us start with
-the type signature
+its type signature.
 \begin{minted}{scheme}
 ;; Define Backward Chainer with Lambda Abstraction
 (: bc (-> $a                            ; Knowledge base space
@@ -749,16 +759,16 @@ the type signature
           $b                            ; Query
           $b))                          ; Result
 \end{minted}
-Two additional arguments are passed
+Compared to the backward chainer implementations above, two extra
+arguments are introduced:
 \begin{itemize}
 \item An environment, typed \mintinline{scheme}{(List $b)}, holding
   the dynamic part of the theory, solely dedicated to store typing
   relationships of variables dynamically introduced by the backward
   chainer as it encounters $\lambda$ abstractions.  While the
-  knowledge base space argument statically holds the rest of the
-  theory.
+  knowledge base space still statically holds the rest of the theory.
 \item A De Bruijn index, typed \mintinline{scheme}{DeBruijn}, to be
-  used as variable in the next encountered $\lambda$ abstraction.
+  used as variable for the next encountered $\lambda$ abstraction.
 \end{itemize}
 For instance, let us say the backward chainer is called on
 \begin{minted}{scheme}
@@ -766,7 +776,7 @@ For instance, let us say the backward chainer is called on
 \end{minted}
 corresponding to a type checking query of
 \mintinline{scheme}{(\ z (+ z z))},  an anonymous function which
-doubles a number, against its type \mintinline{scheme}{(-> Number Number)}.
+doubles a number, against the type \mintinline{scheme}{(-> Number Number)}.
 Initially, the environment is empty, \mintinline{scheme}{Nil}, meaning no
 variable has been introduced so far, or equivalently, no lambda
 abstraction was encountered so far.  The De Bruijn index to be
@@ -784,7 +794,7 @@ The resulting call looks like
 \begin{minted}{scheme}
 (bc $kb (Cons (: z Number) Nil) (s z) (S Z) (: (+ z z)) Number))
 \end{minted}
-At this point the backward chainer needs to unpack
+At this point the backward chainer still needs to unpack
 \mintinline{scheme}{(+ z z)} and go one level deeper in the
 recursion to reach the axioms
 \begin{minted}{scheme}
@@ -822,12 +832,18 @@ chainer supporting $\lambda$ abstraction is given below.
 I am hoping that by now the mechanism is clear.  If it is not, feel
 free to play with the implementation provided in~\cite{TODO}.
 
+We have covered everything we need to know in order to synthesize AI
+services compositions in a type driven manner using MeTTa.  An obvious
+prerequisite though, is to have a knowledge base containing AI
+services and their type specifications, in the first place.  The next
+Chapter will look into the problem of retrieving such information from
+the SingularityNET market place.
+
 \chapter{Crawling the SingularityNET Market Place}
+\section{AI-DSL Ontology}
 
 \chapter{Experimenting with AI Service Composition in MeTTa}
 \label{chap:xpaicompo}
-
-\section{AI-DSL Ontology}
 
 \chapter{Conclusion}
 
