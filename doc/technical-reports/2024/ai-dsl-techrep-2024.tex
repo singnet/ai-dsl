@@ -17,6 +17,7 @@
 \usepackage[font=small,labelfont=bf]{caption}
 \usepackage[skip=0pt]{subcaption}
 \usepackage{circledsteps}
+\usepackage{bussproofs}
 
 \begin{document}
 
@@ -65,7 +66,7 @@ were considered in the knowledge base fed to the chainer.  Attempting
 to perform such synthesis while considering all available AI services
 will be the subject of the next round of work on the AI-DSL.
 
-\chapter{Program Synthesis in MeTTa}
+\chapter{Type Driven Program Synthesis in MeTTa}
 
 In this chapter I will explain how program synthesis can be done in
 MeTTa and go over the various backward chainers I have prototyped
@@ -610,6 +611,7 @@ need to cover because some experiments were conducted with it, the
 support for lambda abstraction.
 
 \section{Lambda Abstraction}
+
 In $\lambda$-calculus, lambda abstraction, or $\lambda$ abstraction,
 is a way to construct functions.  On the proof side of the
 Curry-Howard correspondence, $\lambda$ abstraction is a way to
@@ -625,12 +627,200 @@ function application can be viewed as modus ponens.  That is, given a
 body $c : C$, containing a free variable $x$ of type $H$, one can use
 lambda abstraction to construct the following implication $$\lambda
 x. c : H \to C$$ Likewise, applying such proof abstraction to proof $h
-: H$, results in proof $$((\lambda x. c)\ h) : C$$ perfectly emulating
-the behavior of the modus ponens rule.  Thus one may conclude that the
-backward chainer presented so far is essentially a generic
-implementation of modus ponens.  It makes sense therefore that one
-would want to support its dual operation, lambda abstraction.  NEXT:
-combinatory logic as alternative.
+: H$, results in proof $$((\lambda x. c)\ h) : C$$ which, one may
+note, perfectly emulates the behavior of the modus ponens rule.  Thus
+one may consider that the backward chainer presented so far is
+essentially a generic implementation of modus ponens.  It makes sense
+therefore that one would want to support its dual operation, lambda
+abstraction.  There is an alternative though, which is to use
+\emph{Combinatory Logic}.  A combinator is a higher order function
+that takes functions in inputs and output yet more functions.  Some
+combinator set, such as S, K and I are known to be sufficiently
+expressive so that one can built any function out of them.  That is
+how they can represent an alternative to $\lambda$ abstraction.  Our
+most successful experiments were in fact conducted with combinators
+(albeit another set than S, K and I), while most of our experiments
+conducted with $\lambda$ abstraction failed due to the excessive and
+uncontrollable combinatorial explosion resulting from it.  The
+backward chainer implementations presented so far already support
+combinaroty logic, one just needs to define the set of combinators to
+be used in the theory handed to the backward chainer.  For $\lambda$
+abstraction it is a bit more complicated and the backward chainer
+needs to be modified specifically for that purpose.  Let us show below
+how.
+
+\subsection{Backward Chaining with Lambda Abstraction}
+
+The main idea needed to have the backward chainer support $\lambda$
+abstraction is that, when going backward, unpacking a $\lambda$
+abstraction must introduce knowledge in the theory about the type of
+the variable previously scoped by the $\lambda$.  Formally, this can
+be represented as the following inference rule
+\begin{prooftree}
+  \AxiomC{$\Gamma, x : s \vdash f : t$}
+  \RightLabel{($\lambda$ Introduction)}
+    \UnaryInfC{$\Gamma \vdash \lambda x.f : s \to t$}
+\end{prooftree}
+meaning that if $\lambda x.f$ is typed $s \to t$ in theory $\Gamma$,
+then, as we go backward, to be able to infer the type of $f$, we need
+to add information about the type of $x$ into $\Gamma$.  Indeed, as
+the backward chainer keeps unpacking $f$, it will eventually meet $x$,
+then query the theory about its type.  If the type is missing the
+backward chainer will fail to reach all the axioms, and thus fail to
+infer the type of $f$.  In other words, for $\lambda$ abstraction to
+be properly supported, $x: s$ must temporarily become an axiom of the
+theory as backward chaining is taking place.
+
+Going back to MeTTa, in our backward chaining implementations the
+theory is stored in a space for efficiently matching inference rules
+and axioms.  So far the theory was static, only defined once before
+launching the backward chainer and left unchanged while running.  To
+support $\lambda$ abstraction however, we need to be able to
+dynamically and locally modify such space in every non-deterministic
+branches as the backward chainer unpacks $\lambda$ abstractions.
+Unfortunately, MeTTa does not support locally modifying spaces, though
+an issue~\cite{TODO} has been created and it will hopefully be
+supported in the foreseeable future.  In the meantime we have
+implemented our own data structure alongside a custom match operator
+mimicking what a locally modifiable space would do.  It is not
+efficient, our custom match operator is linear in complexity, but it
+gives us the tools that we need to experiment with $\lambda$
+abstraction, as well as any other reasoning schemes involving
+dynamically modifying a theory, such as modal and contextual
+reasoning, which are not presented in this document but are also of
+capital importance.
+
+\subsection{Locally Modifiable Space}
+
+Below is the code of our MeTTa implementation of a locally modifiable
+space.
+%% \begin{small}
+\begin{minted}{scheme}
+;; Define match', like match but takes a list of terms as space
+(: match' (-> (List Atom) $a $a $a))
+;; Base case, empty space
+(= (match' Nil $pattern $rewrite) (empty))
+;; Base case, match with the head
+(= (match' (Cons $h $t) $p $r) (let $p $h $r))
+;; Recursive step, match with the tail
+(= (match' (Cons $h $t) $p $r) (match' $t $p $r))
+\end{minted}
+%% \end{small}
+So a space is merely a list of MeTTa terms.  Once more,
+non-determinism is put to use to iterate over the list while returning
+the superposition of matches.  For the sake of completeness the code
+of \mintinline{scheme}{List} is provided below
+%% \begin{small}
+\begin{minted}{scheme}
+;; Define List data type and constructors
+(: List (-> $a Type))
+(: Nil (List $a))
+(: Cons (-> $a (List $a) (List $a)))
+\end{minted}
+%% \end{small}
+
+\subsection{Encoding Variables as De Bruijn Indices}
+
+In the backward chainer, MeTTa variables take the role of holes in the
+query.  In order to enable the backward chainer to manipulate
+variables in the proofs and programs being synthesized while avoiding
+any possible confusion with holes, proof and program variables are
+encoded as De Bruijn indices.
+\begin{minted}{scheme}
+;; Define DeBruijn type and constructors
+(: DeBruijn Type)
+(: z DeBruijn)                        ; Zero
+(: s (-> DeBruijn DeBruijn))          ; Successor
+\end{minted}
+Thus \mintinline{scheme}{z} represents the first De Bruijn index,
+\mintinline{scheme}{(s z)} represents the second,
+\mintinline{scheme}{(s (s z))} represents the third, and so on.
+
+\subsection{Lambda Abstraction in MeTTa}
+With all that in hand we can finally provide the full implement of the
+backward chainer supporting $\lambda$ abstraction.  Let us start with
+the type signature
+\begin{minted}{scheme}
+;; Define Backward Chainer with Lambda Abstraction
+(: bc (-> $a                            ; Knowledge base space
+          (List $b)                     ; Environment
+          DeBruijn                      ; De Bruijn Index
+          Nat                           ; Maximum depth
+          $b                            ; Query
+          $b))                          ; Result
+\end{minted}
+Two additional arguments are passed
+\begin{itemize}
+\item An environment, typed \mintinline{scheme}{(List $b)}, holding
+  the dynamic part of the theory, solely dedicated to store typing
+  relationships of variables dynamically introduced by the backward
+  chainer as it encounters $\lambda$ abstractions.  While the
+  knowledge base space argument statically holds the rest of the
+  theory.
+\item A De Bruijn index, typed \mintinline{scheme}{DeBruijn}, to be
+  used as variable in the next encountered $\lambda$ abstraction.
+\end{itemize}
+For instance, let us say the backward chainer is called on
+\begin{minted}{scheme}
+(bc $kb Nil z (S (S Z)) (: (\ z (+ z z)) (-> Number Number)))
+\end{minted}
+corresponding to a type checking query of
+\mintinline{scheme}{(\ z (+ z z))},  an anonymous function which
+doubles a number, against its type \mintinline{scheme}{(-> Number Number)}.
+Initially, the environment is empty, \mintinline{scheme}{Nil}, meaning no
+variable has been introduced so far, or equivalently, no lambda
+abstraction was encountered so far.  The De Bruijn index to be
+introduced next is \mintinline{scheme}{z}, matching the index in the
+$\lambda$ abstraction of the query.  Subsequently, a
+recursive call is crafted by the backward chainer to
+\begin{enumerate}
+\item unpack the $\lambda$ abstraction,
+\item insert typing information about \mintinline{scheme}{z} in the
+  environment, here \mintinline{scheme}{(: z Number)},
+\item increment the De Bruijn index, thus \mintinline{scheme}{(s z)},
+  for a future potential lambda abstraction.
+\end{enumerate}
+The resulting call looks like
+\begin{minted}{scheme}
+(bc $kb (Cons (: z Number) Nil) (s z) (S Z) (: (+ z z)) Number))
+\end{minted}
+At this point the backward chainer needs to unpack
+\mintinline{scheme}{(+ z z)} and go one level deeper in the
+recursion to reach the axioms
+\begin{minted}{scheme}
+(bc $kb (Cons (: z Number) Nil) (s z) Z (: z Number))
+\end{minted}
+which it can, since the query \mintinline{scheme}{(: z Number)}
+unifies with one the axioms in the environment, which happens to be a
+singleton in this example.  The full implementation of the backward
+chainer supporting $\lambda$ abstraction is given below.
+\begin{small}
+\begin{minted}{scheme}
+;; Base cases
+;; Match the knowledge base
+(= (bc $kb $env $idx $_ (: $prf $thrm))
+   (match $kb (: $prf $thrm) (: $prf $thrm)))
+;; Match the environment
+(= (bc $kb $env $idx $_ (: $prf $thrm))
+   (match' $env (: $prf $thrm) (: $prf $thrm)))
+
+;; Recursive steps
+;; Proof application
+(= (bc $kb $env $idx (S $k) (: ($prfabs (: $prfarg $prms)) $thrm))
+   (let* (((: $prfabs (-> $prms $thrm))
+           (bc $kb $env $idx $k (: $prfabs (-> $prms $thrm))))
+          ((: $prfarg $prms)
+           (bc $kb $env $idx $k (: $prfarg $prms))))
+     (: ($prfabs (: $prfarg $prms)) $thrm)))
+;; Proof abstraction
+(= (bc $kb $env $idx (S $k) (: (\ $idx $prfbdy) (-> $prms $thrm)))
+   (let (: $prfbdy $thrm)
+     (bc $kb (Cons (: $idx $prms) $env) (s $idx) $k (: $prfbdy $thrm))
+     (: (\ $idx $prfbdy) (-> $prms $thrm))))
+\end{minted}
+\end{small}
+I am hoping that by now the mechanism is clear.  If it is not, feel
+free to play with the implementation provided in~\cite{TODO}.
 
 \chapter{Crawling the SingularityNET Market Place}
 
