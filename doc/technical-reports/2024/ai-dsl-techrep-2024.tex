@@ -835,13 +835,226 @@ in~\cite{TODO, TODO}.
 
 We have covered everything we need to know in order to synthesize AI
 services compositions in a type driven manner using MeTTa.  An obvious
-prerequisite though, is to have a knowledge base containing AI
-services and their type specifications, in the first place.  The next
-Chapter will look into the problem of retrieving such information from
-the SingularityNET market place.
+prerequisite though, is to have the knowledge of AI services and their
+type specifications, in the first place.  The next Chapter will look
+into the problem of retrieving such information from the
+SingularityNET Market Place.
 
-\chapter{Crawling the SingularityNET Market Place}
-\section{AI-DSL Ontology}
+\chapter{Representing the SingularityNET Market Place in  MeTTa}
+
+\section{SingularityNET and the Blockchain}
+Explaining in detail how the SingularityNET Market Place works is
+beyond the scope of this document, but let me nonetheless attempt to
+give you a high level view of how the SingularityNET Market Place
+operates on the blockchain.  I will focus on the Ethereum blockchain
+because it is the one that I understand, but I believe what I am about
+to say applies to the Cardano blockchain side of SingularityNET as
+well.
+
+A smart contract on the Ethereum blockchain centralizes the process of
+registering organizations that want to publish services on the
+SingularityNET Market Place.  You may ask, ``centralizes'', I thought
+it was decentralized?  Yes, it is decentralized in the sense that the
+contract is ultimately duplicated all over the Ethereum network, but
+it is centralized in the sense that any modification of it will
+disperse over the network until a consensus is reached, so that in the
+end, there is a universal agreement on what this contract contains.
+Once an organization is registered, it can register AI services via
+interacting with the same smart contract.  Due to the high cost of
+holding data on the Ethereum blockchain, the smart contract only holds
+the minimal amount of data, such as organization identifiers, wallets,
+the list of their services, etc.  More data hungry information such as
+the descriptions of the services are stored in the InterPlanetary File
+System (IPFS for short), a decentralized, data immutable, content
+addressable storage system.  The smart contract then only needs to
+point to the right IPFS addresses to retrieve the desired information.
+Given the immutability of data of IPFS, once a smart contract points
+to a given address, it is guarantied that the content at that address
+will not change.  To change it, the smart contract must be modified to
+point to another address.  Thus, all possible modification are
+funneled through the smart contract.  That is not to say that the
+network cannot change if the smart contract is not changed, for
+instance a service provider may decide to silently shut down its
+servers, but the description itself of the SingularityNET Market Place
+should be immune to these external circumstances.  That is of course
+assuming that both the Ethereum blockchain and the IPFS networks are
+collectively given the care to operate as intended.  In particular,
+for IPFS, there needs to be at least one node in the network
+containing the data referenced by the SingularityNET smart contract.
+
+\section{Crawling the Singularity Market Place}
+The goal of this process is to gather information about all AI
+services on the SingularityNET Market Place and convert that
+information into a format that the backward chainer can use to
+synthesize AI service compositions.
+
+To that end, a bash script driving the SingularityNET
+CLI~\cite{SNETCLI} has been implemented to crawl the SingularityNET
+Market Place, see~\cite{TODO}.  First, it gathers all organizations
+and their services in JSON format.  Second, it converts that into
+MeTTa.  It can afford to be implemented in bash because the heavy
+lifting of accessing the information inside the smart contract is
+outsourced to the SingularityNET CLI, and then reading that
+information in JSON format is outsourced to jq~\cite{JQ}, a
+command-line JSON processor.  At the end of the process we are left
+with a folder tree structure of JSON files organized by organizations
+and services, and a monolithic MeTTa file containing the definitions
+of all organizations, their services and their associated type
+signatures.
+
+Such MeTTa file can then be imported in a space and used to reason
+about organizations and their services, and in particular for what is
+our main interest here, to reason about their compositions.  One can
+find examples of such monolithic dumps in MeTTa format in~\cite{TODO}.
+Let us give a few snippets of such a dump for illustrative purposes.
+For instance, the data type to represent an organization is defined in
+MeTTa as follows:
+%% \pagebreak
+\begin{minted}{scheme}
+;; Define Organization type
+(: Organization Type)
+
+;; Define Organization constructor
+(: MkOrganization
+   (->
+       String ; org_name
+       String ; org_id
+       String ; org_type
+       Description ; description
+       (List Assets) ; assets
+       (List Contact) ; contacts
+       (List Group) ; groups
+       Organization))
+\end{minted}
+One may immediately notice that the format is consistent with the
+format of axioms and inference rules the backward chainer expects, a
+collection of typing relationships.  An example of the definition of
+an object of the type \mintinline{scheme}{Organization}, here
+corresponding to the SingularityNET organization, is given below:
+\begin{minted}{scheme}
+(MkOrganization
+    ; org_name
+    "snet"
+    ; org_id
+    "snet"
+    ; org_type
+    "organization"
+    ; description
+    (MkDescription
+        ; url
+        "https://singularitynet.io"
+        ; url content
+        null
+        ; description
+        "We gathered leading minds in machine learning and
+         blockchain to democratize access to AI technology.
+         Now anyone can take advantage of a global network
+         of AI algorithms, services, and agents. The world's
+         first decentralized AI network has arrived"
+        ; short_description
+        "SingularityNET lets anyone create, share, and
+         monetize AI services at scale.")
+    ; assets
+    Nil
+    ; contacts
+    Nil
+    ; groups
+    Nil)
+\end{minted}
+where \mintinline{scheme}{MkDescription} is the data type constructor
+of \mintinline{scheme}{Description}
+\begin{minted}{scheme}
+;; Define Description constructor
+(: MkDescription
+   (->
+       String ; url
+       String ; url_content
+       String ; description
+       String ; short_description
+       Description))
+\end{minted}
+Let us move on to services.  The data type to represent a service is
+defined in MeTTa as follows:
+\begin{minted}{scheme}
+;; Define Service type
+(: Service Type)
+
+;; Define Service constructor
+(: MkService
+   (->
+       Number ; version
+       String ; display_name
+       String ; encoding
+       String ; service_type
+       String ; model_ipfs_hash
+       String ; mpe_address
+       (List Group) ; groups
+       ServiceDescription ; service_description
+       (List Contributor) ; contributors
+       (List Medium) ; media
+       (List String) ; tags
+       Service))
+\end{minted}
+An example of the definition of an object of the type
+\mintinline{scheme}{Service}, here corresponding to the CNTK Image
+Recognition service, is given below
+\begin{minted}{scheme}
+(MkService
+    ; version
+    1
+    ; display_name
+    "AI Sight"
+    ; encoding
+    "proto"
+    ; service_type
+    "grpc"
+    ; model_ipfs_hash
+    "QmWEuXDXBfRMedvzbzC52iYYuv4Bgp6w2PTbwcYyKWg1XU"
+    ; mpe_address
+    "0x5e592F9b1d303183d963635f895f0f0C48284f4e"
+    ; groups
+    Nil
+    ; service_description
+    (MkServiceDescription
+        ; url
+        "https://singnet.github.io/dnn-model-services/users_guide/
+         cntk-image-recon.html"
+        ; url content
+        null
+        ; description
+        "<div>Images of flowers and dogs can be classified using
+         deep neural network models, generated using Microsoft's
+         Cognitive Toolkit. The service receives an image, and
+         then uses it as an input for a pretrained ResNet152
+         model.<br></br>There are two pre-trained models available,
+         one trained with a flowers dataset from the Oxford Visual
+         Geometry Group, that includes 102 different categories of
+         flowers common to the UK. The second model was trained
+         using the Columbia Dogs Dataset, which possesses 133
+         different dog breeds.<br></br>The service makes
+         predictions using computer vision and machine learning
+         techniques, and displays a top 5 prediction list (ordered
+         by confidence) based on the specified dataset (flowers
+         or dogs).</div>"
+        ; short_description
+        "Use neural network models generated by Microsoft's
+         Cognitive Toolkit to classify images of flowers and dogs.
+         Simply upload an image and the service will identify and
+         apply a label.")
+    ; contributors
+    Nil
+    ; media
+    Nil
+    ; tags
+    (Cons "recognition" (Cons "image" (Cons "cntk" Nil))))
+\end{minted}
+Already this information could be reasoned upon by the backward
+chainer due to being formatted as typing relationships.  However, none
+of the examples given so far expresses anything about input and output
+types of services.  What is really of interest to us is coming next.
+NEXT
+
+\section{Enriching Type Signatures using the AI-DSL Ontology}
 
 \chapter{Experimenting with AI Service Composition in MeTTa}
 \label{chap:xpaicompo}
@@ -849,11 +1062,10 @@ the SingularityNET market place.
 \chapter{Conclusion}
 
 \section{Acknowledgments}
-
 Thanks to Matt Ikle and Khellar Crawford for our numerous discussions.
 Thanks to Remy Clarke for mentioning APL and BQN.  Thanks to Douglas
 Miles and his team for making MeTTaLog without which that work would
-not have been possible.
+not have been possible within this time frame.
 
 %% \appendix
 %% \chapter{Glossary}
