@@ -168,7 +168,7 @@
 
 ;; Concatenate two strings (implemented in my own branch)
 (: String.append (-> String String String))
-;; (= (String.append $x $y) (call-fn string_concat $x $y)) ; Only MeTTaLog
+;; (= (String.append $x $y) (call-fn! string_concat $x $y)) ; Only MeTTaLog
 ;; (= (String.append $x $y) ((py-dot $x __add__ (-> String String String)) $y))
 (= (String.append $x $y) (charsToString (append (stringToChars $x) (stringToChars $y))))
 
