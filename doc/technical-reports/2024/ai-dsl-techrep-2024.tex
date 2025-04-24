@@ -1138,7 +1138,115 @@ descriptive enough to catch that sort of errors.  In the next section
 will show how this can be addressed.
 \section{Enriching Type Signatures using the AI-DSL Ontology}
 
-NEXT
+The collection of concepts handled in AI applications is especially
+rich and tied to the real world.  For instance to characterize a face
+recognition algorithm, one needs at most to define what is a face, or
+at least, in case the definition is left to the AI to discover, to
+define that there is such a thing as a face.  That is what the AI-DSL
+ontology is meant to provide.  Not only symbols corresponding to
+concepts but also how these concepts relate to each other.  How
+detailed such ontology should be has not been established yet, neither
+how it should be built.  It is clear that it should be sufficiently
+detailed to be able to discriminate between sensible and absurd AI
+service compositions most of the time, and it is also clear that its
+building should be at least partially automated.  Additionally, it
+should likely be decentralized and able to handle multiple versions.
+
+These aspects will have to be addressed eventually, but in this
+iteration we merely provide a miniature handwritten ontology tailored
+specifically to discriminate sensible vs absurd compositions in our
+examples.  The ontology itself is formalized using a subtyping
+relationship described below.  The axioms are taken from the Subtyping
+Wikipedia article~\cite{TODO} and translated into MeTTa.  Subtyping is
+represented by
+\begin{minted}{scheme}
+  (<: S T)
+\end{minted}
+indicating that \mintinline{scheme}{S} is a subtype of
+\mintinline{scheme}{T}.  The full list of axioms and inference rules
+of the subtyping relationship is provided below in MeTTa format.
+\begin{enumerate}
+\item Relexiveness
+  \begin{minted}{scheme}
+    (: STRefl (<: $T $T))
+  \end{minted}
+\item Transitivity
+  \begin{minted}{scheme}
+    (: STTrans (-> (<: $S $T)
+                   (<: $T $U)
+                   (<: $S $U)))
+  \end{minted}
+\item Contravariant over inputs and covariant over outputs
+  \begin{minted}{scheme}
+    (: STConv (-> (<: $T1 $S1)
+                  (<: $S2 $T2)
+                  (<: (-> $S1 $S2) (-> $T1 $T2))))
+  \end{minted}
+  This one is not as obvious as reflexiveness and transitivity, but is
+  also fairly standard.  To understand it, it is best to apply it to
+  small examples, which we leave that to the reader.  It may help to
+  keep in mind though that the inferred subtyping relationship is
+  between functions, not between their inputs and outputs.
+\item Coercion
+  \begin{minted}{scheme}
+    (: coerce (-> (<: $S $T)
+                  (-> $S $T)))
+  \end{minted}
+  This last rule is crucial and justifies the need for the previous
+  axioms and rules.  Indeed, it expresses that one can automatically
+  coerce an inhabitant of a type into an inhabitant of one of its
+  super types.  So for instance, if a function
+  \mintinline{scheme}{nbrLimbs} takes an inhabitant of the type
+  \mintinline{scheme}{Animal} in input, the
+  \mintinline{scheme}{coerce} rule can be used to apply this function
+  to inhabitants of any subtypes of \mintinline{scheme}{Animal}, such
+  as \mintinline{scheme}{Cat}, as long as it has been proven that
+  \mintinline{scheme}{Cat} is indeed a subtype of
+  \mintinline{scheme}{Animal}.  Such proof obligation corresponds to
+  the first premise of \mintinline{scheme}{coerce}.  A more formal
+  description of such an example goes as follows.  Calling
+  \mintinline{scheme}{nbrLimbs} on the cat \mintinline{scheme}{Macak}
+  can be done with
+  \begin{minted}{scheme}
+    (nbrLimbs (coerce CA Macak))
+  \end{minted}
+  where \mintinline{scheme}{CA} is a proof that
+  \mintinline{scheme}{Cat} is a subtype of
+  \mintinline{scheme}{Animal}, formally
+  \begin{minted}{scheme}
+    (: CA (<: Cat Animal))
+  \end{minted}
+  and \mintinline{scheme}{Macak} is an inhabitant of
+  \mintinline{scheme}{Cat}, formally
+  \begin{minted}{scheme}
+    (: Macak Cat)
+  \end{minted}
+  In this example \mintinline{scheme}{(<: Cat Animal)} would be an
+  axiom, thus easily proven, but in general it may be necessary to
+  build a proof.  For instance, it may not been directly known that
+  \mintinline{scheme}{Cat} is a subtype of
+  \mintinline{scheme}{Animal}, but instead it may be known
+  \mintinline{scheme}{Cat} is a subtype of
+  \mintinline{scheme}{Mammal}, itself being a subtype of
+  \mintinline{scheme}{Animal}.  In this case, a proof of
+  \mintinline{scheme}{(<: Cat Animal)} may look like
+  \begin{minted}{scheme}
+  (: (STTrans CM MA) (<: Cat Animal))
+  \end{minted}
+  where \mintinline{scheme}{STTrans} is the transitivity rule provided
+  earlier, applied to axioms
+  \begin{minted}{scheme}
+  (: CM (<: Cat Mammal))
+  \end{minted}
+  and
+  \begin{minted}{scheme}
+  (: MA (<: Mammal Animal))
+  \end{minted}
+\end{enumerate}
+With a formal specification of the subtyping relationship
+\mintinline{scheme}{<:} in hand, we can now define an ontology for the
+AI-DSL that the backward chainer can use to reason about subtyping and
+type coercion as needed during AI service composition.  NEXT
 
 \chapter{Experimenting with AI Service Composition in MeTTa}
 \label{chap:xpaicompo}
