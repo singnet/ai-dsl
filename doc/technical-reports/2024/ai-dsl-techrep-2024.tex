@@ -1166,7 +1166,7 @@ indicating that \mintinline{scheme}{S} is a subtype of
 \mintinline{scheme}{T}.  The full list of axioms and inference rules
 of the subtyping relationship is provided below in MeTTa format.
 \begin{enumerate}
-\item Relexiveness
+\item Reflexivity
   \begin{minted}{scheme}
     (: STRefl (<: $T $T))
   \end{minted}
@@ -1182,11 +1182,13 @@ of the subtyping relationship is provided below in MeTTa format.
                   (<: $S2 $T2)
                   (<: (-> $S1 $S2) (-> $T1 $T2))))
   \end{minted}
-  This one is not as obvious as reflexiveness and transitivity, but is
+  This rule is not as obvious as reflexivity and transitivity, but is
   also fairly standard.  To understand it, it is best to apply it to
-  small examples, which we leave that to the reader.  It may help to
-  keep in mind though that the inferred subtyping relationship is
-  between functions, not between their inputs and outputs.
+  small examples involving function composition, which we leave to the
+  discretion of the reader.  If it still feels counter-intuitive after
+  that it may help to remember that the inferred subtyping
+  relationship is between functions, not between their inputs and
+  outputs.
 \item Coercion
   \begin{minted}{scheme}
     (: coerce (-> (<: $S $T)
@@ -1223,9 +1225,9 @@ of the subtyping relationship is provided below in MeTTa format.
   \end{minted}
   In this example \mintinline{scheme}{(: CA (<: Cat Animal))} would be
   an axiom, thus easily proven, but in general it may be necessary to
-  construct a proof.  For instance, it may not been directly known
-  that \mintinline{scheme}{Cat} is a subtype of
-  \mintinline{scheme}{Animal}, but instead it may be known
+  construct a proof.  For instance, it may not be directly known that
+  \mintinline{scheme}{Cat} is a subtype of
+  \mintinline{scheme}{Animal}, but instead it may be known that
   \mintinline{scheme}{Cat} is a subtype of
   \mintinline{scheme}{Mammal}, itself being a subtype of
   \mintinline{scheme}{Animal}.  In this case, a proof of
@@ -1240,6 +1242,11 @@ of the subtyping relationship is provided below in MeTTa format.
   \end{minted}
   \begin{minted}{scheme}
   (: MA (<: Mammal Animal))
+  \end{minted}
+  And thus the \mintinline{scheme}{nbrLimbs} call over
+  \mintinline{scheme}{Choupette} may look like
+  \begin{minted}{scheme}
+    (nbrLimbs (coerce (STTrans CM MA) Choupette))
   \end{minted}
 \end{enumerate}
 With a formal specification of the subtyping relationship
