@@ -1205,10 +1205,10 @@ of the subtyping relationship is provided below in MeTTa format.
   \mintinline{scheme}{Animal}.  Such proof obligation corresponds to
   the first premise of \mintinline{scheme}{coerce}.  A more formal
   description of such an example goes as follows.  Calling
-  \mintinline{scheme}{nbrLimbs} on the cat \mintinline{scheme}{Macak}
+  \mintinline{scheme}{nbrLimbs} on the cat \mintinline{scheme}{Choupette}
   can be done with
   \begin{minted}{scheme}
-    (nbrLimbs (coerce CA Macak))
+    (nbrLimbs (coerce CA Choupette))
   \end{minted}
   where \mintinline{scheme}{CA} is a proof that
   \mintinline{scheme}{Cat} is a subtype of
@@ -1216,15 +1216,15 @@ of the subtyping relationship is provided below in MeTTa format.
   \begin{minted}{scheme}
     (: CA (<: Cat Animal))
   \end{minted}
-  and \mintinline{scheme}{Macak} is an inhabitant of
+  and \mintinline{scheme}{Choupette} is an inhabitant of
   \mintinline{scheme}{Cat}, formally
   \begin{minted}{scheme}
-    (: Macak Cat)
+    (: Choupette Cat)
   \end{minted}
-  In this example \mintinline{scheme}{(<: Cat Animal)} would be an
-  axiom, thus easily proven, but in general it may be necessary to
-  build a proof.  For instance, it may not been directly known that
-  \mintinline{scheme}{Cat} is a subtype of
+  In this example \mintinline{scheme}{(: CA (<: Cat Animal))} would be
+  an axiom, thus easily proven, but in general it may be necessary to
+  construct a proof.  For instance, it may not been directly known
+  that \mintinline{scheme}{Cat} is a subtype of
   \mintinline{scheme}{Animal}, but instead it may be known
   \mintinline{scheme}{Cat} is a subtype of
   \mintinline{scheme}{Mammal}, itself being a subtype of
@@ -1238,7 +1238,6 @@ of the subtyping relationship is provided below in MeTTa format.
   \begin{minted}{scheme}
   (: CM (<: Cat Mammal))
   \end{minted}
-  and
   \begin{minted}{scheme}
   (: MA (<: Mammal Animal))
   \end{minted}
