@@ -1164,7 +1164,7 @@ represented by
 \end{minted}
 indicating that \mintinline{scheme}{S} is a subtype of
 \mintinline{scheme}{T}.  The full list of axioms and inference rules
-of the subtyping relationship is provided below in MeTTa format.
+of the subtyping relationship is provided below in MeTTa.
 \begin{enumerate}
 \item Reflexivity
   \begin{minted}{scheme}
@@ -1184,7 +1184,7 @@ of the subtyping relationship is provided below in MeTTa format.
   \end{minted}
   This rule is not as obvious as reflexivity and transitivity, but is
   also fairly standard.  To understand it, it is best to apply it to
-  small examples involving function composition, which we leave to the
+  small examples involving function composition.  We leave that to the
   discretion of the reader.  If it still feels counter-intuitive after
   that it may help to remember that the inferred subtyping
   relationship is between functions, not between their inputs and
@@ -1194,8 +1194,7 @@ of the subtyping relationship is provided below in MeTTa format.
     (: coerce (-> (<: $S $T)
                   (-> $S $T)))
   \end{minted}
-  This last rule is crucial and justifies the need for the previous
-  axioms and rules.  Indeed, it expresses that one can automatically
+  This last rule is crucial, it expresses that one can automatically
   coerce an inhabitant of a type into an inhabitant of one of its
   super types.  So for instance, if a function
   \mintinline{scheme}{nbrLimbs} takes an inhabitant of the type
@@ -1207,8 +1206,8 @@ of the subtyping relationship is provided below in MeTTa format.
   \mintinline{scheme}{Animal}.  Such proof obligation corresponds to
   the first premise of \mintinline{scheme}{coerce}.  A more formal
   description of such an example goes as follows.  Calling
-  \mintinline{scheme}{nbrLimbs} on the cat \mintinline{scheme}{Choupette}
-  can be done with
+  \mintinline{scheme}{nbrLimbs} on the cat
+  \mintinline{scheme}{Choupette} can be done with
   \begin{minted}{scheme}
     (nbrLimbs (coerce CA Choupette))
   \end{minted}
@@ -1243,7 +1242,7 @@ of the subtyping relationship is provided below in MeTTa format.
   \begin{minted}{scheme}
   (: MA (<: Mammal Animal))
   \end{minted}
-  And thus the \mintinline{scheme}{nbrLimbs} call over
+  Thus, the \mintinline{scheme}{nbrLimbs} call over
   \mintinline{scheme}{Choupette} may look like
   \begin{minted}{scheme}
     (nbrLimbs (coerce (STTrans CM MA) Choupette))
@@ -1251,8 +1250,52 @@ of the subtyping relationship is provided below in MeTTa format.
 \end{enumerate}
 With a formal specification of the subtyping relationship
 \mintinline{scheme}{<:} in hand, we can now define an ontology for the
-AI-DSL that the backward chainer can use to reason about subtyping and
-type coercion as needed during AI service composition.  NEXT
+AI-DSL that the backward chainer can use as needed to reason about
+subtyping and type coercion while synthesizing AI service
+compositions.  Please find below the miniature ontology mentioned
+earlier
+\begin{small}
+\begin{minted}{scheme}
+;; Language
+(: NS (<: NaturalLanguage String))
+
+;; Text
+(: TS (<: Text String))
+(: TIT (<: (TextIn $l) Text))
+
+;; URL
+(: US (<: UniformResourceLocator String))
+(: UTU (<: (UniformResourceLocatorOfType $t) UniformResourceLocator))
+
+;; MIDI
+(: MB (<: MusicalInstrumentDigitalInterface Bytes))
+
+;; Audio
+(: AB (<: Audio Bytes))
+(: IA (<: Instrumental Audio))
+(: VA (<: Vocals Audio))
+(: VIV (<: (VocalsIn $l) Vocals))
+(: SIA (<: (SongIn $l) Audio))
+\end{minted}
+\end{small}
+One may observe that in this ontology example all types eventually
+derive from primary types such as \mintinline{scheme}{String} and
+\mintinline{scheme}{Bytes}.  These primary types comes Protobuf.  What
+this means is that, if for instance an AI service outputs data of type
+\mintinline{scheme}{Text} to be received by a service that inputs data
+of type \mintinline{scheme}{String}, the type coercion may actually
+not need to take place at run-time.  Type coercion is, most of the
+time, only here to make sure the AI service composition is consistent
+with its AI service specifications.  One may also observe that some
+types are parameterized, such as \mintinline{scheme}{(TextIn $l)},
+which represents a text in a certain language \mintinline{scheme}{$l}.
+Having parameterized types in the ontology will turn out to useful
+while reasoning about dependent types.
+
+NEXT: write a tool to display ontology.
+
+NEXT: add example of AI service type signature before and after
+ontology.
 
 \chapter{Experimenting with AI Service Composition in MeTTa}
 \label{chap:xpaicompo}
