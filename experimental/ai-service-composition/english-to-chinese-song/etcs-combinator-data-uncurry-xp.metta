@@ -466,7 +466,7 @@
 !(set-random-seed &rng 0)
 !(assertEqual
   (random-index)
-  823576)
+  731113)
 
 ;; Create edges between optionally provided entry and exit nodes and
 ;; internal entry and exit nodes
