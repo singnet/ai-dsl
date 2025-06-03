@@ -215,6 +215,10 @@
 ;; DOT ;;
 ;;;;;;;;;
 
+;; Data structure representation of graph in DOT format.  The
+;; specification of the format can be found in
+;; https://graphviz.org/doc/info/lang.html
+
 ;; DOT Rankdir
 (: DOT.Rankdir Type)
 (: DOT.Rankdir.BT DOT.Rankdir)                 ; Bottom to top
