@@ -1,6 +1,12 @@
 ;; Like etcs-combinator-sd-data-uncurry-xp.metta but tested on the
 ;; whole AI service composition instead of the scaled down one.
 
+;;;;;;;;;;;;;
+;; Imports ;;
+;;;;;;;;;;;;;
+
+!(import! &self random)
+
 ;;;;;;;;;;;
 ;; Utils ;;
 ;;;;;;;;;;;
