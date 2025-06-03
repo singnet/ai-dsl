@@ -1074,17 +1074,17 @@
 !(set-random-seed &rng 0)
 !(assertEqual
   (DOT.toString (toDOT mix))
-  ;; ;; Using HE random generator
-  ;; "digraph Flowchart {\nrankdir=BT\n\n\"__IN__0\" [label=\"\", shape=none]\n\"__OUT__0\" [label=\"\", shape=none]\n\"mix731113\" [label=\"mix\", shape=box]\n\n\"__IN__0\" -> \"mix731113\" []\n\"mix731113\" -> \"__OUT__0\" []\n}")
+  ;; Using HE random generator
+  "digraph Flowchart {\nrankdir=BT\n\n\"__IN__0\" [label=\"\", shape=none]\n\"__OUT__0\" [label=\"\", shape=none]\n\"mix731113\" [label=\"mix\", shape=box]\n\n\"__IN__0\" -> \"mix731113\" []\n\"mix731113\" -> \"__OUT__0\" []\n}")
   ;; Using MeTTaLog random generator
-  "digraph Flowchart {\nrankdir=BT\n\n\"__IN__0\" [label=\"\", shape=none]\n\"__OUT__0\" [label=\"\", shape=none]\n\"mix823576\" [label=\"mix\", shape=box]\n\n\"__IN__0\" -> \"mix823576\" []\n\"mix823576\" -> \"__OUT__0\" []\n}")
+  ;; TODO
 !(set-random-seed &rng 0)
 !(assertEqual
   (DOT.toString (toDOT (. f g)))
-  ;; ;; Using HE random generator
-  ;; "digraph Flowchart {\nrankdir=BT\n\n\"__IN__0\" [label=\"\", shape=none]\n\"__OUT__0\" [label=\"\", shape=none]\n\"f773460\" [label=\"f\", shape=box]\n\"g731113\" [label=\"g\", shape=box]\n\n\"g731113\" -> \"f773460\" []\n\"f773460\" -> \"__OUT__0\" []\n\"__IN__0\" -> \"g731113\" []\n}")
+  ;; Using HE random generator
+  "digraph Flowchart {\nrankdir=BT\n\n\"__IN__0\" [label=\"\", shape=none]\n\"__OUT__0\" [label=\"\", shape=none]\n\"f773460\" [label=\"f\", shape=box]\n\"g731113\" [label=\"g\", shape=box]\n\n\"g731113\" -> \"f773460\" []\n\"f773460\" -> \"__OUT__0\" []\n\"__IN__0\" -> \"g731113\" []\n}")
   ;; Using MeTTaLog random generator
-  "digraph Flowchart {\nrankdir=BT\n\n\"__IN__0\" [label=\"\", shape=none]\n\"__OUT__0\" [label=\"\", shape=none]\n\"f616257\" [label=\"f\", shape=box]\n\"g823576\" [label=\"g\", shape=box]\n\n\"g823576\" -> \"f616257\" []\n\"f616257\" -> \"__OUT__0\" []\n\"__IN__0\" -> \"g823576\" []\n}")
+  ;; TODO
 ;; TODO: re-enable as needed (don't forget to reset the random seed at every test)
 ;; !(assertEqual
 ;;   (DOT.toString (toDOT (Φ f g h)))
