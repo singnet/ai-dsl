@@ -314,6 +314,10 @@
 (: DOT.Node.attributes (-> DOT.Node (List DOT.Attribute)))
 (= (DOT.Node.attributes (DOT.MkNode $identifier $attributes)) $attributes)
 
+;; Helper
+(: mkEmptyNode (-> DOT.Node))
+(= (mkEmptyNode) (DOT.MkNode (DOT.MkExpressionIdentifier ()) Nil))
+
 ;; Data type of DOT edge
 (: DOT.Edge Type)
 
@@ -337,8 +341,6 @@
 (: DOT Type)
 (: MkDOT (-> (List DOT.Node)                ; List of nodes
              (List DOT.Edge)                ; List of edges
-             DOT.Node                       ; Entry node
-             DOT.Node                       ; Exit node
              (List DOT.Attribute)           ; List of attributes
              DOT))
 
@@ -346,17 +348,9 @@
 !(assertEqual
   (MkDOT Nil
          Nil
-         (DOT.MkNode (DOT.MkSymbolIdentifier mix 0)
-                     (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))
-         (DOT.MkNode (DOT.MkSymbolIdentifier mix 0)
-                     (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))
          (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT) Nil))
   (MkDOT Nil
          Nil
-         (DOT.MkNode (DOT.MkSymbolIdentifier mix 0)
-                     (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))
-         (DOT.MkNode (DOT.MkSymbolIdentifier mix 0)
-                     (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))
          (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT) Nil)))
 
 ;; Return the default attributes of a DOT file
@@ -425,22 +419,17 @@
           ($ext_in (inputNode))
           ($ext_out (outputNode))
           ;; Call toDOT_ on term, with external input and output nodes
-          ((MkDOT $nodes $edges $entry $exit $attributes)
+          ((, (MkDOT $nodes $edges $attributes) $entry $exit)
            (toDOT_ (Just $ext_in) (Just $ext_out) $term))
           ;; Add external nodes to node collection
           ($νnodes (Cons $ext_in (Cons $ext_out $nodes))))
           ;; Return genereated DOT data plus hardcoded global
           ;; attributes
-     (MkDOT $νnodes
-            $edges
-            $ext_in
-            $ext_out
-            (List.append (globalAttributes) $attributes))))
+     (MkDOT $νnodes $edges (List.append (globalAttributes) $attributes))))
 
 ;; Make empty DOT data structure
 (: mkEmptyDOT (-> DOT))
-(= (mkEmptyDOT)
-   (MkDOT Nil Nil (MkGroundedIdentifier "") (MkGroundedIdentifier "") Nil))
+(= (mkEmptyDOT) (MkDOT Nil Nil Nil))
 
 ;; Output the string representing the label corresponding to an
 ;; identifier in DOT format
@@ -533,7 +522,9 @@
 (: toDOT_ (-> (Maybe DOT.Node)          ; Optional external entry node
               (Maybe DOT.Node)          ; Optional external exit node
               Atom                      ; Term to convert to DOT
-              DOT))
+              (, DOT                    ; Resulting DOT structure
+                 DOT.Node               ; Entry node
+                 DOT.Node)))            ; Exit node
 (= (toDOT_ $ext_entry $ext_exit $term)
    (case (get-metatype $term)
      (;; Base cases
@@ -549,7 +540,7 @@
                                               $node
                                               Nil
                                               Nil)))
-         (MkDOT $nodes $edges $node $node Nil)))
+         (, (MkDOT $nodes $edges Nil) $node $node)))
       (Grounded
        (let* (($id (if (== $term coerce) ; We need to add this
                                          ; conditional because
@@ -574,27 +565,27 @@
                                               $node
                                               Nil
                                               Nil)))
-         (MkDOT $nodes $edges $node $node Nil)))
+         (, (MkDOT $nodes $edges Nil) $node $node)))
       ;; NEXT: support variables
       ;; (Variable
       ;;  (let* (($id (DOT.MkGroundedIdentifier $term))
       ;;         ($attrs (Cons (DOT.Identifier.toLabelAttribute $id)
       ;;                       (variableAttributes)))
       ;;         ($node (DOT.MkNode $id $attrs)))
-      ;;    (MkDOT (Cons $node Nil) Nil $node $node Nil)))
+      ;;    (, (MkDOT (Cons $node Nil) Nil Nil) $node $node)))
       ;; Recursive step
       (Expression
        (case $term
          (;; Base case
           ;; Empty expression
-          (() (mkEmptyDOT))
+          (() (, (mkEmptyDOT) (mkEmptyNode) (mkEmptyNode)))
           ;; Recursive steps
           ;; Type annotation
           ((: $f $ty)
            (let
                ;; Recursive call on $f.  Do not pass external nodes as
                ;; arguments of toDOT_ as they are treated further below.
-               (MkDOT $fnodes $fedges $fentry $fexit $fattrs)
+               (, (MkDOT $fnodes $fedges $fattrs) $fentry $fexit)
                (toDOT_ Nothing Nothing $f)
              (case (get-metatype $ty)
                ((Expression
@@ -618,7 +609,7 @@
                        ;; Return DOT object.  The entry and exit nodes
                        ;; are still those of $f, replacing them by the
                        ;; external nodes is up to the caller.
-                       (MkDOT $fnodes $edges $fentry $fexit $fattrs)))
+                       (, (MkDOT $fnodes $edges $fattrs) $fentry $fexit)))
                     ;; Binary arrow type
                     ((-> $inty1 $inty2 $outy)
                      (let* (;; Convert output type to edge attributes
@@ -641,7 +632,7 @@
                        ;; Return DOT object.  The entry and exit nodes
                        ;; are still those of $f, replacing them by the
                        ;; external nodes is up to the caller.
-                       (MkDOT $fnodes $edges $fentry $fexit $fattrs)))
+                       (, (MkDOT $fnodes $edges $fattrs) $fentry $fexit)))
                     ;; TODO: support nary arrow types
                     ;; Non-arrow type
                     ($else
@@ -660,7 +651,7 @@
                        ;; Return DOT object.  The entry and exit nodes
                        ;; are still those of $f, replacing them by the
                        ;; external nodes is up to the caller.
-                       (MkDOT $fnodes $edges $fentry $fexit $fattrs))))))
+                       (, (MkDOT $fnodes $edges $fattrs) $fentry $fexit))))))
                 ($else       ; Symbol, Grounded, Variable
                  (let* (;; Convert type to output edge attributes
                         ($ty_attr (edgeAttributes $ty))
@@ -677,15 +668,15 @@
                    ;; Return DOT object.  The entry and exit nodes
                    ;; are still those of $f, replacing them by the
                    ;; external nodes is up to the caller.
-                   (MkDOT $fnodes $edges $fentry $fexit $fattrs)))))))
+                   (, (MkDOT $fnodes $edges $fattrs) $fentry $fexit)))))))
           ;; Bluebird
           ((. $f $g) (let* (;; Recursive call on $g, passing the
                             ;; external entry node.
-                            ((MkDOT $gnodes $gedges $gentry $gexit $gattrs)
+                            ((, (MkDOT $gnodes $gedges $gattrs) $gentry $gexit)
                              (toDOT_ $ext_entry Nothing $g))
                             ;; Recursive call on $f, passing both the
                             ;; exit node of g and the external exit node.
-                            ((MkDOT $fnodes $fedges $fentry $fexit $fattrs)
+                            ((, (MkDOT $fnodes $fedges $fattrs) $fentry $fexit)
                              (toDOT_ (Just $gexit) $ext_exit $f))
                             ;; Concatenate nodes of $f and $g
                             ($nodes (List.append $fnodes $gnodes))
@@ -693,11 +684,11 @@
                             ($edges (List.append $fedges $gedges))
                             ;; Concatenate attributes of $f and $g
                             ($attrs (List.append $fattrs $gattrs)))
-                       (MkDOT $nodes $edges $gentry $fexit $attrs)))
+                       (, (MkDOT $nodes $edges $attrs) $gentry $fexit)))
           ;; Phoenix
           ((Φ $f $g $h) (let* (;; Recursive call on $f, passing the
                                ;; external exit node
-                               ((MkDOT $fnodes $fedges $fentry $fexit $fattrs)
+                               ((, (MkDOT $fnodes $fedges $fattrs) $fentry $fexit)
                                 (toDOT_ Nothing $ext_exit $f))
                                ;; Create phoenix node
                                ($Φid (DOT.MkSymbolIdentifier Φ (random-index)))
@@ -711,11 +702,11 @@
                                                                    Nil))
                                ;; Recursive call on $g, passing both
                                ;; the internal entry node of $f and $Φ
-                               ((MkDOT $gnodes $gedges $gentry $gexit $gattrs)
+                               ((, (MkDOT $gnodes $gedges $gattrs) $gentry $gexit)
                                 (toDOT_ (Just $Φ) (Just $fentry) $g))
                                ;; Recursive call on $h, passing both
                                ;; the internal entry node of $f and $Φ
-                               ((MkDOT $hnodes $hedges $hentry $hexit $hattrs)
+                               ((, (MkDOT $hnodes $hedges $hattrs) $hentry $hexit)
                                 (toDOT_ (Just $Φ) (Just $fentry) $h))
                                ;; Concatenate all nodes
                                ($nodes (Cons $Φ
@@ -727,15 +718,15 @@
                                                      $hedges))
                                ;; Concatenate all attributes
                                ($attrs (List.append3 $fattrs $gattrs $hattrs)))
-                          (MkDOT $nodes $edges $Φ $fexit $attrs)))
+                          (, (MkDOT $nodes $edges $attrs) $Φ $fexit)))
           ;; Unary application
           (($f $x) (let* (;; Recursive call on $f
-                          ((MkDOT $fnodes $fedges $fentry $fexit $fattrs)
+                          ((, (MkDOT $fnodes $fedges $fattrs) $fentry $fexit)
                            (toDOT_ $ext_entry $ext_exit $f))
                           ;; Recusive call on $x, passing $fentry as
                           ;; external exit node.  We assume that $x is
                           ;; non-arrow typed.
-                          ((MkDOT $xnodes $xedges $xentry $xexit $xattrs)
+                          ((, (MkDOT $xnodes $xedges $xattrs) $xentry $xexit)
                            (toDOT_ Nothing (Just $fentry) $x))
                           ;; Append all nodes
                           ($nodes (List.append $fnodes $xnodes))
@@ -743,20 +734,20 @@
                           ($edges (List.append $fedges $xedges))
                           ;; Append all attributes
                           ($attrs (List.append $fattrs $xattrs)))
-                     (MkDOT $nodes $edges $fentry $fexit $attrs)))
+                     (, (MkDOT $nodes $edges $attrs) $fentry $fexit)))
           ;; Binary application
           (($f $x $y) (let* (;; Recursive call on $f
-                             ((MkDOT $fnodes $fedges $fentry $fexit $fattrs)
+                             ((, (MkDOT $fnodes $fedges $fattrs) $fentry $fexit)
                               (toDOT_ $ext_entry $ext_exit $f))
                              ;; Recusive call on $x, passing $fentry
                              ;; as external exit node.  We assume that
                              ;; $x is non-arrow typed.
-                             ((MkDOT $xnodes $xedges $xentry $xexit $xattrs)
+                             ((, (MkDOT $xnodes $xedges $xattrs) $xentry $xexit)
                               (toDOT_ Nothing (Just $fentry) $x))
                              ;; Recusive call on $y, passing $fentry
                              ;; as external exit node.  We assume that
                              ;; $y is non-arrow typed.
-                             ((MkDOT $ynodes $yedges $yentry $yexit $yattrs)
+                             ((, (MkDOT $ynodes $yedges $yattrs) $yentry $yexit)
                               (toDOT_ Nothing (Just $fentry) $y))
                              ;; Append all nodes
                              ($nodes (List.append3 $fnodes $xnodes $ynodes))
@@ -764,29 +755,30 @@
                              ($edges (List.append3 $fedges $xedges $yedges))
                              ;; Append all attributes
                              ($attrs (List.append3 $fattrs $xattrs $yattrs)))
-                        (MkDOT $nodes $edges $fentry $fexit $attrs)))
+                        (, (MkDOT $nodes $edges $attrs) $fentry $fexit)))
           ;; Trinary application (TODO)
-          (($f $x $y $z) (mkEmptyDOT))
+          (($f $x $y $z) (, (mkEmptyDOT) (mkEmptyNode) (mkEmptyNode)))
           ;; Otherwise
-          ($else (mkEmptyDOT)))))
+          ($else (, (mkEmptyDOT) (MkEmptyNode) (MkEmptyNode))))))
       ;; Otherwise
-      ($else (mkEmptyDOT)))))
+      ($else (, (mkEmptyDOT) (mkEmptyNode) (mkEmptyNode))))))
 
 ;; Test toDOT
 !(set-random-seed &rng 0)
 !(assertEqual
   (toDOT mix)
-  ;; ;; Using HE random generator
-  ;; (MkDOT (Cons (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkNode (DOT.MkSymbolIdentifier mix 731113) (Cons (DOT.MkLabelAttribute "\"mix\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) Nil))) (Cons (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier mix 731113) (Cons (DOT.MkLabelAttribute "\"mix\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) Nil) (Cons (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier mix 731113) (Cons (DOT.MkLabelAttribute "\"mix\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) Nil) Nil)) (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT) Nil)))
-  ;; Using MeTTaLog random generator
-  (MkDOT (Cons (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkNode (DOT.MkSymbolIdentifier mix 823576) (Cons (DOT.MkLabelAttribute "\"mix\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) Nil))) (Cons (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier mix 823576) (Cons (DOT.MkLabelAttribute "\"mix\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) Nil) (Cons (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier mix 823576) (Cons (DOT.MkLabelAttribute "\"mix\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) Nil) Nil)) (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT) Nil)))
+  ;; Using HE random generator
+  (MkDOT (Cons (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkNode (DOT.MkSymbolIdentifier mix 731113) (Cons (DOT.MkLabelAttribute "\"mix\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) Nil))) (Cons (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier mix 731113) (Cons (DOT.MkLabelAttribute "\"mix\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) Nil) (Cons (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier mix 731113) (Cons (DOT.MkLabelAttribute "\"mix\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) Nil) Nil)) (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT) Nil)))
+  ;; ;; Using MeTTaLog random generator
+  ;; TODO
 !(set-random-seed &rng 0)
 !(assertEqual
   (toDOT (: f (-> A B)))
-  ;; ;; Using HE random generator
-  ;; (MkDOT (Cons (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkNode (DOT.MkSymbolIdentifier f 731113) (Cons (DOT.MkLabelAttribute "\"f\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) Nil))) (Cons (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier f 731113) (Cons (DOT.MkLabelAttribute "\"f\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) (Cons (DOT.MkLabelAttribute "\"A\"") Nil)) (Cons (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier f 731113) (Cons (DOT.MkLabelAttribute "\"f\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkLabelAttribute "\"B\"") Nil)) Nil)) (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT) Nil)))
-  ;; Using MeTTaLog random generator
-  (MkDOT (Cons (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkNode (DOT.MkSymbolIdentifier f 823576) (Cons (DOT.MkLabelAttribute "\"f\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) Nil))) (Cons (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier f 823576) (Cons (DOT.MkLabelAttribute "\"f\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) (Cons (DOT.MkLabelAttribute "\"A\"") Nil)) (Cons (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier f 823576) (Cons (DOT.MkLabelAttribute "\"f\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkLabelAttribute "\"B\"") Nil)) Nil)) (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT) Nil)))
+  ;; Using HE random generator
+  (MkDOT (Cons (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkNode (DOT.MkSymbolIdentifier f 731113) (Cons (DOT.MkLabelAttribute "\"f\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) Nil))) (Cons (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier __IN__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier f 731113) (Cons (DOT.MkLabelAttribute "\"f\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) (Cons (DOT.MkLabelAttribute "\"A\"") Nil)) (Cons (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier f 731113) (Cons (DOT.MkLabelAttribute "\"f\"") (Cons (DOT.MkShapeAttribute DOT.Shape.Box) Nil))) (DOT.MkNode (DOT.MkSymbolIdentifier __OUT__ 0) (Cons (DOT.MkLabelAttribute "\"\"") (Cons (DOT.MkShapeAttribute DOT.Shape.None) Nil))) (Cons (DOT.MkLabelAttribute "\"B\"") Nil)) Nil)) (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT) Nil)))
+  ;; ;; Using MeTTaLog random generator
+  ;; TODO
+
 ;; TODO: re-enable as needed  (don't forget to reset the random seed at every test)
 ;; !(toDOT (STTrans VA VIV))
 ;; !(toDOT (: (STTrans VA VIV) (<: (VocalsIn "English") Audio)))
