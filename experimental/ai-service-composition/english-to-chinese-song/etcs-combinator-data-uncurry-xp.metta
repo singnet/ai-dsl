@@ -1061,7 +1061,7 @@
 ;; Takes a DOT data structure and outputs the corresponding string in
 ;; DOT format.
 (: DOT.toString (-> DOT String))
-(= (DOT.toString (MkDOT $nodes $edges $entry $exit $attrs))
+(= (DOT.toString (MkDOT $nodes $edges $attrs))
    (let* (($nodes_repr (String.join "\n" (List.map DOT.Node.toString $nodes)))
           ($edges_repr (String.join "\n" (List.map DOT.Edge.toString $edges)))
           ($attrs_repr (String.join "\n" (List.map DOT.Attribute.toString $attrs)))
