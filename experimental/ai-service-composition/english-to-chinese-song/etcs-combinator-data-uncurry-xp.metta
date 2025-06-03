@@ -949,6 +949,44 @@
 ;;         (: sound-spleeter.spleeter $u))
 ;;      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
 
+;; Given a type, outputs its DOT identifier representation
+(: tyToIdentifier (-> $a DOT.Identifier))
+(= (tyToIdentifier $ty)
+   (case (get-metatype $ty)
+     ((Symbol (DOT.MkSymbolIdentifier $ty 0))
+      (Grounded (DOT.MkGroundedIdentifier $ty))
+      (Expression (DOT.MkExpressionIdentifier $ty))
+      (Variable (Error "Variable case not supported")))))
+
+;; Given a type, outputs its DOT node representation
+(: tyToNode (-> $a DOT.Node))
+(= (tyToNode $ty)
+   (DOT.MkNode (tyToIdentifier $ty)
+               (Cons (DOT.MkShapeAttribute DOT.Shape.Ellipse) Nil)))
+
+;; Given a subtyping axiom (: AXIOM (<: S T)), outputs a DOT edge
+;; connecting the subtype S to the super type T labeled by AXIOM.
+(: subtyToEdge (-> $a DOT.Edge))
+(= (subtyToEdge (: $ax (<: $s $t)))
+   (MKEdge (tyToNode $s)
+           (tyToNode $t)
+           (Cons (DOT.MkLabelAttribute (repr $ax)) Nil)))
+
+;; Given a space containing an ontology in the format
+;;
+;; (: AXIOM1 (<: S1 T1))
+;; ...
+;; (: AXIOMn (<: Sn Tn))
+;;
+;; generate a DOT file displaying the ontology
+(: ontoToDOT (-> $a DOT))
+(= (ontoToDOT $kb)
+   (let* (;; Convert subtyping relationships of $kb into a list of DOT edges
+          ($edges (toList (collapse (match $kb (: $ax (<: $s $t))
+                                           (subtyToEdge (: $ax (<: $s $t)))))))
+          ;; NEXT
+          )))
+
 ;; Output the string representing a style in DOT format
 (: DOT.Style.toString (-> DOT.Style String))
 (= (DOT.Style.toString DOT.Style.Rounded) "rounded")
