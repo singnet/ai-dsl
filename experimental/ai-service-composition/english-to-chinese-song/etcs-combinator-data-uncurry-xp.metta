@@ -286,14 +286,18 @@
 ;; DOT Identifier
 (: DOT.Identifier Type)
 
-;; Constructors.  The Symbol based identifier constructor takes an
-;; extra index argument to be treated as unique in the flowchart where
-;; it appears (because if it appears with different arguments it is
-;; should be treated as different).  The Grounded based identifier
-;; constructor does not need such extra index because it used for
-;; constants only, which should be unique since they take no argument.
+;; Constructors
+;; Symbol based identifier constructor.  It takes an extra index
+;; argument to be treated as unique in the flowchart where it appears
+;; (because if it appears with different arguments it is should be
+;; treated as different).
 (: DOT.MkSymbolIdentifier (-> Symbol Number DOT.Identifier))
+;; Grounded based identifier constructor.  It does not need such extra
+;; index because it used for constants only, which should be unique
+;; since they take no argument.
 (: DOT.MkGroundedIdentifier (-> Grounded DOT.Identifier))
+;; Expression based identifier constructor (used by ontoToDOT).
+(: DOT.MkExpressionIdentifier (-> Expression DOT.Identifier))
 
 ;; DOT node
 (: DOT.Node Type)
