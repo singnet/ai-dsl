@@ -958,6 +958,7 @@
 (= (DOT.Shape.toString DOT.Shape.Plain) "plain")
 (= (DOT.Shape.toString DOT.Shape.Box) "box")
 (= (DOT.Shape.toString DOT.Shape.None) "none")
+(= (DOT.Shape.toString DOT.Shape.Ellipse) "ellipse")
 (= (DOT.Shape.toString DOT.Shape.Parallelogram) "parallelogram")
 
 ;; Output the string representing a rankdir in DOT format
