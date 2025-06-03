@@ -241,6 +241,7 @@
 (: DOT.Shape.Plain DOT.Shape)
 (: DOT.Shape.Box DOT.Shape)
 (: DOT.Shape.None DOT.Shape)
+(: DOT.Shape.Ellipse DOT.Shape)
 (: DOT.Shape.Parallelogram DOT.Shape)
 
 ;; DOT attribute
