@@ -438,6 +438,8 @@
    (let $sr (repr $symbol) (repr $sr)))
 (= (DOT.Identifier.toLabelString (DOT.MkGroundedIdentifier $grounded))
    (let $gr (repr $grounded) (repr $gr)))
+(= (DOT.Identifier.toLabelString (DOT.MkExpressionIdentifier $expr))
+   (let $er (repr $expr) (repr $er)))
 
 ;; Output the label attribute corresponding to an identifier
 (: DOT.Identifier.toLabelAttribute (-> DOT.Identifier DOT.Attribute))
