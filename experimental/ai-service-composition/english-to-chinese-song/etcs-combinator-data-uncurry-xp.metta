@@ -2893,3 +2893,11 @@
 ;;            (-> (: $x (SongIn "English"))
 ;;                (sound-spleeter.DTLOutput "English"))))
 ;;      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+
+;; Print ontology in DOT format
+!(bind! &kbo (new-space))
+!(add-atom &kbo (: NS (<: NaturalLanguage String)))
+!(add-atom &kbo (: TS (<: Text String)))
+;; NEXT: fix below
+;; !(add-atom &kbo (: TIT (<: (TextIn $l) Text)))
+!(println! (DOT.toString (ontologyToDOT &kbo)))
