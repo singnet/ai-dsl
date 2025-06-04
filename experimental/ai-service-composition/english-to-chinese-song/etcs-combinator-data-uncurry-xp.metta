@@ -127,6 +127,12 @@
        (Cons $x (Cons $head $tail))
        (Cons $head (List.insertWith $lt $x $tail))))
 
+;; Insert two elements to a presumable sorted list according to a
+;; given order (less than).  The result remains sorted.
+(: List.insertWith2 (-> (-> $a $a Bool) $a $a (List $a) (List $a)))
+(= (List.insertWith2 $lt $x $y $xs)
+   (List.insertWith $lt $x (List.insertWith $lt $y $xs)))
+
 ;; Sort a list according to a given a less than order.
 (: List.sortWith (-> (-> $a $a Bool) (List $a) (List $a)))
 (= (List.sortWith $lt Nil) Nil)
@@ -205,6 +211,15 @@
 
 ;; Test String.join
 !(assertEqual (String.join ", " (Cons "x=42" (Cons "y=24" Nil))) "x=42, y=24")
+
+;; Compare two string in lexical order
+(: String.lt (-> String String Bool))
+(= (String.lt $x $y) ((py-dot $x __lt__ (-> String String Bool)) $y))
+
+;; Test String.lt
+!(assertEqual
+  (String.lt "abc" "def")
+  True)
 
 ;;;;;;;;;
 ;; Nat ;;
@@ -323,6 +338,16 @@
 (: mkEmptyNode (-> DOT.Node))
 (= (mkEmptyNode) (DOT.MkNode (DOT.MkExpressionIdentifier ()) Nil))
 
+;; Less than comparison of nodes according to some lexical order
+(: DOT.Node.lt (-> DOT.Node DOT.Node Bool))
+(= (DOT.Node.lt $x $y) (String.lt (repr $x) (repr $y)))
+
+;; Test DOT.Node.lt
+!(assertEqual
+  (DOT.Node.lt (DOT.MkNode (DOT.MkSymbolIdentifier S1 0) Nil)
+               (DOT.MkNode (DOT.MkSymbolIdentifier S2 0) Nil))
+  True)
+
 ;; Data type of DOT edge
 (: DOT.Edge Type)
 
@@ -341,6 +366,13 @@
 
 (: DOT.Edge.attributes (-> DOT.Edge (List DOT.Attribute)))
 (= (DOT.Edge.attributes (DOT.MkEdge $source $destination $attributes)) $attributes)
+
+;; Test DOT.MkEdge
+!(assertEqual
+  (get-type (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier S1 0) Nil)
+                        (DOT.MkNode (DOT.MkSymbolIdentifier S2 0) Nil)
+                        Nil))
+  DOT.Edge)
 
 ;; Data type to describe Graphviz DOT data
 (: DOT Type)
@@ -954,6 +986,38 @@
 ;;         (: sound-spleeter.spleeter $u))
 ;;      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
 
+;; Given a list of nodes, and an edge, insert the source and the
+;; destination nodes of the edge inside the list of nodes.  The
+;; insertion should ignore duplicates.
+(: insertSrcDst (-> (List DOT.Node) DOT.Edge (List DOT.Node)))
+(= (insertSrcDst $nodes (DOT.MkEdge $src $dst $attrs))
+   (List.insertWith2 DOT.Node.lt $src $dst $nodes))
+
+;; Test insertSrcDst
+!(assertEqual
+  (insertSrcDst Nil
+                (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier S1 0) Nil)
+                            (DOT.MkNode (DOT.MkSymbolIdentifier S2 0) Nil)
+                            Nil))
+  (Cons (DOT.MkNode (DOT.MkSymbolIdentifier S1 0) Nil)
+        (Cons (DOT.MkNode (DOT.MkSymbolIdentifier S2 0) Nil)
+              Nil)))
+
+;; Given a list of edges, collect all nodes, source and destination
+;; alike, and place them in list of unique nodes.
+(: edgesToNodes (-> (List DOT.Edge) (List DOT.Node)))
+(= (edgesToNodes $edges) (List.foldl insertSrcDst Nil $edges))
+
+;; Test edgesToNode
+!(assertEqual
+  (edgesToNodes (Cons (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier S1 0) Nil)
+                                  (DOT.MkNode (DOT.MkSymbolIdentifier S2 0) Nil)
+                                  Nil)
+                      Nil))
+  (Cons (DOT.MkNode (DOT.MkSymbolIdentifier S1 0) Nil)
+        (Cons (DOT.MkNode (DOT.MkSymbolIdentifier S2 0) Nil)
+              Nil)))
+
 ;; Given a type, outputs its DOT identifier representation
 (: tyToIdentifier (-> $a DOT.Identifier))
 (= (tyToIdentifier $ty)
@@ -966,16 +1030,45 @@
 ;; Given a type, outputs its DOT node representation
 (: tyToNode (-> $a DOT.Node))
 (= (tyToNode $ty)
-   (DOT.MkNode (tyToIdentifier $ty)
-               (Cons (DOT.MkShapeAttribute DOT.Shape.Ellipse) Nil)))
+   (let $idt (tyToIdentifier $ty)
+     (DOT.MkNode $idt
+                 (Cons (DOT.MkLabelAttribute (DOT.Identifier.toLabelString $idt))
+                       (Cons (DOT.MkShapeAttribute DOT.Shape.Ellipse)
+                             Nil)))))
 
 ;; Given a subtyping axiom (: AXIOM (<: S T)), outputs a DOT edge
 ;; connecting the subtype S to the super type T labeled by AXIOM.
 (: subtyToEdge (-> $a DOT.Edge))
 (= (subtyToEdge (: $ax (<: $s $t)))
-   (MKEdge (tyToNode $s)
-           (tyToNode $t)
-           (Cons (DOT.MkLabelAttribute (repr $ax)) Nil)))
+   (let $repr (repr $ax)
+     (DOT.MkEdge (tyToNode $s)
+                 (tyToNode $t)
+                 (Cons (DOT.MkLabelAttribute (repr $repr)) Nil))))
+
+;; Test subtyToEdge
+!(assertEqual
+  (subtyToEdge (: ax1 (<: S T)))
+  (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier S 0)
+                          (Cons (DOT.MkLabelAttribute "\"S\"")
+                                (Cons (DOT.MkShapeAttribute DOT.Shape.Ellipse)
+                                      Nil)))
+              (DOT.MkNode (DOT.MkSymbolIdentifier T 0)
+                          (Cons (DOT.MkLabelAttribute "\"T\"")
+                                (Cons (DOT.MkShapeAttribute DOT.Shape.Ellipse)
+                                      Nil)))
+              (Cons (DOT.MkLabelAttribute "\"ax1\"") Nil)))
+
+;; Convert a list of subtyping relationships into DOT
+(: subtypingsToDOT (-> (List Atom) DOT))
+(= (subtypingsToDOT $subtys)
+   (trace! (👁 subtypingsToDOT $subtys)
+   (let* (;; Build a list of edges corresponding subtyping relationships
+          ($edges (List.map subtyToEdge $subtys))
+          ;; Collect all nodes in edges
+          ($nodes (edgesToNodes $edges))
+          ;; Set global attributes
+          ($attrs (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT) Nil)))
+     (MkDOT $nodes $edges $attrs))))
 
 ;; Given a space containing an ontology in the format
 ;;
@@ -984,13 +1077,47 @@
 ;; (: AXIOMn (<: Sn Tn))
 ;;
 ;; generate a DOT file displaying the ontology
-(: ontoToDOT (-> $a DOT))
-(= (ontoToDOT $kb)
-   (let* (;; Convert subtyping relationships of $kb into a list of DOT edges
-          ($edges (toList (collapse (match $kb (: $ax (<: $s $t))
-                                           (subtyToEdge (: $ax (<: $s $t)))))))
-          ;; NEXT
-          )))
+(: ontologyToDOT (-> $a DOT))
+(= (ontologyToDOT $kb)
+   (trace! (👁 ontoToDOT $kb)
+   (let* (;; Fetch all substyping relationship axioms
+          ($subtys (collapse (match $kb (: $ax (<: $s $t)) (: $ax (<: $s $t)))))
+          ;; Convert into a list
+          ($subtys-lst (toList $subtys)))
+     (subtypingsToDOT $subtys-lst))))
+
+;; Test ontologyToDOT
+!(bind! &test.ontologyToDOT.kb (new-space))
+;; Test empty kb
+!(assertEqual
+  (ontologyToDOT &test.ontologyToDOT.kb)
+  (MkDOT Nil Nil (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT) Nil)))
+;; Test kb with one subtyping relationship
+!(add-atom &test.ontologyToDOT.kb (: ax (<: S T)))
+!(assertEqual
+  (ontologyToDOT &test.ontologyToDOT.kb)
+  (MkDOT (Cons (DOT.MkNode (DOT.MkSymbolIdentifier S 0)
+                           (Cons (DOT.MkLabelAttribute "\"S\"")
+                                 (Cons (DOT.MkShapeAttribute DOT.Shape.Ellipse)
+                                       Nil)))
+               (Cons (DOT.MkNode (DOT.MkSymbolIdentifier T 0)
+                                 (Cons (DOT.MkLabelAttribute "\"T\"")
+                                       (Cons (DOT.MkShapeAttribute DOT.Shape.Ellipse)
+                                             Nil)))
+                     Nil))
+         (Cons (DOT.MkEdge (DOT.MkNode (DOT.MkSymbolIdentifier S 0)
+                                       (Cons (DOT.MkLabelAttribute "\"S\"")
+                                             (Cons (DOT.MkShapeAttribute DOT.Shape.Ellipse)
+                                                   Nil)))
+                           (DOT.MkNode (DOT.MkSymbolIdentifier T 0)
+                                       (Cons (DOT.MkLabelAttribute "\"T\"")
+                                             (Cons (DOT.MkShapeAttribute DOT.Shape.Ellipse)
+                                                   Nil)))
+                           (Cons (DOT.MkLabelAttribute "\"ax\"")
+                                 Nil))
+               Nil)
+         (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT)
+               Nil)))
 
 ;; Output the string representing a style in DOT format
 (: DOT.Style.toString (-> DOT.Style String))
