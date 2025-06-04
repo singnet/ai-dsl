@@ -1263,7 +1263,7 @@
 ;; (. $f $g $x)
 ;;
 ;; because . is binary, not trinary.
-(: uncurry (-> Atom Atom))
+(: uncurry (-> Atom $a))
 (= (uncurry $term)
    (case (get-metatype $term)
      ((Variable $term)
