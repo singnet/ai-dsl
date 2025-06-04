@@ -1,5 +1,10 @@
 ;; Like etcs-combinator-sd-data-uncurry-xp.metta but tested on the
 ;; whole AI service composition instead of the scaled down one.
+;;
+;; Uncurried combinators are used to compose services.  See
+;; https://hackage.haskell.org/package/data-aviary-0.4.0/docs/src/Data-Aviary-BirdsInter.html
+;; and https://github.com/fantasyland/fantasy-birds/tree/master for a
+;; good source of combinators, their names, definitions and types.
 
 ;;;;;;;;;;;;;
 ;; Imports ;;
@@ -2113,17 +2118,19 @@
 (= (Φ $f (. $g $j) (. $h (. $i $j)))
    (. (Φ $f $g (. $h $i)) $j))
 
-;; The composition of spleeter with the mixing of accomp
-;; and vocals is involutive.
+;; The composition of spleeter with the mixing of accomp and vocals is
+;; involutive.  The function id is already part of the standard
+;; library, so we use idiot instead which comes from
+;; https://hackage.haskell.org/package/data-aviary-0.4.0/docs/Data-Aviary-Birds.html
 (= (. (Φ mixer.mix
          sound-spleeter.DTLOutput.accomp
          sound-spleeter.DTLOutput.vocals)
       sound-spleeter.spleeter)
-   id)
+   idiot)
 (= (. sound-spleeter.spleeter (Φ mixer.mix
                                  sound-spleeter.DTLOutput.accomp
                                  sound-spleeter.DTLOutput.vocals))
-   id)
+   idiot)
 
 ;; The composition of (. spleeter f) or (. f spleeter) with the mixing
 ;; of accomp and vocals is idempotent with respect to f.
@@ -2137,20 +2144,20 @@
          sound-spleeter.DTLOutput.vocals))
    $f)
 
-;; Composing with id is idempotent.  Or id is the identity element of
-;; composition.
-(= (. id $f) $f)
-(= (. $f id) $f)
+;; Composing with idiot is idempotent.  Or idiot is the identity element
+;; of composition.
+(= (. idiot $f) $f)
+(= (. $f idiot) $f)
 
-;; Applying id to x outputs x
-(= (id $x) $x)
+;; Applying idiot to x outputs x
+(= (idiot $x) $x)
 
 ;; Sequential coercion
 (= (. (coerce $bc) (coerce $ab)) (coerce (STTrans $bc $ab)))
 (= (. (coerce $bc) (. (coerce $ab) $f)) (. (coerce (STTrans $bc $ab)) $f))
 
-;; Translating from/to the same language reduces to id
-(= (machine-translation.translate $l $l) id)
+;; Translating from/to the same language reduces to idiot
+(= (machine-translation.translate $l $l) idiot)
 
 ;; Translating back and forth from/to the same languages reduces to
 ;; id.  Obviously, this is not strictly true, but such combination is
