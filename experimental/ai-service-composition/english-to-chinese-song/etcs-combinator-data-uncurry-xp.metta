@@ -258,22 +258,19 @@
 !(assertEqual
   (pylistToList ((py-dot "abc,def" split) ","))
   (Cons "abc" (Cons "def" Nil)))
+
 ;; Split a string into a list of strings given a separator and take
 ;; the nth substring of this list.
 (: String.split (-> String              ; Separator
-                    Number              ; Index to take (from 0)
                     String              ; String to split
-                    String))            ; Substring
-(= (String.split $separator $idx $str)
-   ((py-dot ((py-dot $str split) $separator) __getitem__) $idx))
+                    (List String)))     ; Substrings
+(= (String.split $separator $str)
+   (pylistToList ((py-dot $str split) $separator)))
 
 ;; Test String.split
 !(assertEqual
-  (String.split ":," 0 "abc:,def")
-  "abc")
-!(assertEqual
-  (String.split ":," 1 "abc:,def")
-  "def")
+  (String.split ":," "abc:,def")
+  (Cons "abc" (Cons "def" Nil)))
 ;;;;;;;;;
 ;; Nat ;;
 ;;;;;;;;;
