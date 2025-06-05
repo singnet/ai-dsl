@@ -590,7 +590,7 @@
 (= (DOT.Identifier.toLabelString (DOT.MkGroundedIdentifier $grounded))
    (let $gr (repr $grounded) (repr $gr)))
 (= (DOT.Identifier.toLabelString (DOT.MkExpressionIdentifier $expr))
-   (let $er (repr $expr) (repr $er)))
+   (let $er (reprWithoutID $expr) (repr $er)))
 
 ;; Output the label attribute corresponding to an identifier
 (: DOT.Identifier.toLabelAttribute (-> DOT.Identifier DOT.Attribute))
@@ -1298,6 +1298,8 @@
    (let $sir (String.append (repr $symbol) (repr $index)) (repr $sir)))
 (= (DOT.Identifier.toString (DOT.MkGroundedIdentifier $grounded))
    (repr $grounded))
+(= (DOT.Identifier.toString (DOT.MkExpressionIdentifier $expr))
+   (let $repr (reprWithoutID $expr) (repr $repr)))
 
 ;; Test DOT.Identifier.toString
 !(assertEqual
