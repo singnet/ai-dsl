@@ -2007,28 +2007,28 @@
 !(add-atom &kb (: VIV (<: (VocalsIn $l) Vocals)))
 !(add-atom &kb (: SIA (<: (SongIn $l) Audio)))
 
-;; Additionally we add an upper type called Data, which all data types
-;; are subtypes of.  This can be used as pruning criterion.  In
-;; principle we would only need to do that for the most general data
-;; types, like String, Number, etc, however, since it is used for
-;; pruning, such criterion should compute as fast as possible, so we
-;; directly provide the entire transitive closure.
-!(add-atom &kb (: BD (<: Bytes Data)))
-!(add-atom &kb (: SD (<: String Data)))
-!(add-atom &kb (: ND (<: NaturalLanguage Data)))
-!(add-atom &kb (: TD (<: Text Data)))
-!(add-atom &kb (: TID (<: (TextIn $l) Data)))
-!(add-atom &kb (: UD (<: UniformResourceLocator Data)))
-!(add-atom &kb (: UTD (<: (UniformResourceLocatorOfType $t) Data)))
-!(add-atom &kb (: MD (<: MusicalInstrumentDigitalInterface Data)))
-!(add-atom &kb (: AD (<: Audio Data)))
-!(add-atom &kb (: ID (<: Instrumental Data)))
-!(add-atom &kb (: VD (<: Vocals Data)))
-!(add-atom &kb (: VID (<: (VocalsIn $l) Data)))
-!(add-atom &kb (: SOD (<: (sound-spleeter.DTLOutput $l) Data)))
-!(add-atom &kb (: VID (<: (VocalsIn $l) Data)))
-!(add-atom &kb (: IND (<: Instrumental Data)))
-!(add-atom &kb (: SID (<: (SongIn $l) Data)))
+;; ;; Additionally we add an upper type called Data, which all data types
+;; ;; are subtypes of.  This can be used as pruning criterion.  In
+;; ;; principle we would only need to do that for the most general data
+;; ;; types, like String, Number, etc, however, since it is used for
+;; ;; pruning, such criterion should compute as fast as possible, so we
+;; ;; directly provide the entire transitive closure.
+;; !(add-atom &kb (: BD (<: Bytes Data)))
+;; !(add-atom &kb (: SD (<: String Data)))
+;; !(add-atom &kb (: ND (<: NaturalLanguage Data)))
+;; !(add-atom &kb (: TD (<: Text Data)))
+;; !(add-atom &kb (: TID (<: (TextIn $l) Data)))
+;; !(add-atom &kb (: UD (<: UniformResourceLocator Data)))
+;; !(add-atom &kb (: UTD (<: (UniformResourceLocatorOfType $t) Data)))
+;; !(add-atom &kb (: MD (<: MusicalInstrumentDigitalInterface Data)))
+;; !(add-atom &kb (: AD (<: Audio Data)))
+;; !(add-atom &kb (: ID (<: Instrumental Data)))
+;; !(add-atom &kb (: VD (<: Vocals Data)))
+;; !(add-atom &kb (: VID (<: (VocalsIn $l) Data)))
+;; !(add-atom &kb (: SOD (<: (sound-spleeter.DTLOutput $l) Data)))
+;; !(add-atom &kb (: VID (<: (VocalsIn $l) Data)))
+;; !(add-atom &kb (: IND (<: Instrumental Data)))
+;; !(add-atom &kb (: SID (<: (SongIn $l) Data)))
 
 ;;;;;;;;;;;;;;
 ;; Services ;;
