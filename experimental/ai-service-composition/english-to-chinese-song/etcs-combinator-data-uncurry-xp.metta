@@ -1369,6 +1369,14 @@
   "digraph Flowchart {\nrankdir=BT\n\n\"__IN__0\" [label=\"\", shape=none]\n\"__OUT__0\" [label=\"\", shape=none]\n\"f773460\" [label=\"f\", shape=box]\n\"g731113\" [label=\"g\", shape=box]\n\n\"g731113\" -> \"f773460\" []\n\"f773460\" -> \"__OUT__0\" []\n\"__IN__0\" -> \"g731113\" []\n}")
   ;; Using MeTTaLog random generator
   ;; TODO
+
+;; Test DOT.toString . ontologyToDOT
+!(bind! &test.DOT.toString.kb (new-space))
+!(add-atom &test.DOT.toString.kb (: TIT (<: (TextIn $l) Text)))
+!(assertEqual
+  (DOT.toString (ontologyToDOT &test.DOT.toString.kb))
+  "digraph Flowchart {\nrankdir=BT\n\n\"(TextIn $l)\" [label=\"(TextIn $l)\", shape=ellipse]\n\"Text0\" [label=\"Text\", shape=ellipse]\n\n\"(TextIn $l)\" -> \"Text0\" [label=\"TIT\"]\n}")
+
 ;; TODO: re-enable as needed (don't forget to reset the random seed at every test)
 ;; !(assertEqual
 ;;   (DOT.toString (toDOT (Φ f g h)))
