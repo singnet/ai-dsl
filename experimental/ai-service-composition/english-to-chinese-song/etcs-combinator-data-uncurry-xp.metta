@@ -271,6 +271,70 @@
 !(assertEqual
   (String.split ":," "abc:,def")
   (Cons "abc" (Cons "def" Nil)))
+
+;; Like repr but removes IDs from variables.  For instance
+;;
+;; (reprWithoutID $x#1234)
+;;
+;; outputs
+;;
+;; "$x"
+;;
+;; Likewise
+;;
+;; (reprWithoutID (R a $x#1234))
+;;
+;; outputs
+;;
+;; "(R a $x)"
+;;
+;; Warning: unlike repr this function will reduce the given argument
+;; before computing its representation.
+(: reprWithoutID (-> $a String))
+(= (reprWithoutID $x)
+   (case (get-metatype $x)
+     ((Symbol (repr $x))
+      (Grounded (repr $x))
+      (Variable (List.index (String.split "#" (repr $x)) Z))
+      (Expression (case $x
+                    (;; Nullary
+                     (() "()")
+                     ;; Unary
+                     (($f) (String.append3 "("
+                                           (reprWithoutID $f)
+                                           ")"))
+                     ;; Binary
+                     (($f $l) (String.append5 "(" ; TODO: replace $l by $g once fixed
+                                              (reprWithoutID $f)
+                                              " "
+                                              (reprWithoutID $l)
+                                              ")"))
+                     ;; Ternary
+                     (($f $g $h) (String.append7 "("
+                                                 (reprWithoutID $f)
+                                                 " "
+                                                 (reprWithoutID $g)
+                                                 " "
+                                                 (reprWithoutID $h)
+                                                 ")"))
+                     ;; NEXT: support other arities
+                     ($else (Error "Not implemented yet"))))))))
+
+;; TODO: re-enable the tests below when $x, or $y are reliably
+;; returned instead of something alpha equivalent.
+;;
+;; Test reprWithoutID
+;; (= (test.reprWithoutID.foo $x) $x)
+;; !(assertEqual
+;;   (reprWithoutID (test.reprWithoutID.foo $x))
+;;   "$x")
+;; !(assertEqual
+;;   (reprWithoutID ((test.reprWithoutID.foo $x)))
+;;   "($x)")
+;; !(assertEqual
+;;   (reprWithoutID (R (test.reprWithoutID.foo $y) "abc"))
+;;   "(P $y \"abc\")")
+
 ;;;;;;;;;
 ;; Nat ;;
 ;;;;;;;;;
