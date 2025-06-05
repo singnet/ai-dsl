@@ -1175,14 +1175,13 @@
 ;; Convert a list of subtyping relationships into DOT
 (: subtypingsToDOT (-> (List Atom) DOT))
 (= (subtypingsToDOT $subtys)
-   (trace! (👁 subtypingsToDOT $subtys)
    (let* (;; Build a list of edges corresponding subtyping relationships
           ($edges (List.map subtyToEdge $subtys))
           ;; Collect all nodes in edges
           ($nodes (edgesToNodes $edges))
           ;; Set global attributes
           ($attrs (Cons (DOT.MkRankdirAttribute DOT.Rankdir.BT) Nil)))
-     (MkDOT $nodes $edges $attrs))))
+     (MkDOT $nodes $edges $attrs)))
 
 ;; Given a space containing an ontology in the format
 ;;
@@ -1193,12 +1192,11 @@
 ;; generate a DOT file displaying the ontology
 (: ontologyToDOT (-> $a DOT))
 (= (ontologyToDOT $kb)
-   (trace! (👁 ontoToDOT $kb)
    (let* (;; Fetch all substyping relationship axioms
           ($subtys (collapse (match $kb (: $ax (<: $s $t)) (: $ax (<: $s $t)))))
           ;; Convert into a list
           ($subtys-lst (toList $subtys)))
-     (subtypingsToDOT $subtys-lst))))
+     (subtypingsToDOT $subtys-lst)))
 
 ;; Test ontologyToDOT
 !(bind! &test.ontologyToDOT.kb (new-space))
