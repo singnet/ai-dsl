@@ -165,6 +165,20 @@
   (List.take 2 (Cons A (Cons B (Cons C Nil))))
   (Cons A (Cons B Nil)))
 
+;; Return the ith element of a list
+(: List.index (-> (List $a) Nat $a))
+(= (List.index (Cons $head $tail) Z) $head)
+(= (List.index (Cons $head $tail) (S $k))
+   (List.index $tail $k))
+
+;; Test List.index
+!(assertEqual
+  (List.index (Cons A (Cons B Nil)) Z)
+  A)
+!(assertEqual
+  (List.index (Cons A (Cons B Nil)) (S Z))
+  B)
+
 ;;;;;;;;;;
 ; String ;
 ;;;;;;;;;;
