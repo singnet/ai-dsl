@@ -195,11 +195,19 @@
 
 ;; Overload String.append to support more than 2 arguments
 (: String.append3 (-> String String String String))
-(= (String.append3 $x $y $z) (String.append $x (String.append $y $z)))
+(= (String.append3 $x $y $z)
+   (String.append $x (String.append $y $z)))
 (: String.append4 (-> String String String String String))
-(= (String.append4 $x $y $z $w) (String.append $x (String.append3 $y $z $w)))
+(= (String.append4 $x $y $z $w)
+   (String.append $x (String.append3 $y $z $w)))
 (: String.append5 (-> String String String String String String))
-(= (String.append5 $x $y $z $w $s) (String.append $x (String.append4 $y $z $w $s)))
+(= (String.append5 $x $y $z $w $s)
+   (String.append $x (String.append4 $y $z $w $s)))
+(: String.append6 (-> String String String String String String String))
+(= (String.append6 $x $y $z $w $s $t)
+   (String.append $x (String.append5 $y $z $w $s $t)))
+(= (String.append7 $x $y $z $w $s $t $u)
+   (String.append $x (String.append6 $y $z $w $s $t $u)))
 
 ;; Join a list of string by a separator
 (: String.join (-> String (List String) String))
