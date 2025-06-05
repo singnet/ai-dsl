@@ -229,6 +229,22 @@
   (String.lt "abc" "def")
   True)
 
+;; Split a string into a list of strings given a separator and take
+;; the nth substring of this list.
+(: String.split (-> String              ; Separator
+                    Number              ; Index to take (from 0)
+                    String              ; String to split
+                    String))            ; Substring
+(= (String.split $separator $idx $str)
+   ((py-dot ((py-dot $str split) $separator) __getitem__) $idx))
+
+;; Test String.split
+!(assertEqual
+  (String.split ":," 0 "abc:,def")
+  "abc")
+!(assertEqual
+  (String.split ":," 1 "abc:,def")
+  "def")
 ;;;;;;;;;
 ;; Nat ;;
 ;;;;;;;;;
