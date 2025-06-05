@@ -1306,6 +1306,12 @@
 !(assertEqual
   (DOT.Identifier.toString (DOT.MkGroundedIdentifier "Hello World!"))
   "\"Hello World!\"")
+;; TODO: re-enable the test below when $x, or $y are reliably
+;; returned instead of something alpha equivalent.
+;;
+;; !(assertEqual
+;;   (DOT.Identifier.toString (DOT.MkExpressionIdentifier (Text $l)))
+;;   "\"(Text $l)\"")
 
 ;; Output the string representing a node in DOT format.
 (: DOT.Node.toString (-> DOT.Node String))
@@ -1988,7 +1994,8 @@
 
 ;; URL
 !(add-atom &kb (: US (<: UniformResourceLocator String)))      ; SUMO
-!(add-atom &kb (: UTU (<: (UniformResourceLocatorOfType $t) UniformResourceLocator)))
+;; TODO: replace $t by $l when variable order is fixed
+!(add-atom &kb (: UTU (<: (UniformResourceLocatorOfType $l) UniformResourceLocator)))
 
 ;; MIDI
 !(add-atom &kb (: MB (<: MusicalInstrumentDigitalInterface Bytes)))
