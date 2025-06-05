@@ -243,6 +243,21 @@
   (String.lt "abc" "def")
   True)
 
+;; Convert Python list into List
+(: pylistToList (-> $a (List $b)))
+(= (pylistToList $pylst)
+   (pylistToList_ $pylst 0 ((py-dot $pylst __len__))))
+(: pylistToList_ (-> $a Number Number (List $b)))
+(= (pylistToList_ $pylst $from $to)
+   (if (< $from $to)
+       (Cons ((py-dot $pylst __getitem__) $from)
+             (pylistToList_ $pylst (+ $from 1) $to))
+       Nil))
+
+;; Test pylistToList
+!(assertEqual
+  (pylistToList ((py-dot "abc,def" split) ","))
+  (Cons "abc" (Cons "def" Nil)))
 ;; Split a string into a list of strings given a separator and take
 ;; the nth substring of this list.
 (: String.split (-> String              ; Separator
