@@ -19,6 +19,9 @@
 \usepackage{circledsteps}
 \usepackage{bussproofs}
 
+%% New commands
+%% \newcommand{\mettainline[1]}{\mintinline{scheme}{#1}}
+
 \begin{document}
 
 \title{AI-DSL Technical Report 2024}
@@ -883,6 +886,7 @@ for IPFS, there needs to be at least one node in the network
 containing the data referenced by the SingularityNET smart contract.
 
 \section{Crawling the SingularityNET Market Place}
+\label{sec:csnmp}
 The goal of this process is to gather information about all AI
 services on the SingularityNET Market Place and convert that
 information into a format that the backward chainer can use to
@@ -1061,7 +1065,7 @@ input type
 ;; Define naint.machine-translation.Input type
 (: naint.machine-translation.Input Type)
 
-;; Define naint.machine-translation.Input constuctor
+;; Define naint.machine-translation.Input constructor
 (: naint.machine-translation.MkInput
    (-> String ; source_lang
        (-> String ; target_lang
@@ -1081,7 +1085,7 @@ Let us now look at the type of its output
 ;; Define naint.machine-translation.Output type
 (: naint.machine-translation.Output Type)
 
-;; Define naint.machine-translation.Output constuctor
+;; Define naint.machine-translation.Output constructor
 (: naint.machine-translation.MkOutput
    (-> String ; translation
        naint.machine-translation.Output))
@@ -1278,7 +1282,21 @@ earlier
 (: SIA (<: (SongIn $l) Audio))
 \end{minted}
 \end{small}
-One may observe that in this ontology example all types eventually
+A graphical representation of the ontology is given in
+Figure~\ref{fig:onto} (Appendix~\ref{apdx:dot} contains information of
+how it has been rendered).
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.235]{figs/ontology.png}
+  \caption{Graphical representation of the miniature ontology
+    mentioned earlier.  The nodes represent the types.  The edges
+    represent the subtyping relationships, for instance Audio is
+    subtype of Bytes is represented by an arrow pointing to Bytes.
+    The labels on the edges correspond to the names of axioms encoding
+    the subtyping relationships.}
+  \label{fig:onto}
+\end{figure}
+One may observe that in this ontology all types directly or indirectly
 derive from primary types such as \mintinline{scheme}{String} and
 \mintinline{scheme}{Bytes}.  These primary types comes Protobuf.  What
 this means is that, if for instance an AI service outputs data of type
@@ -1290,19 +1308,119 @@ service specifications.  One may also observe that some types are
 parameterized, such as \mintinline{scheme}{(TextIn $l)}, which
 represents a text in a certain language \mintinline{scheme}{$l}.
 Having parameterized types in the ontology will especially turn out to
-useful while reasoning about dependent types.
+be useful while reasoning about dependent types.
 
-A graphical representation of the ontology is given in Figure 
+Given this ontology we can replace the Protobuf types by semantically
+richer types.  Let us consider for instance the
+\mintinline{scheme}{naint.machine-translation.MkInput} constructor of
+\mintinline{scheme}{naint.machine-translation.Input} mentioned in
+Section~\ref{sec:csnmp} and recalled below
+\begin{minted}{scheme}
+;; Define naint.machine-translation.Input constructor
+(: naint.machine-translation.MkInput
+   (-> String ; source_lang
+       (-> String ; target_lang
+           (-> String ; sentences_url
+               naint.machine-translation.Input))))
+\end{minted}
+One can replace the first two occurrences of
+\mintinline{scheme}{String} by \mintinline{scheme}{NaturalLanguage}
+and the last occurrence of \mintinline{scheme}{String} by
+\mintinline{scheme}{(UniformResourceLocatorOfType $t)} or even better
+by \mintinline{scheme}{(UniformResourceLocatorOfType Text)} since we
+know that this service translates text to text.  But we can do even
+better than that and replace it by
+\mintinline{scheme}{(UniformResourceLocatorOfType (TextIn $l))} since
+we are given the source language as first argument.  The question is
+how to specify the source language, for now being just represented as
+free variable, \mintinline{scheme}{$l}.  This is where dependent types
+shine.  To see how let us rewrite the entire constructor as follows
+\begin{minted}{scheme}
+;; Define naint.machine-translation.Input constructor with
+;; dependent types
+(: naint.machine-translation.MkInput
+   (-> (: $src-lang NaturalLanguage)
+       (-> (: $dst-lang NaturalLanguage)
+           (-> (UniformResourceLocatorOfType (TextIn $src-lang))
+               (naint.machine-translation.Input $src-lang
+                                                $dst-lang)))))
+\end{minted}
+The variable \mintinline{scheme}{$l} has been replaced by
+\mintinline{scheme}{$src-lang}, the inhabitant of the first argument
+of \mintinline{scheme}{naint.machine-translation.MkInput}, the source
+language of the translation, et voila!  It allows us to express that
+the third argument is a type that \emph{depends} on the value of the
+first argument.  Also, it goes without saying that replacing
+\mintinline{scheme}{String} by a type denoting a location to a datum,
+a URL, as opposed to the datum itself allows to catch at
+type-checking-time an error that would likely have otherwise occurred
+at run-time.  Indeed, it is easy to make the mistake of plugging in
+input of the translator a service that directly outputs a text as
+opposed to a URL pointing to the text to translate.  Finally, one
+should note that the
+\mintinline{scheme}{naint.machine-translation.Input} type has been
+replaced by a parameterized type, taking the source and destination
+languages as parameters, which is needed not to lose that information
+downstream.  Likewise the
+\mintinline{scheme}{naint.machine-translation.Output} type has been
+replaced by a parameterized type simply taking the destination
+language as parameter as the information about the source language is
+no longer needed.  The
+\mintinline{scheme}{naint.machine-translation.translate} method thus
+looks like
+\begin{minted}{scheme}
+;; Define naint.machine-translation.translate service method
+(: naint.machine-translation.translate
+   (-> (naint.machine-translation.Input $src-lang $dst-lang)
+       (naint.machine-translation.Output $dst-lang)))
+\end{minted}
+In the AI service composition experiments described in
+Chapter~\ref{chap:xpaicompo}, the above has been further simplified by
+embedding the input and output constructors directly in the arguments
+of the \mintinline{scheme}{naint.machine-translation.translate}
+method, resulting into the following type signature
+\begin{small}
+\begin{minted}{scheme}
+;; Define naint.machine-translation.translate service method
+(: naint.machine-translation.translate
+   (-> (: $src-lang NaturalLanguage)
+       (: $dst-lang NaturalLanguage)
+       (-> (: $url (UniformResourceLocatorOfType (TextIn $src-lang)))
+           (TextIn $dst-lang))))
+\end{minted}
+\end{small}
+One may also notice that the fully curried representation has been
+replaced by some hybrid curried-uncurried one.  Indeed the first two
+arguments, the source and destination languages, are uncurried while
+the last one, the URL pointing to the text to translate, is curried.
+This is because we have found that it mitigate the combinatorial
+explosion to cleaning separate parameters (like the source and
+destination languages) and data to be processed (like the text to be
+translated).
 
-NEXT: write a tool to display ontology.
-
-NEXT: add example of AI service type signature before and after
-ontology.
+It all looks good and well, but there is one elephant in the Section.
+How to automate such type enrichment process?  How to go from a given
+Protobuf specification to a MeTTa specification?  How to choose the
+right semantically rich type in the ontology as a substitute for a
+semantically poor type in the Protobuf specification.  And finally,
+how to come up with the ontology in the first place?  As valid as
+these questions are, they are left aside in this technical report, but
+will undoubtedly resurface in the future when their time is right.
 
 \chapter{Experimenting with AI Service Composition in MeTTa}
 \label{chap:xpaicompo}
 
 \chapter{Conclusion}
+\section{Future Developments}
+\begin{enumerate}
+\item Manage resources, financial, computational.
+\item Reason about uncertainty of outcomes (probability of failing,
+  average accuracy of the results, etc).
+\item Use infer grained language that captures not just functional
+  semantics but also run-time behavior.
+\item How to build the ontology and enrich Protobuf specifications to
+  leverage such ontology.
+\end{enumerate}
 
 \section{Acknowledgments}
 Thanks to Matt Ikle and Khellar Crawford for our numerous discussions.
@@ -1310,8 +1428,9 @@ Thanks to Remy Clarke for mentioning APL and BQN.  Thanks to Douglas
 Miles and his team for making MeTTaLog without which that work would
 not have been possible within this time frame.
 
-%% \appendix
-%% \chapter{Glossary}
+\appendix
+\chapter{DOT Format Conversion}
+\label{apdx:dot}
 
 \bibliographystyle{splncs04} \bibliography{local}
 
