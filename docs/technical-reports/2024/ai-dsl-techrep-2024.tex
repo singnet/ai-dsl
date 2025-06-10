@@ -1283,14 +1283,16 @@ derive from primary types such as \mintinline{scheme}{String} and
 \mintinline{scheme}{Bytes}.  These primary types comes Protobuf.  What
 this means is that, if for instance an AI service outputs data of type
 \mintinline{scheme}{Text} to be received by a service that inputs data
-of type \mintinline{scheme}{String}, the type coercion may actually
-not need to take place at run-time.  Type coercion is, most of the
-time, only here to make sure the AI service composition is consistent
-with its AI service specifications.  One may also observe that some
-types are parameterized, such as \mintinline{scheme}{(TextIn $l)},
-which represents a text in a certain language \mintinline{scheme}{$l}.
-Having parameterized types in the ontology will turn out to useful
-while reasoning about dependent types.
+of type \mintinline{scheme}{String}, the type coercion may not need to
+take place at run-time.  Type coercion is, most of the time, only here
+to make sure the AI service composition is consistent with its AI
+service specifications.  One may also observe that some types are
+parameterized, such as \mintinline{scheme}{(TextIn $l)}, which
+represents a text in a certain language \mintinline{scheme}{$l}.
+Having parameterized types in the ontology will especially turn out to
+useful while reasoning about dependent types.
+
+A graphical representation of the ontology is given in Figure 
 
 NEXT: write a tool to display ontology.
 
