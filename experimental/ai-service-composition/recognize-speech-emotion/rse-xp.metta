@@ -16,41 +16,6 @@
 (: Nil (List $a))
 (: Cons (-> $a (List $a) (List $a)))
 
-;; Build a list from an expression, containing all the sub-expressions
-;; as elements of the list.
-(: fromExpression (-> Expression (List $a)))
-(= (fromExpression $expr) (if (== $expr ())
-                              Nil
-                              (let* (($head (car-atom $expr))
-                                     ($tail (cdr-atom $expr)))
-                                (Cons $head (fromExpression $tail)))))
-
-;; Build an expression from a List, composed of all elements of the
-;; list as sub-expressions.
-(: fromList (-> (List $a) Expression))
-(= (fromList Nil) ())
-(= (fromList (Cons $head $tail)) (let $tail-sexps (fromList $tail)
-                                   (cons-atom $head $tail-sexps)))
-
-;; Check if an element is in a list (sorted or not)
-(: elem (-> $a (List $a) Bool))
-(= (elem $x Nil) False)
-(= (elem $x (Cons $head $tail)) (if (== $x $head) True (elem $x $tail)))
-
-;; Remove duplicates from a list (sorted or not)
-(: uniq_ (-> (List $a) (List $a) (List $a)))
-(= (uniq_ $acc Nil) Nil)
-(= (uniq_ $acc (Cons $head $tail))
-   (if (elem $head $acc)
-       (uniq_ $acc $tail)
-       (Cons $head (uniq_ (Cons $head $acc) $tail))))
-(: uniq (-> (List $a) (List $a)))
-(= (uniq $l) (uniq_ Nil $l))
-
-;; Remove all duplicated subexpressions of an expression
-(: uniqSExpr (-> Expression Expression))
-(= (uniqSExpr $expr) (fromList (uniq (fromExpression $expr))))
-
 ;;;;;;;;;
 ;; Nat ;;
 ;;;;;;;;;
@@ -80,6 +45,9 @@
 ;; possible to be more readable.
 !(bind! &kb (new-space))
 
+;; Do not import, instead the service definitions are pasted directly
+;; further below.
+;;
 ;; ;; Import the knowledge base containing services related to
 ;; ;; recognizing emotion in speech
 ;; !(import! &kb rse-services)
