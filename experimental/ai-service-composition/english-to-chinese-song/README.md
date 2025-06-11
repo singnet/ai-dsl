@@ -1,7 +1,7 @@
 # English to Chinese Song Experiment
 
 Experiments to compose AI services.  The AI service composition under
-study is the the English to Chinese song converter.  That is the
+study is the English to Chinese song converter.  That is the
 composition takes an English song in input, and outputs the same song
 sung in Chinese.  See the graphical representation of the AI service
 composition below.
@@ -59,24 +59,24 @@ composition below.
 
   ![Scaled down English to Chinese song](figs/EnglishToChineseSongScaledDown.png "Scaled down English to Chinese song AI service composition")
 
-- [etcs-combinator-sd-xp.metta](etcs-combinator-sd-xp.metta) Introduce
-  combinators, bluebird and phoenix, on scaled-down version of the
-  English to Chinese Song AI service composition.
+- [etcs-combinator-sd-xp.metta](etcs-combinator-sd-xp.metta):
+  Introduce combinators, bluebird and phoenix, on scaled-down version
+  of the English to Chinese Song AI service composition.
 
-- [etcs-combinator-sd-data-xp.metta](etcs-combinator-sd-data-xp.metta)
+- [etcs-combinator-sd-data-xp.metta](etcs-combinator-sd-data-xp.metta):
   Same as [etcs-combinator-sd-xp.metta](etcs-combinator-sd-xp.metta)
   but add an extra Data type to avoid using the combinators over
   higher order functions.  The constrain is added as extra arguments
   of the combinators.
 
-- [etcs-combinator-sd-data-uncurry-xp.metta](etcs-combinator-sd-data-uncurry-xp.metta)
+- [etcs-combinator-sd-data-uncurry-xp.metta](etcs-combinator-sd-data-uncurry-xp.metta):
   Same as
   [etcs-combinator-sd-data-xp.metta](etcs-combinator-sd-data-xp.metta)
   but the backward chainer in uncurried and directly contains the
   constraint that function domains and codomains must be concrete data
   types.
 
-- [etcs-combinator-data-uncurry-xp.metta](etcs-combinator-data-uncurry-xp.metta)
+- [etcs-combinator-data-uncurry-xp.metta](etcs-combinator-data-uncurry-xp.metta):
   Same as
   [etcs-combinator-sd-data-uncurry-xp.metta](etcs-combinator-sd-data-uncurry-xp.metta)
   but scaled-up.  It also contains an ontology to DOT and typing
