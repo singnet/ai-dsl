@@ -1,6 +1,6 @@
 ;; Like etcs-combinator-sd-data-xp.metta but the backward chainer is
 ;; uncurried and directly contains the constraint that function
-;; domains and codomains much be concrete data types.  Another way to
+;; domains and codomains must be concrete data types.  Another way to
 ;; put it is that combinators are limited to first order functions
 ;; only, in their applications.
 ;;
