@@ -70,9 +70,9 @@ to perform such synthesis while considering all available AI services
 will be the subject of the next round of work on the AI-DSL.
 
 \chapter{Type Driven Program Synthesis in MeTTa}
-
-In this chapter I will explain how program synthesis can be done in
-MeTTa and go over the various backward chainers I have prototyped
+\label{chap:chainers}
+In this chapter we will explain how program synthesis can be done in
+MeTTa and go over the various backward chainers we have prototyped
 during 2023 and 2024.  This will come handy for
 Chapter~\ref{chap:xpaicompo} which goes over a number of experiments
 on AI service compositions based on these chainers.  Why backward
@@ -98,13 +98,14 @@ could be useful as well but for a different type of queries, such as\\
 combining them?}\\[0.4cm] and the forward chainer would combine them
 to form random, albeit valid, compositions and provide their formal
 specifications.  Then there is everything between forward and backward
-chaining, what I call \emph{omni} chaining.  For instance, the query
-could provide an incomplete specification of the overall composition,
-alongside some AI services which should be involved, and let the omni
-chainer come up with completions of such specifications using the
-provided AI services.  My prototypes cover all of these possibilities,
-but in this report I will only focus on backward chaining because that
-is what I exclusively used for the AI-DSL work so far.
+chaining, what I like to call \emph{omni} chaining.  For instance, the
+query could provide an incomplete specification of the overall
+composition, alongside some AI services which should be involved, and
+let the omni chainer come up with completions of such specifications
+using the provided AI services.  My prototypes cover all of these
+possibilities, but in this report we will only focus on backward
+chaining because that is what I exclusively used for the AI-DSL work
+so far.
 \section{Curried Backward Chainer}
 \label{sec:curriedbc}
 
@@ -245,8 +246,8 @@ Let us walk over that code.
   inference rule.  I say roughly because \mintinline{scheme}{$prfabs}
   may not just be an inference rule, it can be more general than that,
   a proof function that takes in input a proof and outputs a proof, or
-  \emph{proof abstraction} as I like to say, which you can think as a
-  composite inference rule.  The broken up query to discover the
+  \emph{proof abstraction} as I like to call it, which you can think
+  as a composite inference rule.  The broken up query to discover the
   function is
   \begin{minted}{scheme}
     (bc $kb $k (: $prfabs (-> $prms $thrm)))
@@ -843,13 +844,13 @@ type specifications, in the first place.  The next Chapter will look
 into the problem of retrieving such information from the
 SingularityNET Market Place.
 
-\chapter{Representing the SingularityNET Market Place in  MeTTa}
-
+\chapter{Representing the SingularityNET Market Place in MeTTa}
+\label{chap:marketplace}
 \section{SingularityNET and the Blockchain}
 Explaining in detail how the SingularityNET Market Place works is
 beyond the scope of this document, but let me nonetheless attempt to
 give you a high level view of how the SingularityNET Market Place
-operates on the blockchain.  I will focus on the Ethereum blockchain
+operates on the blockchain.  We will focus on the Ethereum blockchain
 because it is the one that I understand, but I believe what I am about
 to say applies to the Cardano blockchain side of SingularityNET as
 well.
@@ -1409,6 +1410,76 @@ will undoubtedly resurface in the future when their time is right.
 
 \chapter{Experimenting with AI Service Composition in MeTTa}
 \label{chap:xpaicompo}
+We have written a few prototypes in MeTTa, all based on the backward
+chainers presented in Chapter~\ref{chap:chainers}, to synthesize AI
+service compositions.  In this chapter we will describe the various
+experiments we have conducted with some benchmarks and a few lessons
+that we have learned along the way.
+
+\section{Experimental Setup}
+\label{sec:xpsetup}
+
+\subsection{AI Service Compositions}
+We have perused the SingularityNET marketplace to find meaningful AI
+service compositions to attempt to synthesize them.  We have retained
+two compositions:
+\begin{enumerate}
+\item \textbf{Speech Emotion Recognition}, obtained by sequentially
+  combining two services, \texttt{speech2text-en} and
+  \texttt{text-emotions}, provided by the NAINT organization,
+  represented by the following flowchart-like graph:
+  \begin{center}
+    \includegraphics[scale=0.55]{figs/SimpleSpeechEmotionRecognition.png}
+  \end{center}
+  The graph says it all, speech is turned into text, then emotion is
+  detected from this text.  One could easily envision a variation
+  involving a parallel composition of another service that can detect
+  emotion in speech directly, more focused and voice expression than
+  semantics, but in this report we purposely leave it at that, a
+  simple composition involving two services.
+\item \textbf{English to Chinese Song Translation}, obtained to by
+  combining the following services, \texttt{sound-spleeter} and
+  \texttt{speech-recognition} from SingularityNET,
+  \texttt{machine-translation} and \texttt{midi2voice-zh} from NAINT.
+  In addition we have added an extra service, \texttt{tomidi}, to
+  convert audio to MIDI.  This service is not present on the
+  SingularityNET marketplace so we had to handwrite it in MeTTa rather
+  than obtain it from the crawler described in
+  Chapter~\ref{chap:marketplace}.  We also had to add a micro service
+  to mix two audio signals, \texttt{mixer}, also not present in the
+  SingularityNET marketplace.  The flowchart-like graph below
+  represents the composition we wish to synthesize.
+  \begin{center}
+    \includegraphics[scale=0.6]{figs/EnglishToChineseSong.png}
+  \end{center}
+  The flow of information is a bit more complicated here.  An audio
+  signal encoding an English song comes in, it is split into two audio
+  signals, one for the instrumental and the other one for the vocals.
+  The instrumental, \texttt{Accomp} in the graph, goes straight to the
+  mixer.  The vocals on the other hand is further duplicated into two
+  signals, one converted into text, the lyrics, then translated to
+  Chinese, the other converted into MIDI, the melody.  Both the
+  Chinese lyrics and the melody then join into the Chinese singing
+  service to produce Chinese vocals.  Finally the instrumental and the
+  Chinese vocals get mixed to produce the Chinese song.  Making this
+  work in practice is actually more involved than just plugging these
+  services as described and requires syncing the Chinese vocals and
+  the instrumental.  But regardless of the run-time result, what is of
+  interest to us here is whether the AI-DSL is able to synthesize such
+  AI service composition.
+\end{enumerate}
+\subsection{Search Space}
+For each AI service composition, the search space is limited to the
+services involved.  Meaning we do not dump the entire SingularityNET
+marketplace into the knowledge based of the chainer.  So for instance
+for the Speech Emotion Recognition composition, only two services are
+described.  This involves more than two axioms because services have
+data constructors and access functions.  But this nonetheless
+dramatically reduces the search space.  As we will see though, even
+with that simplification, in the absence of any pruning, the search
+can already easily become intractable.  Much of the lessons learned
+during these experiments have to do with pruning the search.
+\subsection{Backward Chaining Parameters}
 
 \chapter{Conclusion}
 \section{Future Developments}
