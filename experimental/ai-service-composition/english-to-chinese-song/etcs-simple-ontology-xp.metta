@@ -7,10 +7,6 @@
 (: Z Nat)
 (: S (-> Nat Nat))
 
-;; Define <=
-(: <= (-> $a $a Bool))
-(= (<= $x $y) (or (< $x $y) (== $x $y)))
-
 ;; Define cast functions between Nat and Number
 (: fromNumber (-> Number Nat))
 (= (fromNumber $n) (if (<= $n 0) Z (S (fromNumber (- $n 1)))))
