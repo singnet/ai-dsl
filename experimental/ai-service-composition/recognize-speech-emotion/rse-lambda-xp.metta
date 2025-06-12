@@ -321,6 +321,8 @@
 ;; Reduction rules ;;
 ;;;;;;;;;;;;;;;;;;;;;
 
+;; NEXT: add some reduction rules
+
 ;; ;; Composition to application
 ;; (= (((. $g) $f) $x) ($g ($f $x)))
 
@@ -416,6 +418,6 @@
 ;; naint.speech2text-en.Audio and returns emotion as
 ;; naint.text-emotions.Output.
 !(unique
-  (bc &kb
+  (bc &kb Nil z
       (fromNumber 5)
       (: $prg (-> speech2text-en.Audio text-emotions.Output))))
