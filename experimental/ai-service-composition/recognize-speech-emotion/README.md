@@ -9,11 +9,13 @@ below.
 
 ![Speech Emotion Recognition](figs/RecognizeSpeechEmotion.png "Speech Emotion Recognition AI service composition")
 
-- [rse-xp.metta](rse-xp.metta): Experiment to synthesize the
-  composition.  There are two services to combine in series, requiring
-  only the bluebird combinator.  No ontology is used.
+- [rse-combinator-xp.metta](rse-combinator-xp.metta): Experiment to
+  synthesize the composition.  There are two services to combine in
+  series requiring only the bluebird combinator.  No ontology is used.
 
-- [rse-curried-xp.metta](rse-curried-xp.metta): Same as
-  [rse-xp.metta](rse-xp.metta) but a curried version of the bluebird
-  is used.
+- [rse-combinator-curried-xp.metta](rse-combinator-curried-xp.metta):
+  Same as [rse-combinator-xp.metta](rse-combinator-xp.metta) but a
+  curried version of the bluebird is used.
 
+- [rse-lambda-xp.metta](rse-lambda-xp.metta): Same as above but the
+  bluebird combinator is substituted by lambda abstraction.
