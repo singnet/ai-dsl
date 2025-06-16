@@ -7,6 +7,35 @@
 ;; 2. naint.text-emotions, that recognizes emotion in text.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;
+;; Utils ;;
+;;;;;;;;;;;
+
+;; Run the code if the condition is true, otherwise prune the branch
+(: when (-> Bool $a $a))
+(= (when $c $x) (if $c $x (empty)))
+
+;; Return True iff $term is closed
+(: is-closed (-> Atom Bool))
+(= (is-closed $term)
+   (case (get-metatype $term)
+     ((Variable False)
+      (Symbol True)
+      (Grounded True)
+      (Expression (if (== $term ())
+                      True
+                      (let* (($head (car-atom $term))
+                             ($tail (cdr-atom $term)))
+                        (and (is-closed $head) (is-closed $tail))))))))
+
+;; Return True iff Symbol
+(: is-symbol (-> Atom Bool))
+(= (is-symbol $term) (== Symbol (get-metatype $term)))
+
+;; Return True iff Expression
+(: is-expression (-> Atom Bool))
+(= (is-expression $term) (== Expression (get-metatype $term)))
+
 ;;;;;;;;;;
 ;; List ;;
 ;;;;;;;;;;
@@ -315,7 +344,8 @@
 (= (bc $kb $env $idx (S $k) (: (λ (: $idx $prms) $prfbdy) (-> $prms $thrm)))
    (let (: $prfbdy $thrm)
      (bc $kb (Cons (: $idx $prms) $env) (s $idx) $k (: $prfbdy $thrm))
-     (: (λ (: $idx $prms) $prfbdy) (-> $prms $thrm))))
+     (when (not (is-expression $prms))            ; Prune composite types (including arrow tyoe)
+       (: (λ (: $idx $prms) $prfbdy) (-> $prms $thrm)))))
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Reduction rules ;;
