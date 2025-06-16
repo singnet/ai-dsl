@@ -1495,33 +1495,47 @@ dramatically reduces the search space.  As we will see though, even
 with that simplification, in the absence of any pruning, the search
 can already easily become intractable.  Much of the lessons learned
 during these experiments have to do with pruning the search.
-\subsection{Backward Chaining Variations}
-In order to cope with combinatorial explosion we had to experiment
-with numerous variations of the backward chainer, such as
+\subsection{Lambda Abstraction versus Combinators}
+There are at least two ways of describing AI service compositions.
 \begin{itemize}
-\item Lambda abstraction, which is a powerful way to produce
-  compositions with arbitrary complex information flow.
-\item Combinatory logic, which is also a powerful way to achieve
-  arbitrary complex information flow.
+\item Lambda abstraction, where variables are used to capture and
+  passed data to any part of the composition.  Lambda abstraction is
+  very powerful to express arbitrarily complex information flow
+  between services but can somewhat obfuscate the structure of the
+  composition.
+\item Combinatory logic is also equally powerful to describe
+  arbitrarily complex information flow.  The advantage of using
+  combinators over lambda abstraction though is that the structure of
+  the composition \emph{can} be made more explicit.  I insist on
+  ``can'' because, as soon as combinators apply to higher order
+  functions, things can become very confusing.  Nonetheless, this way
+  to describing the information flow can indeed represent more clearly
+  what is the wiring between services.  This way of describing
+  programs by combining functions instead of carrying variables around
+  is also called \emph{tacit programming}~\cite{TODO}.
 \end{itemize}
-Combinatorial power also comes with combinatorial explosion, thus to
-prune the search we have experimented with
+There would be a third way to describe AI service compositions, using
+process algebras like the $pi$-calculus~\cite{TODO} or the
+$rho$-calculus~\cite{TODO}.  We believe it is a promising future
+avenue of research but we have not explored it in this report.
+
+\subsection{Pruning Techniques}
+In order to prune the search we have experimented with the following:
 \begin{itemize}
 \item Limiting the flow of information to data, as opposed to
   functions.  Meaning that on the wires on the composition only data
   can transit, not functions.
 \item Adding reduction rules to avoid synthesizing syntactically
-  different yet semantically identical candidates (similarly to how
-  MOSES~\cite{TODO} uses reduction as pruning technique).
+  different yet semantically identical candidates.  This is similar to
+  how MOSES~\cite{TODO} uses reduction as pruning technique.
 \item Uncurrify services and combinators.  This has the interesting
   effect of pruning the search by avoiding combining the services in
   weird, higher order ways, quite similar to limiting the information
   flow to data, but even stronger.
 \end{itemize}
 In the end we have found that using a combination of reduction and
-some well selected uncurried combinators, that we will present next,
-led to efficient synthesis of AI service compositions, in our limited
-setting anyway.
+some well selected uncurried combinators leads to efficient synthesis
+of AI service compositions, in our limited setting anyway.
 
 \subsection{Bluebird and Phoenix Combinators}
 
@@ -1542,7 +1556,9 @@ respectively provided in Tables~\ref{tab:bluebird}
 and~\ref{tab:phoenix}.
 \begin{table}[htbp]
   \centering
-  \caption{Bluebird}
+  \caption{Bluebird combinator.  A signal of type $a$ get processed by
+    $g$ which outputs a signal of type $b$, itself then being
+    processed by $f$ which outputs a signal of type $c$.}
   \label{tab:bluebird}
   \begin{tabular}{|l|l|}
     \hline
@@ -1575,7 +1591,10 @@ and~\ref{tab:phoenix}.
 \end{table}
 \begin{table}[htbp]
   \centering
-  \caption{Phoenix}
+  \caption{Phoenix combinator.  A signal of type $a$ splits and get
+    processed by $g$ and $h$ in parallel, which output signals of
+    types $b$ and $c$ respectively, then rejoining to $f$ which
+    outputs a signal of type $d$.}
   \label{tab:phoenix}
   \begin{tabular}{|l|l|}
     \hline
@@ -1616,7 +1635,8 @@ to describe any information flow between AI services as long as they
 do not require recursion~\footnote{Assuming the identity combinator is
 also provided one may in fact only need the phoenix as it can be
 turned into the bluebird when combined with the identity, but that
-would not as compact as having both the bluebird and the phoenix.}.
+would not result to compositions as compact as having both the
+bluebird and the phoenix.}.
 
 \section{Benchmarks}
 
