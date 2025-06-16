@@ -1516,9 +1516,20 @@ prune the search we have experimented with
   weird, higher order ways, quite similar to limiting the information
   flow to data, but even stronger.
 \end{itemize}
-In the end we have found that using reduction rules and some well
-selected uncurried combinators enabled efficient synthesis of AI
-service compositions, for our limited setting anyway.
+In the end we have found that using a combination of reduction and
+some well selected uncurried combinators, that we will present next,
+led to efficient synthesis of AI service compositions, in our limited
+setting anyway.
+
+\section{The Bluebird and the Phoenix}
+
+The well selected combinators aforementioned are:
+\begin{itemize}
+\item The \emph{bluebird}, which is just another name for regular
+  function composition, used here to simulate sequential composition.
+\item The \emph{phoenix}, a less known yet powerful combinator, used
+  here to simulate parallel composition.
+\end{itemize}
 
 \chapter{Conclusion}
 \section{Future Developments}
