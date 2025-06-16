@@ -18,6 +18,7 @@
 \usepackage[skip=0pt]{subcaption}
 \usepackage{circledsteps}
 \usepackage{bussproofs}
+\usepackage[pdf]{graphviz}
 
 %% New commands
 %% \newcommand{\mettainline[1]}{\mintinline{scheme}{#1}}
@@ -1480,7 +1481,8 @@ two compositions:
   text, melody recognition and Chinese singing generation has been
   replaced by a single service, \textbf{Vocals Translator}.  This
   service does not exists on the SingularityNET marketplace thus was
-  handcoded.
+  handcoded in MeTTa specifically for the purpose of creating this
+  down scaled variation.
 \end{enumerate}
 \subsection{Search Space}
 For each AI service composition, the search space is limited to the
@@ -1521,15 +1523,102 @@ some well selected uncurried combinators, that we will present next,
 led to efficient synthesis of AI service compositions, in our limited
 setting anyway.
 
-\section{The Bluebird and the Phoenix}
+\subsection{Bluebird and Phoenix Combinators}
 
 The well selected combinators aforementioned are:
 \begin{itemize}
-\item The \emph{bluebird}, which is just another name for regular
-  function composition, used here to simulate sequential composition.
-\item The \emph{phoenix}, a less known yet powerful combinator, used
-  here to simulate parallel composition.
+\item The \emph{bluebird}, which is just another name for the regular
+  function composition operator, that could be understood as
+  simulating sequential composition.
+\item The \emph{phoenix} is a less known yet powerful combinator that
+  could be understood as simulating parallel composition~\footnote{I
+  am careful with my words because the $\lambda$-calculus is
+  inadequate to model the difference between sequential and parallel
+  computations.  One would be better served using a process algebra,
+  which is intended to be explored is the future.}.
 \end{itemize}
+The definitions of the bluebird and phoenix combinators are
+respectively provided in Tables~\ref{tab:bluebird}
+and~\ref{tab:phoenix}.
+\begin{table}[htbp]
+  \centering
+  \caption{Bluebird}
+  \label{tab:bluebird}
+  \begin{tabular}{|l|l|}
+    \hline
+    Name & bluebird \\
+    \hline
+    Symbol & $.$ \\
+    \hline
+    Description & sequential composition \\
+    \hline
+    Type (Haskell) & \mintinline{haskell}{(b -> c) -> (a -> b) -> a -> c} \\
+    \hline
+    Type (MeTTa) & \mintinline{scheme}{(-> (-> $b $c) (-> $a $b) (-> $a $c))} \\
+    \hline
+    Definition & . f g x = f (g x) \\
+    \hline
+    \parbox{1cm}{\vspace{-45pt} \centering Diagram} &
+    \digraph[scale=0.45]{bluebird}{
+      rankdir=LR;
+      node[shape=none, label=""] IN;
+      node[shape=none, label=""] OUT;
+      node[shape=box, label="g"] A;
+      node[shape=box, label="f"] B;
+      IN -> A [label="a"];
+      A -> B [label="b"];
+      B -> OUT [label="c"];
+    }
+    \\
+    \hline
+  \end{tabular}
+\end{table}
+\begin{table}[htbp]
+  \centering
+  \caption{Phoenix}
+  \label{tab:phoenix}
+  \begin{tabular}{|l|l|}
+    \hline
+    Name & phoenix \\
+    \hline
+    Symbol & $\Phi$ \\
+    \hline
+    Description & parallel composition (split then join)\\
+    \hline
+    Type (Haskell) &
+    \mintinline{haskell}{(b -> c -> d) -> (a -> b) -> (a -> c) -> a -> d} \\
+    \hline
+    Type (MeTTa) &
+    \mintinline{scheme}{(-> (-> $b $c $d) (-> $a $b) (-> $a $c) (-> $a $d))} \\
+    \hline
+    Definition & $\Phi$ f g h x = f (g x) (h x) \\
+    \hline
+    \parbox{1cm}{\vspace{-60pt} \centering Diagram} &
+    \digraph[scale=0.4]{phoenix}{
+      rankdir=LR;
+      node[shape=none, label=""] IN;
+      node[shape=none, label=""] OUT;
+      node[shape=box, label="g"] G;
+      node[shape=box, label="h"] H;
+      node[shape=box, label="f"] F;
+      IN -> G [label="a"];
+      IN -> H [label="a"];
+      G -> F [label="b"];
+      H -> F [label="c"];
+      F -> OUT [label="d"];
+    }
+    \\
+    \hline
+  \end{tabular}
+\end{table}
+It is reasonable to assume that these two combinators should be enough
+to describe any information flow between AI services as long as they
+do not require recursion~\footnote{Assuming the identity combinator is
+also provided one may in fact only need the phoenix as it can be
+turned into the bluebird when combined with the identity, but that
+would not as compact as having both the bluebird and the phoenix.}.
+
+\section{Benchmarks}
 
 \chapter{Conclusion}
 \section{Future Developments}
@@ -1545,9 +1634,11 @@ The well selected combinators aforementioned are:
 
 \section{Acknowledgments}
 Thanks to Matt Ikle and Khellar Crawford for our numerous discussions.
-Thanks to Remy Clarke for mentioning APL and BQN.  Thanks to Douglas
-Miles for making MeTTaLog which has been tremendously helpful for
-running some experiments.
+Thanks to Remy Clarke for mentioning APL and BQN to me which led me to
+learn about tacit programming.  Thanks to Douglas Miles for making
+MeTTaLog which has been tremendously helpful for running some
+experiments.  Thanks to the SingularityNET Foundation for funding this
+work.
 
 \appendix
 \chapter{DOT Format Conversion}
