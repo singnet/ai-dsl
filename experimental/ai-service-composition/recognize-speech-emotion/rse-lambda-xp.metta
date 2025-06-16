@@ -321,39 +321,11 @@
 ;; Reduction rules ;;
 ;;;;;;;;;;;;;;;;;;;;;
 
-;; NEXT: add some reduction rules
+;; Identity function
+(= ((λ (: $x $t) $x) $y) $y)
 
-;; ;; Composition to application
-;; (= (((. $g) $f) $x) ($g ($f $x)))
-
-;; ;; Right associate composition, meaning
-;; ;;
-;; ;; h . g . f
-;; ;;
-;; ;; should be represented as
-;; ;;
-;; ;; h . (g . f)
-;; ;;
-;; ;; or in MeTTa
-;; ;;
-;; ;; ((. h) ((. g) f))
-;; ;;
-;; ;; Thus anything deviating from that representation, such as
-;; ;;
-;; ;; (h . g) . f
-;; ;;
-;; ;; or in MeTTa
-;; ;;
-;; ;; ((. ((. h) g)) f)
-;; ;;
-;; ;; should be rewritten as
-;; ;;
-;; ;; ((. h) ((. g) f))
-;; ;;
-;; ;; The reason left associativity is choosen as default over right
-;; ;; associativity is because in prefix notation the former is easier to
-;; ;; read (to me anyway).
-;; (= ((. ((. $h) $g)) $f) ((. $h) ((. $g) $f)))
+;; Constant function
+(= ((λ (: (s z) $t) z) $x) z)
 
 ;; ;; Eliminate contiguous composition of constructor and deconstructor.
 ;; ;; speech2text-en.Audio
