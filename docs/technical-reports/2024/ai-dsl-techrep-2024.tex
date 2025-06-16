@@ -1420,8 +1420,8 @@ that we have learned along the way.
 \label{sec:xpsetup}
 
 \subsection{AI Service Compositions}
-We have perused the SingularityNET marketplace to find meaningful AI
-service compositions to attempt to synthesize them.  We have retained
+After perusing the SingularityNET marketplace to find meaningful AI
+service compositions to attempt to synthesize them, we have retained
 two compositions:
 \begin{enumerate}
 \item \textbf{Speech Emotion Recognition}, obtained by sequentially
@@ -1467,6 +1467,20 @@ two compositions:
   the instrumental.  But regardless of the run-time result, what is of
   interest to us here is whether the AI-DSL is able to synthesize such
   AI service composition.
+\item Additionally, our experiments contains a third AI service
+  composition which is a scaled down version of the English to Chinese
+  Song Translation shown below, defined to create an intermediary
+  level of difficulty in synthesis between the Speech Emotion
+  Recognition composition and the English to Chinese Song Translation
+  composition.
+  \begin{center}
+    \includegraphics[scale=0.6]{figs/EnglishToChineseSongScaledDown.png}
+  \end{center}
+  In this composition the translation from English text to Chinese
+  text, melody recognition and Chinese singing generation has been
+  replaced by a single service, \textbf{Vocals Translator}.  This
+  service does not exists on the SingularityNET marketplace thus was
+  handcoded.
 \end{enumerate}
 \subsection{Search Space}
 For each AI service composition, the search space is limited to the
@@ -1479,7 +1493,32 @@ dramatically reduces the search space.  As we will see though, even
 with that simplification, in the absence of any pruning, the search
 can already easily become intractable.  Much of the lessons learned
 during these experiments have to do with pruning the search.
-\subsection{Backward Chaining Parameters}
+\subsection{Backward Chaining Variations}
+In order to cope with combinatorial explosion we had to experiment
+with numerous variations of the backward chainer, such as
+\begin{itemize}
+\item Lambda abstraction, which is a powerful way to produce
+  compositions with arbitrary complex information flow.
+\item Combinatory logic, which is also a powerful way to achieve
+  arbitrary complex information flow.
+\end{itemize}
+Combinatorial power also comes with combinatorial explosion, thus to
+prune the search we have experimented with
+\begin{itemize}
+\item Limiting the flow of information to data, as opposed to
+  functions.  Meaning that on the wires on the composition only data
+  can transit, not functions.
+\item Adding reduction rules to avoid synthesizing syntactically
+  different yet semantically identical candidates (similarly to how
+  MOSES~\cite{TODO} uses reduction as pruning technique).
+\item Uncurrify services and combinators.  This has the interesting
+  effect of pruning the search by avoiding combining the services in
+  weird, higher order ways, quite similar to limiting the information
+  flow to data, but even stronger.
+\end{itemize}
+In the end we have found that using reduction rules and some well
+selected uncurried combinators enabled efficient synthesis of AI
+service compositions, for our limited setting anyway.
 
 \chapter{Conclusion}
 \section{Future Developments}
@@ -1496,8 +1535,8 @@ during these experiments have to do with pruning the search.
 \section{Acknowledgments}
 Thanks to Matt Ikle and Khellar Crawford for our numerous discussions.
 Thanks to Remy Clarke for mentioning APL and BQN.  Thanks to Douglas
-Miles and his team for making MeTTaLog without which that work would
-not have been possible within this time frame.
+Miles for making MeTTaLog which has been tremendously helpful for
+running some experiments.
 
 \appendix
 \chapter{DOT Format Conversion}
