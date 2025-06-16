@@ -32,6 +32,14 @@
 (: is-symbol (-> Atom Bool))
 (= (is-symbol $term) (== Symbol (get-metatype $term)))
 
+;; Return True iff Grounded
+(: is-grounded (-> Atom Bool))
+(= (is-grounded $term) (== Grounded (get-metatype $term)))
+
+;; Return True iff Variable
+(: is-variable (-> Atom Bool))
+(= (is-variable $term) (== Variable (get-metatype $term)))
+
 ;; Return True iff Expression
 (: is-expression (-> Atom Bool))
 (= (is-expression $term) (== Expression (get-metatype $term)))
@@ -344,7 +352,7 @@
 (= (bc $kb $env $idx (S $k) (: (λ (: $idx $prms) $prfbdy) (-> $prms $thrm)))
    (let (: $prfbdy $thrm)
      (bc $kb (Cons (: $idx $prms) $env) (s $idx) $k (: $prfbdy $thrm))
-     (when (not (is-expression $prms))            ; Prune composite types (including arrow tyoe)
+     (when (or (is-symbol $prms) (is-grounded $prms))
        (: (λ (: $idx $prms) $prfbdy) (-> $prms $thrm)))))
 
 ;;;;;;;;;;;;;;;;;;;;;
@@ -357,102 +365,42 @@
 ;; Constant function
 (= ((λ (: (s z) $t) z) $x) z)
 
-;; ;; Eliminate contiguous composition of constructor and deconstructor.
-;; ;; speech2text-en.Audio
-;; (= ((. speech2text-en.Audio.data) ((. speech2text-en.MkAudio) $f)) $f)
-;; (= ((. $f) ((. speech2text-en.Audio.data) speech2text-en.MkAudio)) $f)
-;; (= ((. speech2text-en.MkAudio) ((. speech2text-en.Audio.data) $f)) $f)
-;; (= ((. $f) ((. speech2text-en.MkAudio) speech2text-en.Audio.data)) $f)
-;; ;; speech2text-en.Text
-;; (= ((. speech2text-en.Text.text) ((. speech2text-en.MkText) $f)) $f)
-;; (= ((. $f) ((. speech2text-en.Text.text) speech2text-en.MkText)) $f)
-;; (= ((. speech2text-en.MkText) ((. speech2text-en.Text.text) $f)) $f)
-;; (= ((. $f) ((. speech2text-en.MkText) speech2text-en.Text.text)) $f)
-;; ;; text-emotions.Input
-;; (= ((. text-emotions.Input.text) ((. text-emotions.MkInput) $f)) $f)
-;; (= ((. $f) ((. text-emotions.Input.text) text-emotions.MkInput)) $f)
-;; (= ((. text-emotions.MkInput) ((. text-emotions.Input.text) $f)) $f)
-;; (= ((. $f) ((. text-emotions.MkInput) text-emotions.Input.text)) $f)
-;; ;; text-emotions.Output
-;; (= ((. text-emotions.Output.result) ((. text-emotions.MkOutput) $f)) $f)
-;; (= ((. $f) ((. text-emotions.Output.result) text-emotions.MkOutput)) $f)
-;; (= ((. text-emotions.MkOutput) ((. text-emotions.Output.result) $f)) $f)
-;; (= ((. $f) ((. text-emotions.MkOutput) text-emotions.Output.result)) $f)
-
 ;;;;;;;;;;
 ;; Test ;;
 ;;;;;;;;;;
 
-;; ;; Synthesize a program that takes speech as
-;; ;; naint.speech2text-en.Audio and returns text as
-;; ;; naint.speech2text-en.Text.
-;; !(bc &kb Nil z (fromNumber 0) (: $prg (-> speech2text-en.Audio speech2text-en.Text)))
+;; Synthesize a program that takes speech as
+;; naint.speech2text-en.Audio and returns text as
+;; naint.speech2text-en.Text.
+!(bc &kb Nil z (fromNumber 0) (: $prg (-> speech2text-en.Audio speech2text-en.Text)))
 
-;; ;; Synthesize a program that takes text as naint.text-emotions.Input
-;; ;; and returns emotion as naint.text-emotions.Output.
-;; !(bc &kb Nil z (fromNumber 0) (: $prg (-> text-emotions.Input text-emotions.Output)))
+;; Synthesize a program that takes text as naint.text-emotions.Input
+;; and returns emotion as naint.text-emotions.Output.
+!(bc &kb Nil z (fromNumber 0) (: $prg (-> text-emotions.Input text-emotions.Output)))
 
-;; ;; Synthesize a program that takes speech as Bytes and returns speech
-;; ;; as naint.speech2text-en.Audio.
-;; !(bc &kb Nil z (fromNumber 0) (: $prg (-> Bytes speech2text-en.Audio)))
+;; Synthesize a program that takes speech as Bytes and returns speech
+;; as naint.speech2text-en.Audio.
+!(bc &kb Nil z (fromNumber 0) (: $prg (-> Bytes speech2text-en.Audio)))
 
-;; ;; Synthesize a program that takes text as naint.speech2text-en.Text
-;; ;; and returns text as String.
-;; !(bc &kb Nil z (fromNumber 0) (: $prg (-> speech2text-en.Text String)))
+;; Synthesize a program that takes text as naint.speech2text-en.Text
+;; and returns text as String.
+!(bc &kb Nil z (fromNumber 0) (: $prg (-> speech2text-en.Text String)))
 
-;; ;; Synthesize a program that takes speech as Bytes and returns text as
-;; ;; naint.speech2text-en.Text.
-;; !(bc &kb Nil z (fromNumber 3) (: $prg (-> Bytes speech2text-en.Text)))
+;; Synthesize a program that takes speech as Bytes and returns text as
+;; naint.speech2text-en.Text.
+!(bc &kb Nil z (fromNumber 3) (: $prg (-> Bytes speech2text-en.Text)))
 
-;; ;; Synthesize a program that takes speech as Bytes and returns text as
-;; ;; String.
-;; !(bc &kb Nil z (fromNumber 4) (: $prg (-> Bytes String)))
+;; Synthesize a program that takes speech as Bytes and returns text as
+;; String.
+!(bc &kb Nil z (fromNumber 4) (: $prg (-> Bytes String)))
 
-;; NEXT: identify stuff to reduce (or look at english to chinese lambda experiment)
+;; Synthesize a program that takes text as String and returns emotion
+;; as String.
+!(bc &kb Nil z (fromNumber 4) (: $prg (-> String String)))
 
-;; [(: (λ (: z Bytes) (speech2text-en.Text.text (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) Type) speech2text-en.Text.text) speech2text-en.Audio) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> Bytes speech2text-en.Audio)) speech2text-en.Text.text) speech2text-en.MkAudio) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> speech2text-en.Audio Bytes)) speech2text-en.Text.text) speech2text-en.Audio.data) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) Type) speech2text-en.Text.text) speech2text-en.Text) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> String speech2text-en.Text)) speech2text-en.Text.text) speech2text-en.MkText) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> speech2text-en.Text String)) speech2text-en.Text.text) speech2text-en.Text.text) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> speech2text-en.Audio speech2text-en.Text)) speech2text-en.Text.text) speech2text-en.s2t) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) Type) speech2text-en.Text.text) text-emotions.Input) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> String text-emotions.Input)) speech2text-en.Text.text) text-emotions.MkInput) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> text-emotions.Input String)) speech2text-en.Text.text) text-emotions.Input.text) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) Type) speech2text-en.Text.text) text-emotions.Output) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> String text-emotions.Output)) speech2text-en.Text.text) text-emotions.MkOutput) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> text-emotions.Output String)) speech2text-en.Text.text) text-emotions.Output.result) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> text-emotions.Input text-emotions.Output)) speech2text-en.Text.text) text-emotions.recognize) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) Bytes) speech2text-en.Text.text) z) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) speech2text-en.Audio) speech2text-en.Text.text) (speech2text-en.MkAudio z)) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> $255105508 Type)) speech2text-en.Text.text) (λ (: (s z) $255105508) speech2text-en.Audio)) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> $255105508 (-> Bytes speech2text-en.Audio))) speech2text-en.Text.text) (λ (: (s z) $255105508) speech2text-en.MkAudio)) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> $255105508 (-> speech2text-en.Audio Bytes))) speech2text-en.Text.text) (λ (: (s z) $255105508) speech2text-en.Audio.data)) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> $255105508 Type)) speech2text-en.Text.text) (λ (: (s z) $255105508) speech2text-en.Text)) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> $255105508 (-> String speech2text-en.Text))) speech2text-en.Text.text) (λ (: (s z) $255105508) speech2text-en.MkText)) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> $255105508 (-> speech2text-en.Text String))) speech2text-en.Text.text) (λ (: (s z) $255105508) speech2text-en.Text.text)) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> $255105508 (-> speech2text-en.Audio speech2text-en.Text))) speech2text-en.Text.text) (λ (: (s z) $255105508) speech2text-en.s2t)) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> $255105508 Type)) speech2text-en.Text.text) (λ (: (s z) $255105508) text-emotions.Input)) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> $255105508 (-> String text-emotions.Input))) speech2text-en.Text.text) (λ (: (s z) $255105508) text-emotions.MkInput)) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> $255105508 (-> text-emotions.Input String))) speech2text-en.Text.text) (λ (: (s z) $255105508) text-emotions.Input.text)) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> $255105508 Type)) speech2text-en.Text.text) (λ (: (s z) $255105508) text-emotions.Output)) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> $255105508 (-> String text-emotions.Output))) speech2text-en.Text.text) (λ (: (s z) $255105508) text-emotions.MkOutput)) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> $255105508 (-> text-emotions.Output String))) speech2text-en.Text.text) (λ (: (s z) $255105508) text-emotions.Output.result)) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> $255105508 (-> text-emotions.Input text-emotions.Output))) speech2text-en.Text.text) (λ (: (s z) $255105508) text-emotions.recognize)) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> $255105508 $255105508)) speech2text-en.Text.text) (λ (: (s z) $255105508) (s z))) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> $255105508 Bytes)) speech2text-en.Text.text) (λ (: (s z) $255105508) z)) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) (((λ (: (s z) (-> speech2text-en.Text String)) (s z)) speech2text-en.Text.text) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))
-;;  (: (λ (: z Bytes) ((λ (: (s z) speech2text-en.Text) (speech2text-en.Text.text (s z))) (speech2text-en.s2t (speech2text-en.MkAudio z)))) (-> Bytes String))]
-
-;; ;; Synthesize a program that takes text as String and returns emotion
-;; ;; as String.
-;; !(bc &kb Nil z (fromNumber 4) (: $prg (-> String String)))
-
-;; ;; Synthesize a program that takes speech as Bytes and returns text or
-;; ;; emotion as String.
-;; !(bc &kb Nil z (fromNumber 5) (: $prg (-> Bytes String)))
+;; Synthesize a program that takes speech as Bytes and returns text or
+;; emotion as String.
+!(bc &kb Nil z (fromNumber 5) (: $prg (-> Bytes String)))
 
 ;; Synthesize a program that takes speech as
 ;; naint.speech2text-en.Audio and returns emotion as
@@ -461,43 +409,5 @@
   (bc &kb Nil z
       (fromNumber 5)
       (: $prg (-> speech2text-en.Audio text-emotions.Output))))
-
-;; NEXT: identify reduction rules
-
-;; Depth = 4
-;; [(: (λ (: z speech2text-en.Audio) (text-emotions.MkOutput (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) Type) text-emotions.MkOutput) speech2text-en.Audio) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> Bytes speech2text-en.Audio)) text-emotions.MkOutput) speech2text-en.MkAudio) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> speech2text-en.Audio Bytes)) text-emotions.MkOutput) speech2text-en.Audio.data) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) Type) text-emotions.MkOutput) speech2text-en.Text) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> String speech2text-en.Text)) text-emotions.MkOutput) speech2text-en.MkText) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> speech2text-en.Text String)) text-emotions.MkOutput) speech2text-en.Text.text) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> speech2text-en.Audio speech2text-en.Text)) text-emotions.MkOutput) speech2text-en.s2t) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) Type) text-emotions.MkOutput) text-emotions.Input) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> String text-emotions.Input)) text-emotions.MkOutput) text-emotions.MkInput) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> text-emotions.Input String)) text-emotions.MkOutput) text-emotions.Input.text) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) Type) text-emotions.MkOutput) text-emotions.Output) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> String text-emotions.Output)) text-emotions.MkOutput) text-emotions.MkOutput) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> text-emotions.Output String)) text-emotions.MkOutput) text-emotions.Output.result) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> text-emotions.Input text-emotions.Output)) text-emotions.MkOutput) text-emotions.recognize)o (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) speech2text-en.Audio) text-emotions.MkOutput) z) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) Bytes) text-emotions.MkOutput) (speech2text-en.Audio.data z)) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) speech2text-en.Text) text-emotions.MkOutput) (speech2text-en.s2t z)) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> $232385588 Type)) text-emotions.MkOutput) (λ (: (s z) $232385588) speech2text-en.Audio)) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> $232385588 (-> Bytes speech2text-en.Audio))) text-emotions.MkOutput) (λ (: (s z) $232385588) speech2text-en.MkAudio)) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> $232385588 (-> speech2text-en.Audio Bytes))) text-emotions.MkOutput) (λ (: (s z) $232385588) speech2text-en.Audio.data)) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> $232385588 Type)) text-emotions.MkOutput) (λ (: (s z) $232385588) speech2text-en.Text)) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> $232385588 (-> String speech2text-en.Text))) text-emotions.MkOutput) (λ (: (s z) $232385588) speech2text-en.MkText)) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> $232385588 (-> speech2text-en.Text String))) text-emotions.MkOutput) (λ (: (s z) $232385588) speech2text-en.Text.text)) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> $232385588 (-> speech2text-en.Audio speech2text-en.Text))) text-emotions.MkOutput) (λ (: (s z) $232385588) speech2text-en.s2t)) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> $232385588 Type)) text-emotions.MkOutput) (λ (: (s z) $232385588) text-emotions.Input)) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> $232385588 (-> String text-emotions.Input))) text-emotions.MkOutput) (λ (: (s z) $232385588) text-emotions.MkInput)) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> $232385588 (-> text-emotions.Input String))) text-emotions.MkOutput) (λ (: (s z) $232385588) text-emotions.Input.text)) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> $232385588 Type)) text-emotions.MkOutput) (λ (: (s z) $232385588) text-emotions.Output)) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> $232385588 (-> String text-emotions.Output))) text-emotions.MkOutput) (λ (: (s z) $232385588) text-emotions.MkOutput)) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> $232385588 (-> text-emotions.Output String))) text-emotions.MkOutput) (λ (: (s z) $232385588) text-emotions.Output.result)) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> $232385588 (-> text-emotions.Input text-emotions.Output))) text-emotions.MkOutput) (λ (: (s z) $232385588) text-emotions.recognize)) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> $232385588 $232385588)) text-emotions.MkOutput) (λ (: (s z) $232385588) (s z))) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> $232385588 speech2text-en.Audio)) text-emotions.MkOutput) (λ (: (s z) $232385588) z)) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) (((λ (: (s z) (-> String text-emotions.Output)) (s z)) text-emotions.MkOutput) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))
-;;  (: (λ (: z speech2text-en.Audio) ((λ (: (s z) String) (text-emotions.MkOutput (s z))) (speech2text-en.Text.text (speech2text-en.s2t z)))) (-> speech2text-en.Audio text-emotions.Output))]
+;; Should contain
+;; (: (λ (: z speech2text-en.Audio) (text-emotions.recognize (text-emotions.MkInput (speech2text-en.Text.text (speech2text-en.s2t z))))) (-> speech2text-en.Audio text-emotions.Output))
