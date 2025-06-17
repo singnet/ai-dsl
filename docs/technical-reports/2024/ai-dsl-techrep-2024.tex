@@ -19,6 +19,32 @@
 \usepackage{circledsteps}
 \usepackage{bussproofs}
 \usepackage[pdf]{graphviz}
+\usepackage{array}
+%% \usepackage{tabularray}
+
+%% For wrapping around long lines in tabular
+\newcolumntype{L}{>{\arraybackslash}m{9cm}}
+
+%% For dotted horizontal line in tabular
+\newlength\replength
+\newcommand\repfrac{.33}
+\newcommand\dashfrac[1]{\renewcommand\repfrac{#1}}
+\setlength\replength{1.5pt}
+\newcommand\rulewidth{.6pt}
+\newcommand\tdashfill[1][\repfrac]{\cleaders\hbox to \replength{%
+  \smash{\rule[\arraystretch\ht\strutbox]{\repfrac\replength}{\rulewidth}}}\hfill}
+\newcommand\tabdashline{%
+  \makebox[0pt][r]{\makebox[\tabcolsep]{\tdashfill\hfil}}\tdashfill\hfil%
+  \makebox[0pt][l]{\makebox[\tabcolsep]{\tdashfill\hfil}}%
+  \\[-\arraystretch\dimexpr\ht\strutbox+\dp\strutbox\relax]%
+}
+\newcommand\tdotfill[1][\repfrac]{\cleaders\hbox to \replength{%
+  \smash{\raisebox{\arraystretch\dimexpr\ht\strutbox-.1ex\relax}{.}}}\hfill}
+\newcommand\tabdotline{%
+  \makebox[0pt][r]{\makebox[\tabcolsep]{\tdotfill\hfil}}\tdotfill\hfil%
+  \makebox[0pt][l]{\makebox[\tabcolsep]{\tdotfill\hfil}}%
+  \\[-\arraystretch\dimexpr\ht\strutbox+\dp\strutbox\relax]%
+}
 
 %% New commands
 %% \newcommand{\mettainline[1]}{\mintinline{scheme}{#1}}
@@ -1554,11 +1580,12 @@ The well selected combinators aforementioned are:
 The definitions of the bluebird and phoenix combinators are
 respectively provided in Tables~\ref{tab:bluebird}
 and~\ref{tab:phoenix}.
-\begin{table}[htbp]
+\begin{table}[h]
   \centering
-  \caption{Bluebird combinator.  A signal of type $a$ get processed by
-    $g$ which outputs a signal of type $b$, itself then being
-    processed by $f$ which outputs a signal of type $c$.}
+  \caption{Bluebird combinator.  A signal of type \texttt{a} get
+    processed by \texttt{g} which outputs a signal of type \texttt{b},
+    itself then being processed by \texttt{f} which outputs a signal
+    of type \texttt{c}.}
   \label{tab:bluebird}
   \begin{tabular}{|l|l|}
     \hline
@@ -1589,12 +1616,13 @@ and~\ref{tab:phoenix}.
     \hline
   \end{tabular}
 \end{table}
-\begin{table}[htbp]
+\begin{table}[h]
   \centering
-  \caption{Phoenix combinator.  A signal of type $a$ splits and get
-    processed by $g$ and $h$ in parallel, which output signals of
-    types $b$ and $c$ respectively, then rejoining to $f$ which
-    outputs a signal of type $d$.}
+  \caption{Phoenix combinator.  A signal of type \texttt{a} splits and
+    get processed by \texttt{g} and \texttt{h} in parallel, which
+    output signals of types \texttt{b} and \texttt{c} respectively,
+    then rejoining to \texttt{f} which outputs a signal of type
+    \texttt{d}.}
   \label{tab:phoenix}
   \begin{tabular}{|l|l|}
     \hline
@@ -1639,6 +1667,57 @@ would not result to compositions as compact as having both the
 bluebird and the phoenix.}.
 
 \section{Benchmarks}
+\label{sec:benchmarks}
+Table~\ref{tab:benchmarks} provides a benchmark summary for some of
+our most meaningful experiments.
+\begin{table}[h]
+  \centering
+  \caption{Benchmarks sorted increasing order of difficulty.  All file
+    paths are relative to path
+    \texttt{experimental/ai-service-composition} from the root folder
+    of the AI-DSL repository~\cite{TODO}.}
+  \label{tab:benchmarks}
+  \begin{tabular}{|l|L|}
+    \hline
+    Experiment ID & $\texttt{xp}_1$ \\
+    \tabdashline & \tabdashline
+    Relative path & \texttt{recognize-speech-emotion} \\
+    \tabdashline & \tabdashline
+    File name & \texttt{rse-lambda-xp.metta} \\
+    \tabdashline & \tabdashline
+    Description & TODO \\
+    \tabdashline & \tabdashline
+    Parameters & TODO \\
+    \tabdashline & \tabdashline
+    Results & TODO \\
+    \hline
+    Experiment ID & $\texttt{xp}_2$ \\
+    \tabdashline & \tabdashline
+    Relative path & \texttt{recognize-speech-emotion} \\
+    \tabdashline & \tabdashline
+    File name & \texttt{rse-combinator-curried-xp.metta} \\
+    \tabdashline & \tabdashline
+    Description & Like $\texttt{xp}_1$ but lambda abstraction is replaced
+    by the bluebird combinator \\
+    \tabdashline & \tabdashline
+    Parameters &  \{Reduction: Disabled \} \\
+    \tabdashline & \tabdashline
+    Results & TODO \\
+    \hline
+    Experiment ID & $\texttt{xp}_3$ \\
+    \tabdashline & \tabdashline
+    Relative path & \texttt{recognize-speech-emotion} \\
+    \tabdashline & \tabdashline
+    File name & \texttt{rse-combinator-curried-xp.metta} \\
+    \tabdashline & \tabdashline
+    Description & TODO \\
+    \tabdashline & \tabdashline
+    Parameters & \{Reduction: Enabled\} \\
+    \tabdashline & \tabdashline
+    Results & TODO \\
+    \hline
+  \end{tabular}
+\end{table}
 
 \chapter{Conclusion}
 \section{Future Developments}
