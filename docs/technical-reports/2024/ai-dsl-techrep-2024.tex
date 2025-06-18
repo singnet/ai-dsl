@@ -600,7 +600,7 @@ dependent types is as trivial as it may be.  The code is identical to
 the backward chainers presented above but the queries must follow the
 format presented in Subsection~\ref{subsec:frmtdt}.  The full
 implementation for the modified curried backward chainer is given
-below
+below.
 \begin{minted}{scheme}
 ;; Dependently Typed Curried Backward Chainer type signature
 (: bc (-> $a                            ; Knowledge base space
@@ -962,7 +962,7 @@ One may immediately notice that the format is consistent with the
 format of axioms and inference rules the backward chainer expects, a
 collection of typing relationships.  An example of the definition of
 an object of the type \mintinline{scheme}{Organization}, here
-corresponding to the SingularityNET organization, is given below:
+corresponding to the SingularityNET organization, is given below.
 \begin{minted}{scheme}
 (MkOrganization
     ; org_name
@@ -1126,7 +1126,7 @@ data exchanged between services.  So if a service outputs a pair of
 string and number, and another service wishes to take the string in
 input without the number, the access function can be used to select
 only the string.  The access function for
-\mintinline{scheme}{naint.machine-translation.Output} is given below
+\mintinline{scheme}{naint.machine-translation.Output} is given below.
 \begin{minted}{scheme}
 ;; Define naint.machine-translation.Output.translation
 (: naint.machine-translation.Output.translation
@@ -1139,7 +1139,7 @@ Thus it allows to select the translated string given the output of the
 Machine Translation service.  Even though in this case the string is
 the only output, the access function is still necessary to cast the
 output into a string.  Given these type definitions we can finally
-declare the service and its corresponding type signature, given below
+declare the service and its corresponding type signature, given below.
 \begin{minted}{scheme}
 ;; Define naint.machine-translation.translate service method
 (: naint.machine-translation.translate
@@ -1668,56 +1668,208 @@ bluebird and the phoenix.}.
 
 \section{Benchmarks}
 \label{sec:benchmarks}
-Table~\ref{tab:benchmarks} provides a benchmark summary for some of
-our most meaningful experiments.
+Experiments on the three AI service compositions presented above have
+been conducted on a AMD Ryzen 7 PRO 4750G with 64GB of RAM.  The
+hyperon-experimental~\cite{TODO} MeTTa back-end was primarily used and
+all results reported in tables are for it.  The MeTTaLog~\cite{TODO}
+back-end was also used but due to not being able to run on all
+experiments was not selected as the reference of comparison.  As a
+result results with MeTTaLog are not systematically reported but given
+here and there just to provide an idea of its potential speed-up.
+
+\subsection{Speech Emotion Recognition}
+Experiments begin with the simplest AI service composition,
+recognizing emotion in speech, involving only two services to be
+sequentially combined.  In these experiments no ontology has been
+used, instead the Protobuf types are directly used to specify the
+input and output of the desired composition.  The query submitted to
+the backward chainer in all cases is
+\begin{minted}{scheme}
+(: $prg (-> speech2text-en.Audio text-emotions.Output))
+\end{minted}
+The benchmarks are detailed in table~\ref{tab:rse}.  The first three
+experiments involving lambda abstraction deliver poor (over 19 minutes
+of run-time in the best case).  The poor performances are due to
+lambda abstraction requiring more depth to describe the desired
+composition, thus dramatically increasing the search space.  It is
+also due to the inherent expressive power of lambda abstraction, in
+particular its capacity to build higher order functions, enabling far
+more combinations than necessary.  When higher order lambda
+abstraction is disabled (experiment $\texttt{xp}_2$), meaning that the
+variables created by lambda abstraction can only bind to data instead
+of functions, the time is considerably reduced, but is still large
+(23m40s).  Pruning the search space by applying reduction rules
+(experiment $\texttt{xp}_3$) reduces run-time a bit further (19m6s).
+Notably the number of resulting candidates is lower as well, going
+from 44 to 20.  This is good because less candidates means less work
+to the user (or whatever upstream process will use the output of AI
+service composition) to carry out the final selection.  When using
+MeTTaLog, results for $\texttt{xp}_3$ down to 1m21s, which is far
+better than 19m6s with hyperon-experimental, but still unacceptable
+for such simple AI service composition.  The best solution synthesized
+by experiments $\texttt{xp}_1$, $\texttt{xp}_2$ and $\texttt{xp}_3$ is
+given below.
+\begin{minted}{scheme}
+(: (\ (: z speech2text-en.Audio)
+      (text-emotions.recognize
+       (text-emotions.MkInput
+        (speech2text-en.Text.text
+         (speech2text-en.s2t z)))))
+   (-> speech2text-en.Audio text-emotions.Output))
+\end{minted}
+Note that other semantically equivalent but more complex solutions, or
+even incorrect ones, where also provided among the results.  An
+example of a correct but more complex solution is
+\begin{minted}{scheme}
+(: (\ (: z speech2text-en.Audio)
+      ((\ (: (s z) String)
+          (text-emotions.recognize (text-emotions.MkInput (s z))))
+        ((\ (: (s z) speech2text-en.Text)
+            (speech2text-en.Text.text (s z)))
+          ((\ (: (s z) speech2text-en.Text)
+              (s z))
+            (speech2text-en.s2t z)))))
+   (-> speech2text-en.Audio text-emotions.Output))
+\end{minted}
+An example of a simpler but incorrect solution is
+\begin{minted}{scheme}
+(: (\ (: z speech2text-en.Audio)
+      (text-emotions.MkOutput
+       (speech2text-en.Text.text
+        (speech2text-en.s2t z))))
+  (-> speech2text-en.Audio text-emotions.Output))
+\end{minted}
+It is incorrect because it never involves the
+\mintinline{scheme}{text-emotions.recognize} service.  Instead it
+tricks the type by directly constructing an emotion from the text
+output by \mintinline{scheme}{speech2text-en.s2t} using the
+\mintinline{scheme}{text-emotions.MkOutput} constructor.  This is a
+perfect example of an under-specified formal description.  Obviously,
+\mintinline{scheme}{text-emotions.MkOutput} should not be allowed to
+construct an emotion from arbitrary text.  This is where the ontology
+comes into play and will be explored in the subsequent experiments.
+
+Using the bluebird and phoenix combinators instead of lambda
+abstraction (experiment $\texttt{xp}_4$) considerably improve
+performances, going from 19m6s to 6.86s.  This is explained by the
+fact that now only a depth of 4 is required to synthesize the desired
+composition.  The bluebird and the phoenix combinators seem to strike
+the right balance between expressiveness and restrictiveness.  In
+other words, they seem to be placed at the right level of abstraction
+to describe AI service compositions, compared to say a more expressive
+and foundational combinator sets such as I, S and K.  Also, it is not
+presented in the report but one of our first experiments involved
+using the I, S, K combinators.  And if I recall correctly it was
+performance-wise even worse than lambda abstraction.  The solution
+that was synthesized by experiment $\texttt{xp}_4$ is given below.
+\begin{minted}{scheme}
+(: ((. text-emotions.recognize)
+     ((. text-emotions.MkInput)
+       ((. speech2text-en.Text.text)
+         speech2text-en.s2t)))
+  (-> speech2text-en.Audio text-emotions.Output))
+\end{minted}
+
+Another considerable speed-up is gained when using uncurried versions
+of the bluebird and phoenix combinators (experiment $\texttt{xp}_5$)
+going from 6.86s to 0.69s.  This allows to represent the AI service
+composition even more compactly, requiring only a depth of 2.
+Additionally, using uncurried version makes it impossible for the
+combinator to create higher order functions, thus pruning the search
+space even further by only considering composition such that data, but
+not function, transit between services.  Here enabling reduction
+(experiment $\texttt{xp}_6$ had no impact on synthesis time however it
+did reduce the number of resulting candidates from 3 to 2.  The best
+solution that was synthesized by experiments $\texttt{xp}_5$ and
+$\texttt{xp}_6$ is given below.
+\begin{minted}{scheme}
+(: (. text-emotions.recognize
+      (. text-emotions.MkInput
+         (. speech2text-en.Text.text
+            speech2text-en.s2t)))
+  (-> speech2text-en.Audio text-emotions.Output))
+\end{minted}
+
 \begin{table}[h]
   \centering
-  \caption{Benchmarks sorted increasing order of difficulty.  All file
-    paths are relative to path
-    \texttt{experimental/ai-service-composition} from the root folder
-    of the AI-DSL repository~\cite{TODO}.}
-  \label{tab:benchmarks}
+  \caption{AI service composition benchmarks for recognizing emotion
+    in speech.  The files involved to reproduce the experiments can be
+    found under the folder
+    \texttt{experimental/ai-service-composition/recognize-speech-emotion/}
+    from the root folder of the AI-DSL repository~\cite{TODO}.  The
+    results are indicated in time to synthesize the AI service
+    composition.  }
+  \label{tab:rse}
   \begin{tabular}{|l|L|}
     \hline
     Experiment ID & $\texttt{xp}_1$ \\
     \tabdashline & \tabdashline
-    Relative path & \texttt{recognize-speech-emotion} \\
-    \tabdashline & \tabdashline
     File name & \texttt{rse-lambda-xp.metta} \\
     \tabdashline & \tabdashline
-    Description & TODO \\
+    Description & The composition is achieved using lambda abstraction. \\
     \tabdashline & \tabdashline
-    Parameters & TODO \\
+    Parameters & Reduct: False, OnlyData: False, Depth: 5 \\
     \tabdashline & \tabdashline
     Results & TODO \\
     \hline
     Experiment ID & $\texttt{xp}_2$ \\
     \tabdashline & \tabdashline
-    Relative path & \texttt{recognize-speech-emotion} \\
+    File name & \texttt{rse-lambda-xp.metta} \\
     \tabdashline & \tabdashline
-    File name & \texttt{rse-combinator-curried-xp.metta} \\
+    Description & Like $\texttt{xp}_1$ but the variables in the lambda
+    abstraction can only bind to data, not functions.\\
     \tabdashline & \tabdashline
-    Description & Like $\texttt{xp}_1$ but lambda abstraction is replaced
-    by the bluebird combinator \\
+    Parameters & Reduct: False, OnlyData: True, Depth: 5 \\
     \tabdashline & \tabdashline
-    Parameters &  \{Reduction: Disabled \} \\
-    \tabdashline & \tabdashline
-    Results & TODO \\
+    Results & Time: 23m40s, NumCandidates: 44 \\
     \hline
     Experiment ID & $\texttt{xp}_3$ \\
     \tabdashline & \tabdashline
-    Relative path & \texttt{recognize-speech-emotion} \\
+    File name & \texttt{rse-lambda-xp.metta} \\
+    \tabdashline & \tabdashline
+    Description & Like $\texttt{xp}_2$ but reduction is enabled.\\
+    \tabdashline & \tabdashline
+    Parameters & Reduct: True, OnlyData: True, Depth: 5 \\
+    \tabdashline & \tabdashline
+    Results & Time: 19m6s, NumCandidates: 20 \\
+    \hline
+    Experiment ID & $\texttt{xp}_4$ \\
+    \tabdashline & \tabdashline
+    File name & \texttt{rse-combinator-xp.metta} \\
+    \tabdashline & \tabdashline
+    Description & The composition is achieved using the bluebird
+    combinator. \\
+    \tabdashline & \tabdashline
+    Parameters & Reduct: False, Uncurried: False, Depth: 4 \\
+    \tabdashline & \tabdashline
+    Results & Time: 6.86s, NumCandidates: 30 \\
+    \hline
+    Experiment ID & $\texttt{xp}_5$ \\
     \tabdashline & \tabdashline
     File name & \texttt{rse-combinator-curried-xp.metta} \\
     \tabdashline & \tabdashline
-    Description & TODO \\
+    Description & Like $\texttt{xp}_4$ but the bluebird operator is
+    uncurried to further constrain its applicability. \\
     \tabdashline & \tabdashline
-    Parameters & \{Reduction: Enabled\} \\
+    Parameters & Reduct: False, Uncurried: True, Depth: 2 \\
     \tabdashline & \tabdashline
-    Results & TODO \\
+    Results & 0.69s \\
+    \hline
+    Experiment ID & $\texttt{xp}_6$ \\
+    \tabdashline & \tabdashline
+    File name & \texttt{rse-combinator-curried-xp.metta} \\
+    \tabdashline & \tabdashline
+    Description & Like $\texttt{xp}_5$ but reduction is enabled. \\
+    \tabdashline & \tabdashline
+    Parameters & Reduct: True, Uncurried: True, Depth: 2 \\
+    \tabdashline & \tabdashline
+    Results & 0.68s \\
     \hline
   \end{tabular}
 \end{table}
+
+\subsection{English To Chinese Song (Scaled Down)}
+NEXT
 
 \chapter{Conclusion}
 \section{Future Developments}
@@ -1732,11 +1884,14 @@ our most meaningful experiments.
 \end{enumerate}
 
 \section{Acknowledgments}
-Thanks to Matt Ikle and Khellar Crawford for our numerous discussions.
-Thanks to Remy Clarke for mentioning APL and BQN to me which led me to
-learn about tacit programming.  Thanks to Douglas Miles for making
-MeTTaLog which has been tremendously helpful for running some
-experiments.  Thanks to the SingularityNET Foundation for funding this
+Thanks to Matt Ikle and Khellar Crawford for our numerous stimulating
+discussions.  Thanks to Remy Clarke for mentioning APL and BQN which
+led me to learn about tacit programming.  Thanks to Douglas Miles for
+making \mbox{MeTTaLog} which has been tremendously helpful for some
+experiments and getting to reach results at all in some circumstances.
+Thanks to Vitaly Bognanov for making the hyperon-experimental back-end
+of MeTTa which was used across all experiments to establish a fair
+comparison.  Thanks to the SingularityNET Foundation for funding this
 work.
 
 \appendix
