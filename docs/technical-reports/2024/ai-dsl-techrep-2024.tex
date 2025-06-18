@@ -1701,14 +1701,20 @@ of functions, the time is considerably reduced, but is still large
 (23m40s).  Pruning the search space by applying reduction rules
 (experiment $\texttt{xp}_3$) reduces run-time a bit further (19m6s).
 Notably the number of resulting candidates is lower as well, going
-from 44 to 20.  This is good because less candidates means less work
-to the user (or whatever upstream process will use the output of AI
-service composition) to carry out the final selection.  When using
-MeTTaLog, results for $\texttt{xp}_3$ down to 1m21s, which is far
-better than 19m6s with hyperon-experimental, but still unacceptable
-for such simple AI service composition.  The best solution synthesized
-by experiments $\texttt{xp}_1$, $\texttt{xp}_2$ and $\texttt{xp}_3$ is
-given below.
+from 44 to 20, in spite of having provided only two reduction rules
+\begin{minted}{scheme}
+;; Identity application reduction
+(= ((\ (: $x $t) $x) $y) $y))
+;; Constant function application reduction
+(= ((\ (: (s z) $t) z) $x) z)
+\end{minted}
+It is good because less candidates means less work to the user or
+whatever upstream process will use the output of AI service
+composition.  When using MeTTaLog, results for $\texttt{xp}_3$ goes
+down to 1m21s, which is far better than 19m6s with
+hyperon-experimental, but still unacceptable for such simple AI
+service composition.  The best solution synthesized by experiments
+$\texttt{xp}_1$, $\texttt{xp}_2$ and $\texttt{xp}_3$ is given below.
 \begin{minted}{scheme}
 (: (\ (: z speech2text-en.Audio)
       (text-emotions.recognize
@@ -1739,15 +1745,16 @@ An example of a simpler but incorrect solution is
         (speech2text-en.s2t z))))
   (-> speech2text-en.Audio text-emotions.Output))
 \end{minted}
-It is incorrect because it never involves the
+It is incorrect because it never invokes the
 \mintinline{scheme}{text-emotions.recognize} service.  Instead it
-tricks the type by directly constructing an emotion from the text
-output by \mintinline{scheme}{speech2text-en.s2t} using the
+tricks the type by directly constructing an emotion from the output of
+\mintinline{scheme}{speech2text-en.s2t} using the
 \mintinline{scheme}{text-emotions.MkOutput} constructor.  This is a
-perfect example of an under-specified formal description.  Obviously,
+good example of an under-specified formal description.  Obviously,
 \mintinline{scheme}{text-emotions.MkOutput} should not be allowed to
-construct an emotion from arbitrary text.  This is where the ontology
-comes into play and will be explored in the subsequent experiments.
+construct an emotion from an arbitrary text.  This is where the
+ontology comes into play and will be explored in
+Section~\ref{sec:etcs}.
 
 Using the bluebird and phoenix combinators instead of lambda
 abstraction (experiment $\texttt{xp}_4$) considerably improve
@@ -1777,11 +1784,11 @@ composition even more compactly, requiring only a depth of 2.
 Additionally, using uncurried version makes it impossible for the
 combinator to create higher order functions, thus pruning the search
 space even further by only considering composition such that data, but
-not function, transit between services.  Here enabling reduction
-(experiment $\texttt{xp}_6$ had no impact on synthesis time however it
-did reduce the number of resulting candidates from 3 to 2.  The best
-solution that was synthesized by experiments $\texttt{xp}_5$ and
-$\texttt{xp}_6$ is given below.
+not functions, transit between services.  Here enabling reduction
+(experiment $\texttt{xp}_6$) has no impact on run-time.  However, it
+reduces the number of candidates from 3 to 2.  The best solution that
+was synthesized by experiments $\texttt{xp}_5$ and $\texttt{xp}_6$ is
+given below.
 \begin{minted}{scheme}
 (: (. text-emotions.recognize
       (. text-emotions.MkInput
@@ -1796,9 +1803,7 @@ $\texttt{xp}_6$ is given below.
     in speech.  The files involved to reproduce the experiments can be
     found under the folder
     \texttt{experimental/ai-service-composition/recognize-speech-emotion/}
-    from the root folder of the AI-DSL repository~\cite{TODO}.  The
-    results are indicated in time to synthesize the AI service
-    composition.  }
+    from the root folder of the AI-DSL repository~\cite{TODO}.}
   \label{tab:rse}
   \begin{tabular}{|l|L|}
     \hline
@@ -1853,7 +1858,7 @@ $\texttt{xp}_6$ is given below.
     \tabdashline & \tabdashline
     Parameters & Reduct: False, Uncurried: True, Depth: 2 \\
     \tabdashline & \tabdashline
-    Results & 0.69s \\
+    Results & Time: 0.69s, NumCandidates: 3 \\
     \hline
     Experiment ID & $\texttt{xp}_6$ \\
     \tabdashline & \tabdashline
@@ -1863,13 +1868,15 @@ $\texttt{xp}_6$ is given below.
     \tabdashline & \tabdashline
     Parameters & Reduct: True, Uncurried: True, Depth: 2 \\
     \tabdashline & \tabdashline
-    Results & 0.68s \\
+    Results & Time: 0.68s, NumCandidates: 2 \\
     \hline
   \end{tabular}
 \end{table}
 
-\subsection{English To Chinese Song (Scaled Down)}
-NEXT
+\subsection{English To Chinese Song}
+\label{sec:etcs}
+We first experiment with a scaled down version of the English to
+Chinese Song AI service composition.  None of our NEXT
 
 \chapter{Conclusion}
 \section{Future Developments}
