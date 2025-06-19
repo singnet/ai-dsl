@@ -1994,10 +1994,11 @@ right away.  In spite of that it is NEXT.  The next experiment,
 $\texttt{xp}_8$, moves on to bluebird and phoenix combinators.  Even
 without reduction, and still using curried combinators, the best
 solution is found in 1m42s.  Enabling reduction in experiment
-$\texttt{xp}_9$ brings that down to 42.7s.  Moreover the number of
-candidates goes from 29 to 1, only retaining the best solution.  That
-is because we have introduced more reduction rules, 6 in total.  In
-both experiments the best solution is
+$\texttt{xp}_9$ brings that down to 42.7s.  NEXT: This number may seem
+too big but in MeTTaLog it takes less than a second.  Moreover the
+number of candidates goes from 29 to 1, only retaining the best
+solution.  That is because we have introduced more reduction rules, 6
+in total.  In both experiments the best solution is
 \begin{minted}{scheme}
 (: ((. (((Φ mix) accomp) ((. translate) vocals))) spleeter)
    (-> (: $x (SongIn "English")) (SongIn "Chinese")))
@@ -2086,6 +2087,7 @@ representation of the best candidate with all edges annotated by types.
     that transit between services.}
   \label{fig:cnd3typed}
 \end{figure}
+NEXT: mention about partial currification of services (parameters
 
 \chapter{Conclusion}
 \section{Future Developments}
