@@ -20,7 +20,7 @@
 \usepackage{bussproofs}
 \usepackage[pdf]{graphviz}
 \usepackage{array}
-%% \usepackage{tabularray}
+\usepackage{unicode-math}
 
 %% For wrapping around long lines in tabular
 \newcolumntype{L}{>{\arraybackslash}m{9cm}}
@@ -1169,7 +1169,7 @@ least as provided by the existing Protobuf specifications, are not
 descriptive enough to catch that sort of errors.  In the next section
 will show how this can be addressed.
 \section{Enriching Type Signatures using the AI-DSL Ontology}
-
+\label{sec:ontology}
 The collection of concepts handled in AI applications is especially
 rich and tied to the real world.  For instance to characterize a face
 recognition algorithm, one needs at most to define what is a face, or
@@ -1447,6 +1447,7 @@ that we have learned along the way.
 \label{sec:xpsetup}
 
 \subsection{AI Service Compositions}
+\label{sec:aicomp}
 After perusing the SingularityNET marketplace to find meaningful AI
 service compositions to attempt to synthesize them, we have retained
 two compositions:
@@ -1580,14 +1581,14 @@ The well selected combinators aforementioned are:
 The definitions of the bluebird and phoenix combinators are
 respectively provided in Tables~\ref{tab:bluebird}
 and~\ref{tab:phoenix}.
-\begin{table}[h]
+\begin{table}[H]
   \centering
   \caption{Bluebird combinator.  A signal of type \texttt{a} get
     processed by \texttt{g} which outputs a signal of type \texttt{b},
     itself then being processed by \texttt{f} which outputs a signal
     of type \texttt{c}.}
   \label{tab:bluebird}
-  \begin{tabular}{|l|l|}
+  \begin{tabular}{|c|l|}
     \hline
     Name & bluebird \\
     \hline
@@ -1601,7 +1602,7 @@ and~\ref{tab:phoenix}.
     \hline
     Definition & . f g x = f (g x) \\
     \hline
-    \parbox{1cm}{\vspace{-45pt} \centering Diagram} &
+    \parbox{2cm}{\vspace{-45pt} \centering Diagram} &
     \digraph[scale=0.45]{bluebird}{
       rankdir=LR;
       node[shape=none, label=""] IN;
@@ -1616,7 +1617,7 @@ and~\ref{tab:phoenix}.
     \hline
   \end{tabular}
 \end{table}
-\begin{table}[h]
+\begin{table}[H]
   \centering
   \caption{Phoenix combinator.  A signal of type \texttt{a} splits and
     get processed by \texttt{g} and \texttt{h} in parallel, which
@@ -1624,7 +1625,7 @@ and~\ref{tab:phoenix}.
     then rejoining to \texttt{f} which outputs a signal of type
     \texttt{d}.}
   \label{tab:phoenix}
-  \begin{tabular}{|l|l|}
+  \begin{tabular}{|c|l|}
     \hline
     Name & phoenix \\
     \hline
@@ -1640,7 +1641,7 @@ and~\ref{tab:phoenix}.
     \hline
     Definition & $\Phi$ f g h x = f (g x) (h x) \\
     \hline
-    \parbox{1cm}{\vspace{-60pt} \centering Diagram} &
+    \parbox{2cm}{\vspace{-60pt} \centering Diagram} &
     \digraph[scale=0.4]{phoenix}{
       rankdir=LR;
       node[shape=none, label=""] IN;
@@ -1679,40 +1680,41 @@ here and there just to provide an idea of its potential speed-up.
 
 \subsection{Speech Emotion Recognition}
 Experiments begin with the simplest AI service composition,
-recognizing emotion in speech, involving only two services to be
-sequentially combined.  In these experiments no ontology has been
-used, instead the Protobuf types are directly used to specify the
-input and output of the desired composition.  The query submitted to
-the backward chainer in all cases is
+\textbf{recognizing emotion in speech} described in
+Section~\ref{sec:aicomp}, merely involving two services to be
+sequentially combined.  In these experiments no ontology is used,
+instead the Protobuf types are directly used to specify the input and
+output of the desired composition.  The query submitted to the
+backward chainer in all cases is
 \begin{minted}{scheme}
 (: $prg (-> speech2text-en.Audio text-emotions.Output))
 \end{minted}
-The benchmarks are detailed in table~\ref{tab:rse}.  The first three
-experiments involving lambda abstraction deliver poor (over 19 minutes
-of run-time in the best case).  The poor performances are due to
-lambda abstraction requiring more depth to describe the desired
-composition, thus dramatically increasing the search space.  It is
-also due to the inherent expressive power of lambda abstraction, in
-particular its capacity to build higher order functions, enabling far
-more combinations than necessary.  When higher order lambda
-abstraction is disabled (experiment $\texttt{xp}_2$), meaning that the
-variables created by lambda abstraction can only bind to data instead
-of functions, the time is considerably reduced, but is still large
+The results are detailed in table~\ref{tab:rse}.  The first three
+experiments, $\texttt{xp}_1$, $\texttt{xp}_2$ and $\texttt{xp}_3$,
+involve lambda abstraction and deliver poor (over 19 minutes of
+run-time in the best case).  The poor performances are due to lambda
+abstraction requiring more depth to describe the desired composition,
+thus dramatically increasing the search space.  It is also due to the
+inherent expressive power of lambda abstraction, in particular its
+capacity to build higher order functions, enabling far more
+combinations than necessary.  When higher order lambda abstraction is
+disabled (experiment $\texttt{xp}_2$), meaning that the variables
+created by lambda abstraction can only bind to data instead of
+functions, the time is considerably reduced, but is still large
 (23m40s).  Pruning the search space by applying reduction rules
-(experiment $\texttt{xp}_3$) reduces run-time a bit further (19m6s).
+(experiment $\texttt{xp}_3$) reduces run-time a bit further to 19m6s.
 Notably the number of resulting candidates is lower as well, going
-from 44 to 20, in spite of having provided only two reduction rules
+from 44 to 20.  The reduction rules used are simply the following two
 \begin{minted}{scheme}
 ;; Identity application reduction
 (= ((\ (: $x $t) $x) $y) $y))
 ;; Constant function application reduction
 (= ((\ (: (s z) $t) z) $x) z)
 \end{minted}
-It is good because less candidates means less work to the user or
-whatever upstream process will use the output of AI service
-composition.  When using MeTTaLog, results for $\texttt{xp}_3$ goes
-down to 1m21s, which is far better than 19m6s with
-hyperon-experimental, but still unacceptable for such simple AI
+It is good because less candidates means less work to select the final
+composition by the downstream process.  When using MeTTaLog, results
+for $\texttt{xp}_3$ goes down to 1m21s, which is far better than 19m6s
+with hyperon-experimental, but still unacceptable for such simple AI
 service composition.  The best solution synthesized by experiments
 $\texttt{xp}_1$, $\texttt{xp}_2$ and $\texttt{xp}_3$ is given below.
 \begin{minted}{scheme}
@@ -1776,6 +1778,8 @@ that was synthesized by experiment $\texttt{xp}_4$ is given below.
          speech2text-en.s2t)))
   (-> speech2text-en.Audio text-emotions.Output))
 \end{minted}
+Obviously, only the bluebird operator appears in the solution since it
+is entirely built of sequential compositions.
 
 Another considerable speed-up is gained when using uncurried versions
 of the bluebird and phoenix combinators (experiment $\texttt{xp}_5$)
@@ -1797,11 +1801,12 @@ given below.
   (-> speech2text-en.Audio text-emotions.Output))
 \end{minted}
 
-\begin{table}[h]
+\begin{table}[H]
   \centering
-  \caption{AI service composition benchmarks for recognizing emotion
-    in speech.  The files involved to reproduce the experiments can be
-    found under the folder
+  \caption{AI service composition results for synthesizing AI service
+    compositions for recognizing emotion in speech.  The files
+    involved in reproducing the experiments can be found under the
+    folder
     \texttt{experimental/ai-service-composition/recognize-speech-emotion/}
     from the root folder of the AI-DSL repository~\cite{TODO}.}
   \label{tab:rse}
@@ -1875,8 +1880,202 @@ given below.
 
 \subsection{English To Chinese Song}
 \label{sec:etcs}
-We first experiment with a scaled down version of the English to
-Chinese Song AI service composition.  None of our NEXT
+We experiment with two versions of the English To Chinese Song AI
+service composition, scaled down and normal sizes, as described in
+Section~\ref{sec:aicomp}.  Like above we experiments with lambda
+abstraction, bluebird and phoenix combinators, reduction and uncurried
+combinators.  Additionally we use the ontology described in
+Section~\ref{sec:ontology} specifically tailored for this AI service
+composition.  In all cases the query submitted to the backward chainer
+is
+\begin{minted}{scheme}
+(: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese")))
+\end{minted}
+Meaning that we want to synthesize the program that takes in input a
+song in English and outputs a song in Chinese.  The query does not
+specify more information than that.  For instance, it does not specify
+that the song in Chinese must be the same as the English one, except
+the singing part.  As such it still constitutes an over simplification
+of what we want to achieve.  More complex AI service composition
+formal specifications will be explored in the future.  However the
+size of the AI service composition (the normal one, not the scaled
+down one) resembles what we want achieve.  Indeed, if we consider all
+services plus the necessary glue to connect them such as combinators,
+microservices and type coercion to handle the ontology, we are already
+talking about combining 14 unique components.  Which I believe is
+above the size we would expect such synthesis process to start
+providing real world value.  Of course one the reasons we are able to
+do it is because we already know a priori which components are going
+to be used among a much larger set, constituted in large part from the
+AI services available on the SingularityNET marketplace.
+
+Table~\ref{tab:etcs} contains the results of the
+experiments.
+\begin{table}[H]
+  \centering
+  \caption{AI service composition results for synthesizing AI service
+    compositions to turn an English into a Chinese song.  The
+    files involved in reproducing the experiments can be found under
+    the folder
+    \texttt{experimental/ai-service-composition/english-to-chinese-song/}
+    from the root folder of the AI-DSL repository~\cite{TODO}.}
+  \label{tab:etcs}
+  \begin{tabular}{|l|L|}
+    \hline
+    Experiment ID & $\texttt{xp}_7$ \\
+    \tabdashline & \tabdashline
+    File name & \texttt{etcs-dtl-atw-ontology-syn-sd-xp.metta} \\
+    \tabdashline & \tabdashline
+    Description & Scaled down English to Chinese song AI service
+    composition.  The composition is achieved using lambda abstraction. \\
+    \tabdashline & \tabdashline
+    Parameters & Reduct: True, OnlyData: True, Depth: 6 \\
+    \tabdashline & \tabdashline
+    Results & TODO \\
+    \hline
+    Experiment ID & $\texttt{xp}_8$ \\
+    \tabdashline & \tabdashline
+    File name & \texttt{etcs-combinator-sd-xp.metta} \\
+    \tabdashline & \tabdashline
+    Description & Like $\texttt{xp}_7$ but lambda
+    abstraction is replaced by bluebird and phoenix combinators.\\
+    \tabdashline & \tabdashline
+    Parameters & Reduct: False, Uncurried: False, Depth: 5 \\
+    \tabdashline & \tabdashline
+    Results & Time: 1m42s, NumCandidates: 29 \\
+    \hline
+    Experiment ID & $\texttt{xp}_9$ \\
+    \tabdashline & \tabdashline
+    File name & \texttt{etcs-combinator-sd-xp.metta} \\
+    \tabdashline & \tabdashline
+    Description & Like $\texttt{xp}_8$ but reduction is enabled.\\
+    \tabdashline & \tabdashline
+    Parameters & Reduct: True, Uncurried: False, Depth: 5 \\
+    \tabdashline & \tabdashline
+    Results & Time: 42.7s, NumCandidates: 1 \\
+    \hline
+    Experiment ID & $\texttt{xp}_{10}$ \\
+    \tabdashline & \tabdashline
+    File name & \texttt{etcs-combinator-sd-data-uncurried-xp.metta} \\
+    \tabdashline & \tabdashline
+    Description & Like $\texttt{xp}_9$ but the bluebird and phoenix
+    combinators are uncurried. \\
+    \tabdashline & \tabdashline
+    Parameters & Reduct: True, Uncurried: True, Depth: 3 \\
+    \tabdashline & \tabdashline
+    Results & Time: 1.6s, NumCandidates: 1 \\
+    \hline
+    Experiment ID & $\texttt{xp}_{11}$ \\
+    \tabdashline & \tabdashline
+    File name & \texttt{etcs-combinator-data-uncurry-xp.metta} \\
+    \tabdashline & \tabdashline
+    Description & Like $\texttt{xp}_{10}$ but on the full English to
+    Chinese song AI service composition.  Also, reduction is disabled.\\
+    \tabdashline & \tabdashline
+    Parameters & Reduct: False, Uncurried: True, Depth: 6 \\
+    \tabdashline & \tabdashline
+    Results & Time: ?, NumCandidates: ? \\
+    \hline
+    Experiment ID & $\texttt{xp}_{12}$ \\
+    \tabdashline & \tabdashline
+    File name & \texttt{etcs-combinator-data-uncurry-xp.metta} \\
+    \tabdashline & \tabdashline
+    Description & Like $\texttt{xp}_{11}$ but reduction is enabled. \\
+    \tabdashline & \tabdashline
+    Parameters & Reduct: True, Uncurried: True, Depth: 6 \\
+    \tabdashline & \tabdashline
+    Results & Time: 7m56s, NumCandidates: 18 \\
+    \hline
+  \end{tabular}
+\end{table}
+Experiment $\texttt{xp}_7$ uses lambda abstraction, but enables
+reduction and binding only data to variables of lambda abstraction
+right away.  In spite of that it is NEXT.  The next experiment,
+$\texttt{xp}_8$, moves on to bluebird and phoenix combinators.  Even
+without reduction, and still using curried combinators, the best
+solution is found in 1m42s.  Enabling reduction in experiment
+$\texttt{xp}_9$ brings that down to 42.7s.  Moreover the number of
+candidates goes from 29 to 1, only retaining the best solution.  That
+is because we have introduced more reduction rules, 6 in total.  In
+both experiments the best solution is
+\begin{minted}{scheme}
+(: ((. (((Φ mix) accomp) ((. translate) vocals))) spleeter)
+   (-> (: $x (SongIn "English")) (SongIn "Chinese")))
+\end{minted}
+Experiment $\texttt{xp}_{10}$ is like $\texttt{xp}_9$ but uses
+uncurried bluebird and phoenix combinators, bringing synthesis time
+down to 1.6s, which is not only faster but produces a candidate that
+is easier to read
+\begin{minted}{scheme}
+(: (. (Φ mix accomp (. translate vocals)) spleeter)
+   (-> (: $x (SongIn "English")) (SongIn "Chinese")))
+\end{minted}
+One the goals of the AI-DSL is to come up with a user friendly DSL to
+describe AI service compositions.  It seems that combining tacit
+programming, thus relieving us from having to use intermediary
+variables to represent the flow of information, with the bluebird and
+phoenix combinators produces the elegance we are looking for!  We are
+now ready to synthesize the full English to Chinese song AI service
+composition.  Because the full composition is much larger than what
+has been previously attempted we skip lambda abstraction and curried
+combinators.  Instead we run two experiments using uncurried bluebird
+and phoenix combinators, one with reduction disabled (experiment
+$\texttt{xp}_{11}$) and the other with reduction enabled (experiment
+$\texttt{xp}_{12}$).  In both experiments the best candidate is
+\begin{small}
+\begin{minted}{scheme}
+(: (. (Φ mixer.mix
+         sound-spleeter.DTLOutput.accomp
+         (. (Φ midi2voice-zh.singingZH
+               (. (machine-translation.translate "English" "Chinese")
+                  (. upload speech-recognition.s2t))
+               tomidi.a2m)
+            (. (coerce IA) sound-spleeter.DTLOutput.accomp)))
+      sound-spleeter.spleeter)
+   (-> (: $x (SongIn "English")) (SongIn "Chinese")))
+\end{minted}
+\end{small}
+Figure~\ref{fig:corcnd} shows a graphical representation of this candidate
+produced by the MeTTa to DOT converter described in
+Appendix~\ref{apdx:dot}.
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.35]{figs/cnd-3.png}
+  \caption{Graphical representation of the best candidate of
+    experiments $\texttt{xp}_{11}$ and $\texttt{xp}_{12}$.  The nodes
+    represent services like \mintinline{scheme}{tomidi.a2m},
+    microservices like \mintinline{scheme}{upload}, type coercion like
+    \mintinline{scheme}{coerce}, subtyping proof constructors used by
+    type coercion like \mintinline{scheme}{SSTrans}.  The edges
+    represent the information flow between the nodes.  The labels on
+    the input and output edges of the composition represents the input
+    and output types respectively.}
+  \label{fig:corcnd}
+\end{figure}
+However $\texttt{xp}_{11}$ took XXX and
+produced XXX candidates, while $\texttt{xp}_{12}$ took only 7m56s and
+produced 18 candidates.  Of these 18 candidates some are still
+incorrect due to the under-specification of the English to Chinese
+song AI service composition, such as
+\begin{small}
+\begin{minted}{scheme}
+(: (Φ mixer.mix
+      (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter)
+      (Φ midi2voice-zh.singingZH
+         (. (machine-translation.translate "English" "Chinese")
+            (. upload (. speech-recognition.s2t (coerce SIA))))
+         (. tomidi.a2m (coerce SIA))))
+  (-> (: $x (SongIn "English")) (SongIn "Chinese")))
+\end{minted}
+\end{small}
+It is incorrect because XXX.  Figure~\ref{fig:inccnd} provides a
+graphical representation of this incorrect candidate.
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.35]{figs/cnd-4.png}
+  \caption{Graphical representation of an incorrect candidate.}
+  \label{fig:inccnd}
+\end{figure}
 
 \chapter{Conclusion}
 \section{Future Developments}
