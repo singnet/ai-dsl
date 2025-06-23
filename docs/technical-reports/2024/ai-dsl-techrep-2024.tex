@@ -51,7 +51,7 @@
 
 \begin{document}
 
-\title{AI-DSL Technical Report (2024 to June 2025)}
+\title{AI-DSL Technical Report\\(January 2024 to June 2025)}
 \author{Nil Geisweiller}
 \maketitle
 
@@ -426,7 +426,7 @@ unified with \mintinline{scheme}{Bool} while attempting to match
 
 If at this point what is going on is still unclear, I recommend to run
 the code, query by query, while tracing the function calls.  To that
-end I have included a file~\cite{TODO}
+end I have included a file~\cite{ChainingAIDSL2025}
 \begin{minted}{bash}
   curry-backward-chainer-example.metta
 \end{minted}
@@ -521,11 +521,11 @@ Chapter~\ref{chap:chainers}.
 
 \section{Dependent Types}
 
-Simply explained, \emph{dependent types}~\cite{TODO} allow to use
-values inside types.  An example of what can be done with dependent
-types that is often given is a vector data structure where the size of
-the vector is specified within the type itself.  Such definition may
-in Idris look like
+Simply explained, \emph{dependent types}~\cite{MartinLof1980} allow to
+use values inside types.  An example of what can be done with
+dependent types that is often given is a vector data structure where
+the size of the vector is specified within the type itself.  Such
+definition may in Idris look like
 \begin{minted}{idris}
 -- Vector type parameterized by element type and size
 Vect : a -> Nat -> Type
@@ -648,12 +648,13 @@ to
 (: $prfabs (-> (: $prfarg $prms) $thrm))
 \end{minted}
 that is all.  An example of using such dependently typed backward
-chainer to prove properties about programs can be found in~\ref{TODO}.
-The chainer used for most of the AI-DSL experiments is based on it,
-with the additional support for uncurried and embedded rules.  We are
-almost done regarding chaining, but there is one last extension we
-need to cover because some experiments were conducted with it, the
-support for lambda abstraction.
+chainer to prove properties about programs can be found
+in~\cite{ChainingProgramProp}.  The chainer used for most of the
+AI-DSL experiments is based on it, with the additional support for
+uncurried and embedded rules.  We are almost done regarding chaining,
+but there is one last extension we need to cover because some
+experiments were conducted with it, the support for lambda
+abstraction.
 
 \section{Lambda Abstraction}
 
@@ -724,8 +725,8 @@ support $\lambda$ abstraction however, we need to be able to
 dynamically and locally modify such space in every non-deterministic
 branches as the backward chainer unpacks $\lambda$ abstractions.
 Unfortunately, MeTTa does not support locally modifying spaces, though
-an issue~\cite{TODO} has been created and it will hopefully be
-supported in the foreseeable future.  In the meantime we have
+an issue~\cite{ForkSpaceIssue} has been created and it will hopefully
+be supported in the foreseeable future.  In the meantime we have
 implemented our own data structure alongside a custom match operator
 mimicking what a locally modifiable space would do.  It is not
 efficient, our custom match operator is linear in complexity, but it
@@ -936,11 +937,11 @@ synthesize AI service compositions.
 
 To that end, a bash script driving the SingularityNET
 CLI~\cite{SNETCLI} has been implemented to crawl the SingularityNET
-Market Place, see~\cite{TODO}.  First, it gathers all organizations
-and their services in JSON format.  Second, it converts that into
-MeTTa.  It can afford to be implemented in bash because the heavy
-lifting of accessing the information inside the smart contract is
-outsourced to the SingularityNET CLI, and then reading that
+Market Place, see~\cite{SNETCrawler}.  First, it gathers all
+organizations and their services in JSON format.  Second, it converts
+that into MeTTa.  It can afford to be implemented in bash because the
+heavy lifting of accessing the information inside the smart contract
+is outsourced to the SingularityNET CLI, and then reading that
 information in JSON format is outsourced to jq~\cite{JQ}, a
 command-line JSON processor.  At the end of the process we are left
 with a folder tree structure of JSON files organized by organizations
@@ -951,10 +952,10 @@ signatures.
 Such MeTTa file can then be imported in a space and used to reason
 about organizations and their services, and in particular for what is
 our main interest here, to reason about their compositions.  One can
-find examples of such monolithic dumps in MeTTa format in~\cite{TODO}.
-Let us give a few snippets of such a dump for illustrative purposes.
-For instance, the data type to represent an organization is defined in
-MeTTa as follows:
+find examples of such monolithic dumps in MeTTa format
+in~\cite{SNETCrawlerDump}.  Let us give a few snippets of such a dump
+for illustrative purposes.  For instance, the data type to represent
+an organization is defined in MeTTa as follows:
 %% \pagebreak
 \begin{minted}{scheme}
 ;; Define Organization type
@@ -1203,8 +1204,8 @@ iteration we merely provide a miniature handwritten ontology tailored
 specifically to discriminate sensible vs absurd compositions in our
 examples.  The ontology itself is formalized using a subtyping
 relationship described below.  The axioms are taken from the Subtyping
-Wikipedia article~\cite{TODO} and translated into MeTTa.  Subtyping is
-represented by
+Wikipedia article~\cite{enwiki:1292323950} and translated into MeTTa.
+Subtyping is represented by
 \begin{minted}{scheme}
   (<: S T)
 \end{minted}
@@ -1553,10 +1554,10 @@ There are at least two ways of describing AI service compositions.
   to describing the information flow can indeed represent more clearly
   what is the wiring between services.  This way of describing
   programs by combining functions instead of carrying variables around
-  is also called \emph{tacit programming}~\cite{TODO}.
+  is also called \emph{tacit programming}~\cite{enwiki:1283676462}.
 \end{itemize}
 There would be a third way to describe AI service compositions, using
-process algebras like the $pi$-calculus~\cite{TODO} or the
+process algebras like the $pi$-calculus~\cite{Milner1999} or the
 $rho$-calculus~\cite{Meredith2005}.  We believe it is a promising
 future avenue of research but we have not explored it in this report.
 
@@ -1568,7 +1569,7 @@ In order to prune the search we have experimented with the following:
   can transit, not functions.
 \item Adding reduction rules to avoid synthesizing syntactically
   different yet semantically identical candidates.  This is similar to
-  how MOSES~\cite{TODO} uses reduction as pruning technique.
+  how MOSES~\cite{Looks2006} uses reduction as pruning technique.
 \item Uncurrify services and combinators.  This has the interesting
   effect of pruning the search by avoiding combining the services in
   weird, higher order ways, quite similar to limiting the information
@@ -1685,14 +1686,14 @@ bluebird and the phoenix.}.
 \label{sec:benchmarks}
 Experiments on the three AI service compositions presented above have
 been conducted on a AMD Ryzen 7 PRO 4750G with 64GB of RAM.  The
-hyperon-experimental~\cite{TODO} MeTTa back-end was primarily used and
-all results reported in tables are for it.  The MeTTaLog~\cite{TODO}
-back-end was also used but due to not being able to run on all
-experiments was not selected as the reference of comparison, in spite
-of its much better performances when usable.  Due to that the results
-with MeTTaLog are not systematically reported but given here and there
-to provide an idea of the kind of speed a efficient MeTTa back-end may
-provide.
+hyperon-experimental~\cite{HyperonExperimental} MeTTa back-end was
+primarily used and all results reported in tables are for it.  The
+MeTTaLog~\cite{MeTTaLog} back-end was also used but due to not being
+able to run on all experiments was not selected as the reference of
+comparison, in spite of its much better performances when usable.  Due
+to that the results with MeTTaLog are not systematically reported but
+given here and there to provide an idea of the kind of speed a
+efficient MeTTa back-end may provide.
 
 \subsection{Speech Emotion Recognition}
 Experiments begin with the simplest AI service composition,
@@ -1829,7 +1830,7 @@ given below.
     involved in reproducing the experiments can be found under the
     folder
     \texttt{experimental/ai-service-composition/recognize-speech-emotion/}
-    from the root folder of the AI-DSL repository~\cite{TODO}.}
+    from the root folder of the AI-DSL repository~\cite{AIDSLRepo}.}
   \label{tab:rse}
   \begin{tabular}{|l|L|}
     \hline
@@ -1939,7 +1940,7 @@ experiments.
     files involved in reproducing the experiments can be found under
     the folder
     \texttt{experimental/ai-service-composition/english-to-chinese-song/}
-    from the root folder of the AI-DSL repository~\cite{TODO}.}
+    from the root folder of the AI-DSL repository~\cite{AIDSLRepo}.}
   \label{tab:etcs}
   \begin{tabular}{|l|L|}
     \hline
@@ -2166,8 +2167,8 @@ sequential and parallel data flow respectively.
 
 \section{Future Developments}
 We believe the results are quite promising but there is still work
-left to fully realize the vision of the AI-DSL.  In particular, we
-need to:
+left to fully realize the vision of the
+AI-DSL~\cite{GoertzelGeisweillerBlog}.  In particular, we need to:
 \begin{enumerate}
 \item Integrate a form of attention allocation to restrict the set of
   services available on the SingularityNET marketplace to a subset of
@@ -2188,7 +2189,8 @@ need to:
   specifications to leverage such ontology.  Likely this could be
   crowed-sourced both by humans and AIs.
 \item Use a finer-than-functional-programming language to model
-  run-time behavior.  A process algebra, such as $\pi$-calculus or
+  run-time behavior.  A process algebra, such as
+  $\pi$-calculus~\cite{Milner1999} or
   $\rho$-calculus~\cite{Meredith2005}, combined with behavioral and
   spatial types could for instance be used.
 \item Incorporate inference control to speed-up synthesis.
