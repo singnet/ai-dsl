@@ -51,11 +51,25 @@
 
 \begin{document}
 
-\title{AI-DSL Technical Report 2024}
+\title{AI-DSL Technical Report 2024 to June 2025}
 \author{Nil Geisweiller}
 \maketitle
 
 \begin{abstract}
+In this iteration we finally explore synthesizing AI service
+compositions from actual services living on the SingularityNET
+marketplace.  This document includes in-depth explanations about the
+chaining technology implemented in MeTTa for synthesizing AI service
+compositions, description of the SingularityNET marketplace crawler to
+fetch Protobuf specifications of AI services, a miniature ontology to
+enrich the Protobuf specifications with dependent types, extensive
+experiments comparing various approaches to synthesis, lessons learned
+and future directions.  Final results, demonstrating efficient
+synthesis involving half a dozen AI services, are quite promising and
+although the work is far from complete, it represents an important
+step forward towards realizing the final vision of the AI-DSL as a
+system that can autonomously assembles AI services to fulfill formal
+specifications.
 \end{abstract}
 
 \tableofcontents
@@ -2168,19 +2182,24 @@ need to:
   the formal descriptions of the services, as to be able to not only
   synthesize AI service compositions but also evaluate their costs.
 \item Incorporate uncertainty of resources and outcomes in the formal
-  description using a probabilistic logic such as PLN~\cite{TODO}.
-\item How to build the ontology and enrich Protobuf specifications to
-  leverage such ontology.
-\item NEXT: Use infer grained language that captures not just functional
-  semantics but also run-time behavior.
-\item NEXT: inference control.
+  description using for instance a probabilistic logic such as
+  PLN~\cite{TODO}.
+\item Explore how to build a large AI-DSL ontology and enrich Protobuf
+  specifications to leverage such ontology.  Likely this could be
+  crowed-sourced both by humans and AIs.
+\item Use a finer-than-functional-programming language to model
+  run-time behavior.  A process algebra, such as $\pi$-calculus or
+  $\rho$-calculus, combined with behavioral and spatial
+  types~\cite{TODO} could be used for instance.
+\item Incorporate inference control to speed-up synthesis.
 \end{enumerate}
 
 \section{Acknowledgments}
-Thanks to Matt Ikle and Khellar Crawford for our numerous stimulating
-discussions.  Thanks to Remy Clarke for mentioning APL and BQN which
-led me to learn about tacit programming.  Thanks to Douglas Miles for
-making \mbox{MeTTaLog} which has been tremendously helpful for some
+Thanks to Matt Ikle, Khellar Crawford, Douglas Miles and Stassa
+Patsantzis for our numerous stimulating discussions on the subject.
+Thanks to Remy Clarke for mentioning APL and BQN which led me to learn
+about tacit programming.  Thanks to Douglas Miles for making
+\mbox{MeTTaLog} which has been tremendously helpful for some
 experiments and getting to reach results at all in some circumstances.
 Thanks to Vitaly Bognanov for making the hyperon-experimental back-end
 of MeTTa which was used across all experiments to establish a fair
