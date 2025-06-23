@@ -51,7 +51,7 @@
 
 \begin{document}
 
-\title{AI-DSL Technical Report 2024 to June 2025}
+\title{AI-DSL Technical Report (2024 to June 2025)}
 \author{Nil Geisweiller}
 \maketitle
 
@@ -328,9 +328,9 @@ to \mintinline{scheme}{String}, called \mintinline{scheme}{foo}, and
 the other one from \mintinline{scheme}{String} to
 \mintinline{scheme}{Bool}, called \mintinline{scheme}{bar}.  Finally,
 it provides a higher order composition operator \mintinline{scheme}{.}
-also called the \emph{Bluebird} combinator in~\cite{TODO}.  Given that
-theory we can now call the backward chainer with a few queries.  For
-starter, let us infer the type of 42.
+also called the \emph{Bluebird} combinator in~\cite{Smullyan1985}.
+Given that theory we can now call the backward chainer with a few
+queries.  For starter, let us infer the type of 42.
 \begin{minted}{scheme}
 ;; Infer the type of 42
 !(bc &kb Z (: 42 $type))
@@ -517,7 +517,7 @@ some rules being generic, and some being embedded in the code.  One
 advantage of embedding the theory directly in the backward chainer
 implementation is that some axioms or rules can be given some special
 treatments.  Examples of such implementations will be shown in
-Chapter~\ref{TODO}.
+Chapter~\ref{chap:chainers}.
 
 \section{Dependent Types}
 
@@ -1557,8 +1557,8 @@ There are at least two ways of describing AI service compositions.
 \end{itemize}
 There would be a third way to describe AI service compositions, using
 process algebras like the $pi$-calculus~\cite{TODO} or the
-$rho$-calculus~\cite{TODO}.  We believe it is a promising future
-avenue of research but we have not explored it in this report.
+$rho$-calculus~\cite{Meredith2005}.  We believe it is a promising
+future avenue of research but we have not explored it in this report.
 
 \subsection{Pruning Techniques}
 In order to prune the search we have experimented with the following:
@@ -2174,23 +2174,23 @@ need to:
   relevant services to be combined given the specification of the
   desired composition.  Otherwise, it is likely combinatorial
   explosion will be too difficult to manage.  How to do that well
-  remains to be determined.  It could be that some attention
-  allocation mechanism could be designed specifically for the AI-DSL,
-  or a more general-purpose one such as ECAN~\ref{TODO} or
-  SINE~\ref{TODO} could be used.
+  remains to be determined.  Some attention allocation mechanism could
+  be designed specifically for the AI-DSL, or more general-purpose
+  mechanisms such as ECAN~\cite{Pitt2009}, SINE~\cite{Hoder2011} or
+  probabilistic variation thereof~\cite{Agnieszka2019} could be used.
 \item Incorporate resources, financial, computational and temporal in
   the formal descriptions of the services, as to be able to not only
   synthesize AI service compositions but also evaluate their costs.
 \item Incorporate uncertainty of resources and outcomes in the formal
   description using for instance a probabilistic logic such as
-  PLN~\cite{TODO}.
+  PLN~\cite{Goertzel09PLN}.
 \item Explore how to build a large AI-DSL ontology and enrich Protobuf
   specifications to leverage such ontology.  Likely this could be
   crowed-sourced both by humans and AIs.
 \item Use a finer-than-functional-programming language to model
   run-time behavior.  A process algebra, such as $\pi$-calculus or
-  $\rho$-calculus, combined with behavioral and spatial
-  types~\cite{TODO} could be used for instance.
+  $\rho$-calculus~\cite{Meredith2005}, combined with behavioral and
+  spatial types could for instance be used.
 \item Incorporate inference control to speed-up synthesis.
 \end{enumerate}
 
