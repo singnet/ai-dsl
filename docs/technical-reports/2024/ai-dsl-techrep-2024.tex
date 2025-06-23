@@ -1674,9 +1674,11 @@ been conducted on a AMD Ryzen 7 PRO 4750G with 64GB of RAM.  The
 hyperon-experimental~\cite{TODO} MeTTa back-end was primarily used and
 all results reported in tables are for it.  The MeTTaLog~\cite{TODO}
 back-end was also used but due to not being able to run on all
-experiments was not selected as the reference of comparison.  As a
-result results with MeTTaLog are not systematically reported but given
-here and there just to provide an idea of its potential speed-up.
+experiments was not selected as the reference of comparison, in spite
+of its much better performances when usable.  Due to that the results
+with MeTTaLog are not systematically reported but given here and there
+to provide an idea of the kind of speed a efficient MeTTa back-end may
+provide.
 
 \subsection{Speech Emotion Recognition}
 Experiments begin with the simplest AI service composition,
@@ -1700,11 +1702,16 @@ capacity to build higher order functions, enabling far more
 combinations than necessary.  When higher order lambda abstraction is
 disabled (experiment $\texttt{xp}_2$), meaning that the variables
 created by lambda abstraction can only bind to data instead of
-functions, the time is considerably reduced, but is still large
-(23m40s).  Pruning the search space by applying reduction rules
-(experiment $\texttt{xp}_3$) reduces run-time a bit further to 19m6s.
-Notably the number of resulting candidates is lower as well, going
-from 44 to 20.  The reduction rules used are simply the following two
+functions, the time is reduced from at least 3 days~\footnote{With the
+hyperon-experimental back-end, $\texttt{xp}_1$ was prematurely
+terminated due to memory exhaustion.  MeTTaLog on the other hand was
+able to output 72 candidates in 18m3s before terminating for unknown
+reason.} to 23m14s, which is considerably better but still large.
+Pruning the search space by applying reduction rules (experiment
+$\texttt{xp}_3$) reduces the run-time a bit further to 19m6s (compared
+to 23m40s without reduction).  Moreover, the number of resulting
+candidates was lower as well, going from 44 to 20.  The reduction
+rules used are simply the following two
 \begin{minted}{scheme}
 ;; Identity application reduction
 (= ((\ (: $x $t) $x) $y) $y))
@@ -1820,7 +1827,7 @@ given below.
     \tabdashline & \tabdashline
     Parameters & Reduct: False, OnlyData: False, Depth: 5 \\
     \tabdashline & \tabdashline
-    Results & TODO \\
+    Results & Time: 3+ days, NumCandidates: 72+ \\
     \hline
     Experiment ID & $\texttt{xp}_2$ \\
     \tabdashline & \tabdashline
@@ -1931,7 +1938,7 @@ experiments.
     \tabdashline & \tabdashline
     Parameters & Reduct: True, OnlyData: True, Depth: 6 \\
     \tabdashline & \tabdashline
-    Results & TODO \\
+    Results & Time: 6+ days, NumCandidates: ?\\
     \hline
     Experiment ID & $\texttt{xp}_8$ \\
     \tabdashline & \tabdashline
@@ -1974,7 +1981,7 @@ experiments.
     \tabdashline & \tabdashline
     Parameters & Reduct: False, Uncurried: True, Depth: 6 \\
     \tabdashline & \tabdashline
-    Results & Time: ?, NumCandidates: ? \\
+    Results & Time: 3+ days, NumCandidates: 976+ \\
     \hline
     Experiment ID & $\texttt{xp}_{12}$ \\
     \tabdashline & \tabdashline
@@ -1988,17 +1995,18 @@ experiments.
     \hline
   \end{tabular}
 \end{table}
-Experiment $\texttt{xp}_7$ uses lambda abstraction, but enables
-reduction and binding only data to variables of lambda abstraction
-right away.  In spite of that it is NEXT.  The next experiment,
-$\texttt{xp}_8$, moves on to bluebird and phoenix combinators.  Even
-without reduction, and still using curried combinators, the best
-solution is found in 1m42s.  Enabling reduction in experiment
-$\texttt{xp}_9$ brings that down to 42.7s.  NEXT: This number may seem
-too big but in MeTTaLog it takes less than a second.  Moreover the
-number of candidates goes from 29 to 1, only retaining the best
-solution.  That is because we have introduced more reduction rules, 6
-in total.  In both experiments the best solution is
+Experiment $\texttt{xp}_7$ uses lambda abstraction, but with the two
+pruning mechanisms, reduction and binding only data to variables of
+lambda abstraction, enabled right away.  In spite of enabling this it
+could not complete after 6 days of computation with the
+hyperon-experimental back-end.  The next experiment, $\texttt{xp}_8$,
+moves on to bluebird and phoenix combinators.  Even without reduction,
+and still using curried combinators, the best solution is found in
+1m42s.  Enabling reduction in experiment $\texttt{xp}_9$ brings that
+down to 42.7s.  Moreover the number of candidates goes from 29 to 1,
+only retaining the best solution.  That is because we have introduced
+more reduction rules, 6 in total.  In both experiments the best
+solution is
 \begin{minted}{scheme}
 (: ((. (((Φ mix) accomp) ((. translate) vocals))) spleeter)
    (-> (: $x (SongIn "English")) (SongIn "Chinese")))
@@ -2053,11 +2061,18 @@ Appendix~\ref{apdx:dot}.
     and output types respectively.}
   \label{fig:corcnd}
 \end{figure}
-However $\texttt{xp}_{11}$ took XXX and
-produced XXX candidates, while $\texttt{xp}_{12}$ took only 7m56s and
-produced 18 candidates.  Of these 18 candidates some are still
-incorrect due to the under-specification of the English to Chinese
-song AI service composition, such as
+However $\texttt{xp}_{11}$ was terminated due to memory exhaustion
+after 6 days~\footnote{Running $\texttt{xp}_{11}$ MeTTaLog produced
+976 in 9m before being terminated for unknown reason}, while
+$\texttt{xp}_{12}$ took only 7m56s and produced 18 candidates.
+Unfortunately MeTTaLog could not run on $\texttt{xp}_{12}$, but we
+recall that on some experiments with fairly similar settings it was
+able to produce all solutions in a few seconds, which is consistent
+with the kind of speed-ups that MeTTaLog offers.  Showing that the
+approach, given an efficient MeTTa back-end, should be quite usable in
+practice.  Of these 18 candidates some are still incorrect due to the
+under-specification of the English to Chinese song AI service
+composition, such as
 \begin{small}
 \begin{minted}{scheme}
 (: (Φ mixer.mix
@@ -2069,16 +2084,24 @@ song AI service composition, such as
   (-> (: $x (SongIn "English")) (SongIn "Chinese")))
 \end{minted}
 \end{small}
-It is incorrect because XXX.  Figure~\ref{fig:inccnd} provides a
-graphical representation of this incorrect candidate.
+It is incorrect because the whole song, instead of just the vocals, is
+passed to the speech and melody recognition services.  The type
+signatures of the methods are not specific enough to make such a
+difference but nothing is preventing us to address this in the future.
+Figure~\ref{fig:inccnd} provides a graphical representation of this
+incorrect candidate.
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.35]{figs/incorrect-cnd.png}
-  \caption{Graphical representation of an incorrect candidate.}
+  \caption{Graphical representation of an incorrect candidate.  The
+    whole song, instead of just the vocals, is passed to the speech
+    and melody recognition services.}
   \label{fig:inccnd}
 \end{figure}
-Additionally see Figure~\ref{fig:cnd3typed} for a graphical
-representation of the best candidate with all edges annotated by types.
+Additionally, see Figure~\ref{fig:cnd3typed} for a graphical
+representation of the best candidate with all edges annotated by
+types, allowing us to identify the types of data that transit between
+the services.
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.215]{figs/cnd-3-typed.png}
@@ -2087,18 +2110,70 @@ representation of the best candidate with all edges annotated by types.
     that transit between services.}
   \label{fig:cnd3typed}
 \end{figure}
-NEXT: mention about partial currification of services (parameters
+Overall, the results of the last experiment are quite promising.  It
+shows that it is possible to synthesize reasonably quickly a
+moderately complex AI service composition.  Obviously this is assuming
+that all services involved in the composition are already
+pre-selected, indicating that a form of attention allocation will need
+to be integrated in future versions of the AI-DSL.  Also, a detail
+that has been left out regarding currying and uncurrying combinators
+and AI services.  The convention was taken that arguments pertaining
+to parameters as opposed to data, would be separated by a form of
+currying.  This is so the uncurried combinators can perfectly match
+the arity of the AI services, see for instance the service
+\mintinline{scheme}{machine-translation.translate} detailed in
+Section~\ref{sec:ontology}.  The separation between parameters and
+data was operated manually.  Even though it does not seem like a big
+hurdle, it is unclear how to automate this separation and more
+research may be necessary to better understand it.
 
 \chapter{Conclusion}
+In this iteration of the work on the AI-DSL we have finally started to
+experiment with AI service composition synthesis using AI services
+from the SingularityNET marketplace.  To realize this we have
+\begin{itemize}
+\item Implemented in MeTTa a number of backward chainer variations in
+  order to synthesize programs given their types, with or without
+  holes in both types and programs, supporting lambda abstraction and
+  dependent types.
+\item Implemented a SingularityNET marketplace crawler to retrieve the
+  type specifications of all AI services.
+\item Created an miniature ontology and used this ontology to enrich
+  the type signatures of the AI services involved in our experiments.
+\item Extensively experimented with a variety of approaches to
+  represent AI service compositions, in particular using lambda
+  abstraction and combinators and a variety AI service compositions of
+  different difficulties (recognizing emotion in speech and
+  translating an English to a Chinese song).
+\end{itemize}
+At the end we discovered that efficient synthesis was possible by
+combining the bluebird and the phoenix combinators to simulate
+sequential and parallel data flow respectively.
+
 \section{Future Developments}
+We believe the results are quite promising but there is still work
+left to fully realize the vision of the AI-DSL.  In particular, we
+need to:
 \begin{enumerate}
-\item Manage resources, financial, computational.
-\item Reason about uncertainty of outcomes (probability of failing,
-  average accuracy of the results, etc).
-\item Use infer grained language that captures not just functional
-  semantics but also run-time behavior.
+\item Integrate a form of attention allocation to restrict the set of
+  services available on the SingularityNET marketplace to a subset of
+  relevant services to be combined given the specification of the
+  desired composition.  Otherwise, it is likely combinatorial
+  explosion will be too difficult to manage.  How to do that well
+  remains to be determined.  It could be that some attention
+  allocation mechanism could be designed specifically for the AI-DSL,
+  or a more general-purpose one such as ECAN~\ref{TODO} or
+  SINE~\ref{TODO} could be used.
+\item Incorporate resources, financial, computational and temporal in
+  the formal descriptions of the services, as to be able to not only
+  synthesize AI service compositions but also evaluate their costs.
+\item Incorporate uncertainty of resources and outcomes in the formal
+  description using a probabilistic logic such as PLN~\cite{TODO}.
 \item How to build the ontology and enrich Protobuf specifications to
   leverage such ontology.
+\item NEXT: Use infer grained language that captures not just functional
+  semantics but also run-time behavior.
+\item NEXT: inference control.
 \end{enumerate}
 
 \section{Acknowledgments}
