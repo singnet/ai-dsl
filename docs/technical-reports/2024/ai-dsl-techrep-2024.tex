@@ -88,7 +88,7 @@ follows:
 \item Develop and improve a general purpose chainer in MeTTa
   supporting backward, forward and in fact \emph{omniward} chaining
   and can handle dependent types.
-\item Develop a SingularityNET Market Place crawler to gather
+\item Develop a SingularityNET marketplace crawler to gather
   information about AI services and convert that information into
   MeTTa specifications.
 \item Extensively experiment with AI service composition using the
@@ -184,7 +184,11 @@ inference rules on the logical side, so our curried backward chainer
 can also handle synthesizing proofs, not just programs.  The AI-DSL
 actually uses both sides at the same time producing AI service
 compositions containing programs and proofs.  Why on earth would we
-want that is explained in detail in Chapter~\ref{chap:xpaicompo}.\\
+want that is explained in Section~\ref{sec:ontology}, but a teaser is
+that some functions require proofs in arguments alongside data.  For
+instance to coerce a datum of subtype $S$ to a supertype $T$, one not
+only needs to provide such datum but also a proof that $S$ is a
+subtype of $T$.
 
 The MeTTa implementation of the curried backward chainer can be found
 in~\cite{CurriedBackwardChainer} is given in full below\pagebreak
@@ -211,7 +215,7 @@ in~\cite{CurriedBackwardChainer} is given in full below\pagebreak
      ;; Query with holes filled
      (: ($prfabs $prfarg) $thrm)))
 \end{minted}
-Let us walk over that code.
+Let us walk over this code.
 \begin{enumerate}
 \item The type signature takes
   \begin{itemize}
@@ -226,7 +230,7 @@ Let us walk over that code.
       (: TERM TYPE)
     \end{minted}
     indicating that \mintinline{scheme}{TERM} is of type
-    \mintinline{scheme}{TYPE}.  The query may contains free variables
+    \mintinline{scheme}{TYPE}.  The query may contain free variables
     representing holes that the backward chainer must fill.  For
     instance if the query is
     \begin{minted}{scheme}
@@ -295,7 +299,7 @@ Let us walk over that code.
   \end{minted}
   ordering the backward chainer to look for a proof abstraction that,
   if given a proof of a premise, \mintinline{scheme}{$prms}, to be
-  discovered as well, then it outputs a proof of
+  discovered as well, then outputs a proof of
   \mintinline{scheme}{$thrm}, the conclusion.  The broken up query to
   discover the argument is
   \begin{minted}{scheme}
@@ -322,14 +326,14 @@ knowledge with a theory
 !(add-atom &kb (: bar (-> String Bool)))
 !(add-atom &kb (: . (-> (-> $b $c) (-> (-> $a $b) (-> $a $c)))))
 \end{minted}
-That theory expresses that \mintinline{scheme}{42} is a number,
+This theory expresses that \mintinline{scheme}{42} is a number,
 provides two casting functions, one from \mintinline{scheme}{Number}
 to \mintinline{scheme}{String}, called \mintinline{scheme}{foo}, and
 the other one from \mintinline{scheme}{String} to
 \mintinline{scheme}{Bool}, called \mintinline{scheme}{bar}.  Finally,
 it provides a higher order composition operator \mintinline{scheme}{.}
 also called the \emph{Bluebird} combinator in~\cite{Smullyan1985}.
-Given that theory we can now call the backward chainer with a few
+Given this theory we can now call the backward chainer with a few
 queries.  For starter, let us infer the type of 42.
 \begin{minted}{scheme}
 ;; Infer the type of 42
@@ -366,18 +370,18 @@ one turning a number into a Boolean value,
 \mintinline{scheme}{((. bar) foo)}, the other one turning a string
 into a Boolean value, \mintinline{scheme}{bar}.\\
 
-To help you understand what is going I have printed the trace of the
-\mintinline{scheme}{bc} call of the last query.
+To help you understand what is going on I have printed the trace of
+the \mintinline{scheme}{bc} call of the last query.
 \mintinline{scheme}{bc-bas} corresponds to the base case entry,
 \mintinline{scheme}{bc-rec} corresponds to the recursive step entry.
 The knowledge base argument is missing from the trace to be more
 concise.  I have manually reconstructed the tree representing the
 recursive calls and added some comments.  Note that the tree does not
 show the distinction between non-determinism across branches and
-regular functional evaluation along one branch.  I hope the trace
-conveys what is going on in spite of that omission.  Obviously it
-would be nice if MeTTa could offer a tool to automatically display
-such trace and show such distinctions.\\
+functional evaluation along one branch.  I hope the trace conveys what
+is going on in spite of this omission.  Obviously it would be nice if
+MeTTa could offer a tool to automatically display such trace and show
+such distinctions.\\
 \begin{footnotesize}
 \begin{minted}{scheme}
 | ;; Original call, base case, succeeds (match bar)
@@ -491,7 +495,7 @@ to do that so far.
 
 Another possible extension of the backward chainer is to embed its
 axioms and inference rules directly in its code.  For instance the
-theory given in example in Section~\ref{sec:curriedbc} we be directly
+theory given in example in Section~\ref{sec:curriedbc} can be directly
 implemented as the following specialized backward chainer
 
 \begin{minted}{scheme}
@@ -513,11 +517,11 @@ implemented as the following specialized backward chainer
 \end{minted}
 In this example the entire theory is embedded in the backward chainer
 implementation, but one can also write a hybrid backward chainer with
-some rules being generic, and some being embedded in the code.  One
-advantage of embedding the theory directly in the backward chainer
-implementation is that some axioms or rules can be given some special
-treatments.  Examples of such implementations will be shown in
-Chapter~\ref{chap:chainers}.
+some rules being treated generically in the knowledge base, and some
+being embedded in the code.  One advantage of embedding the theory
+directly in the backward chainer implementation is that some axioms or
+rules can be given some special treatments.  Examples of such
+implementations will be shown in Chapter~\ref{chap:xpaicompo}.
 
 \section{Dependent Types}
 
@@ -525,7 +529,7 @@ Simply explained, \emph{dependent types}~\cite{MartinLof1980} allow to
 use values inside types.  An example of what can be done with
 dependent types that is often given is a vector data structure where
 the size of the vector is specified within the type itself.  Such
-definition may in Idris look like
+definition may look like (in Idris)
 \begin{minted}{idris}
 -- Vector type parameterized by element type and size
 Vect : a -> Nat -> Type
@@ -551,8 +555,8 @@ Note that the vector size inside the output type is
 
 As of today, dependent types are not supported by the built-in type
 checker of MeTTa.  Luckily for us however, only a few modifications
-need to be operated to have the backward chainer support dependent
-types in MeTTa.
+need to be done to have the backward chainer support dependent types
+in MeTTa.
 
 \subsection{Rule Format for Dependent Types}
 \label{subsec:frmtdt}
@@ -564,7 +568,7 @@ to
 \begin{minted}{scheme}
 (-> (: ARGUMENT PREMISE) CONCLUSION)
 \end{minted}
-where \mintinline{scheme}{ARGUMENT} would typically appear inside
+where \mintinline{scheme}{ARGUMENT} would be allowed to appear inside
 \mintinline{scheme}{CONCLUSION}, the \emph{dependent} part of
 dependent types.  An example of such inference rule would be
 \begin{minted}{scheme}
@@ -573,7 +577,7 @@ dependent types.  An example of such inference rule would be
        (-> (: $_ (TextIn $src-lang)) (TextIn $dst-lang))))
 \end{minted}
 This inference rule represents an actually AI service from the
-SingularityNET market place that translates a text in some source
+SingularityNET marketplace that translates a text in some source
 language to an equivalent text in some destination language.  The
 first two arguments of the type signature of the service are the
 source and destination languages
@@ -591,21 +595,22 @@ they can be passed as parameters to the other following types
 where \mintinline{scheme}{TextIn} is a parameterized type representing
 a text in a given language.  One may notice the use of
 \mintinline{scheme}{$_} representing a variable that is not
-subsequently used to create dependencies\footnote{Please be aware that
-in MeTTa \mintinline{scheme}{$_} is a regular variable and does behave
-like an underscore in a functional programming language like Haskell.
-Thus multiple occurrences of \mintinline{scheme}{$_} within the same
-scope still will point to the same variable.}.  That is because in the
+subsequently used\footnote{Please be aware that in MeTTa
+\mintinline{scheme}{$_} is a regular variable and does behave like an
+underscore in a functional programming language like Haskell.  Thus
+multiple occurrences of \mintinline{scheme}{$_} within the same scope
+still will point to the same variable.}.  That is because in the
 current format, unlike in Idris, specifying the argument associated to
 the input of an arrow type is mandatory.  This may eventually become
-optional to have more concise type signatures.  One may also notice
-that the rule is a mixture of curried and uncurried arguments.  The
-first two arguments are uncurried while the last one is curried.  This
-is perfectly fine and comes from a convention that has been adopted in
-some experiments, which is that arguments of AI services corresponding
-to hyper-parameters are uncurried, while those corresponding to data
-being processed are curried.  The reason for this convention is
-explained in detail in Chapter~\ref{TODO}.
+optional, but for now we will have to carry out this heavier syntax.
+One may also notice that the rule is a mixture of curried and
+uncurried arguments.  The first two arguments are uncurried while the
+last one is curried.  This is perfectly fine and comes from a
+convention that has been adopted in some experiments, which is that
+arguments of AI services corresponding to hyper-parameters are
+uncurried, while those corresponding to data being processed are
+curried.  The reason for this convention is explained in
+Chapter~\ref{chap:xpaicompo}.
 
 \subsection{Backward Chainer for Dependent Types}
 
@@ -658,50 +663,49 @@ abstraction.
 
 \section{Lambda Abstraction}
 
-In $\lambda$-calculus, lambda abstraction, or $\lambda$ abstraction,
-is a way to construct functions.  On the proof side of the
-Curry-Howard correspondence, $\lambda$ abstraction is a way to
-construct proof functions, or what I like to call \emph{proof
-abstractions}, a function that takes a proof in argument and outputs a
-proof.  If the argument is the proof of a certain hypothesis $H$, and
-the output is a proof of a conclusion $C$, then the proof abstraction
-is a function that computes a way to go from a proof of $H$ to a proof
-of $C$, which can be denoted with the arrow type as $H \to C$.
-Function construction is the dual of function application.  Just like
-function construction can be viewed as hypothesis introduction,
-function application can be viewed as modus ponens.  That is, given a
-body $c : C$, containing a free variable $x$ of type $H$, one can use
-lambda abstraction to construct the following implication $$\lambda
-x. c : H \to C$$ Likewise, applying such proof abstraction to proof $h
-: H$, results in proof $$((\lambda x. c)\ h) : C$$ which, one may
-note, perfectly emulates the behavior of the modus ponens rule.  Thus
-one may consider that the backward chainer presented so far is
-essentially a generic implementation of modus ponens.  It makes sense
-therefore that one would want to support its dual operation, lambda
-abstraction.  There is an alternative though, which is to use
-\emph{Combinatory Logic}.  A combinator is a higher order function
-that takes functions in inputs and output yet more functions.  Some
-combinator set, such as S, K and I are known to be sufficiently
-expressive so that one can built any function out of them.  That is
-how they can represent an alternative to $\lambda$ abstraction.  Our
-most successful experiments were in fact conducted with combinators
-(albeit another set than S, K and I), while most of our experiments
-conducted with $\lambda$ abstraction failed due to the excessive and
-uncontrollable combinatorial explosion resulting from it.  The
-backward chainer implementations presented so far already support
-combinaroty logic, one just needs to define the set of combinators to
-be used in the theory handed to the backward chainer.  For $\lambda$
-abstraction it is a bit more complicated and the backward chainer
-needs to be modified specifically for that purpose.  Let us show below
-how.
+In $\lambda$-calculus, $\lambda$ abstraction, is a way to construct
+functions.  On the proof side of the Curry-Howard correspondence,
+$\lambda$ abstraction is a way to construct proof functions, or what I
+like to call \emph{proof abstractions}, a function that takes a proof
+in argument and outputs a proof.  If the argument is the proof of a
+certain hypothesis $H$, and the output is a proof of a conclusion $C$,
+then the proof abstraction is a function that computes a way to go
+from a proof of $H$ to a proof of $C$, which can be denoted with the
+arrow type as $H \to C$.  Function construction is the dual of
+function application.  Just like function construction can be viewed
+as hypothesis introduction, function application can be viewed as
+modus ponens.  That is, given a body $c : C$, containing a free
+variable $x$ of type $H$, one can use lambda abstraction to construct
+the following implication $$\lambda x. c : H \to C$$ Likewise,
+applying such proof abstraction to proof $h : H$, results in
+proof $$((\lambda x. c)\ h) : C$$ which, one may note, perfectly
+emulates the behavior of the modus ponens rule.  Thus one may consider
+that the backward chainer presented so far is essentially a generic
+implementation of modus ponens.  It makes sense therefore that one
+would want to support its dual operation, lambda abstraction.  There
+is an alternative though, which is to use \emph{Combinatory Logic}.  A
+combinator is a higher order function that takes functions in inputs
+and output yet more functions.  Some combinator set, such as S, K and
+I are known to be sufficiently expressive so that one can build any
+function out of them.  That is how they can represent an alternative
+to $\lambda$ abstraction.  Our most successful experiments were in
+fact conducted with combinators (albeit another set than S, K and I),
+while most of our experiments conducted with $\lambda$ abstraction
+failed due to the excessive and uncontrollable combinatorial explosion
+resulting from it.  The backward chainer implementations presented so
+far already support combinatory logic, one just needs to define the
+set of combinators to be used in the theory handed to the backward
+chainer.  For $\lambda$ abstraction it is a bit more complicated and
+the backward chainer needs to be modified specifically for that
+purpose.  Let us show below how.
 
 \subsection{Backward Chaining with Lambda Abstraction}
 
-The main idea needed to have the backward chainer support $\lambda$
-abstraction is that, when going backward, unpacking a $\lambda$
-abstraction must introduce knowledge in the theory about the type of
-the variable previously scoped by the $\lambda$.  Formally, this can
-be represented as the following inference rule
+The main idea that is required to have the backward chainer support
+$\lambda$ abstraction is that, when going backward, unpacking a
+$\lambda$ abstraction must introduce knowledge in the theory about the
+type of the variable previously scoped by the $\lambda$.  Formally,
+this can be represented as the following inference rule
 \begin{prooftree}
   \AxiomC{$\Gamma, x : s \vdash f : t$}
   \RightLabel{($\lambda$ Introduction)}
@@ -715,7 +719,7 @@ then query the theory about its type.  If the type is missing the
 backward chainer will fail to reach all the axioms, and thus fail to
 infer the type of $f$.  In other words, for $\lambda$ abstraction to
 be properly supported, $x: s$ must temporarily become an axiom of the
-theory as backward chaining is taking place.
+theory as backward chaining is unfolding.
 
 Going back to MeTTa, in our backward chaining implementations the
 theory is stored in a space for efficiently matching inference rules
@@ -728,13 +732,12 @@ Unfortunately, MeTTa does not support locally modifying spaces, though
 an issue~\cite{ForkSpaceIssue} has been created and it will hopefully
 be supported in the foreseeable future.  In the meantime we have
 implemented our own data structure alongside a custom match operator
-mimicking what a locally modifiable space would do.  It is not
-efficient, our custom match operator is linear in complexity, but it
-gives us the tools that we need to experiment with $\lambda$
-abstraction, as well as any other reasoning schemes involving
-dynamically modifying a theory, such as modal and contextual
-reasoning, which are not presented in this document but are also of
-capital importance.
+mimicking a locally modifiable space.  It is not efficient, our custom
+match operator is linear in complexity, but it gives us the tools that
+we need to experiment with $\lambda$ abstraction, as well as any other
+reasoning schemes involving dynamically modifying a theory, such as
+modal and contextual reasoning, which are not presented in this
+document but are also of capital importance.
 
 \subsection{Locally Modifying Space}
 
@@ -809,7 +812,7 @@ Compared to the backward chainer implementations above, two extra
 arguments are introduced:
 \begin{itemize}
 \item An environment, typed \mintinline{scheme}{(List $b)}, holding
-  the dynamic part of the theory, solely dedicated to store typing
+  the dynamic part of the theory, solely dedicated to storing typing
   relationships of variables dynamically introduced by the backward
   chainer as it encounters $\lambda$ abstractions.  While the
   knowledge base space still statically holds the rest of the theory.
@@ -877,21 +880,20 @@ chainer supporting $\lambda$ abstraction is given below.
 \end{small}
 I am hoping that by now the mechanism is clear.  If it is not, feel
 free to play with the implementation and the examples provided
-in~\cite{TODO, TODO}.
+in~\cite{TODO_CHAINER_EXAMPLES_WITH_LAMBDA_ABSTRACTION}.
 
 We have covered everything we need to know in order to synthesize AI
 services compositions in a type driven manner using MeTTa.  An obvious
 prerequisite though, is to have the knowledge of AI services and their
-type specifications, in the first place.  The next Chapter will look
-into the problem of retrieving such information from the
-SingularityNET Market Place.
+type specifications.  The next Chapter will look into the problem of
+retrieving such information from the SingularityNET marketplace.
 
-\chapter{Representing the SingularityNET Market Place in MeTTa}
+\chapter{Representing the SingularityNET Marketplace in MeTTa}
 \label{chap:marketplace}
 \section{SingularityNET and the Blockchain}
-Explaining in detail how the SingularityNET Market Place works is
+Explaining in detail how the SingularityNET marketplace works is
 beyond the scope of this document, but let me nonetheless attempt to
-give you a high level view of how the SingularityNET Market Place
+give you a high level view of how the SingularityNET marketplace
 operates on the blockchain.  We will focus on the Ethereum blockchain
 because it is the one that I understand, but I believe what I am about
 to say applies to the Cardano blockchain side of SingularityNET as
@@ -899,7 +901,7 @@ well.
 
 A smart contract on the Ethereum blockchain centralizes the process of
 registering organizations that want to publish services on the
-SingularityNET Market Place.  You may ask, ``centralizes'', I thought
+SingularityNET marketplace.  You may ask, ``centralizes'', I thought
 it was decentralized?  Yes, it is decentralized in the sense that the
 contract is ultimately duplicated all over the Ethereum network, but
 it is centralized in the sense that any modification of it will
@@ -921,23 +923,23 @@ point to another address.  Thus, all possible modification are
 funneled through the smart contract.  That is not to say that the
 network cannot change if the smart contract is not changed, for
 instance a service provider may decide to silently shut down its
-servers, but the description itself of the SingularityNET Market Place
+servers, but the description itself of the SingularityNET marketplace
 should be immune to these external circumstances.  That is of course
 assuming that both the Ethereum blockchain and the IPFS networks are
 collectively given the care to operate as intended.  In particular,
 for IPFS, there needs to be at least one node in the network
 containing the data referenced by the SingularityNET smart contract.
 
-\section{Crawling the SingularityNET Market Place}
+\section{Crawling the SingularityNET Marketplace}
 \label{sec:csnmp}
 The goal of this process is to gather information about all AI
-services on the SingularityNET Market Place and convert that
+services on the SingularityNET marketplace and convert that
 information into a format that the backward chainer can use to
 synthesize AI service compositions.
 
 To that end, a bash script driving the SingularityNET
 CLI~\cite{SNETCLI} has been implemented to crawl the SingularityNET
-Market Place, see~\cite{SNETCrawler}.  First, it gathers all
+marketplace, see~\cite{SNETCrawler}.  First, it gathers all
 organizations and their services in JSON format.  Second, it converts
 that into MeTTa.  It can afford to be implemented in bash because the
 heavy lifting of accessing the information inside the smart contract
@@ -1098,7 +1100,7 @@ types of services.  This information is encoded as Protocol Buffers
 us to retrieve the Protobuf files associated to each service.  Then
 the Protobuf files can be converted into MeTTa via
 protobuf-metta~\cite{ProtoMeTTa} a tool specifically created for that
-purpose.  The bash script crawling the market place calls
+purpose.  The bash script crawling the marketplace calls
 protobuf-metta and populates the resulting MeTTa file with these
 specifications.  Below is an example of such specification pertaining
 to the same Machine Translation service.  First it contains the
@@ -1452,6 +1454,9 @@ will undoubtedly resurface in the future when their time is right.
 
 \chapter{Experimenting with AI Service Composition in MeTTa}
 \label{chap:xpaicompo}
+
+NEXT: add special treatment data only lambda abstraction.
+
 We have written a few prototypes in MeTTa, all based on the backward
 chainers presented in Chapter~\ref{chap:chainers}, to synthesize AI
 service compositions.  In this chapter we will describe the various
