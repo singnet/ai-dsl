@@ -7,10 +7,6 @@
 (: Z Nat)
 (: S (-> Nat Nat))
 
-;; Define <=
-(: <= (-> $a $a Bool))
-(= (<= $x $y) (or (< $x $y) (== $x $y)))
-
 ;; Define cast functions between Nat and Number
 (: fromNumber (-> Number Nat))
 (= (fromNumber $n) (if (<= $n 0) Z (S (fromNumber (- $n 1)))))
@@ -26,8 +22,8 @@
 (: DeBruijn Type)
 
 ;; Define DeBruijn constructors
-(: Z' DeBruijn)                        ; Zero
-(: S' (-> DeBruijn DeBruijn))          ; Successor
+(: z DeBruijn)                        ; Zero
+(: s (-> DeBruijn DeBruijn))          ; Successor
 
 ;;;;;;;;;;
 ;; List ;;
@@ -424,15 +420,13 @@
 ;; Backward chainer ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-;; The following code is copied from NEXT.
-
 ;; Curried Backward Chainer with lambda abstraction.  A lambda
 ;; abstraction is represented by
 ;;
 ;; (λ <INDEX> <BODY>)
 ;;
-;; where <INDEX> is a De Bruijn index as define above, such as Z' or
-;; (S' Z'), and <BODY> is a term possibly containing <INDEX>.  Note
+;; where <INDEX> is a De Bruijn index as define above, such as z or
+;; (s z), and <BODY> is a term possibly containing <INDEX>.  Note
 ;; that the use of De Bruijn index in lambda abstraction is somewhat
 ;; unconventional here.  It differs from what is described in
 ;; https://en.wikipedia.org/wiki/De_Bruijn_index in three ways:
@@ -440,15 +434,15 @@
 ;; 1. The index is explicitely attached to a λ by being its first
 ;;    argument.  For instance the lambda term λx.x, which would
 ;;    traditionally be represented by λ1 using De Bruijn index, would
-;;    be represented here by the MeTTa term (λ Z' Z').
+;;    be represented here by the MeTTa term (λ z z).
 ;;
 ;; 2. As seen in the example above the index here starts at 0,
-;;    represented by Z', instead of 1.
+;;    represented by z, instead of 1.
 ;;
 ;; 3. The index increases as the lambda abstraction gets deeper.  For
 ;;    instance λx.λy.x, which would traditionally be represented by
 ;;    λλ2 using De Bruijn index, is represented here by the MeTTa term
-;;    (λ Z' (λ (S' Z') Z').
+;;    (λ z (λ (s z) z).
 ;;
 ;; This differences are due to the way the proof abstraction recursive
 ;; step is defined in the bc, as well as the need for having non
@@ -470,7 +464,7 @@
 ;; * Environment: a list of typing relationship between De Bruijn
 ;;   index and type, such as
 ;;
-;;   (Cons (: Z' String) (Cons (: (S' Z') Number) Nil))
+;;   (Cons (: z String) (Cons (: (s z) Number) Nil))
 ;;
 ;; * De Bruijn Index: De Bruijn Index to use if a lambda abstraction
 ;;   is introduced.
@@ -529,7 +523,7 @@
 ;; Proof abstraction
 (= (bc $kb $env $idx (S $k) (: (λ $idx $prfbdy) (-> $prms $thrm)))
    (let (: $prfbdy $thrm)
-     (bc $kb (Cons (: $idx $prms) $env) (S' $idx) $k (: $prfbdy $thrm))
+     (bc $kb (Cons (: $idx $prms) $env) (s $idx) $k (: $prfbdy $thrm))
      (: (λ $idx $prfbdy) (-> $prms $thrm))))
 
 ;;;;;;;;;;;;;;;;;;;;;
@@ -591,7 +585,7 @@
       (Expression (case $term
                     ((() ())
                      (($x) ($x))
-                     (($x $y) (if (== $x S')
+                     (($x $y) (if (== $x s)
                                   ;; Treat De Bruijn index atomically
                                   $term
                                   ;; Add type annotation to argument of application
@@ -631,7 +625,7 @@
                      (() ())
                      ;; LET
                      ((LET $x $y $f) (let* (($x $idx)
-                                            ($νf (mt2lc (S' $idx) $f))
+                                            ($νf (mt2lc (s $idx) $f))
                                             ($νy (mt2lc $idx $y)))
                                        ((λ $x $νf) $νy)))
                      ;; Application
@@ -647,7 +641,7 @@
 ;; ;; target_lang as String, a sentences_url as String and returns a
 ;; ;; machine-translation.Input.
 ;; !(assertEqual
-;;   (bc &kb Nil Z' (fromNumber 0)
+;;   (bc &kb Nil z (fromNumber 0)
 ;;       (: $prg
 ;;          (-> String (-> String (-> String machine-translation.Input)))))
 ;;   (: machine-translation.MkInput
@@ -657,7 +651,7 @@
 ;; ;; be English singing, and return an audio stream as Bytes, supposed
 ;; ;; to be Chinese singing.
 ;; Disable because it takes too long
-;; !(bc &kb Nil Z' (fromNumber 3) (: $prf (-> Bytes Bytes)))
+;; !(bc &kb Nil z (fromNumber 3) (: $prf (-> Bytes Bytes)))
 
 ;; Cannot use assertEqual due to the need for alpha-equivalence (which
 ;; has been implemented in the combinatory logic experiment in the
@@ -665,7 +659,7 @@
 ;;
 ;; TODO: re-enable once Minimal MeTTa is faster.
 ;;
-;; !(add-type (: (λ Z' ((λ (S' Z') ((λ (S' (S' Z')) ((λ (S' (S' (S' Z'))) ((λ (S' (S' (S' (S' Z')))) ((λ (S' (S' (S' (S' (S' Z'))))) (mixer.Audio.data (mixer.mix ((mixer.MkMultiAudio (sound-spleeter.Output.accomp (S' Z'))) (S' (S' (S' (S' (S' Z'))))))))) (midi2voice-zh.Answer.output_audio (midi2voice-zh.singingZH (((midi2voice-zh.MkQuery (S' (S' (S' Z')))) (S' (S' (S' (S' Z'))))) 1.0))))) (tomidi.MIDI.data (tomidi.a2m (tomidi.MkAudio (S' (S' Z'))))))) (machine-translation.Output.translation (machine-translation.translate (((machine-translation.MkInput "English") "Chinese") (speech-recognition.Text.text (speech-recognition.s2t (speech-recognition.MkAudio (S' (S' Z')))))))))) (sound-spleeter.Output.vocals (S' Z')))) (sound-spleeter.spleeter ((sound-spleeter.MkInput "") Z')))) (-> Bytes Bytes)))
+;; !(add-type (: (λ z ((λ (s z) ((λ (s (s z)) ((λ (s (s (s z))) ((λ (s (s (s (s z)))) ((λ (s (s (s (s (s z))))) (mixer.Audio.data (mixer.mix ((mixer.MkMultiAudio (sound-spleeter.Output.accomp (s z))) (s (s (s (s (s z))))))))) (midi2voice-zh.Answer.output_audio (midi2voice-zh.singingZH (((midi2voice-zh.MkQuery (s (s (s z)))) (s (s (s (s z))))) 1.0))))) (tomidi.MIDI.data (tomidi.a2m (tomidi.MkAudio (s (s z))))))) (machine-translation.Output.translation (machine-translation.translate (((machine-translation.MkInput "English") "Chinese") (speech-recognition.Text.text (speech-recognition.s2t (speech-recognition.MkAudio (s (s z)))))))))) (sound-spleeter.Output.vocals (s z)))) (sound-spleeter.spleeter ((sound-spleeter.MkInput "") z)))) (-> Bytes Bytes)))
 
 ;; The following MeTTa program represents the AI service composition
 ;; for the English to Chinese song translation.
@@ -743,7 +737,7 @@
 ;; The following lambda term has been obtained by converting MeTTa to
 ;; lambda-calculus as follow
 ;;
-;; !(mt2lc (S' Z')
+;; !(mt2lc (s z)
 ;;        (LET $spleeter-output
 ;;             (sound-spleeter.spleeter ((sound-spleeter.MkInput "") $input))
 ;;             (LET $english-vocals (sound-spleeter.Output.vocals $spleeter-output)
@@ -766,28 +760,28 @@
 ;;                                     (sound-spleeter.Output.accomp $spleeter-output))
 ;;                                    $chinese-vocals)))))))))
 ;;
-;; and wrapping $input into a lambda abstraction using Z' as its
+;; and wrapping $input into a lambda abstraction using z as its
 ;; corresponding De Bruijn index.  Then adding type annotations via
 ;; add-type.  In the end we obtain the following lambda term
 ;;
-;;         (λ Z'
-;;           ((λ (S' Z')
-;;              ((λ (S' (S' Z'))
-;;                 ((λ (S' (S' (S' Z')))
-;;                    ((λ (S' (S' (S' (S' Z'))))
-;;                       ((λ (S' (S' (S' (S' (S' Z')))))
+;;         (λ z
+;;           ((λ (s z)
+;;              ((λ (s (s z))
+;;                 ((λ (s (s (s z)))
+;;                    ((λ (s (s (s (s z))))
+;;                       ((λ (s (s (s (s (s z)))))
 ;;                          (mixer.Audio.data
 ;;                           (: (mixer.mix
 ;;                               (: ((mixer.MkMultiAudio
 ;;                                    (: (sound-spleeter.Output.accomp
-;;                                        (: (S' Z') $t51913082)) $t51898733))
-;;                                   (: (S' (S' (S' (S' (S' Z'))))) $t51880775))
+;;                                        (: (s z) $t51913082)) $t51898733))
+;;                                   (: (s (s (s (s (s z))))) $t51880775))
 ;;                                  $t51855788)) $t51829490)))
 ;;                        (: (midi2voice-zh.Answer.output_audio
 ;;                            (: (midi2voice-zh.singingZH
 ;;                                (: (((midi2voice-zh.MkQuery
-;;                                      (: (S' (S' (S' Z'))) $t52151099))
-;;                                     (: (S' (S' (S' (S' Z')))) $t52131583))
+;;                                      (: (s (s (s z))) $t52151099))
+;;                                     (: (s (s (s (s z)))) $t52131583))
 ;;                                    (: 1.0 $t52104485))
 ;;                                   $t52075637))
 ;;                               $t52045478))
@@ -795,7 +789,7 @@
 ;;                     (: (tomidi.MIDI.data
 ;;                         (: (tomidi.a2m
 ;;                             (: (tomidi.MkAudio
-;;                                 (: (S' (S' Z')) $t52945476))
+;;                                 (: (s (s z)) $t52945476))
 ;;                                $t52929564))
 ;;                            $t12345678))
 ;;                        $t51422971)))
@@ -807,7 +801,7 @@
 ;;                              (: (speech-recognition.Text.text
 ;;                                  (: (speech-recognition.s2t
 ;;                                      (: (speech-recognition.MkAudio
-;;                                          (: (S' (S' Z')) $t56315149))
+;;                                          (: (s (s z)) $t56315149))
 ;;                                         $t56299237))
 ;;                                     $t56282014))
 ;;                                 $t56230536))
@@ -815,186 +809,186 @@
 ;;                         $t56184111))
 ;;                     $t50404647)))
 ;;               (: (sound-spleeter.Output.vocals
-;;                   (: (S' Z') $t70938935)) $t46608723)))
+;;                   (: (s z) $t70938935)) $t46608723)))
 ;;            (: (sound-spleeter.spleeter
 ;;                (: ((sound-spleeter.MkInput
 ;;                     (: "" $t131081238))
-;;                    (: Z' $t131072410))
+;;                    (: z $t131072410))
 ;;                   $t131058283))
 ;;               $t31783546)))
 
 ;; Type check a portion of the English to Chinese singing AI service composition
 !(assertEqual
-  (bc &kb (Cons (: (S' Z') $t51913082) Nil) Z' (fromNumber 1)
-      (: (sound-spleeter.Output.accomp (: (S' Z') $t51913082)) $t51898733))
+  (bc &kb (Cons (: (s z) $t51913082) Nil) z (fromNumber 1)
+      (: (sound-spleeter.Output.accomp (: (s z) $t51913082)) $t51898733))
   (: (sound-spleeter.Output.accomp
-      (: (S' Z') sound-spleeter.Output)) Bytes))
+      (: (s z) sound-spleeter.Output)) Bytes))
 
 ;; Type check a portion of the English to Chinese singing AI service composition
 !(assertEqual
-  (bc &kb (Cons (: (S' Z') $t51913082) Nil) Z' (fromNumber 2)
+  (bc &kb (Cons (: (s z) $t51913082) Nil) z (fromNumber 2)
       (: (mixer.MkMultiAudio (: (sound-spleeter.Output.accomp
-                                 (: (S' Z') $t51913082)) $t51898733)) $thrm))
+                                 (: (s z) $t51913082)) $t51898733)) $thrm))
   (: (mixer.MkMultiAudio
       (: (sound-spleeter.Output.accomp
-          (: (S' Z') sound-spleeter.Output)) Bytes))
+          (: (s z) sound-spleeter.Output)) Bytes))
      (-> Bytes mixer.MultiAudio)))
 
 ;; Type check a portion of the English to Chinese singing AI service composition
 !(assertEqual
   (bc &kb
-      (Cons (: (S' Z') $t51913082)
-            (Cons (: (S' (S' (S' (S' (S' Z'))))) $t51880775) Nil))
-      Z'
+      (Cons (: (s z) $t51913082)
+            (Cons (: (s (s (s (s (s z))))) $t51880775) Nil))
+      z
       (fromNumber 2)
       (: (mixer.MkMultiAudio (: (sound-spleeter.Output.accomp
-                                 (: (S' Z') $t51913082))
+                                 (: (s z) $t51913082))
                                 $t51898733))
          $thrm))
   (: (mixer.MkMultiAudio (: (sound-spleeter.Output.accomp
-                             (: (S' Z') sound-spleeter.Output)) Bytes))
+                             (: (s z) sound-spleeter.Output)) Bytes))
      (-> Bytes mixer.MultiAudio)))
 
 ;; Type check a portion of the English to Chinese singing AI service composition
 !(assertEqual
   (bc &kb
-      (Cons (: (S' Z') Bytes) (Cons (: Z' sound-spleeter.Output) Nil))
-      Z'
+      (Cons (: (s z) Bytes) (Cons (: z sound-spleeter.Output) Nil))
+      z
       (fromNumber 3)
       (: ((mixer.MkMultiAudio (: (sound-spleeter.Output.accomp
-                                  (: Z' sound-spleeter.Output)) Bytes))
-          (: (S' Z') Bytes))
+                                  (: z sound-spleeter.Output)) Bytes))
+          (: (s z) Bytes))
          $thrm))
   (: ((mixer.MkMultiAudio (: (sound-spleeter.Output.accomp
-                              (: Z' sound-spleeter.Output)) Bytes))
-      (: (S' Z') Bytes))
+                              (: z sound-spleeter.Output)) Bytes))
+      (: (s z) Bytes))
      mixer.MultiAudio))
 
 ;; Type check a portion of the English to Chinese singing AI service composition
 !(assertEqual
   (bc &kb
-      (Cons (: Z' $t51913082) (Cons (: (S' Z') $t51880775) Nil))
-      Z'
+      (Cons (: z $t51913082) (Cons (: (s z) $t51880775) Nil))
+      z
       (fromNumber 3)
       (: ((mixer.MkMultiAudio (: (sound-spleeter.Output.accomp
-                                  (: Z' $t51913082)) $t51898733))
-          (: (S' Z') $t51880775))
+                                  (: z $t51913082)) $t51898733))
+          (: (s z) $t51880775))
          $thrm))
   (: ((mixer.MkMultiAudio (: (sound-spleeter.Output.accomp
-                              (: Z' sound-spleeter.Output)) Bytes))
-      (: (S' Z') Bytes))
+                              (: z sound-spleeter.Output)) Bytes))
+      (: (s z) Bytes))
      mixer.MultiAudio))
 
 ;; Type check a portion of the English to Chinese singing AI service composition
 !(assertEqual
   (bc &kb
-      (Cons (: (S' Z') $t51913082)
-            (Cons (: (S' (S' (S' (S' (S' Z'))))) $t51880775) Nil))
-      Z'
+      (Cons (: (s z) $t51913082)
+            (Cons (: (s (s (s (s (s z))))) $t51880775) Nil))
+      z
       (fromNumber 4)
       (: (mixer.mix
           (: ((mixer.MkMultiAudio
                (: (sound-spleeter.Output.accomp
-                   (: (S' Z') $t51913082)) $t51898733))
-              (: (S' (S' (S' (S' (S' Z'))))) $t51880775))
+                   (: (s z) $t51913082)) $t51898733))
+              (: (s (s (s (s (s z))))) $t51880775))
              $t51855788))
          $t51829490))
   (: (mixer.mix
       (: ((mixer.MkMultiAudio
            (: (sound-spleeter.Output.accomp
-               (: (S' Z') sound-spleeter.Output)) Bytes))
-          (: (S' (S' (S' (S' (S' Z'))))) Bytes))
+               (: (s z) sound-spleeter.Output)) Bytes))
+          (: (s (s (s (s (s z))))) Bytes))
          mixer.MultiAudio))
      mixer.Audio))
 
 ;; Type check a portion of the English to Chinese singing AI service composition
 !(assertEqual
   (bc &kb
-      (Cons (: (S' Z') $t51913082)
-            (Cons (: (S' (S' (S' (S' (S' Z'))))) $t51880775) Nil))
-      Z'
+      (Cons (: (s z) $t51913082)
+            (Cons (: (s (s (s (s (s z))))) $t51880775) Nil))
+      z
       (fromNumber 5)
       (: (mixer.Audio.data
           (: (mixer.mix
               (: ((mixer.MkMultiAudio
                    (: (sound-spleeter.Output.accomp
-                       (: (S' Z') $t51913082)) $t51898733))
-                  (: (S' (S' (S' (S' (S' Z'))))) $t51880775))
+                       (: (s z) $t51913082)) $t51898733))
+                  (: (s (s (s (s (s z))))) $t51880775))
                  $t51855788)) $t51829490))
          $thrm))
   (: (mixer.Audio.data
       (: (mixer.mix
           (: ((mixer.MkMultiAudio
                (: (sound-spleeter.Output.accomp
-                   (: (S' Z') sound-spleeter.Output)) Bytes))
-              (: (S' (S' (S' (S' (S' Z'))))) Bytes))
+                   (: (s z) sound-spleeter.Output)) Bytes))
+              (: (s (s (s (s (s z))))) Bytes))
              mixer.MultiAudio)) mixer.Audio))
      Bytes))
 
 ;; Type check a portion of the English to Chinese singing AI service composition
 !(assertEqual
   (bc &kb
-      (Cons (: (S' Z') $t51913082) Nil)
-      (S' (S' (S' (S' (S' Z')))))
+      (Cons (: (s z) $t51913082) Nil)
+      (s (s (s (s (s z)))))
       (fromNumber 6)
-      (: (λ (S' (S' (S' (S' (S' Z')))))
+      (: (λ (s (s (s (s (s z)))))
            (mixer.Audio.data
             (: (mixer.mix
                 (: ((mixer.MkMultiAudio
                      (: (sound-spleeter.Output.accomp
-                         (: (S' Z') $t51913082)) $t51898733))
-                    (: (S' (S' (S' (S' (S' Z'))))) $t51880775))
+                         (: (s z) $t51913082)) $t51898733))
+                    (: (s (s (s (s (s z))))) $t51880775))
                    $t51855788)) $t51829490)))
          $thrm))
-  (: (λ (S' (S' (S' (S' (S' Z')))))
+  (: (λ (s (s (s (s (s z)))))
        (mixer.Audio.data
         (: (mixer.mix
             (: ((mixer.MkMultiAudio
                  (: (sound-spleeter.Output.accomp
-                     (: (S' Z') sound-spleeter.Output)) Bytes))
-                (: (S' (S' (S' (S' (S' Z'))))) Bytes))
+                     (: (s z) sound-spleeter.Output)) Bytes))
+                (: (s (s (s (s (s z))))) Bytes))
                mixer.MultiAudio)) mixer.Audio)))
      (-> Bytes Bytes)))
 
 ;; Type check a portion of the English to Chinese singing AI service composition
 !(assertEqual
   (bc &kb
-      (Cons (: (S' Z') $t51913082)
-            (Cons (: (S' (S' (S' Z'))) $t52151099)
-                  (Cons (: (S' (S' (S' (S' Z')))) $t52131583) Nil)))
-      (S' (S' (S' (S' (S' Z')))))
+      (Cons (: (s z) $t51913082)
+            (Cons (: (s (s (s z))) $t52151099)
+                  (Cons (: (s (s (s (s z)))) $t52131583) Nil)))
+      (s (s (s (s (s z)))))
       (fromNumber 7)
-      (: ((λ (S' (S' (S' (S' (S' Z')))))
+      (: ((λ (s (s (s (s (s z)))))
             (mixer.Audio.data
              (: (mixer.mix
                  (: ((mixer.MkMultiAudio
                       (: (sound-spleeter.Output.accomp
-                          (: (S' Z') $t51913082)) $t51898733))
-                     (: (S' (S' (S' (S' (S' Z'))))) $t51880775))
+                          (: (s z) $t51913082)) $t51898733))
+                     (: (s (s (s (s (s z))))) $t51880775))
                     $t51855788)) $t51829490)))
           (: (midi2voice-zh.Answer.output_audio
               (: (midi2voice-zh.singingZH
                   (: (((midi2voice-zh.MkQuery
-                        (: (S' (S' (S' Z'))) $t52151099))
-                       (: (S' (S' (S' (S' Z')))) $t52131583))
+                        (: (s (s (s z))) $t52151099))
+                       (: (s (s (s (s z)))) $t52131583))
                       (: 1.0 $t52104485))
                      $t52075637))
                  $t52045478))
              $t51726536))
          $thrm))
-  (: ((λ (S' (S' (S' (S' (S' Z')))))
+  (: ((λ (s (s (s (s (s z)))))
         (mixer.Audio.data
          (: (mixer.mix
              (: ((mixer.MkMultiAudio
                   (: (sound-spleeter.Output.accomp
-                      (: (S' Z') sound-spleeter.Output)) Bytes))
-                 (: (S' (S' (S' (S' (S' Z'))))) Bytes))
+                      (: (s z) sound-spleeter.Output)) Bytes))
+                 (: (s (s (s (s (s z))))) Bytes))
                 mixer.MultiAudio)) mixer.Audio)))
       (: (midi2voice-zh.Answer.output_audio
           (: (midi2voice-zh.singingZH
               (: (((midi2voice-zh.MkQuery
-                    (: (S' (S' (S' Z'))) String))
-                   (: (S' (S' (S' (S' Z')))) Bytes))
+                    (: (s (s (s z))) String))
+                   (: (s (s (s (s z)))) Bytes))
                   (: 1.0 Float))
                  midi2voice-zh.Query))
              midi2voice-zh.Answer))
@@ -1005,43 +999,43 @@
 ;; Disabled because it takes a long time
 ;; !(assertEqual
 ;;   (bc &kb
-;;       (Cons (: (S' Z') $t51913082)
-;;             (Cons (: (S' (S' (S' Z'))) $t52151099) Nil))
-;;       (S' (S' (S' (S' Z'))))
+;;       (Cons (: (s z) $t51913082)
+;;             (Cons (: (s (s (s z))) $t52151099) Nil))
+;;       (s (s (s (s z))))
 ;;       (fromNumber 8)
-;;       (: (λ (S' (S' (S' (S' Z'))))
-;;            ((λ (S' (S' (S' (S' (S' Z')))))
+;;       (: (λ (s (s (s (s z))))
+;;            ((λ (s (s (s (s (s z)))))
 ;;               (mixer.Audio.data
 ;;                (: (mixer.mix
 ;;                    (: ((mixer.MkMultiAudio
 ;;                         (: (sound-spleeter.Output.accomp
-;;                             (: (S' Z') $t51913082)) $t51898733))
-;;                        (: (S' (S' (S' (S' (S' Z'))))) $t51880775))
+;;                             (: (s z) $t51913082)) $t51898733))
+;;                        (: (s (s (s (s (s z))))) $t51880775))
 ;;                       $t51855788)) $t51829490)))
 ;;             (: (midi2voice-zh.Answer.output_audio
 ;;                 (: (midi2voice-zh.singingZH
 ;;                     (: (((midi2voice-zh.MkQuery
-;;                           (: (S' (S' (S' Z'))) $t52151099))
-;;                          (: (S' (S' (S' (S' Z')))) $t52131583))
+;;                           (: (s (s (s z))) $t52151099))
+;;                          (: (s (s (s (s z)))) $t52131583))
 ;;                         (: 1.0 $t52104485))
 ;;                        $t52075637))
 ;;                    $t52045478))
 ;;                $t51726536)))
 ;;          $thrm))
-;;   (: (λ (S' (S' (S' (S' Z'))))
-;;        ((λ (S' (S' (S' (S' (S' Z')))))
+;;   (: (λ (s (s (s (s z))))
+;;        ((λ (s (s (s (s (s z)))))
 ;;           (mixer.Audio.data
 ;;            (: (mixer.mix
 ;;                (: ((mixer.MkMultiAudio
 ;;                     (: (sound-spleeter.Output.accomp
-;;                         (: (S' Z') sound-spleeter.Output)) Bytes))
-;;                    (: (S' (S' (S' (S' (S' Z'))))) Bytes))
+;;                         (: (s z) sound-spleeter.Output)) Bytes))
+;;                    (: (s (s (s (s (s z))))) Bytes))
 ;;                   mixer.MultiAudio)) mixer.Audio)))
 ;;         (: (midi2voice-zh.Answer.output_audio
 ;;             (: (midi2voice-zh.singingZH
 ;;                 (: (((midi2voice-zh.MkQuery
-;;                       (: (S' (S' (S' Z'))) String))
-;;                      (: (S' (S' (S' (S' Z')))) Bytes))
+;;                       (: (s (s (s z))) String))
+;;                      (: (s (s (s (s z)))) Bytes))
 ;;                     (: 1.0 Float))
 ;;                    midi2voice-zh.Query))
 ;;                midi2voice-zh.Answer))
@@ -1052,25 +1046,25 @@
 ;; Disabled because it takes a long tim
 ;; !(assertEqual
 ;;   (bc &kb
-;;       (Cons (: (S' Z') $t51913082)
-;;             (Cons (: (S' (S' Z')) $t52945476)
-;;                   (Cons (: (S' (S' (S' Z'))) $t52151099) Nil)))
-;;       (S' (S' (S' (S' Z'))))
+;;       (Cons (: (s z) $t51913082)
+;;             (Cons (: (s (s z)) $t52945476)
+;;                   (Cons (: (s (s (s z))) $t52151099) Nil)))
+;;       (s (s (s (s z))))
 ;;       (fromNumber 9)
-;;       (: ((λ (S' (S' (S' (S' Z'))))
-;;             ((λ (S' (S' (S' (S' (S' Z')))))
+;;       (: ((λ (s (s (s (s z))))
+;;             ((λ (s (s (s (s (s z)))))
 ;;                (mixer.Audio.data
 ;;                 (: (mixer.mix
 ;;                     (: ((mixer.MkMultiAudio
 ;;                          (: (sound-spleeter.Output.accomp
-;;                              (: (S' Z') $t51913082)) $t51898733))
-;;                         (: (S' (S' (S' (S' (S' Z'))))) $t51880775))
+;;                              (: (s z) $t51913082)) $t51898733))
+;;                         (: (s (s (s (s (s z))))) $t51880775))
 ;;                        $t51855788)) $t51829490)))
 ;;              (: (midi2voice-zh.Answer.output_audio
 ;;                  (: (midi2voice-zh.singingZH
 ;;                      (: (((midi2voice-zh.MkQuery
-;;                            (: (S' (S' (S' Z'))) $t52151099))
-;;                           (: (S' (S' (S' (S' Z')))) $t52131583))
+;;                            (: (s (s (s z))) $t52151099))
+;;                           (: (s (s (s (s z)))) $t52131583))
 ;;                          (: 1.0 $t52104485))
 ;;                         $t52075637))
 ;;                     $t52045478))
@@ -1078,25 +1072,25 @@
 ;;           (: (tomidi.MIDI.data
 ;;               (: (tomidi.a2m
 ;;                   (: (tomidi.MkAudio
-;;                       (: (S' (S' Z')) $t52945476))
+;;                       (: (s (s z)) $t52945476))
 ;;                      $t52929564))
 ;;                  $t12345678))
 ;;              $t51422971))
 ;;          $thrm))
-;;   (: ((λ (S' (S' (S' (S' Z'))))
-;;         ((λ (S' (S' (S' (S' (S' Z')))))
+;;   (: ((λ (s (s (s (s z))))
+;;         ((λ (s (s (s (s (s z)))))
 ;;            (mixer.Audio.data
 ;;             (: (mixer.mix
 ;;                 (: ((mixer.MkMultiAudio
 ;;                      (: (sound-spleeter.Output.accomp
-;;                          (: (S' Z') sound-spleeter.Output)) Bytes))
-;;                     (: (S' (S' (S' (S' (S' Z'))))) Bytes))
+;;                          (: (s z) sound-spleeter.Output)) Bytes))
+;;                     (: (s (s (s (s (s z))))) Bytes))
 ;;                    mixer.MultiAudio)) mixer.Audio)))
 ;;          (: (midi2voice-zh.Answer.output_audio
 ;;              (: (midi2voice-zh.singingZH
 ;;                  (: (((midi2voice-zh.MkQuery
-;;                        (: (S' (S' (S' Z'))) String))
-;;                       (: (S' (S' (S' (S' Z')))) Bytes))
+;;                        (: (s (s (s z))) String))
+;;                       (: (s (s (s (s z)))) Bytes))
 ;;                      (: 1.0 Float))
 ;;                     midi2voice-zh.Query))
 ;;                 midi2voice-zh.Answer))
@@ -1104,7 +1098,7 @@
 ;;       (: (tomidi.MIDI.data
 ;;           (: (tomidi.a2m
 ;;               (: (tomidi.MkAudio
-;;                   (: (S' (S' Z')) Bytes))
+;;                   (: (s (s z)) Bytes))
 ;;                  tomidi.Audio))
 ;;              tomidi.MIDI))
 ;;          Bytes))
@@ -1112,25 +1106,25 @@
 
 ;; Type check the totality of the English to Chinese singing AI service composition
 ;; Disabled because it takes several hours
-;; !(bc &kb Nil Z' (fromNumber 16)
-;;      (: (λ Z'
-;;           ((λ (S' Z')
-;;              ((λ (S' (S' Z'))
-;;                 ((λ (S' (S' (S' Z')))
-;;                    ((λ (S' (S' (S' (S' Z'))))
-;;                       ((λ (S' (S' (S' (S' (S' Z')))))
+;; !(bc &kb Nil z (fromNumber 16)
+;;      (: (λ z
+;;           ((λ (s z)
+;;              ((λ (s (s z))
+;;                 ((λ (s (s (s z)))
+;;                    ((λ (s (s (s (s z))))
+;;                       ((λ (s (s (s (s (s z)))))
 ;;                          (mixer.Audio.data
 ;;                           (: (mixer.mix
 ;;                               (: ((mixer.MkMultiAudio
 ;;                                    (: (sound-spleeter.Output.accomp
-;;                                        (: (S' Z') $t51913082)) $t51898733))
-;;                                   (: (S' (S' (S' (S' (S' Z'))))) $t51880775))
+;;                                        (: (s z) $t51913082)) $t51898733))
+;;                                   (: (s (s (s (s (s z))))) $t51880775))
 ;;                                  $t51855788)) $t51829490)))
 ;;                        (: (midi2voice-zh.Answer.output_audio
 ;;                            (: (midi2voice-zh.singingZH
 ;;                                (: (((midi2voice-zh.MkQuery
-;;                                      (: (S' (S' (S' Z'))) $t52151099))
-;;                                     (: (S' (S' (S' (S' Z')))) $t52131583))
+;;                                      (: (s (s (s z))) $t52151099))
+;;                                     (: (s (s (s (s z)))) $t52131583))
 ;;                                    (: 1.0 $t52104485))
 ;;                                   $t52075637))
 ;;                               $t52045478))
@@ -1138,7 +1132,7 @@
 ;;                     (: (tomidi.MIDI.data
 ;;                         (: (tomidi.a2m
 ;;                             (: (tomidi.MkAudio
-;;                                 (: (S' (S' Z')) $t52945476))
+;;                                 (: (s (s z)) $t52945476))
 ;;                                $t52929564))
 ;;                            $t12345678))
 ;;                        $t51422971)))
@@ -1150,7 +1144,7 @@
 ;;                              (: (speech-recognition.Text.text
 ;;                                  (: (speech-recognition.s2t
 ;;                                      (: (speech-recognition.MkAudio
-;;                                          (: (S' (S' Z')) $t56315149))
+;;                                          (: (s (s z)) $t56315149))
 ;;                                         $t56299237))
 ;;                                     $t56282014))
 ;;                                 $t56230536))
@@ -1158,11 +1152,11 @@
 ;;                         $t56184111))
 ;;                     $t50404647)))
 ;;               (: (sound-spleeter.Output.vocals
-;;                   (: (S' Z') $t70938935)) $t46608723)))
+;;                   (: (s z) $t70938935)) $t46608723)))
 ;;            (: (sound-spleeter.spleeter
 ;;                (: ((sound-spleeter.MkInput
 ;;                     (: "" $t131081238))
-;;                    (: Z' $t131072410))
+;;                    (: z $t131072410))
 ;;                   $t131058283))
 ;;               $t31783546)))
 ;;         (-> Bytes Bytes)))

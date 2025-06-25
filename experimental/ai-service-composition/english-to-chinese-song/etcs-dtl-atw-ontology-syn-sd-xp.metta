@@ -1,3 +1,63 @@
+;;;;;;;;;;;
+;; Utils ;;
+;;;;;;;;;;;
+
+;; Run the code if the condition is true, otherwise prune the branch
+(: when (-> Bool $a $a))
+(= (when $c $x) (if $c $x (empty)))
+
+;; Return True iff $term is closed
+(: is-closed (-> Atom Bool))
+(= (is-closed $term)
+   (case (get-metatype $term)
+     ((Variable False)
+      (Symbol True)
+      (Grounded True)
+      (Expression (if (== $term ())
+                      True
+                      (let* (($head (car-atom $term))
+                             ($tail (cdr-atom $term)))
+                        (and (is-closed $head) (is-closed $tail))))))))
+
+;; Return True iff Symbol
+(: is-symbol (-> Atom Bool))
+(= (is-symbol $term) (== Symbol (get-metatype $term)))
+
+;; Return True iff Grounded
+(: is-grounded (-> Atom Bool))
+(= (is-grounded $term) (== Grounded (get-metatype $term)))
+
+;; Return True iff Variable
+(: is-variable (-> Atom Bool))
+(= (is-variable $term) (== Variable (get-metatype $term)))
+
+;; Return True iff Expression
+(: is-expression (-> Atom Bool))
+(= (is-expression $term) (== Expression (get-metatype $term)))
+
+;; Return True iff the term is an arrow type
+(: is-arrow-type (-> Atom Bool))
+(= (is-arrow-type $term) (case (get-metatype $term)
+                           ((Symbol False)
+                            (Grounded False)
+                            (Variable False)
+                            (Expression (if-decons-expr $term
+                                                        $head
+                                                        $tail
+                                                        (== $head ->)
+                                                        False)))))
+
+;; Test is-arrow-type
+!(assertEqual
+  (is-arrow-type A)
+  False)
+!(assertEqual
+  (is-arrow-type (A B))
+  False)
+!(assertEqual
+  (is-arrow-type (-> A B))
+  True)
+
 ;;;;;;;;;
 ;; Nat ;;
 ;;;;;;;;;
@@ -6,10 +66,6 @@
 (: Nat Type)
 (: Z Nat)
 (: S (-> Nat Nat))
-
-;; Define <=
-(: <= (-> $a $a Bool))
-(= (<= $x $y) (or (< $x $y) (== $x $y)))
 
 ;; Define cast functions between Nat and Number
 (: fromNumber (-> Number Nat))
@@ -392,17 +448,18 @@
 ;; Recursive steps
 
 ;; Proof application
-(= (bc $kb $env $idx (S $k) (: ($prfabs (: $prfarg $prms)) $thrm))
+(= (bc $kb $env $idx (S $k) (: ($prfabs $prfarg) $thrm))
    (let* (((: $prfabs (-> (: $prfarg $prms) $thrm))
            (bc $kb $env $idx $k (: $prfabs (-> (: $prfarg $prms) $thrm))))
           ((: $prfarg $prms)
            (bc $kb $env $idx $k (: $prfarg $prms))))
-     (: ($prfabs (: $prfarg $prms)) $thrm)))
+     (: ($prfabs $prfarg) $thrm)))
 ;; Proof abstraction
-(= (bc $kb $env $idx (S $k) (: (λ $idx $prfbdy) (-> (: $prfarg $prms) $thrm)))
+(= (bc $kb $env $idx (S $k) (: (λ (: $idx $prms) $prfbdy) (-> (: $prfarg $prms) $thrm)))
    (let (: $prfbdy $thrm)
      (bc $kb (Cons (: $idx $prms) $env) (s $idx) $k (: $prfbdy $thrm))
-     (: (λ $idx $prfbdy) (-> (: $prfarg $prms) $thrm))))
+     (when (not (is-arrow-type $prms))
+       (: (λ (: $idx $prms) $prfbdy) (-> (: $prfarg $prms) $thrm)))))
 
 ;;;;;;;;;;;;;;;
 ;; Reduction ;;
@@ -422,11 +479,14 @@
 ;; Constant function
 (= ((λ (s z) z) $x) z)
 
-;; Application function.  This is incorrect because $x is supposed not
-;; to contain (s z) and we have no way to guaranty that via pattern
-;; matching.  This incorrectness is probably tolerable because such
-;; situation may not arise here.
-(= ((λ (s z) ((s z) $x)) $y) ($y $x))
+;; ;; Application function.  This is incorrect because $x is supposed not
+;; ;; to contain (s z) and we have no way to guaranty that via pattern
+;; ;; matching.  This incorrectness is probably tolerable because such
+;; ;; situation may not arise here.
+;; (= ((λ (s z) ((s z) $x)) $y) ($y $x))
+
+;; ;; Lambda application
+;; (= ((λ $x $y) $z) (let $x $z $y))
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Remove/add type ;;
@@ -597,138 +657,110 @@
 ;;        (: (sound-spleeter.DTLOutput.accomp (: (s z) $a)) $b))
 ;;       (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) $c)) $d)) $e)))
 ;;    (: (sound-spleeter.spleeter (: z $f)) $g)))
+;;
+;; Note: after a subsequent revision of this experiment, type
+;; annotation is only placed on the lambda variables.
 
-;; Type check the totality of the English to Chinese singing AI service composition
-!(assertEqual
-  (bc &kb Nil z (fromNumber 6)
-      (: (λ z
-           ((λ (s z)
-              ((mixer.mix
-                (: (sound-spleeter.DTLOutput.accomp (: (s z) $a)) $b))
-               (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) $c)) $d)) $e)))
-            (: (sound-spleeter.spleeter (: z $f)) $g)))
-         (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
-  (: (λ z
-       ((λ (s z)
-          ((mixer.mix
-            (: (sound-spleeter.DTLOutput.accomp (: (s z) (sound-spleeter.DTLOutput "English"))) Instrumental))
-           (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) (sound-spleeter.DTLOutput "English"))) (VocalsIn "English"))) (VocalsIn "Chinese"))))
-        (: (sound-spleeter.spleeter (: z (SongIn "English"))) (sound-spleeter.DTLOutput "English"))))
-     (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+;; ;; ;; Synthesize part of the English to Chinese singing AI service
+;; ;; ;; composition, given the totally of its template with two holes,
+;; ;; ;;
+;; ;; ;; 1. $accomp
+;; ;; ;; 2. $vocals
+;; ;; ;; !(assertEqual
+;;   !(bc &kb Nil z (fromNumber 6)
+;;       (: (λ (: z $t1)
+;;            ((λ (: (s z) $t2)
+;;               ((mixer.mix $accomp) $vocals))
+;;             (sound-spleeter.spleeter $input)))
+;;          (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+;; ;; (: (λ (: z (SongIn "English"))
+;; ;;      ((λ (: (s z) (sound-spleeter.DTLOutput "English"))
+;; ;;         ((mixer.mix (sound-spleeter.DTLOutput.accomp (s z)))
+;; ;;          (vocals-translator.translate (sound-spleeter.DTLOutput.vocals (s z)))))
+;; ;;       (sound-spleeter.spleeter z)))
+;; ;;    (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
 
-;; Remove type annotation from solution
-!(assertEqual
-  (: (remove-type-annotation
-      (λ z
-        ((λ (s z)
-           ((mixer.mix
-             (: (sound-spleeter.DTLOutput.accomp (: (s z) (sound-spleeter.DTLOutput "English"))) Instrumental))
-            (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) (sound-spleeter.DTLOutput "English"))) (VocalsIn "English"))) (VocalsIn "Chinese"))))
-         (: (sound-spleeter.spleeter (: z (SongIn "English"))) (sound-spleeter.DTLOutput "English")))))
-     (-> (: $s (SongIn "English")) (SongIn "Chinese")))
-  (: (λ z
-       ((λ (s z)
-          ((mixer.mix
-            (sound-spleeter.DTLOutput.accomp (s z)))
-           (vocals-translator.translate (sound-spleeter.DTLOutput.vocals (s z)))))
-        (sound-spleeter.spleeter z)))
-     (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
-
-;; Synthesize part of the English to Chinese singing AI service
-;; composition, given the totally of its template with a hole,
-;; $accomp, replacing
-;;
-;; (: (sound-spleeter.DTLOutput.accomp (: (s z) $a)) $b))
-!(assertEqual
-  (bc &kb Nil z (fromNumber 6)
-      (: (λ z
-           ((λ (s z)
-              ((mixer.mix $accomp)
-               (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) $c)) $d)) $e)))
-            (: (sound-spleeter.spleeter (: z $f)) $g)))
-         (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
-  (: (λ z
-       ((λ (s z)
-          ((mixer.mix
-            (: (sound-spleeter.DTLOutput.accomp (: (s z) (sound-spleeter.DTLOutput "English"))) Instrumental))
-           (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) (sound-spleeter.DTLOutput "English"))) (VocalsIn "English"))) (VocalsIn "Chinese"))))
-        (: (sound-spleeter.spleeter (: z (SongIn "English"))) (sound-spleeter.DTLOutput "English"))))
-     (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
-
-;; Synthesize part of the English to Chinese singing AI service
-;; composition, given the totally of its template with two holes,
-;;
-;; 1. $accomp, replacing
-;;
-;; (: (sound-spleeter.DTLOutput.accomp (: (s z) $a)) $b))
-;;
-;; 2. $vocals, replacing
-;;
-;; (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) $c)) $d)) $e)))
-!(assertEqual
-  (bc &kb Nil z (fromNumber 6)
-      (: (λ z
-           ((λ (s z)
-              ((mixer.mix $accomp) $vocals))
-            (: (sound-spleeter.spleeter (: z $f)) $g)))
-         (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
-  (: (λ z
-       ((λ (s z)
-          ((mixer.mix
-            (: (sound-spleeter.DTLOutput.accomp (: (s z) (sound-spleeter.DTLOutput "English"))) Instrumental))
-           (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) (sound-spleeter.DTLOutput "English"))) (VocalsIn "English"))) (VocalsIn "Chinese"))))
-        (: (sound-spleeter.spleeter (: z (SongIn "English"))) (sound-spleeter.DTLOutput "English"))))
-     (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
-
-;; Synthesize part of the English to Chinese singing AI service
-;; composition, given the totally of its template with two holes,
-;;
-;; 1. $accomp, replacing
-;;
-;; (: (sound-spleeter.DTLOutput.accomp (: (s z) $a)) $b))
-;;
-;; 2. $vocals, replacing
-;;
-;; (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) $c)) $d)) $e)))
-!(assertEqual
-  (bc &kb Nil z (fromNumber 6)
-      (: (λ z
-           ((λ (s z)
-              ((mixer.mix $accomp) $vocals))
-            (: (sound-spleeter.spleeter $input) $g)))
-         (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
-  (: (λ z
-       ((λ (s z)
-          ((mixer.mix
-            (: (sound-spleeter.DTLOutput.accomp (: (s z) (sound-spleeter.DTLOutput "English"))) Instrumental))
-           (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) (sound-spleeter.DTLOutput "English"))) (VocalsIn "English"))) (VocalsIn "Chinese"))))
-        (: (sound-spleeter.spleeter (: z (SongIn "English"))) (sound-spleeter.DTLOutput "English"))))
-     (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
-
-;; NEXT: takes too long and too much RAM
+;; ;; ;; Synthesize part of the English to Chinese singing AI service
+;; ;; ;; composition, given the totally of its template with three holes,
+;; ;; ;;
+;; ;; ;; 1. $accomp
+;; ;; ;; 2. $vocals
+;; ;; ;; 3. $spleeter
+;; ;; ;; !(assertEqual
+;;   !(bc &kb Nil z (fromNumber 6)
+;;        (: (λ (: z $t1) ((λ (: (s z) $t2) ((mixer.mix $accomp) $vocals)) $spleeter))
+;;           (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+;; ;; (: (λ (: z (SongIn "English"))
+;; ;;      ((λ (: (s z) (sound-spleeter.DTLOutput "English"))
+;; ;;         ((mixer.mix (sound-spleeter.DTLOutput.accomp (s z)))
+;; ;;          (vocals-translator.translate (sound-spleeter.DTLOutput.vocals (s z)))))
+;; ;;       (sound-spleeter.spleeter z)))
+;; ;;    (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
 
 ;; ;; Synthesize part of the English to Chinese singing AI service
-;; ;; composition, given the totally of its template with three holes,
+;; ;; composition, given the totally of its template with four holes,
 ;; ;;
-;; ;; 1. $accomp, replacing
-;; ;;
-;; ;; (: (sound-spleeter.DTLOutput.accomp (: (s z) $a)) $b))
-;; ;;
-;; ;; 2. $vocals, replacing
-;; ;;
-;; ;; (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) $c)) $d)) $e)))
-;; ;;
-;; ;; 3. $spleeter, replacing
-;; ;;
-;; ;; (: (sound-spleeter.spleeter (: z $f)) $g)
+;; ;; 1. $accomp
+;; ;; 2. $vocals
+;; ;; 3. $spleeter
+;; ;; 4. $mix
 ;; ;; !(assertEqual
 ;;   !(bc &kb Nil z (fromNumber 6)
-;;        (: (λ z ((λ (s z) ((mixer.mix $accomp) $vocals)) $spleeter))
+;;        (: (λ (: z $t1) ((λ (: (s z) $t2) (($mix $accomp) $vocals)) $spleeter))
 ;;           (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
-;;   ;; (: (λ z
-;;   ;;      ((λ (s z)
-;;   ;;         ((mixer.mix
-;;   ;;           (: (sound-spleeter.DTLOutput.accomp (: (s z) (sound-spleeter.DTLOutput "English"))) Instrumental))
-;;   ;;          (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) (sound-spleeter.DTLOutput "English"))) (VocalsIn "English"))) (VocalsIn "Chinese"))))
-;;   ;;       (: (sound-spleeter.spleeter (: z (SongIn "English"))) (sound-spleeter.DTLOutput "English"))))
-;;   ;;    (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+;; ;; (: (λ (: z (SongIn "English"))
+;; ;;      ((λ (: (s z) (sound-spleeter.DTLOutput "English"))
+;; ;;         ((mixer.mix (sound-spleeter.DTLOutput.accomp (s z)))
+;; ;;          (vocals-translator.translate (sound-spleeter.DTLOutput.vocals (s z)))))
+;; ;;       (sound-spleeter.spleeter z)))
+;; ;;    (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+
+;; ;; Synthesize part of the English to Chinese singing AI service
+;; ;; composition, given the totally of its template with two holes,
+;; ;;
+;; ;; 1. $mav
+;; ;; 2. $spleeter
+;; ;; !(assertEqual
+;;   !(bc &kb Nil z (fromNumber 6)
+;;        (: (λ (: z $t1) ((λ (: (s z) $t2) $mav) $spleeter))
+;;           (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+;; ;; ;; (: (λ (: z (SongIn "English"))
+;; ;; ;;      ((λ (: (s z) (sound-spleeter.DTLOutput "English"))
+;; ;; ;;         ((mixer.mix (sound-spleeter.DTLOutput.accomp (s z)))
+;; ;; ;;          (vocals-translator.translate (sound-spleeter.DTLOutput.vocals (s z)))))
+;; ;; ;;       (sound-spleeter.spleeter z)))
+;; ;; ;;    (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+
+;; ;; Synthesize part of the English to Chinese singing AI service
+;; ;; composition, given the totally of its template with one hole,
+;; ;;
+;; ;; 1. $body, ideally replacing
+;; ;;
+;; ;;      ((λ (s z)
+;; ;;         ((mixer.mix
+;; ;;           (: (sound-spleeter.DTLOutput.accomp (: (s z) (sound-spleeter.DTLOutput "English"))) Instrumental))
+;; ;;          (: (vocals-translator.translate (: (sound-spleeter.DTLOutput.vocals (: (s z) (sound-spleeter.DTLOutput "English"))) (VocalsIn "English"))) (VocalsIn "Chinese"))))
+;; ;;       (: (sound-spleeter.spleeter (: z (SongIn "English"))) (sound-spleeter.DTLOutput "English")))
+;; ;;
+;; ;; !(assertEqual
+;;   !(bc &kb Nil z (fromNumber 6)
+;;        (: (λ (: z $t) $bdy)
+;;           (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+;; ;; ;; ;; (: (λ (: z (SongIn "English"))
+;; ;; ;; ;;      ((λ (: (s z) (sound-spleeter.DTLOutput "English"))
+;; ;; ;; ;;         ((mixer.mix (sound-spleeter.DTLOutput.accomp (s z)))
+;; ;; ;; ;;          (vocals-translator.translate (sound-spleeter.DTLOutput.vocals (s z)))))
+;; ;; ;; ;;       (sound-spleeter.spleeter z)))
+;; ;; ;; ;;    (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+
+;; Synthesize part of the English to Chinese singing AI service
+;; composition from scratch.
+;;
+;; !(assertEqual
+  !(bc &kb Nil z (fromNumber 6) (: $prg (-> (: $s (SongIn "English")) (SongIn "Chinese"))))
+;; ;; ;; ;; (: (λ (: z (SongIn "English"))
+;; ;; ;; ;;      ((λ (: (s z) (sound-spleeter.DTLOutput "English"))
+;; ;; ;; ;;         ((mixer.mix (sound-spleeter.DTLOutput.accomp (s z)))
+;; ;; ;; ;;          (vocals-translator.translate (sound-spleeter.DTLOutput.vocals (s z)))))
+;; ;; ;; ;;       (sound-spleeter.spleeter z)))
+;; ;; ;; ;;    (-> (: $s (SongIn "English")) (SongIn "Chinese"))))

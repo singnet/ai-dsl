@@ -7,10 +7,6 @@
 (: Z Nat)
 (: S (-> Nat Nat))
 
-;; Define <=
-(: <= (-> $a $a Bool))
-(= (<= $x $y) (or (< $x $y) (== $x $y)))
-
 ;; Define cast functions between Nat and Number
 (: fromNumber (-> Number Nat))
 (= (fromNumber $n) (if (<= $n 0) Z (S (fromNumber (- $n 1)))))
@@ -26,8 +22,8 @@
 (: DeBruijn Type)
 
 ;; Define DeBruijn constructors
-(: Z' DeBruijn)                        ; Zero
-(: S' (-> DeBruijn DeBruijn))          ; Successor
+(: z DeBruijn)                        ; Zero
+(: s (-> DeBruijn DeBruijn))          ; Successor
 
 ;;;;;;;;;;
 ;; List ;;
@@ -292,8 +288,8 @@
 ;;
 ;; (λ <INDEX> <BODY>)
 ;;
-;; where <INDEX> is a De Bruijn index as define above, such as Z' or
-;; (S' Z'), and <BODY> is a term possibly containing <INDEX>.  Note
+;; where <INDEX> is a De Bruijn index as define above, such as z or
+;; (s z), and <BODY> is a term possibly containing <INDEX>.  Note
 ;; that the use of De Bruijn index in lambda abstraction is somewhat
 ;; unconventional here.  It differs from what is described in
 ;; https://en.wikipedia.org/wiki/De_Bruijn_index in three ways:
@@ -301,15 +297,15 @@
 ;; 1. The index is explicitely attached to a λ by being its first
 ;;    argument.  For instance the lambda term λx.x, which would
 ;;    traditionally be represented by λ1 using De Bruijn index, would
-;;    be represented here by the MeTTa term (λ Z' Z').
+;;    be represented here by the MeTTa term (λ z z).
 ;;
 ;; 2. As seen in the example above the index here starts at 0,
-;;    represented by Z', instead of 1.
+;;    represented by z, instead of 1.
 ;;
 ;; 3. The index increases as the lambda abstraction gets deeper.  For
 ;;    instance λx.λy.x, which would traditionally be represented by
 ;;    λλ2 using De Bruijn index, is represented here by the MeTTa term
-;;    (λ Z' (λ (S' Z') Z').
+;;    (λ z (λ (s z) z).
 ;;
 ;; This differences are due to the way the proof abstraction recursive
 ;; step is defined in the bc, as well as the need for having non
@@ -331,7 +327,7 @@
 ;; * Environment: a list of typing relationship between De Bruijn
 ;;   index and type, such as
 ;;
-;;   (Cons (: Z' String) (Cons (: (S' Z') Number) Nil))
+;;   (Cons (: z String) (Cons (: (s z) Number) Nil))
 ;;
 ;; * De Bruijn Index: De Bruijn Index to use if a lambda abstraction
 ;;   is introduced.
@@ -390,7 +386,7 @@
 ;; Proof abstraction
 (= (bc $kb $env $idx (S $k) (: (λ $idx $prfbdy) (-> $prms $thrm)))
    (let (: $prfbdy $thrm)
-     (bc $kb (Cons (: $idx $prms) $env) (S' $idx) $k (: $prfbdy $thrm))
+     (bc $kb (Cons (: $idx $prms) $env) (s $idx) $k (: $prfbdy $thrm))
      (: (λ $idx $prfbdy) (-> $prms $thrm))))
 
 ;;;;;;;;;;;;;;;;;;;;;
@@ -452,7 +448,7 @@
       (Expression (case $term
                     ((() ())
                      (($x) ($x))
-                     (($x $y) (if (== $x S')
+                     (($x $y) (if (== $x s)
                                   ;; Treat De Bruijn index atomically
                                   $term
                                   ;; Add type annotation to argument of application
@@ -492,7 +488,7 @@
                      (() ())
                      ;; LET
                      ((LET $x $y $f) (let* (($x $idx)
-                                            ($νf (mt2lc (S' $idx) $f))
+                                            ($νf (mt2lc (s $idx) $f))
                                             ($νy (mt2lc $idx $y)))
                                        ((λ $x $νf) $νy)))
                      ;; Application
@@ -550,7 +546,7 @@
 ;; The following lambda term has been obtained by converting MeTTa to
 ;; lambda-calculus as follow
 ;;
-;; !(mt2lc (S' Z')
+;; !(mt2lc (s z)
 ;;         (LET $spleeter-output (sound-spleeter.spleeter $input)
 ;;           (LET $english-vocals (sound-spleeter.Output.vocals $spleeter-output)
 ;;             (LET $chinese-lyrics (((machine-translation.translate "English") "Chinese")
@@ -559,91 +555,91 @@
 ;;                 (sound-spleeter.Output.accomp $spleeter-output))
 ;;                ((midi2voice-zh.singingZH $chinese-lyrics) (tomidi.a2m $english-vocals)))))))
 ;;
-;; and wrapping $input into a lambda abstraction using Z' as its
+;; and wrapping $input into a lambda abstraction using z as its
 ;; corresponding De Bruijn index, which gives us
 ;;
-;; (λ Z'
-;;   ((λ (S' Z')
-;;      ((λ (S' (S' Z'))
-;;         ((λ (S' (S' (S' Z')))
+;; (λ z
+;;   ((λ (s z)
+;;      ((λ (s (s z))
+;;         ((λ (s (s (s z)))
 ;;            ((mixer.mix
-;;              (sound-spleeter.Output.accomp (S' Z')))
-;;             ((midi2voice-zh.singingZH (S' (S' (S' Z'))))
-;;              (tomidi.a2m (S' (S' Z'))))))
+;;              (sound-spleeter.Output.accomp (s z)))
+;;             ((midi2voice-zh.singingZH (s (s (s z))))
+;;              (tomidi.a2m (s (s z))))))
 ;;          (((machine-translation.translate "English") "Chinese")
-;;           (upload (speech-recognition.s2t (S' (S' Z')))))))
-;;       (sound-spleeter.Output.vocals (S' Z'))))
-;;    (sound-spleeter.spleeter Z')))
+;;           (upload (speech-recognition.s2t (s (s z)))))))
+;;       (sound-spleeter.Output.vocals (s z))))
+;;    (sound-spleeter.spleeter z)))
 
 ;; The we add type annotations, as it required by the backward
 ;; chainer, by calling add-type as follows
 ;;
 ;; !(add-type
-;;   (λ Z'
-;;     ((λ (S' Z')
-;;        ((λ (S' (S' Z'))
-;;           ((λ (S' (S' (S' Z')))
+;;   (λ z
+;;     ((λ (s z)
+;;        ((λ (s (s z))
+;;           ((λ (s (s (s z)))
 ;;              ((mixer.mix
-;;                (sound-spleeter.Output.accomp (S' Z')))
-;;               ((midi2voice-zh.singingZH (S' (S' (S' Z'))))
-;;                (tomidi.a2m (S' (S' Z'))))))
+;;                (sound-spleeter.Output.accomp (s z)))
+;;               ((midi2voice-zh.singingZH (s (s (s z))))
+;;                (tomidi.a2m (s (s z))))))
 ;;            (((machine-translation.translate "English") "Chinese")
-;;             (upload (speech-recognition.s2t (S' (S' Z')))))))
-;;         (sound-spleeter.Output.vocals (S' Z'))))
-;;      (sound-spleeter.spleeter Z'))))
+;;             (upload (speech-recognition.s2t (s (s z)))))))
+;;         (sound-spleeter.Output.vocals (s z))))
+;;      (sound-spleeter.spleeter z))))
 ;;
 ;; which gives us
 ;;
-;; (λ Z'
-;;   ((λ (S' Z')
-;;      ((λ (S' (S' Z'))
-;;         ((λ (S' (S' (S' Z')))
+;; (λ z
+;;   ((λ (s z)
+;;      ((λ (s (s z))
+;;         ((λ (s (s (s z)))
 ;;            ((mixer.mix
-;;              (: (sound-spleeter.Output.accomp (: (S' Z') $t#946326)) $t#932085))
-;;             (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) $t#995065))
-;;                 (: (tomidi.a2m (: (S' (S' Z')) $t#1028590)) $t#976891)) $t#911331)))
+;;              (: (sound-spleeter.Output.accomp (: (s z) $t#946326)) $t#932085))
+;;             (: ((midi2voice-zh.singingZH (: (s (s (s z))) $t#995065))
+;;                 (: (tomidi.a2m (: (s (s z)) $t#1028590)) $t#976891)) $t#911331)))
 ;;          (: (((machine-translation.translate (: "English" $t#1107114)) (: "Chinese" $t#1098324))
-;;              (: (upload (: (speech-recognition.s2t (: (S' (S' Z'))
+;;              (: (upload (: (speech-recognition.s2t (: (s (s z))
 ;;                                                       $t#1149569))
 ;;                            $t#1133777)) $t#1083952)) $t#828927)))
-;;       (: (sound-spleeter.Output.vocals (: (S' Z') $t#1284211)) $t#678772)))
-;;    (: (sound-spleeter.spleeter (: Z' $t#1707943)) $t#363530)))
+;;       (: (sound-spleeter.Output.vocals (: (s z) $t#1284211)) $t#678772)))
+;;    (: (sound-spleeter.spleeter (: z $t#1707943)) $t#363530)))
 
 ;; Type check the totality of the English to Chinese singing AI
 ;; service composition.  Note that no coercion is required with such
 ;; simple ontology.
 !(assertEqual
-  (bc &kb Nil Z' (fromNumber 10)
-      (: (λ Z'
-           ((λ (S' Z')
-              ((λ (S' (S' Z'))
-                 ((λ (S' (S' (S' Z')))
+  (bc &kb Nil z (fromNumber 10)
+      (: (λ z
+           ((λ (s z)
+              ((λ (s (s z))
+                 ((λ (s (s (s z)))
                     ((mixer.mix
                       (: (sound-spleeter.Output.accomp
-                          (: (S' Z') $t946326)) $t932085))
+                          (: (s z) $t946326)) $t932085))
                      (: ((midi2voice-zh.singingZH
-                          (: (S' (S' (S' Z'))) $t995065))
-                         (: (tomidi.a2m (: (S' (S' Z')) $t1028590))
+                          (: (s (s (s z))) $t995065))
+                         (: (tomidi.a2m (: (s (s z)) $t1028590))
                             $t976891)) $t911331)))
                   (: (((machine-translation.translate
                         (: "English" $t1107114))
                        (: "Chinese" $t1098324))
                       (: (upload
-                          (: (speech-recognition.s2t (: (S' (S' Z'))
+                          (: (speech-recognition.s2t (: (s (s z))
                                                         $t1149569))
                              $t1133777)) $t1083952)) $t828927)))
-               (: (sound-spleeter.Output.vocals (: (S' Z') $t1284211)) $t678772)))
-            (: (sound-spleeter.spleeter (: Z' $t1707943)) $t363530)))
+               (: (sound-spleeter.Output.vocals (: (s z) $t1284211)) $t678772)))
+            (: (sound-spleeter.spleeter (: z $t1707943)) $t363530)))
          (-> Audio Audio)))
-  (: (λ Z'
-       ((λ (S' Z')
-          ((λ (S' (S' Z'))
-             ((λ (S' (S' (S' Z')))
+  (: (λ z
+       ((λ (s z)
+          ((λ (s (s z))
+             ((λ (s (s (s z)))
                 ((mixer.mix
                   (: (sound-spleeter.Output.accomp
-                      (: (S' Z') sound-spleeter.Output)) Audio))
-                 (: ((midi2voice-zh.singingZH (: (S' (S' (S' Z'))) Text))
-                     (: (tomidi.a2m (: (S' (S' Z')) Audio))
+                      (: (s z) sound-spleeter.Output)) Audio))
+                 (: ((midi2voice-zh.singingZH (: (s (s (s z))) Text))
+                     (: (tomidi.a2m (: (s (s z)) Audio))
                         MusicalInstrumentDigitalInterface))
                     Audio)))
               (: (((machine-translation.translate
@@ -651,10 +647,10 @@
                    (: "Chinese" NaturalLanguage))
                   (: (upload
                       (: (speech-recognition.s2t
-                          (: (S' (S' Z')) Audio)) Text))
+                          (: (s (s z)) Audio)) Text))
                      UniformResourceLocator)) Text)))
            (: (sound-spleeter.Output.vocals
-               (: (S' Z') sound-spleeter.Output)) Audio)))
+               (: (s z) sound-spleeter.Output)) Audio)))
         (: (sound-spleeter.spleeter
-            (: Z' Audio)) sound-spleeter.Output)))
+            (: z Audio)) sound-spleeter.Output)))
      (-> Audio Audio)))
