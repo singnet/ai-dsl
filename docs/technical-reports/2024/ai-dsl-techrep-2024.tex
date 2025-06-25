@@ -662,7 +662,7 @@ experiments were conducted with it, the support for lambda
 abstraction.
 
 \section{Lambda Abstraction}
-
+\label{sec:lambdabs}
 In $\lambda$-calculus, $\lambda$ abstraction, is a way to construct
 functions.  On the proof side of the Curry-Howard correspondence,
 $\lambda$ abstraction is a way to construct proof functions, or what I
@@ -880,7 +880,7 @@ chainer supporting $\lambda$ abstraction is given below.
 \end{small}
 I am hoping that by now the mechanism is clear.  If it is not, feel
 free to play with the implementation and the examples provided
-in~\cite{TODO_CHAINER_EXAMPLES_WITH_LAMBDA_ABSTRACTION}.
+in~\cite{ChainingLambdaAbstraction}.
 
 We have covered everything we need to know in order to synthesize AI
 services compositions in a type driven manner using MeTTa.  An obvious
@@ -1567,22 +1567,72 @@ $rho$-calculus~\cite{Meredith2005}.  We believe it is a promising
 future avenue of research but we have not explored it in this report.
 
 \subsection{Pruning Techniques}
-In order to prune the search we have experimented with the following:
-\begin{itemize}
-\item Limiting the flow of information to data, as opposed to
-  functions.  Meaning that on the wires on the composition only data
-  can transit, not functions.
-\item Adding reduction rules to avoid synthesizing syntactically
-  different yet semantically identical candidates.  This is similar to
-  how MOSES~\cite{Looks2006} uses reduction as pruning technique.
-\item Uncurrify services and combinators.  This has the interesting
-  effect of pruning the search by avoiding combining the services in
-  weird, higher order ways, quite similar to limiting the information
-  flow to data, but even stronger.
-\end{itemize}
-In the end we have found that using a combination of reduction and
-some well selected uncurried combinators leads to efficient synthesis
-of AI service compositions, in our limited setting anyway.
+In order to prune the search we have experimented with a few things.
+\subsubsection{Limit the Flow of Information to Data, as Opposed to
+  Functions} This means that on the wires on the composition only data
+can transit, not functions.  To realize this we implement a constraint
+directly inside the backward chainer entry handling lambda
+abstraction.  The code looks like
+\begin{small}
+\begin{minted}{scheme}
+(= (bc $kb $env $idx (S $k) (: (\ $idx $prfbdy) (-> $prms $thrm)))
+   (let (: $prfbdy $thrm)
+     (bc $kb (Cons (: $idx $prms) $env) (s $idx) $k (: $prfbdy $thrm))
+     (when (or (not &OnlyData) (not (is-arrow-type $prms)))
+       (: (\ $idx $prfbdy) (-> $prms $thrm)))))
+\end{minted}
+\end{small}
+It is identical to the lambda abstraction implementation presented in
+Section~\ref{sec:lambdabs} expect that the output of
+\mintinline{scheme}{bc} is wrapped around a \mintinline{scheme}{when}
+conditional.  A \mintinline{scheme}{when} conditional is like an
+\mintinline{scheme}{if} conditional but the else branch is replaced by
+\mintinline{scheme}{Empty}, resulting in pruning the evaluation if the
+condition is false.  In this case the condition
+\begin{minted}{scheme}
+(or (not &OnlyData) (not (is-arrow-type $prms)))
+\end{minted}
+expresses that if the \mintinline{scheme}{&OnlyData} hyper-parameter
+is \mintinline{scheme}{True}, then the premise
+\mintinline{scheme}{$prms}, the type of the variable scoped by the
+lambda abstraction, must not be an arrow type, thus must be a data
+type.
+
+\subsubsection{Use Reduction Rules to Avoid Semantically Redundant
+  Candidates} One can use reduction rules to avoid synthesizing proofs
+or programs that are syntactically different but semantically
+identical.  This is similar to how MOSES~\cite{Looks2006} uses
+reduction as pruning technique while evolving programs.  In our case
+reduction rules can range from very generic such as
+\begin{minted}{scheme}
+;; Identity application reduction
+(= ((\ $x $x) $y) $y))
+\end{minted}
+removing the application of the identity function over any argument,
+to very specific such as
+\begin{minted}{scheme}
+;; Translating from/to the same language reduces to idiot
+(= (machine-translation.translate $l $l) idiot)
+\end{minted}
+where \mintinline{scheme}{idiot} is the combinator corresponding to
+the identity function.  This latest reduction rule is specialized to
+the \mintinline{scheme}{machine-translation.translate} service and
+indicates that translating a text from a source language to an
+identical destination language is equivalent to doing nothing. We have
+implemented over a dozen reduction rules for each experiment.  The
+result is a notable, sometimes dramatic, speed-up in most experiments,
+as well as a reduction in the number of resulting candidates.
+
+\subsubsection{Uncurrify Services and Combinators}
+Using uncurried services and combinators has the interesting effect of
+pruning the search by avoiding combining the services in weird, higher
+order ways, quite similar to limiting the information flow to data,
+but even stronger.\\
+
+In the end we have found that limiting the flow of information to
+data, using reduction rules as well as a carefully selected uncurried
+combinator set leads to efficient synthesis of AI service
+compositions.
 
 \subsection{Bluebird and Phoenix Combinators}
 
