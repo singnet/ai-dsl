@@ -162,11 +162,34 @@
 ;; Combinators ;;
 ;;;;;;;;;;;;;;;;;
 
-;; Complete the knowledge base with inference rules
-!(add-atom &kb (: .                 ; Composition (bluebird)
-                  (-> (-> $b $c)    ; Premise 1
-                      (-> $a $b)    ; Premise 2
-                      (-> $a $c)))) ; Conclusion
+;; Name: Bluebird
+;; Description: Sequential composition
+;; Type: (b -> c) -> (a -> b) -> a -> c
+;; Definition: bluebird f g x = f (g x)
+;; Symbol: .
+;; Diagram:
+;; -a-b-c->
+!(add-atom &kb (: .
+                  (-> (-> $b $c)
+                      (-> $a $b)
+                      (-> $a $c))))
+
+;; Name: Phoenix
+;; Description: Split then join
+;; Type: (b -> c -> d) -> (a -> b) -> (a -> c) -> a -> d
+;; Definition: phoenix f g h x = f (g x) (h x)
+;; Symbol: Φ (LaTeX: \Phi, Math Emacs: \upPhi)
+;; Diagram:
+;;    b
+;;   / \
+;; -a   d->
+;;   \ /
+;;    c
+!(add-atom &kb (: Φ
+                  (-> (-> $b (-> $c $d))
+                      (-> $a $b)
+                      (-> $a $c)
+                      (-> $a $d))))
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; Backward chainer ;;
@@ -209,6 +232,18 @@
           ;; Recurse on second argument
           ((: $prfarg2 $prms2) (bc $kb $k (: $prfarg2 $prms2))))
      (: ($prfabs $prfarg1 $prfarg2) $ccln)))
+;; Trinary application
+(= (bc $kb (S $k) (: ($prfabs $prfarg1 $prfarg2 $prfarg3) $ccln))
+   (let* (;; Recurse on abstraction
+          ((: $prfabs (-> $prms1 $prms2 $prms3 $ccln))
+           (bc $kb $k (: $prfabs (-> $prms1 $prms2 $prms3 $ccln))))
+          ;; Recurse on first argument
+          ((: $prfarg1 $prms1) (bc $kb $k (: $prfarg1 $prms1)))
+          ;; Recurse on second argument
+          ((: $prfarg2 $prms2) (bc $kb $k (: $prfarg2 $prms2)))
+          ;; Recurse on second argument
+          ((: $prfarg3 $prms3) (bc $kb $k (: $prfarg3 $prms3))))
+     (: ($prfabs $prfarg1 $prfarg2 $prfarg3) $ccln)))
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Reduction rules ;;
