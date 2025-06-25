@@ -162,11 +162,34 @@
 ;; Combinators ;;
 ;;;;;;;;;;;;;;;;;
 
-;; Complete the knowledge base with inference rules
-!(add-atom &kb (: .                      ; Composition
-                  (-> (-> $b $c)         ; Premise 1
-                      (-> (-> $a $b)     ; Premise 2
-                          (-> $a $c))))) ; Conclusion
+;; Name: Bluebird
+;; Description: Sequential composition
+;; Type: (b -> c) -> (a -> b) -> a -> c
+;; Definition: bluebird f g x = f (g x)
+;; Symbol: .
+;; Diagram:
+;; -a-b-c->
+!(add-atom &kb (: .
+                  (-> (-> $b $c)
+                      (-> (-> $a $b)
+                          (-> $a $c)))))
+
+;; Name: Phoenix
+;; Description: Split then join
+;; Type: (b -> c -> d) -> (a -> b) -> (a -> c) -> a -> d
+;; Definition: phoenix f g h x = f (g x) (h x)
+;; Symbol: Φ (LaTeX: \Phi, Math Emacs: \upPhi)
+;; Diagram:
+;;    b
+;;   / \
+;; -a   d->
+;;   \ /
+;;    c
+!(add-atom &kb (: Φ
+                  (-> (-> $b (-> $c $d))
+                      (-> (-> $a $b)
+                          (-> (-> $a $c)
+                              (-> $a $d))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; Backward chainer ;;
