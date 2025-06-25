@@ -905,30 +905,31 @@ SingularityNET marketplace.  You may ask, ``centralizes'', I thought
 it was decentralized?  Yes, it is decentralized in the sense that the
 contract is ultimately duplicated all over the Ethereum network, but
 it is centralized in the sense that any modification of it will
-disperse over the network until a consensus is reached, so that in the
-end, there is a universal agreement on what this contract contains.
-Once an organization is registered, it can register AI services via
-interacting with the same smart contract.  Due to the high cost of
-holding data on the Ethereum blockchain, the smart contract only holds
-the minimal amount of data, such as organization identifiers, wallets,
-the list of their services, etc.  More data hungry information such as
-the descriptions of the services are stored in the InterPlanetary File
-System (IPFS for short), a decentralized, data immutable, content
-addressable storage system.  The smart contract then only needs to
-point to the right IPFS addresses to retrieve the desired information.
-Given the immutability of data of IPFS, once a smart contract points
-to a given address, it is guarantied that the content at that address
-will not change.  To change it, the smart contract must be modified to
-point to another address.  Thus, all possible modification are
-funneled through the smart contract.  That is not to say that the
-network cannot change if the smart contract is not changed, for
-instance a service provider may decide to silently shut down its
-servers, but the description itself of the SingularityNET marketplace
-should be immune to these external circumstances.  That is of course
-assuming that both the Ethereum blockchain and the IPFS networks are
-collectively given the care to operate as intended.  In particular,
-for IPFS, there needs to be at least one node in the network
-containing the data referenced by the SingularityNET smart contract.
+propagate over the network until a consensus is reached, so that in
+the end, there is a universal agreement on what this contract
+contains.  Once an organization is registered, it can register AI
+services via interacting with the same smart contract.  Due to the
+high cost of holding data on the Ethereum blockchain, the smart
+contract only holds the minimal amount of data, such as organization
+identifiers, wallets, the list of their services, etc.  More data
+hungry information such as the descriptions of the services are stored
+in the InterPlanetary File System (IPFS for short), a decentralized,
+data immutable, content addressable storage system.  The smart
+contract then only needs to point to the right IPFS addresses to
+retrieve the desired information.  Given the immutability of data of
+IPFS, once a smart contract points to a given address, it is
+guarantied that the content at that address will not change.  To
+change it, the smart contract must be modified to point to another
+address.  Thus, all possible modification are funneled through the
+smart contract.  That is not to say that the network cannot change if
+the smart contract is not changed, for instance a service provider may
+decide to silently shut down its servers, but the description itself
+of the SingularityNET marketplace should be immune to these external
+circumstances.  That is of course assuming that both the Ethereum
+blockchain and the IPFS networks are collectively given enough care to
+operate as intended.  In particular, for IPFS, there needs to be at
+least one node in the network containing the data referenced by the
+SingularityNET smart contract.
 
 \section{Crawling the SingularityNET Marketplace}
 \label{sec:csnmp}
@@ -1178,7 +1179,7 @@ is sensible or absurd.  A good example is the third argument of the
 Machine Translation service.  According to Protobuf alone, it is of
 type string, however one can see in the comment that it is not a
 string containing the content to be translated but a string pointing
-to a URL containing the content to be translated.  That means that if
+to a URL containing the content to be translated.  This means that if
 an afferent service sends a string of text to the Machine Translate
 service, the latter will fail unless the string of text has been
 uploaded to a URL and the URL is sent instead.  The types alone, at
@@ -1203,11 +1204,11 @@ should likely be decentralized and able to handle multiple versions.
 
 These aspects will have to be addressed eventually, but in this
 iteration we merely provide a miniature handwritten ontology tailored
-specifically to discriminate sensible vs absurd compositions in our
-examples.  The ontology itself is formalized using a subtyping
-relationship described below.  The axioms are taken from the Subtyping
-Wikipedia article~\cite{enwiki:1292323950} and translated into MeTTa.
-Subtyping is represented by
+specifically to discriminate sensible versus absurd compositions in
+our examples.  The ontology itself is formalized using subtyping as
+described below.  The axioms are taken from the Subtyping Wikipedia
+article~\cite{enwiki:1292323950} and translated into MeTTa.  Subtyping
+is represented by
 \begin{minted}{scheme}
   (<: S T)
 \end{minted}
@@ -1297,12 +1298,12 @@ of the subtyping relationship is provided below in MeTTa.
     (nbrLimbs (coerce (STTrans CM MA) Choupette))
   \end{minted}
 \end{enumerate}
+
 With a formal specification of the subtyping relationship
 \mintinline{scheme}{<:} in hand, we can now define an ontology for the
-AI-DSL that the backward chainer can use as needed to reason about
-subtyping and type coercion while synthesizing AI service
-compositions.  Please find below the miniature ontology mentioned
-earlier
+AI-DSL that the backward chainer can use to reason about subtyping and
+type coercion while synthesizing AI service compositions.  Please find
+below the miniature ontology mentioned earlier
 \begin{small}
 \begin{minted}{scheme}
 ;; Language
@@ -1327,30 +1328,33 @@ earlier
 (: SIA (<: (SongIn $l) Audio))
 \end{minted}
 \end{small}
-A graphical representation of the ontology is given in
-Figure~\ref{fig:onto} (Appendix~\ref{apdx:dot} contains information of
-how it has been rendered).
+A graphical representation of this ontology is given in
+Figure~\ref{fig:onto} and has been generated using a MeTTa to
+Graphviz~\cite{Ellson2004} DOT format converted developed
+in~\cite{MeTTaToDOT}.
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.235]{figs/ontology.png}
-  \caption{Graphical representation of the miniature ontology
-    mentioned earlier.  The nodes represent the types.  The edges
-    represent the subtyping relationships, for instance Audio is
-    subtype of Bytes is represented by an arrow pointing to Bytes.
-    The labels on the edges correspond to the names of axioms encoding
-    the subtyping relationships.}
+  \caption{Graphical representation of a miniature ontology.  The
+    nodes represent the types.  The edges represent the subtyping
+    relationships.  For instance, the fact that
+    \mintinline{scheme}{Audio} is subtype of
+    \mintinline{scheme}{Bytes}, is represented by an arrow going from
+    \mintinline{scheme}{Audio} to \mintinline{scheme}{Bytes}.  The
+    labels on the edges correspond to the names of axioms of the
+    primary subtyping relationships.}
   \label{fig:onto}
 \end{figure}
 One may observe that in this ontology all types directly or indirectly
 derive from primary types such as \mintinline{scheme}{String} and
-\mintinline{scheme}{Bytes}.  These primary types comes Protobuf.  What
-this means is that, if for instance an AI service outputs data of type
-\mintinline{scheme}{Text} to be received by a service that inputs data
-of type \mintinline{scheme}{String}, the type coercion may not need to
-take place at run-time.  Type coercion is, most of the time, only here
-to make sure the AI service composition is consistent with its AI
-service specifications.  One may also observe that some types are
-parameterized, such as \mintinline{scheme}{(TextIn $l)}, which
+\mintinline{scheme}{Bytes}.  These primary types come from Protobuf.
+What this means is that, if for instance an AI service outputs data of
+type \mintinline{scheme}{Text} to be received by a service that inputs
+data of type \mintinline{scheme}{String}, the type coercion may not
+need to take place at run-time.  Type coercion is, most of the time,
+only here to make sure the AI service composition is consistent with
+its AI service specifications.  One may also observe that some types
+are parameterized, such as \mintinline{scheme}{(TextIn $l)}, which
 represents a text in a certain language \mintinline{scheme}{$l}.
 Having parameterized types in the ontology will especially turn out to
 be useful while reasoning about dependent types.
@@ -1376,10 +1380,11 @@ by \mintinline{scheme}{(UniformResourceLocatorOfType Text)} since we
 know that this service translates text to text.  But we can do even
 better than that and replace it by
 \mintinline{scheme}{(UniformResourceLocatorOfType (TextIn $l))} since
-we are given the source language as first argument.  The question is
-how to specify the source language, for now being just represented as
-free variable, \mintinline{scheme}{$l}.  This is where dependent types
-shine.  To see how let us rewrite the entire constructor as follows
+we are given the source language as first argument.  A question that
+will need to be answered is: how to specify the source language?  That
+is, how to set the variable \mintinline{scheme}{$l}?  This is exactly
+where dependent types come into the picture.  To see how let us
+rewrite the entire constructor as follows
 \begin{minted}{scheme}
 ;; Define naint.machine-translation.Input constructor with
 ;; dependent types
@@ -1393,7 +1398,7 @@ shine.  To see how let us rewrite the entire constructor as follows
 The variable \mintinline{scheme}{$l} has been replaced by
 \mintinline{scheme}{$src-lang}, the inhabitant of the first argument
 of \mintinline{scheme}{naint.machine-translation.MkInput}, the source
-language of the translation, et voila!  It allows us to express that
+language of the translation, et voil\`a!  It allows us to express that
 the third argument is a type that \emph{depends} on the value of the
 first argument.  Also, it goes without saying that replacing
 \mintinline{scheme}{String} by a type denoting a location to a datum,
@@ -1405,8 +1410,8 @@ opposed to a URL pointing to the text to translate.  Finally, one
 should note that the
 \mintinline{scheme}{naint.machine-translation.Input} type has been
 replaced by a parameterized type, taking the source and destination
-languages as parameters, which is needed not to lose that information
-downstream.  Likewise the
+languages as parameters, which is required not to lose that
+information downstream.  Likewise the
 \mintinline{scheme}{naint.machine-translation.Output} type has been
 replaced by a parameterized type simply taking the destination
 language as parameter as the information about the source language is
@@ -1435,22 +1440,22 @@ method, resulting into the following type signature
 \end{minted}
 \end{small}
 One may also notice that the fully curried representation has been
-replaced by some hybrid curried-uncurried one.  Indeed the first two
+replaced by a hybrid curried-uncurried one.  Indeed the first two
 arguments, the source and destination languages, are uncurried while
 the last one, the URL pointing to the text to translate, is curried.
-This is because we have found that it mitigate the combinatorial
-explosion to cleaning separate parameters (like the source and
+This is because we have found that it mitigates the combinatorial
+explosion to cleanly separate parameters (like the source and
 destination languages) and data to be processed (like the text to be
 translated).
 
 It all looks good and well, but there is one elephant in the Section.
 How to automate such type enrichment process?  How to go from a given
-Protobuf specification to a MeTTa specification?  How to choose the
-right semantically rich type in the ontology as a substitute for a
-semantically poor type in the Protobuf specification.  And finally,
+Protobuf specification to a MeTTa specification?  How to choose a
+semantically rich type in the ontology as a substitute for a
+semantically poor type in the Protobuf specification?  And finally,
 how to come up with the ontology in the first place?  As valid as
 these questions are, they are left aside in this technical report, but
-will undoubtedly resurface in the future when their time is right.
+will resurface in the future when their time has come.
 
 \chapter{Experimenting with AI Service Composition in MeTTa}
 \label{chap:xpaicompo}
@@ -2263,10 +2268,6 @@ Thanks to Vitaly Bognanov for making the hyperon-experimental back-end
 of MeTTa which was used across all experiments to establish a fair
 comparison.  Thanks to the SingularityNET Foundation for funding this
 work.
-
-\appendix
-\chapter{DOT Format Conversion}
-\label{apdx:dot}
 
 \bibliographystyle{splncs04} \bibliography{local}
 
