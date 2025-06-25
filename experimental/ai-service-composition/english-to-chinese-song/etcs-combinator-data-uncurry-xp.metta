@@ -2753,10 +2753,10 @@
 ;; ;; !(List.sortWith termLengthLT
 ;; ;;                 (toList (collapse
 ;;                                ;; !(limit 6
-;;                                 !(bc &kb (fromNumber 6)
+;;                                 !(unique (bc &kb (fromNumber 6)
 ;;                                     (: $prg
 ;;                                        (-> (: $x (SongIn "English"))
-;;                                            (SongIn "Chinese")))););)))
+;;                                            (SongIn "Chinese"))))););)))
 
 ;; Infer the type annotations of one of the solutions above but
 ;; slightly simplified
