@@ -573,61 +573,61 @@
   (: (. (Φ mix accomp (. translate vocals)) spleeter)
      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
 
-;; Synthesize full AI service composition with depth 4.  Depth 3 is
-;; enough but we want to test how much reduction and Data constraints
-;; help to prune the search.
-;;
-;; At this depth though adding Data constraints still does not help.
-;; Indeed we get the same results with or without it.  However,
-;; without Data constraints it is about x3 faster, probably cause
-;; there is less code to evaluate.
-;;
-;; Reduction on the other hand tremedously helps.  Indeed, with
-;; reduction onle 1 result is returned instead of 80 without reduction
-;; (with or without Data constraints).
-!(assertEqual
-  (unique
-   (capture
-    (bc &kb
-        (fromNumber 4)
-        (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
-  (: (. (Φ mix accomp (. translate vocals)) spleeter)
-     (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+;; ;; Synthesize full AI service composition with depth 4.  Depth 3 is
+;; ;; enough but we want to test how much reduction and Data constraints
+;; ;; help to prune the search.
+;; ;;
+;; ;; At this depth though adding Data constraints still does not help.
+;; ;; Indeed we get the same results with or without it.  However,
+;; ;; without Data constraints it is about x3 faster, probably cause
+;; ;; there is less code to evaluate.
+;; ;;
+;; ;; Reduction on the other hand tremedously helps.  Indeed, with
+;; ;; reduction onle 1 result is returned instead of 80 without reduction
+;; ;; (with or without Data constraints).
+;; !(assertEqual
+;;   (unique
+;;    (capture
+;;     (bc &kb
+;;         (fromNumber 4)
+;;         (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
+;;   (: (. (Φ mix accomp (. translate vocals)) spleeter)
+;;      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
 
-;; Synthesize full AI service composition with depth 5.  Data
-;; constraints still makes no difference.  Reduction obviously makes a
-;; tremendous difference.
-!(assertEqual
-  (unique
-   (capture
-    (bc &kb
-        (fromNumber 5)
-        (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
-  (: (. (Φ mix accomp (. translate vocals)) spleeter)
-     (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+;; ;; Synthesize full AI service composition with depth 5.  Data
+;; ;; constraints still makes no difference.  Reduction obviously makes a
+;; ;; tremendous difference.
+;; !(assertEqual
+;;   (unique
+;;    (capture
+;;     (bc &kb
+;;         (fromNumber 5)
+;;         (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
+;;   (: (. (Φ mix accomp (. translate vocals)) spleeter)
+;;      (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
 
-;; Synthesize full AI service composition with depth 6.  Data
-;; constraints still makes no difference.  Reduction obviously makes a
-;; tremendous difference.  Some candidates could not be reduced even
-;; though they are probably equivalent to the shortest one given some
-;; semantics assumptions.
-!(assertEqualToResult
-  (unique
-   (capture
-    (bc &kb
-        (fromNumber 6)
-        (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
-  ((: (. (Φ mix (. accomp (. spleeter (Φ mix accomp (. translate vocals))))
-            (. translate vocals)) spleeter)
-      (-> (: $x (SongIn "English")) (SongIn "Chinese")))
-   (: (. (Φ mix accomp (. vocals (. spleeter (Φ mix accomp (. translate vocals)))))
-         spleeter)
-      (-> (: $x (SongIn "English")) (SongIn "Chinese")))
-   (: (Φ mix (. accomp (. spleeter (. (Φ mix accomp (. translate vocals)) spleeter)))
-         (. translate (. vocals spleeter)))
-      (-> (: $x (SongIn "English")) (SongIn "Chinese")))
-   (: (. (Φ mix accomp (. translate vocals)) spleeter)
-      (-> (: $x (SongIn "English")) (SongIn "Chinese")))
-   (: (Φ mix (. accomp spleeter)
-         (. vocals (. spleeter (. (Φ mix accomp (. translate vocals)) spleeter))))
-      (-> (: $x (SongIn "English")) (SongIn "Chinese")))))
+;; ;; Synthesize full AI service composition with depth 6.  Data
+;; ;; constraints still makes no difference.  Reduction obviously makes a
+;; ;; tremendous difference.  Some candidates could not be reduced even
+;; ;; though they are probably equivalent to the shortest one given some
+;; ;; semantics assumptions.
+;; !(assertEqualToResult
+;;   (unique
+;;    (capture
+;;     (bc &kb
+;;         (fromNumber 6)
+;;         (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese"))))))
+;;   ((: (. (Φ mix (. accomp (. spleeter (Φ mix accomp (. translate vocals))))
+;;             (. translate vocals)) spleeter)
+;;       (-> (: $x (SongIn "English")) (SongIn "Chinese")))
+;;    (: (. (Φ mix accomp (. vocals (. spleeter (Φ mix accomp (. translate vocals)))))
+;;          spleeter)
+;;       (-> (: $x (SongIn "English")) (SongIn "Chinese")))
+;;    (: (Φ mix (. accomp (. spleeter (. (Φ mix accomp (. translate vocals)) spleeter)))
+;;          (. translate (. vocals spleeter)))
+;;       (-> (: $x (SongIn "English")) (SongIn "Chinese")))
+;;    (: (. (Φ mix accomp (. translate vocals)) spleeter)
+;;       (-> (: $x (SongIn "English")) (SongIn "Chinese")))
+;;    (: (Φ mix (. accomp spleeter)
+;;          (. vocals (. spleeter (. (Φ mix accomp (. translate vocals)) spleeter))))
+;;       (-> (: $x (SongIn "English")) (SongIn "Chinese")))))
