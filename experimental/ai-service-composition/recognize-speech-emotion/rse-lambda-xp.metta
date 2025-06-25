@@ -7,12 +7,22 @@
 ;; 2. naint.text-emotions, that recognizes emotion in text.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;
+;; Hyperparameters ;;
+;;;;;;;;;;;;;;;;;;;;;
+
+;; Whether reduction rules should be applied during backward chaining
+!(bind! &Reduct False)
+
+;; Whether lambda abstraction should only bind to data, not functions
+!(bind! &OnlyData False)
+
 ;;;;;;;;;;;
 ;; Utils ;;
 ;;;;;;;;;;;
 
 ;; Run the code if the condition is true, otherwise prune the branch
-(: when (-> Bool $a $a))
+(: when (-> Bool Atom $a))
 (= (when $c $x) (if $c $x (empty)))
 
 ;; Return True iff $term is closed
@@ -329,18 +339,6 @@
 
 ;; Recursive steps
 
-;; ;; Proof application
-;; (= (bc $kb $env $idx (S $k) (: ($prfabs (: $prfarg $prms)) $thrm))
-;;    (let* (((: $prfabs (-> $prms $thrm))
-;;            (bc $kb $env $idx $k (: $prfabs (-> $prms $thrm))))
-;;           ((: $prfarg $prms)
-;;            (bc $kb $env $idx $k (: $prfarg $prms))))
-;;      (: ($prfabs (: $prfarg $prms)) $thrm)))
-;; ;; Proof abstraction
-;; (= (bc $kb $env $idx (S $k) (: (λ $idx $prfbdy) (-> $prms $thrm)))
-;;    (let (: $prfbdy $thrm)
-;;      (bc $kb (Cons (: $idx $prms) $env) (s $idx) $k (: $prfbdy $thrm))
-;;      (: (λ $idx $prfbdy) (-> $prms $thrm))))
 ;; Proof application
 (= (bc $kb $env $idx (S $k) (: ($prfabs $prgarg) $thrm))
    (let* (((: $prfabs (-> $prms $thrm))
@@ -352,7 +350,7 @@
 (= (bc $kb $env $idx (S $k) (: (λ (: $idx $prms) $prfbdy) (-> $prms $thrm)))
    (let (: $prfbdy $thrm)
      (bc $kb (Cons (: $idx $prms) $env) (s $idx) $k (: $prfbdy $thrm))
-     (when (or (is-symbol $prms) (is-grounded $prms))
+     (when (or (not &OnlyData) (or (is-symbol $prms) (is-grounded $prms)))
        (: (λ (: $idx $prms) $prfbdy) (-> $prms $thrm)))))
 
 ;;;;;;;;;;;;;;;;;;;;;
@@ -360,10 +358,10 @@
 ;;;;;;;;;;;;;;;;;;;;;
 
 ;; Identity function
-(= ((λ (: $x $t) $x) $y) $y)
+!(when &Reduct (add-atom &self (= ((λ (: $x $t) $x) $y) $y)))
 
 ;; Constant function
-(= ((λ (: (s z) $t) z) $x) z)
+!(when &Reduct (add-atom &self (= ((λ (: (s z) $t) z) $x) z)))
 
 ;;;;;;;;;;
 ;; Test ;;
