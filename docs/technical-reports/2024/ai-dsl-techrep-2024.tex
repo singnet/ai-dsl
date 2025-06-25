@@ -1459,14 +1459,11 @@ will resurface in the future when their time has come.
 
 \chapter{Experimenting with AI Service Composition in MeTTa}
 \label{chap:xpaicompo}
-
-NEXT: add special treatment data only lambda abstraction.
-
-We have written a few prototypes in MeTTa, all based on the backward
-chainers presented in Chapter~\ref{chap:chainers}, to synthesize AI
-service compositions.  In this chapter we will describe the various
-experiments we have conducted with some benchmarks and a few lessons
-that we have learned along the way.
+A dozen experiments to synthesize AI service compositions, all based
+on the backward chainer implementations presented in
+Chapter~\ref{chap:chainers}, have been conducted.  In this chapter we
+will describe this experiments, results and the lessons learned along
+the way.
 
 \section{Experimental Setup}
 \label{sec:xpsetup}
@@ -1474,23 +1471,23 @@ that we have learned along the way.
 \subsection{AI Service Compositions}
 \label{sec:aicomp}
 After perusing the SingularityNET marketplace to find meaningful AI
-service compositions to attempt to synthesize them, we have retained
-two compositions:
+service compositions to attempt to synthesize, we have retained two
+compositions:
 \begin{enumerate}
-\item \textbf{Speech Emotion Recognition}, obtained by sequentially
+\item \textbf{Speech Emotion Recognition}, is obtained by sequentially
   combining two services, \texttt{speech2text-en} and
   \texttt{text-emotions}, provided by the NAINT organization,
   represented by the following flowchart-like graph:
   \begin{center}
     \includegraphics[scale=0.55]{figs/SimpleSpeechEmotionRecognition.png}
   \end{center}
-  The graph says it all, speech is turned into text, then emotion is
-  detected from this text.  One could easily envision a variation
-  involving a parallel composition of another service that can detect
-  emotion in speech directly, more focused and voice expression than
-  semantics, but in this report we purposely leave it at that, a
-  simple composition involving two services.
-\item \textbf{English to Chinese Song Translation}, obtained to by
+  Speech is turned into text, then emotion is detected from this text.
+  One could easily envision a variation involving a parallel
+  composition of another service that can detect emotion in speech
+  directly, more focused and voice expression than semantics, but in
+  this report we purposely leave it at that, a simple sequential
+  composition involving two services.
+\item \textbf{English to Chinese Song Translation}, is obtained to by
   combining the following services, \texttt{sound-spleeter} and
   \texttt{speech-recognition} from SingularityNET,
   \texttt{machine-translation} and \texttt{midi2voice-zh} from NAINT.
@@ -1498,10 +1495,11 @@ two compositions:
   convert audio to MIDI.  This service is not present on the
   SingularityNET marketplace so we had to handwrite it in MeTTa rather
   than obtain it from the crawler described in
-  Chapter~\ref{chap:marketplace}.  We also had to add a micro service
-  to mix two audio signals, \texttt{mixer}, also not present in the
-  SingularityNET marketplace.  The flowchart-like graph below
-  represents the composition we wish to synthesize.
+  Chapter~\ref{chap:marketplace}.  We also had to add two micro
+  services, one to mix two audio signals, \texttt{mixer}, and one to
+  upload data to a URL, both also not present in the SingularityNET
+  marketplace.  The flowchart-like graph below represents the
+  composition we wish to synthesize.
   \begin{center}
     \includegraphics[scale=0.6]{figs/EnglishToChineseSong.png}
   \end{center}
@@ -1516,25 +1514,28 @@ two compositions:
   service to produce Chinese vocals.  Finally the instrumental and the
   Chinese vocals get mixed to produce the Chinese song.  Making this
   work in practice is actually more involved than just plugging these
-  services as described and requires syncing the Chinese vocals and
-  the instrumental.  But regardless of the run-time result, what is of
+  services as depicted and requires syncing the Chinese vocals and the
+  instrumental.  But regardless of the run-time result, what is of
   interest to us here is whether the AI-DSL is able to synthesize such
   AI service composition.
 \item Additionally, our experiments contains a third AI service
   composition which is a scaled down version of the English to Chinese
-  Song Translation shown below, defined to create an intermediary
-  level of difficulty in synthesis between the Speech Emotion
-  Recognition composition and the English to Chinese Song Translation
-  composition.
+  Song Translation, defined to create an intermediary level of
+  difficulty in synthesis between the Speech Emotion Recognition
+  composition and the English to Chinese Song Translation composition.
   \begin{center}
     \includegraphics[scale=0.6]{figs/EnglishToChineseSongScaledDown.png}
   \end{center}
-  In this composition the translation from English text to Chinese
-  text, melody recognition and Chinese singing generation has been
-  replaced by a single service, \textbf{Vocals Translator}.  This
-  service does not exists on the SingularityNET marketplace thus was
-  handcoded in MeTTa specifically for the purpose of creating this
-  down scaled variation.
+  In this composition the three services
+  \begin{enumerate}
+  \item translation from English text to Chinese text,
+  \item melody recognition,
+  \item and Chinese singing generation,
+  \end{enumerate}
+  have been replaced by a single service, \textbf{Vocals Translator}.
+  This service does not exists on the SingularityNET marketplace thus
+  was handcoded in MeTTa, and by that I mean its type definition,
+  specifically for the purpose of creating this down scaled version.
 \end{enumerate}
 \subsection{Search Space}
 For each AI service composition, the search space is limited to the
@@ -1544,39 +1545,40 @@ for the Speech Emotion Recognition composition, only two services are
 described.  This involves more than two axioms because services have
 data constructors and access functions.  But this nonetheless
 dramatically reduces the search space.  As we will see though, even
-with that simplification, in the absence of any pruning, the search
-can already easily become intractable.  Much of the lessons learned
-during these experiments have to do with pruning the search.
+with this simplification, in the absence of any pruning, the search
+can already become intractable.  Much of the lessons learned during
+these experiments have to do with pruning the search.
 \subsection{Lambda Abstraction versus Combinators}
-There are at least two ways of describing AI service compositions.
+There are at least two ways to describe AI service compositions.
 \begin{itemize}
-\item Lambda abstraction, where variables are used to capture and
-  passed data to any part of the composition.  Lambda abstraction is
-  very powerful to express arbitrarily complex information flow
-  between services but can somewhat obfuscate the structure of the
-  composition.
-\item Combinatory logic is also equally powerful to describe
+\item \textbf{Lambda abstraction}, where variables are used to capture
+  the information flow and passed data to any part of the composition.
+  Lambda abstraction is very powerful to express arbitrarily complex
+  information flow between services but can somewhat obfuscate the
+  structure of the composition.
+\item \textbf{Combinatory logic} is also equally powerful to describe
   arbitrarily complex information flow.  The advantage of using
   combinators over lambda abstraction though is that the structure of
   the composition \emph{can} be made more explicit.  I insist on
-  ``can'' because, as soon as combinators apply to higher order
+  \emph{can} because, as soon as combinators apply to higher order
   functions, things can become very confusing.  Nonetheless, this way
   to describing the information flow can indeed represent more clearly
-  what is the wiring between services.  This way of describing
-  programs by combining functions instead of carrying variables around
-  is also called \emph{tacit programming}~\cite{enwiki:1283676462}.
+  the wiring between services.  This way of describing programs by
+  combining functions instead of carrying variables around is also
+  called \emph{tacit programming}~\cite{enwiki:1283676462}.
 \end{itemize}
 There would be a third way to describe AI service compositions, using
-process algebras like the $pi$-calculus~\cite{Milner1999} or the
-$rho$-calculus~\cite{Meredith2005}.  We believe it is a promising
-future avenue of research but we have not explored it in this report.
+process algebras like the $\pi$-calculus~\cite{Milner1999} or the
+$\rho$-calculus~\cite{Meredith2005}.  We believe it is a promising
+avenue of research but we have not explored it yet.
 
 \subsection{Pruning Techniques}
-In order to prune the search we have experimented with a few things.
+In order to speed-up the search we have experimented with the
+following pruning mechanisms.
 \subsubsection{Limit the Flow of Information to Data, as Opposed to
-  Functions} This means that on the wires on the composition only data
-can transit, not functions.  To realize this we implement a constraint
-directly inside the backward chainer entry handling lambda
+  Functions} This means that on the wires of the composition only data
+can transit, not functions.  To realize this we added a constraint
+directly inside the backward chainer implementation handling lambda
 abstraction.  The code looks like
 \begin{small}
 \begin{minted}{scheme}
@@ -1591,42 +1593,42 @@ It is identical to the lambda abstraction implementation presented in
 Section~\ref{sec:lambdabs} expect that the output of
 \mintinline{scheme}{bc} is wrapped around a \mintinline{scheme}{when}
 conditional.  A \mintinline{scheme}{when} conditional is like an
-\mintinline{scheme}{if} conditional but the else branch is replaced by
+\mintinline{scheme}{if} conditional but the else branch is
 \mintinline{scheme}{Empty}, resulting in pruning the evaluation if the
-condition is false.  In this case the condition
+condition is \mintinline{scheme}{False}.  In this case the condition is
 \begin{minted}{scheme}
 (or (not &OnlyData) (not (is-arrow-type $prms)))
 \end{minted}
-expresses that if the \mintinline{scheme}{&OnlyData} hyper-parameter
-is \mintinline{scheme}{True}, then the premise
-\mintinline{scheme}{$prms}, the type of the variable scoped by the
-lambda abstraction, must not be an arrow type, thus must be a data
-type.
+and expresses that if the \mintinline{scheme}{&OnlyData}
+hyper-parameter is \mintinline{scheme}{True}, then the premise
+\mintinline{scheme}{$prms} (the type of the variable scoped by the
+lambda abstraction) must not be an arrow type, thus must represent
+data.
 
 \subsubsection{Use Reduction Rules to Avoid Semantically Redundant
   Candidates} One can use reduction rules to avoid synthesizing proofs
 or programs that are syntactically different but semantically
 identical.  This is similar to how MOSES~\cite{Looks2006} uses
 reduction as pruning technique while evolving programs.  In our case
-reduction rules can range from very generic such as
+reduction rules can range from generic such as
 \begin{minted}{scheme}
 ;; Identity application reduction
 (= ((\ $x $x) $y) $y))
 \end{minted}
 removing the application of the identity function over any argument,
-to very specific such as
+to specific such as
 \begin{minted}{scheme}
 ;; Translating from/to the same language reduces to idiot
 (= (machine-translation.translate $l $l) idiot)
 \end{minted}
 where \mintinline{scheme}{idiot} is the combinator corresponding to
-the identity function.  This latest reduction rule is specialized to
-the \mintinline{scheme}{machine-translation.translate} service and
-indicates that translating a text from a source language to an
-identical destination language is equivalent to doing nothing. We have
-implemented over a dozen reduction rules for each experiment.  The
-result is a notable, sometimes dramatic, speed-up in most experiments,
-as well as a reduction in the number of resulting candidates.
+the identity function.  This reduction rule is specialized to the
+\mintinline{scheme}{machine-translation.translate} service and
+indicates that translating a text from the same source and destination
+language is equivalent to doing nothing. We have implemented a couple
+dozen reduction rules across all experiments with various degrees of
+generality and specificity.  The speed-up is a notable, sometimes even
+dramatic, in most experiments.
 
 \subsubsection{Uncurrify Services and Combinators}
 Using uncurried services and combinators has the interesting effect of
@@ -1635,9 +1637,9 @@ order ways, quite similar to limiting the information flow to data,
 but even stronger.\\
 
 In the end we have found that limiting the flow of information to
-data, using reduction rules as well as a carefully selected uncurried
-combinator set leads to efficient synthesis of AI service
-compositions.
+data, using reduction rules as well as a carefully selecting an
+uncurried set of combinators leads to efficient synthesis of AI
+service compositions.
 
 \subsection{Bluebird and Phoenix Combinators}
 
@@ -1646,12 +1648,12 @@ The well selected combinators aforementioned are:
 \item The \emph{bluebird}, which is just another name for the regular
   function composition operator, that could be understood as
   simulating sequential composition.
-\item The \emph{phoenix} is a less known yet powerful combinator that
-  could be understood as simulating parallel composition~\footnote{I
-  am careful with my words because the $\lambda$-calculus is
-  inadequate to model the difference between sequential and parallel
-  computations.  One would be better served using a process algebra,
-  which is intended to be explored is the future.}.
+\item The \emph{phoenix}, which is a less known yet powerful
+  combinator that could be understood as simulating parallel
+  composition~\footnote{I am careful with my words because the
+  $\lambda$-calculus is inadequate to model the difference between
+  sequential and parallel computations and one would be better served
+  using a process algebra.}.
 \end{itemize}
 The definitions of the bluebird and phoenix combinators are
 respectively provided in Tables~\ref{tab:bluebird}
@@ -1669,7 +1671,7 @@ and~\ref{tab:phoenix}.
     \hline
     Symbol & $.$ \\
     \hline
-    Description & sequential composition \\
+    Description & Sequential composition \\
     \hline
     Type (Haskell) & \mintinline{haskell}{(b -> c) -> (a -> b) -> a -> c} \\
     \hline
@@ -1695,9 +1697,9 @@ and~\ref{tab:phoenix}.
 \begin{table}[H]
   \centering
   \caption{Phoenix combinator.  A signal of type \texttt{a} splits and
-    get processed by \texttt{g} and \texttt{h} in parallel, which
-    output signals of types \texttt{b} and \texttt{c} respectively,
-    then rejoining to \texttt{f} which outputs a signal of type
+    get processed by \texttt{g} and \texttt{h} in parallel, outputting
+    signals of types \texttt{b} and \texttt{c} respectively, then
+    rejoining to \texttt{f} which outputs a signal of type
     \texttt{d}.}
   \label{tab:phoenix}
   \begin{tabular}{|c|l|}
@@ -1706,13 +1708,13 @@ and~\ref{tab:phoenix}.
     \hline
     Symbol & $\Phi$ \\
     \hline
-    Description & parallel composition (split then join)\\
+    Description & Parallel composition (split then join)\\
     \hline
     Type (Haskell) &
     \mintinline{haskell}{(b -> c -> d) -> (a -> b) -> (a -> c) -> a -> d} \\
     \hline
     Type (MeTTa) &
-    \mintinline{scheme}{(-> (-> $b $c $d) (-> $a $b) (-> $a $c) (-> $a $d))} \\
+    \begin{small}\mintinline{scheme}{(-> (-> $b $c $d) (-> $a $b) (-> $a $c) (-> $a $d))}\end{small} \\
     \hline
     Definition & $\Phi$ f g h x = f (g x) (h x) \\
     \hline
@@ -1734,26 +1736,27 @@ and~\ref{tab:phoenix}.
     \hline
   \end{tabular}
 \end{table}
-It is reasonable to assume that these two combinators should be enough
-to describe any information flow between AI services as long as they
-do not require recursion~\footnote{Assuming the identity combinator is
-also provided one may in fact only need the phoenix as it can be
-turned into the bluebird when combined with the identity, but that
-would not result to compositions as compact as having both the
-bluebird and the phoenix.}.
+It seems reasonable, although we have not taken the time to
+mathematically prove it, to assume that these two combinators are
+enough to describe any information flow between AI
+services~\footnote{If the identity combinator is provided one may in
+fact only need the phoenix combinator, but that would result into
+compositions which are not as compact and elegant as having both the
+bluebird and the phoenix combinators.}  as long as they do not require
+recursion.
 
 \section{Benchmarks}
 \label{sec:benchmarks}
 Experiments on the three AI service compositions presented above have
 been conducted on a AMD Ryzen 7 PRO 4750G with 64GB of RAM.  The
-hyperon-experimental~\cite{HyperonExperimental} MeTTa back-end was
-primarily used and all results reported in tables are for it.  The
-MeTTaLog~\cite{MeTTaLog} back-end was also used but due to not being
-able to run on all experiments was not selected as the reference of
-comparison, in spite of its much better performances when usable.  Due
-to that the results with MeTTaLog are not systematically reported but
-given here and there to provide an idea of the kind of speed a
-efficient MeTTa back-end may provide.
+hyperon-experimental MeTTa back-end~\cite{HyperonExperimental} was
+used in priority and all results reported in tables are based on it.
+The MeTTaLog back-end~\cite{MeTTaLog} was also used but due to not
+being able to run on all experiments was not selected as the default
+back-end, in spite of being much faster.  Due to that the results
+obtained with MeTTaLog are only sporadically reported to provide an
+idea of the kind of speed-up an optimized MeTTa back-end may
+eventually provide.
 
 \subsection{Speech Emotion Recognition}
 Experiments begin with the simplest AI service composition,
@@ -1762,43 +1765,44 @@ Section~\ref{sec:aicomp}, merely involving two services to be
 sequentially combined.  In these experiments no ontology is used,
 instead the Protobuf types are directly used to specify the input and
 output of the desired composition.  The query submitted to the
-backward chainer in all cases is
+backward chainer is
 \begin{minted}{scheme}
 (: $prg (-> speech2text-en.Audio text-emotions.Output))
 \end{minted}
-The results are detailed in table~\ref{tab:rse}.  The first three
+The results are provided in table~\ref{tab:rse}.  The first three
 experiments, $\texttt{xp}_1$, $\texttt{xp}_2$ and $\texttt{xp}_3$,
-involve lambda abstraction and deliver poor (over 19 minutes of
-run-time in the best case).  The poor performances are due to lambda
-abstraction requiring more depth to describe the desired composition,
-thus dramatically increasing the search space.  It is also due to the
-inherent expressive power of lambda abstraction, in particular its
-capacity to build higher order functions, enabling far more
-combinations than necessary.  When higher order lambda abstraction is
-disabled (experiment $\texttt{xp}_2$), meaning that the variables
-created by lambda abstraction can only bind to data instead of
-functions, the time is reduced from at least 3 days~\footnote{With the
-hyperon-experimental back-end, $\texttt{xp}_1$ was prematurely
+involve lambda abstraction and deliver poor performances, over 19
+minutes of run-time in the best case.  The poor performances are due
+to lambda abstraction requiring more depth to describe the desired
+composition, thus dramatically increasing the search space.  It is
+also due to the inherent expressive power of lambda abstraction, in
+particular its capacity to build higher order functions, enabling far
+more combinations than necessary.  When higher order lambda
+abstraction is disabled (experiment $\texttt{xp}_2$), meaning that the
+variables created by lambda abstraction can only bind to data instead
+of functions, the time is reduced from at least 3 days~\footnote{With
+the hyperon-experimental back-end, $\texttt{xp}_1$ was prematurely
 terminated due to memory exhaustion.  MeTTaLog on the other hand was
 able to output 72 candidates in 18m3s before terminating for unknown
 reason.} to 23m14s, which is considerably better but still large.
 Pruning the search space by applying reduction rules (experiment
-$\texttt{xp}_3$) reduces the run-time a bit further to 19m6s (compared
-to 23m40s without reduction).  Moreover, the number of resulting
-candidates was lower as well, going from 44 to 20.  The reduction
-rules used are simply the following two
+$\texttt{xp}_3$) reduces the run-time a bit further to 19m6s.
+Moreover, the number of resulting candidates is lower as well, going
+from 44 to 20.  The reduction rules used in $\texttt{xp}_3$ are simply
+the following two
 \begin{minted}{scheme}
 ;; Identity application reduction
 (= ((\ (: $x $t) $x) $y) $y))
 ;; Constant function application reduction
 (= ((\ (: (s z) $t) z) $x) z)
 \end{minted}
-It is good because less candidates means less work to select the final
+This reduction in number of candidates synthesized is a good thing
+because less candidates means less work to select the final
 composition by the downstream process.  When using MeTTaLog, results
 for $\texttt{xp}_3$ goes down to 1m21s, which is far better than 19m6s
-with hyperon-experimental, but still unacceptable for such simple AI
-service composition.  The best solution synthesized by experiments
-$\texttt{xp}_1$, $\texttt{xp}_2$ and $\texttt{xp}_3$ is given below.
+with hyperon-experimental, but still unacceptable given the simplicity
+of the AI service composition.  The best solution synthesized by
+experiments $\texttt{xp}_1$, $\texttt{xp}_2$ and $\texttt{xp}_3$ is
 \begin{minted}{scheme}
 (: (\ (: z speech2text-en.Audio)
       (text-emotions.recognize
@@ -1807,9 +1811,10 @@ $\texttt{xp}_1$, $\texttt{xp}_2$ and $\texttt{xp}_3$ is given below.
          (speech2text-en.s2t z)))))
    (-> speech2text-en.Audio text-emotions.Output))
 \end{minted}
-Note that other semantically equivalent but more complex solutions, or
-even incorrect ones, where also provided among the results.  An
-example of a correct but more complex solution is
+Other solutions where also synthesized, including semantically
+equivalent but more complex ones, as well semantically different (and
+incorrect) but simpler ones.  An example of a correct but more complex
+solution is
 \begin{minted}{scheme}
 (: (\ (: z speech2text-en.Audio)
       ((\ (: (s z) String)
@@ -1833,8 +1838,8 @@ It is incorrect because it never invokes the
 \mintinline{scheme}{text-emotions.recognize} service.  Instead it
 tricks the type by directly constructing an emotion from the output of
 \mintinline{scheme}{speech2text-en.s2t} using the
-\mintinline{scheme}{text-emotions.MkOutput} constructor.  This is a
-good example of an under-specified formal description.  Obviously,
+\mintinline{scheme}{text-emotions.MkOutput} constructor.  This is due
+to the under-specified formal description.  Obviously,
 \mintinline{scheme}{text-emotions.MkOutput} should not be allowed to
 construct an emotion from an arbitrary text.  This is where the
 ontology comes into play and will be explored in
@@ -1849,8 +1854,8 @@ the right balance between expressiveness and restrictiveness.  In
 other words, they seem to be placed at the right level of abstraction
 to describe AI service compositions, compared to say a more expressive
 and foundational combinator sets such as I, S and K.  Also, it is not
-presented in the report but one of our first experiments involved
-using the I, S, K combinators.  And if I recall correctly it was
+presented in the report, but one of our first experiments involved
+using the I, S, K combinators.  And if I recall correctly, it was
 performance-wise even worse than lambda abstraction.  The solution
 that was synthesized by experiment $\texttt{xp}_4$ is given below.
 \begin{minted}{scheme}
@@ -1861,20 +1866,20 @@ that was synthesized by experiment $\texttt{xp}_4$ is given below.
   (-> speech2text-en.Audio text-emotions.Output))
 \end{minted}
 Obviously, only the bluebird operator appears in the solution since it
-is entirely built of sequential compositions.
+only requires sequential compositions.
 
 Another considerable speed-up is gained when using uncurried versions
 of the bluebird and phoenix combinators (experiment $\texttt{xp}_5$)
 going from 6.86s to 0.69s.  This allows to represent the AI service
 composition even more compactly, requiring only a depth of 2.
-Additionally, using uncurried version makes it impossible for the
-combinator to create higher order functions, thus pruning the search
-space even further by only considering composition such that data, but
-not functions, transit between services.  Here enabling reduction
-(experiment $\texttt{xp}_6$) has no impact on run-time.  However, it
-reduces the number of candidates from 3 to 2.  The best solution that
-was synthesized by experiments $\texttt{xp}_5$ and $\texttt{xp}_6$ is
-given below.
+Additionally, using uncurried combinations makes it impossible to
+combine them in strange ways to create higher order functions, thus
+pruning the search space even further by only considering compositions
+where data, but not functions, transit between services.  Enabling
+reduction for experiment $\texttt{xp}_6$ has no impact on run-time.
+However, it reduces the number of candidates from 3 to 2.  The best
+solution that was synthesized by experiments $\texttt{xp}_5$ and
+$\texttt{xp}_6$ is
 \begin{minted}{scheme}
 (: (. text-emotions.recognize
       (. text-emotions.MkInput
@@ -1882,13 +1887,13 @@ given below.
             speech2text-en.s2t)))
   (-> speech2text-en.Audio text-emotions.Output))
 \end{minted}
+the simplest and most readable representation so far.
 
 \begin{table}[H]
   \centering
   \caption{AI service composition results for synthesizing AI service
     compositions for recognizing emotion in speech.  The files
-    involved in reproducing the experiments can be found under the
-    folder
+    involved in the experiments can be found under
     \texttt{experimental/ai-service-composition/recognize-speech-emotion/}
     from the root folder of the AI-DSL repository~\cite{AIDSLRepo}.}
   \label{tab:rse}
@@ -1963,35 +1968,34 @@ given below.
 \subsection{English To Chinese Song}
 \label{sec:etcs}
 We experiment with two versions of the English To Chinese Song AI
-service composition, scaled down and normal sizes, as described in
-Section~\ref{sec:aicomp}.  Like above we experiments with lambda
-abstraction, bluebird and phoenix combinators, reduction and uncurried
-combinators.  Additionally we use the ontology described in
-Section~\ref{sec:ontology} specifically tailored for this AI service
-composition.  In all cases the query submitted to the backward chainer
-is
+service composition, scaled down size and normal, as described in
+Section~\ref{sec:aicomp}.  Like above we experiment with lambda
+abstraction, bluebird and phoenix combinators, reduction rules and
+uncurried combinators.  Additionally we use the ontology specifically
+tailored for this AI service composition described in
+Section~\ref{sec:ontology}.  The query submitted to the backward
+chainer is
 \begin{minted}{scheme}
 (: $prg (-> (: $x (SongIn "English")) (SongIn "Chinese")))
 \end{minted}
-Meaning that we want to synthesize the program that takes in input a
+Meaning that we want to synthesize a program that takes in input a
 song in English and outputs a song in Chinese.  The query does not
 specify more information than that.  For instance, it does not specify
 that the song in Chinese must be the same as the English one, except
 the singing part.  As such it still constitutes an over simplification
-of what we want to achieve.  More complex AI service composition
-formal specifications will be explored in the future.  However the
-size of the AI service composition (the normal one, not the scaled
-down one) resembles what we want achieve.  Indeed, if we consider all
-services plus the necessary glue to connect them such as combinators,
-microservices and type coercion to handle the ontology, we are already
-talking about combining 14 unique components.  Which I believe is
-above the size we would expect such synthesis process to start
-providing real world value.  Of course one the reasons we are able to
-do it is because we already know a priori which components are going
-to be used among a much larger set, constituted in large part from the
-AI services available on the SingularityNET marketplace.
-
-Table~\ref{tab:etcs} contains the results of the
+of what we want to achieve.  More complex formal specifications will
+be explored in the future.  However, the size of the AI service
+composition (the normal one, not the scaled down one) resembles what
+we want achieve.  Indeed, if we consider all services plus the
+necessary glue to connect them such as combinators, microservices and
+type coercion to handle the ontology, we are already dealing with 14
+unique components to combine.  Which I believe is above the size we
+would expect such synthesis process to start providing real world
+value.  Of course, let me recall that one of the reasons we are able
+to achieve that, is that we have already pre-filtered the components
+that are going to be composed among a much larger set, constituted in
+large part by the AI services available on the SingularityNET
+marketplace.  Table~\ref{tab:etcs} contains the results of the
 experiments.
 \begin{table}[H]
   \centering
@@ -2075,21 +2079,21 @@ pruning mechanisms, reduction and binding only data to variables of
 lambda abstraction, enabled right away.  In spite of enabling this it
 could not complete after 6 days of computation with the
 hyperon-experimental back-end.  The next experiment, $\texttt{xp}_8$,
-moves on to bluebird and phoenix combinators.  Even without reduction,
-and still using curried combinators, the best solution is found in
-1m42s.  Enabling reduction in experiment $\texttt{xp}_9$ brings that
-down to 42.7s.  Moreover the number of candidates goes from 29 to 1,
-only retaining the best solution.  That is because we have introduced
-more reduction rules, 6 in total.  In both experiments the best
-solution is
+uses the bluebird and phoenix combinators instead.  Even without
+reduction, and still using curried combinators, the best solution is
+found in 1m42s.  Enabling reduction in experiment $\texttt{xp}_9$
+brings that down to 42.7s.  Moreover the number of candidates goes
+from 29 to 1, only retaining the best solution.  That is because we
+have introduced more reduction rules, 6 in total.  In both experiments
+the best solution is
 \begin{minted}{scheme}
 (: ((. (((Φ mix) accomp) ((. translate) vocals))) spleeter)
    (-> (: $x (SongIn "English")) (SongIn "Chinese")))
 \end{minted}
 Experiment $\texttt{xp}_{10}$ is like $\texttt{xp}_9$ but uses
 uncurried bluebird and phoenix combinators, bringing synthesis time
-down to 1.6s, which is not only faster but produces a candidate that
-is easier to read
+down to 1.6s, which is not only faster but produces easier to read
+solutions, such as
 \begin{minted}{scheme}
 (: (. (Φ mix accomp (. translate vocals)) spleeter)
    (-> (: $x (SongIn "English")) (SongIn "Chinese")))
@@ -2098,7 +2102,7 @@ One the goals of the AI-DSL is to come up with a user friendly DSL to
 describe AI service compositions.  It seems that combining tacit
 programming, thus relieving us from having to use intermediary
 variables to represent the flow of information, with the bluebird and
-phoenix combinators produces the elegance we are looking for!  We are
+phoenix combinators produces the elegance we are looking for.  We are
 now ready to synthesize the full English to Chinese song AI service
 composition.  Because the full composition is much larger than what
 has been previously attempted we skip lambda abstraction and curried
@@ -2119,9 +2123,10 @@ $\texttt{xp}_{12}$).  In both experiments the best candidate is
    (-> (: $x (SongIn "English")) (SongIn "Chinese")))
 \end{minted}
 \end{small}
-Figure~\ref{fig:corcnd} shows a graphical representation of this candidate
-produced by the MeTTa to DOT converter described in
-Appendix~\ref{apdx:dot}.
+I hope the reader can appreciate the elegance of the representation of
+such moderately intricate composition.  Figure~\ref{fig:corcnd} shows
+a graphical representation of this candidate produced by the MeTTa to
+DOT converter described in~\cite{MeTTaToDOT}.
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.35]{figs/cnd-3.png}
@@ -2141,14 +2146,14 @@ However $\texttt{xp}_{11}$ was terminated due to memory exhaustion
 after 6 days~\footnote{Running $\texttt{xp}_{11}$ with MeTTaLog
 produced 976 candidates in 9m before being terminated for unknown
 reason}, while $\texttt{xp}_{12}$ took only 7m56s and produced 18
-candidates.  Unfortunately MeTTaLog could not run on
-$\texttt{xp}_{12}$, but we recall that on some experiments with fairly
-similar settings it was able to produce all solutions in a few
-seconds, which is consistent with the kind of speed-ups that MeTTaLog
-offers.  Showing that the approach, given an efficient MeTTa back-end,
-should be quite usable in practice.  Of these 18 candidates some are
-still incorrect due to the under-specification of the English to
-Chinese song AI service composition, such as
+candidates.  Unfortunately the latest version of MeTTaLog was not able
+to run on $\texttt{xp}_{12}$ to give us an exact time, but we recall
+that a previous version of it was able to produce all solutions in
+just a few seconds, which is consistent with the kind of speed-ups
+that MeTTaLog offers.  Showing that the approach, given an efficient
+MeTTa back-end, is already quite usable in practice.  Of these 18
+candidates some are still incorrect due to the under-specification of
+the English to Chinese song AI service composition, such as
 \begin{small}
 \begin{minted}{scheme}
 (: (Φ mixer.mix
@@ -2163,7 +2168,7 @@ Chinese song AI service composition, such as
 It is incorrect because the whole song, instead of just the vocals, is
 passed to the speech and melody recognition services.  The type
 signatures of the methods are not specific enough to make such a
-difference but nothing is preventing us to address this in the future.
+difference but nothing prevents us to address this in the future.
 Figure~\ref{fig:inccnd} provides a graphical representation of this
 incorrect candidate.
 \begin{figure}[H]
@@ -2174,86 +2179,98 @@ incorrect candidate.
     and melody recognition services.}
   \label{fig:inccnd}
 \end{figure}
-Additionally, see Figure~\ref{fig:cnd3typed} for a graphical
-representation of the best candidate with all edges annotated by
-types, allowing us to identify the types of data that transit between
-the services.
+The MeTTa to DOT converter~\cite{MeTTaToDOT} also allows us to produce
+a graph that is fully type annotated.  Figure~\ref{fig:cnd3typed}
+contains for a graphical representation of the best candidate with all
+edges annotated by types, allowing us to identify the types of data
+that transit between services.
 \begin{figure}[H]
   \centering
   \includegraphics[scale=0.215]{figs/cnd-3-typed.png}
   \caption{Graphical representation of the best candidates with all
-    edges annotated by types.  This allows to see the type of the data
-    that transit between services.}
+    edges annotated by types.  This allows to see what data types
+    transit between services.}
   \label{fig:cnd3typed}
 \end{figure}
 Overall, the results of the last experiment are quite promising.  It
 shows that it is possible to synthesize reasonably quickly a
 moderately complex AI service composition.  Obviously this is assuming
 that all services involved in the composition are already
-pre-selected, indicating that a form of attention allocation will need
-to be integrated in future versions of the AI-DSL.  Also, a detail
-that has been left out regarding currying and uncurrying combinators
-and AI services.  The convention was taken that arguments pertaining
-to parameters as opposed to data, would be separated by a form of
-currying.  This is so the uncurried combinators can perfectly match
-the arity of the AI services, see for instance the service
+pre-selected, indicating that a form of attention allocation will be
+needed.  Also, a detail that has been left out regarding currying and
+uncurrying combinators and AI services must be provided.  The
+following convention regarding currying was adopted: arguments
+pertaining to parameters should be separated by currying from
+arguments pertaining to data transiting between services.  This is so
+the uncurried combinators can perfectly match the arity of the
+services, see for instance the service
 \mintinline{scheme}{machine-translation.translate} detailed in
 Section~\ref{sec:ontology}.  The separation between parameters and
-data was operated manually.  Even though it does not seem like a big
-hurdle, it is unclear how to automate this separation and more
-research may be necessary to better understand it.
+data was operated manually.  Even though it does not seem like a
+difficult task to automate, it is still unclear how to do it and more
+research may be required.
 
 \chapter{Conclusion}
 In this iteration of the work on the AI-DSL we have finally started to
-experiment with AI service composition synthesis using AI services
-from the SingularityNET marketplace.  To realize this we have
+experiment with synthesizing AI service compositions using AI services
+from the SingularityNET marketplace.  To realize this feat we have
 \begin{itemize}
 \item Implemented in MeTTa a number of backward chainer variations in
   order to synthesize programs given their types, with or without
-  holes in both types and programs, supporting lambda abstraction and
-  dependent types.
+  holes in both types and programs, supporting lambda abstraction,
+  combinators and dependent types.
 \item Implemented a SingularityNET marketplace crawler to retrieve the
-  type specifications of all AI services.
+  type specifications of AI services.
 \item Created an miniature ontology and used this ontology to enrich
-  the type signatures of the AI services involved in our experiments.
+  the type signatures of the AI services for our experiments.
 \item Extensively experimented with a variety of approaches to
-  represent AI service compositions, in particular using lambda
-  abstraction and combinators and a variety AI service compositions of
-  different difficulties (recognizing emotion in speech and
-  translating an English to a Chinese song).
+  represent and synthesize AI service compositions at various levels
+  of difficulties, involving lambda abstraction, combinators and
+  various pruning techniques.
 \end{itemize}
-At the end we discovered that efficient synthesis was possible by
-combining the bluebird and the phoenix combinators to simulate
-sequential and parallel data flow respectively.
+In doing so we have discovered that efficient synthesis is possible by
+\begin{itemize}
+\item Restricting information flow between AI services to be of data
+  types, either by implemented such constraint explicitly in the
+  backward chainer or by uncurrying combinators and services.
+\item Introducing reduction rules to minimize over-representation and
+  prune the search space,
+\item Selecting the high level bluebird and the phoenix combinators to
+  simulate sequential and parallel data flow respectively.
+\item Avoiding absurd compositions by using semantically rich
+  dependent types obtained from an ontology made of subtyping
+  relationships.
+\end{itemize}
 
 \section{Future Developments}
 We believe the results are quite promising but there is still work
 left to fully realize the vision of the
-AI-DSL~\cite{GoertzelGeisweillerBlog}.  In particular, we need to:
+AI-DSL~\cite{GoertzelGeisweillerBlog}.  In particular, we need to
 \begin{enumerate}
 \item Integrate a form of attention allocation to restrict the set of
-  services available on the SingularityNET marketplace to a subset of
-  relevant services to be combined given the specification of the
-  desired composition.  Otherwise, it is likely combinatorial
-  explosion will be too difficult to manage.  How to do that well
-  remains to be determined.  Some attention allocation mechanism could
-  be designed specifically for the AI-DSL, or more general-purpose
-  mechanisms such as ECAN~\cite{Pitt2009}, SINE~\cite{Hoder2011} or
-  probabilistic variation thereof~\cite{Agnieszka2019} could be used.
-\item Incorporate resources, financial, computational and temporal in
+  services on the SingularityNET marketplace to a subset of relevant
+  services to compose given the specification.  Without this, it is
+  almost certain that combinatorial explosion will be too difficult to
+  manage.  How to do this well remains to be determined.  Some
+  attention allocation mechanism could be designed specifically for
+  the AI-DSL, or more general-purpose mechanisms such as
+  ECAN~\cite{Pitt2009}, SINE~\cite{Hoder2011} or probabilistic
+  variations thereof~\cite{Agnieszka2019} could be used.
+\item Incorporate financial, computational and temporal resources in
   the formal descriptions of the services, as to be able to not only
   synthesize AI service compositions but also evaluate their costs.
 \item Incorporate uncertainty of resources and outcomes in the formal
-  description using for instance a probabilistic logic such as
+  description to open the door to a broader class of formal
+  descriptions, using probabilistic logic such as
   PLN~\cite{Goertzel09PLN}.
-\item Explore how to build a large AI-DSL ontology and enrich Protobuf
-  specifications to leverage such ontology.  Likely this could be
-  crowed-sourced both by humans and AIs.
-\item Use a finer-than-functional-programming language to model
-  run-time behavior.  A process algebra, such as
-  $\pi$-calculus~\cite{Milner1999} or
-  $\rho$-calculus~\cite{Meredith2005}, combined with behavioral and
-  spatial types~\cite{Acciai2010} could for instance be used.
+\item Explore how to build automatically or semi-automatically a large
+  AI-DSL ontology and enrich Protobuf specifications to leverage such
+  ontology.
+\item Use finer-than-functional computational models to reason about
+  run-time behavior.  Process algebras such as
+  $\pi$-calculus~\cite{Milner1999} and
+  $\rho$-calculus~\cite{Meredith2005} combined with behavioral and
+  spatial types~\cite{Acciai2010} could be used.
 \item Incorporate inference control to speed-up synthesis.
 \end{enumerate}
 
