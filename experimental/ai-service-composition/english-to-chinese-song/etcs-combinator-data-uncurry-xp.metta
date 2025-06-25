@@ -2916,6 +2916,9 @@
 ;; !(DOT.println! (: (. (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (coerce SIA))) (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce IA) (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter))))) (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
 ;; !(DOT.println! (: (. (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (coerce SIA))) (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (. (coerce (STTrans VA VIV)) (. sound-spleeter.DTLOutput.vocals sound-spleeter.spleeter))))) (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
 
+;; An extra incorrect in an interesting way candidate
+;; !(DOT.println! (: (Φ mixer.mix (. sound-spleeter.DTLOutput.accomp sound-spleeter.spleeter) (. (Φ midi2voice-zh.singingZH (. (machine-translation.translate "English" "Chinese") (. upload speech-recognition.s2t)) tomidi.a2m) (coerce SIA))) (-> (: $x (SongIn "English")) (SongIn "Chinese"))))
+
 ;; ;; (Partial) 3rd candidate (the solution) printed in DOT format with type
 ;; ;; annotations on the edges
 ;; !(DOT.println!
